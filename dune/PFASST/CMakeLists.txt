@@ -1,0 +1,2 @@
+#install headers
+install(FILES PFASST.hh DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dune/PFASST)

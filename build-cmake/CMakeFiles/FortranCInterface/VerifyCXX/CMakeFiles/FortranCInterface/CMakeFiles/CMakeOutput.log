@@ -1,0 +1,18 @@
+Performing C SOURCE FILE Test C_SUPPORTS_DOLLAR succeded with the following output:
+Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/gmake" "cmTC_2fab3/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_2fab3.dir/build.make CMakeFiles/cmTC_2fab3.dir/build
+gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_2fab3.dir/src.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DC_SUPPORTS_DOLLAR   -o CMakeFiles/cmTC_2fab3.dir/src.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_2fab3
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2fab3.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DC_SUPPORTS_DOLLAR    CMakeFiles/cmTC_2fab3.dir/src.c.o  -o cmTC_2fab3 
+gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
+
+Source file was:
+
+extern int dollar$(void);
+int main() { return 0; }
+

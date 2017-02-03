@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 2.8.12)
+project(dune-PFASST CXX)
+
+if(NOT (dune-common_DIR OR dune-common_ROOT OR
+      "${CMAKE_PREFIX_PATH}" MATCHES ".*dune-common.*"))
+    string(REPLACE  ${CMAKE_PROJECT_NAME} dune-common dune-common_DIR
+      ${PROJECT_BINARY_DIR})
+endif()
+
+#find dune-common and set the module path
+find_package(dune-common REQUIRED)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules"
+  ${dune-common_MODULE_PATH})
+
+#include the dune macros
+include(DuneMacros)
+
+#dune-PFASST needs an installation of PFASST++
+#set installation path with cmake -Dpfasst_include=...
+SET(pfasst_include="/home/zam/ruth/software_engineering/PFASST/include" CACHE STRING "PFASST_DIR")#change default directory to /usr/include before push
+include_directories(${pfasst_include})
+MESSAGE( STATUS "include directory of PFASST++ library is set to " ${pfasst_include} )
+
+SET(eigen_include="/home/zam/ruth/software_engineering/eigen-eigen-69d418c06999" CACHE STRING "PFASST_DIR") #change default directory to /usr/include before push
+include_directories(${eigen_include})
+MESSAGE( STATUS "include directory of eigen3 library is set to " ${eigen_include} )
+
+# start a dune project with information from dune.module
+dune_project()
+dune_enable_all_packages()
+add_subdirectory("src")
+add_subdirectory("dune")
+add_subdirectory("doc")
+add_subdirectory("cmake/modules")
+
+# finalize the dune project, e.g. generating config.h etc.
+finalize_dune_project(GENERATE_CONFIG_H_CMAKE)

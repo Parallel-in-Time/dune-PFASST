@@ -1,0 +1,3 @@
+add_subdirectory(examples)
+add_subdirectory(datatypes)
+add_subdirectory(finite_element_stuff)
