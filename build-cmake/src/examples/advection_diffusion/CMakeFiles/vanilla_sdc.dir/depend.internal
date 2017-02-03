@@ -7,6 +7,13 @@ src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/vanilla_sdc.cpp.o
  /home/zam/ruth/software_engineering/PFASST/pfasst/comm/communicator.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/comm/communicator_impl.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/config.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer_1d.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer_1d_impl.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer_2d.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer_2d_impl.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer_3d.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/contrib/spectral_transfer_3d_impl.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/controller/controller.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/controller/controller_impl.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/controller/sdc.hpp
@@ -39,6 +46,11 @@ src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/vanilla_sdc.cpp.o
  /home/zam/ruth/software_engineering/PFASST/pfasst/sweeper/sweeper.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/sweeper/sweeper_impl.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/sweeper/traits.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/transfer/polynomial.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/transfer/polynomial_impl.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/transfer/traits.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/transfer/transfer.hpp
+ /home/zam/ruth/software_engineering/PFASST/pfasst/transfer/transfer_impl.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/util.hpp
  /home/zam/ruth/software_engineering/PFASST/pfasst/version.hpp
  /home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/dune_vec.hpp
@@ -139,6 +151,7 @@ src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/vanilla_sdc.cpp.o
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/optional.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/polymorphicsmallobject.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/signature.hh
+ /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/treedata.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/type_traits.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/typeerasure.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/common/utility.hh
@@ -156,7 +169,9 @@ src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/vanilla_sdc.cpp.o
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/functionspacebases/pqknodalbasis.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/functionspacebases/sizeinfo.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/functionspacebases/subspacelocalview.hh
+ /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/functionspacebases/taylorhoodbasis.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/gridfunctions/analyticgridviewfunction.hh
+ /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/gridfunctions/discreteglobalbasisfunction.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/gridfunctions/gridfunction.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/gridfunctions/gridfunction_imp.hh
  /home/zam/ruth/software_engineering/dune/dune-functions/dune/functions/gridfunctions/gridviewentityset.hh
@@ -176,9 +191,18 @@ src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/vanilla_sdc.cpp.o
  /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/quadraturerules/simplexquadrature.hh
  /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/quadraturerules/tensorproductquadrature.hh
  /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/referenceelements.hh
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement.hh
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement/base.cc
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement/hcube.cc
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement/hcubetriangulation.cc
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement/prismtriangulation.cc
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement/pyramidtriangulation.cc
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/refinement/simplex.cc
  /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/type.hh
  /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/typeindex.hh
  /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/utility/typefromvertexcount.hh
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/virtualrefinement.cc
+ /home/zam/ruth/software_engineering/dune/dune-geometry/dune/geometry/virtualrefinement.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/common/backuprestore.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/common/boundarysegment.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/common/capabilities.hh
@@ -207,6 +231,7 @@ src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/vanilla_sdc.cpp.o
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/io/file/vtk/function.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/io/file/vtk/pvtuwriter.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/io/file/vtk/streams.hh
+ /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/io/file/vtk/subsamplingvtkwriter.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/io/file/vtk/vtkwriter.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/io/file/vtk/vtuwriter.hh
  /home/zam/ruth/software_engineering/dune/dune-grid/dune/grid/utility/multiindex.hh

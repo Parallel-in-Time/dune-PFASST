@@ -1,285 +1,281 @@
+ 
+#include "dune_vec.hpp"
+
 #include <algorithm>
 #include <cassert>
+#include <stdexcept>
+#include <memory>
+#include <type_traits>
+#include <vector>
+using std::shared_ptr;
+using std::vector;
 
-#include "dune_vec.hpp"
+#include "pfasst/logging.hpp"
+#include "pfasst/util.hpp"
+
 
 namespace pfasst
 {
   namespace encap
   {
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar, time>::Dune_VectorEncapsulation(const size_t size)
-      : BlockVector<FieldVector<scalar,1>>(size)
+    template<class EncapsulationTrait>
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::Encapsulation(const size_t size)
+      : _data(size) , size(size)
     {
-      zero();
+      this->zero();
     }
 
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar, time>::Dune_VectorEncapsulation(const Dune_VectorEncapsulation<scalar, time>& other)
-      : BlockVector<FieldVector<scalar,1>>(other)
-    {}
-
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar, time>::Dune_VectorEncapsulation(const Encapsulation<time>& other)
-      : Dune_VectorEncapsulation(dynamic_cast<const Dune_VectorEncapsulation<scalar, time>>(other))
-    {}
-
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar, time>::Dune_VectorEncapsulation(Dune_VectorEncapsulation<scalar, time>&& other)
-      : BlockVector<FieldVector<scalar,1>>(other)
-    {}
-
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar, time>::Dune_VectorEncapsulation(Encapsulation<time>&& other)
-      : Dune_VectorEncapsulation(dynamic_cast<Dune_VectorEncapsulation<scalar, time>&&>(other))
-    {}
-
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar, time>::~Dune_VectorEncapsulation()
+    template<class EncapsulationTrait>
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::Encapsulation(const typename EncapsulationTrait::data_t& data)
+      : Encapsulation<EncapsulationTrait>(data.size())
     {
-#ifdef WITH_MPI
-      if (this->send_request != MPI_REQUEST_NULL) {
-        MPI_Status stat = MPI_Status_factory();
-        ML_CLOG(DEBUG, "Encap", "waiting for open send request");
-        int err = MPI_Wait(&(this->send_request), &stat);
-        check_mpi_error(err);
-        ML_CLOG(DEBUG, "Encap", "waited for open send request");
+      this->data() = data;
+    }
+
+    template<class EncapsulationTrait>
+    Encapsulation<EncapsulationTrait>&
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::operator=(const typename EncapsulationTrait::data_t& data)
+    {
+      this->data() = data;
+      return *this;
+    }
+
+    template<class EncapsulationTrait>
+    typename EncapsulationTrait::data_t&
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::data()
+    {
+      return this->_data;
+    }
+
+    template<class EncapsulationTrait>
+    const typename EncapsulationTrait::data_t&
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::get_data() const
+    {
+      return this->_data;
+    }
+
+    template<class EncapsulationTrait>
+    size_t
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::get_total_num_dofs() const
+    {
+      return this->get_data().size();
+    }
+
+    template<class EncapsulationTrait>
+    std::array<int, EncapsulationTrait::DIM>
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::get_dimwise_num_dofs() const
+    {
+      std::array<int, EncapsulationTrait::DIM> dimwise_ndofs;
+      switch (EncapsulationTrait::DIM) {
+        case 1:
+          dimwise_ndofs.fill((int)this->get_total_num_dofs()); //setzt 1,2 v 3 dimensionen und quadratischen raum vorraus
+          break;
+        case 2:
+          dimwise_ndofs.fill((int)sqrt(this->get_total_num_dofs()));
+          break;
+        case 3:
+          dimwise_ndofs.fill((int)cbrt(this->get_total_num_dofs()));
+          break;
+        default:
+          ML_CLOG(FATAL, "ENCAP", "unsupported spatial dimension: " << EncapsulationTrait::DIM);
+          throw std::runtime_error("unsupported spatial dimension");
       }
-      assert(this->recv_request == MPI_REQUEST_NULL);
-      assert(this->send_request == MPI_REQUEST_NULL);
-#endif
+
+      return dimwise_ndofs;
     }
 
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::zero()
-    {
-      //this->assign(this->size(), scalar(0.0));
-      std::fill(this->begin(), this->end(), scalar(0.0));
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::copy(shared_ptr<const Encapsulation<time>> x)
-    {
-      shared_ptr<const Dune_VectorEncapsulation<scalar, time>> x_cast = \
-        dynamic_pointer_cast<const Dune_VectorEncapsulation<scalar, time>>(x);
-      assert(x_cast);
-      this->copy(x_cast);
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::copy(shared_ptr<const Dune_VectorEncapsulation<scalar, time>> x)
-    {
-      std::copy(x->begin(), x->end(), this->begin());
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::saxpy(time a, shared_ptr<const Encapsulation<time>> x)
-    {
-      shared_ptr<const Dune_VectorEncapsulation<scalar, time>> x_cast = \
-        dynamic_pointer_cast<const Dune_VectorEncapsulation<scalar, time>>(x);
-      assert(x_cast);
-
-      this->saxpy(a, x_cast);
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::saxpy(time a, shared_ptr<const Dune_VectorEncapsulation<scalar, time>> x)
-    {
-      assert(this->size() == x->size());
-      for (size_t i = 0; i < this->size(); i++)
-      { (*this)[i] += a * (*x)[i]; }
-    }
-
-    template<typename scalar, typename time>
+    template<class EncapsulationTrait>
     void
-    Dune_VectorEncapsulation<scalar, time>::mat_apply(vector<shared_ptr<Encapsulation<time>>> dst,
-                                                 time a, Matrix<time> mat,
-                                                 vector<shared_ptr<Encapsulation<time>>> src,
-                                                 bool zero)
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::zero()
     {
-
-      size_t ndst = dst.size();
-      size_t nsrc = src.size();
-
-      vector<shared_ptr<Dune_VectorEncapsulation<scalar, time>>> dst_cast(ndst), src_cast(nsrc);
-      for (size_t n = 0; n < ndst; n++) {
-	//std::cout << dst[n] << std::endl;
-        dst_cast[n] = dynamic_pointer_cast<Dune_VectorEncapsulation<scalar, time>>(dst[n]);
-        assert(dst_cast[n]);
-      }
-
-      for (size_t m = 0; m < nsrc; m++) {
-
-        src_cast[m] = dynamic_pointer_cast<Dune_VectorEncapsulation<scalar, time>>(src[m]);
-        assert(src_cast[m]);
-      }
-
-      dst_cast[0]->mat_apply(dst_cast, a, mat, src_cast, zero);
-
+      std::fill(this->data().begin(), this->data().end(), typename EncapsulationTrait::spatial_t(0.0));
     }
 
-    template<typename scalar, typename time>
+    template<class EncapsulationTrait>
     void
-    Dune_VectorEncapsulation<scalar, time>::mat_apply(vector<shared_ptr<Dune_VectorEncapsulation<scalar, time>>> dst,
-                                                 time a, Matrix<time> mat,
-                                                 vector<shared_ptr<Dune_VectorEncapsulation<scalar, time>>> src,
-                                                 bool zero)
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::scaled_add(const typename EncapsulationTrait::time_t& a,
+                                   const shared_ptr<Encapsulation<EncapsulationTrait>> y)
     {
 
-      size_t ndst = dst.size();
-      size_t nsrc = src.size();
+      assert(this->get_data().size() == y->data().size());
 
-      if (zero) { for (auto elem : dst) { elem->zero(); } }
+      std::transform(this->get_data().begin(), this->get_data().end(), y->data().begin(),
+                this->data().begin(),
+                [a](const typename EncapsulationTrait::spatial_t& xi,
+                    const typename EncapsulationTrait::spatial_t& yi) { return xi + a * yi; });
 
-      size_t ndofs = dst[0]->size();
-      for (size_t i = 0; i < ndofs; i++) {
-        for (size_t n = 0; n < ndst; n++) {
-          assert(dst[n]->size() == ndofs);
-          for (size_t m = 0; m < nsrc; m++) {
-            assert(src[m]->size() == ndofs);
+    }
 
-            (*(dst[n]))[i][0] += a * mat(n, m) * (*(src[m]))[i][0];
+    template<class EncapsulationTrait>
+    typename EncapsulationTrait::spatial_t
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::norm0() const
+    {
+      return std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
+                               [](const typename EncapsulationTrait::spatial_t& a,
+                                  const typename EncapsulationTrait::spatial_t& b)
+                                 { return std::abs(a) < std::abs(b); })));
+    }
 
-          }
-        }
+    template<class EncapsulationTrait>
+    template<class CommT>
+    bool
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::probe(shared_ptr<CommT> comm, const int src_rank, const int tag)
+    {
+      return comm->probe(src_rank, tag);
+    }
+
+    template<class EncapsulationTrait>
+    template<class CommT>
+    void
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::send(shared_ptr<CommT> comm, const int dest_rank,
+                              const int tag, const bool blocking)
+    {
+      ML_CVLOG(2, "ENCAP", "sending data: " << this->get_data());
+      if (blocking) {
+        //comm->send(this->get_data().data(), this->get_data().size(), dest_rank, tag);
+        comm->send(&(this->data()[0][0]), this->size, dest_rank, tag);
+      } else {
+        //comm->isend(this->get_data().data(), this->get_data().size(), dest_rank, tag);
+        comm->isend(&(this->data()[0][0]), this->size, dest_rank, tag);
       }
-
     }
 
-    template<typename scalar, typename time>
-    time Dune_VectorEncapsulation<scalar, time>::norm0() const
+    template<class EncapsulationTrait>
+    template<class CommT>
+    void
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::recv(shared_ptr<CommT> comm, const int src_rank,
+                              const int tag, const bool blocking)
     {
-      //return std::abs(*std::max_element(this->begin(), this->end(),
-      //                                  [](scalar a, scalar b) {return std::abs(a) < std::abs(b); } ));
-    
-      return this->infinity_norm();
+      if (blocking) {
+        //comm->recv(this->data().data(), this->get_data().size(), src_rank, tag);
+        comm->recv(&(this->data()[0][0]), this->size, src_rank, tag);
+      } else {
+        //comm->irecv(this->data().data(),    this->get_data().size(), src_rank, tag);
+        comm->irecv(&(this->data()[0][0]), this->size, src_rank, tag);
+      }
+      ML_CVLOG(2, "ENCAP", "received data: " << this->get_data());
+    }
+
+    template<class EncapsulationTrait>
+    template<class CommT>
+    void
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::bcast(shared_ptr<CommT> comm, const int root_rank)
+    {
+      //comm->bcast(this->data().data(), this->get_data().size(), root_rank);
+      comm->bcast(&(this->data()[0][0]), this->size, root_rank);
+    }
+
+    template<class EncapsulationTrait>
+    void
+    Encapsulation<
+      EncapsulationTrait, 
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::log(el::base::type::ostream_t& os) const
+    {
+      os << "FieldVector" << pfasst::join(this->get_data(), ", ");
     }
 
 
-    template<typename scalar, typename time>
-    Dune_VectorFactory<scalar, time>::Dune_VectorFactory(const size_t size)
-      : size(size)
+    template<class EncapsulationTrait>
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::EncapsulationFactory(const size_t size)
+      : _size(size)
     {}
 
-    template<typename scalar, typename time>
-    size_t Dune_VectorFactory<scalar, time>::dofs() const
+    template<class EncapsulationTrait>
+    shared_ptr<Encapsulation<EncapsulationTrait>>
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::create() const
     {
-      return size;
+      return std::make_shared<Encapsulation<EncapsulationTrait>>(this->size());
     }
 
-    template<typename scalar, typename time>
-    shared_ptr<Encapsulation<time>> Dune_VectorFactory<scalar, time>::create(const EncapType)
+    template<class EncapsulationTrait>
+    void
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::set_size(const size_t& size)
     {
-      return make_shared<Dune_VectorEncapsulation<scalar, time>>(this->dofs());
+      this->_size = size;
     }
 
-
-    template<typename scalar, typename time>
-    Dune_VectorEncapsulation<scalar,time>& as_vector(shared_ptr<Encapsulation<time>> x)
+    template<class EncapsulationTrait>
+    size_t
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::size() const
     {
-      typedef Dune_VectorEncapsulation<scalar,time> VectorT;
-      shared_ptr<VectorT> y = dynamic_pointer_cast<VectorT>(x);
-      assert(y);
-      return *y.get();
+      return this->_size;
     }
-
-    template<typename scalar, typename time>
-    const Dune_VectorEncapsulation<scalar,time>& as_vector(shared_ptr<const Encapsulation<time>> x)
-    {
-      typedef Dune_VectorEncapsulation<scalar,time> VectorT;
-      shared_ptr<const VectorT> y = dynamic_pointer_cast<const VectorT>(x);
-      assert(y);
-      return *y.get();
-    }
-
-#ifdef WITH_MPI
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::post(ICommunicator* comm, int tag)
-    {
-      auto& mpi = as_mpi(comm);
-      if (mpi.size() == 1) { return; }
-      if (mpi.rank() == 0) { return; }
-
-      if (this->recv_request != MPI_REQUEST_NULL) {
-        throw MPIError("a previous receive request is still open");
-      }
-
-      int src = (mpi.rank() - 1) % mpi.size();
-      ML_CLOG(DEBUG, "Encap", "non-blocking receiving from rank " << src << " with tag=" << tag);
-      int err = MPI_Irecv(this[0], sizeof(scalar) * this->size(), MPI_CHAR,
-                          src, tag, mpi.comm, &this->recv_request);
-      check_mpi_error(err);
-      ML_CLOG(DEBUG, "Encap", "non-blocking received from rank " << src << " with tag=" << tag);
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::recv(ICommunicator* comm, int tag, bool blocking)
-    {
-      auto& mpi = as_mpi(comm);
-      if (mpi.size() == 1) { return; }
-      if (mpi.rank() == 0) { return; }
-
-      MPI_Status stat = MPI_Status_factory();
-      int err = MPI_SUCCESS;
-
-      if (blocking) {
-        int src = (mpi.rank() - 1) % mpi.size();
-        ML_CLOG(DEBUG, "Encap", "blocking receive from rank " << src << " with tag=" << tag);
-        err = MPI_Recv(this[0], sizeof(scalar) * this->size(), MPI_CHAR,
-                       src, tag, mpi.comm, &stat);
-        check_mpi_error(err);
-        ML_CLOG(DEBUG, "Encap", "received blocking from rank " << src << " with tag=" << tag << ": " << stat);
-      } else {
-        if (this->recv_request != MPI_REQUEST_NULL) {
-          ML_CLOG(DEBUG, "Encap", "waiting on last receive request");
-          err = MPI_Wait(&(this->recv_request), &stat);
-          check_mpi_error(err);
-          ML_CLOG(DEBUG, "Encap", "waited on last receive request: " << stat);
-        }
-      }
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::send(ICommunicator* comm, int tag, bool blocking)
-    {
-      auto& mpi = as_mpi(comm);
-      if (mpi.size() == 1) { return; }
-      if (mpi.rank() == mpi.size() - 1) { return; }
-
-      MPI_Status stat = MPI_Status_factory();
-      int err = MPI_SUCCESS;
-      int dest = (mpi.rank() + 1) % mpi.size();
-
-      if (blocking) {
-        ML_CLOG(DEBUG, "Encap", "blocking send to rank " << dest << " with tag=" << tag);
-        err = MPI_Send(this[0], sizeof(scalar) * this->size(), MPI_CHAR, dest, tag, mpi.comm);
-        check_mpi_error(err);
-        ML_CLOG(DEBUG, "Encap", "sent blocking to rank " << dest << " with tag=" << tag);
-      } else {
-        // got never in here
-        ML_CLOG(DEBUG, "Encap", "waiting on last send request to finish");
-        err = MPI_Wait(&(this->send_request), &stat);
-        check_mpi_error(err);
-        ML_CLOG(DEBUG, "Encap", "waited on last send request: " << stat);
-        ML_CLOG(DEBUG, "Encap", "non-blocking sending to rank " << dest << " with tag=" << tag);
-        err = MPI_Isend(this[0], sizeof(scalar) * this->size(), MPI_CHAR,
-                        dest, tag, mpi.comm, &(this->send_request));
-        check_mpi_error(err);
-        ML_CLOG(DEBUG, "Encap", "sent non-blocking to rank " << dest << " with tag=" << tag);
-      }
-    }
-
-    template<typename scalar, typename time>
-    void Dune_VectorEncapsulation<scalar, time>::broadcast(ICommunicator* comm)
-    {
-      auto& mpi = as_mpi(comm);
-      ML_CLOG(DEBUG, "Encap", "broadcasting");
-      int err = MPI_Bcast(this[0], sizeof(scalar) * this->size(), MPI_CHAR,
-                          comm->size()-1, mpi.comm);
-      check_mpi_error(err);
-      ML_CLOG(DEBUG, "Encap", "broadcasted");
-    }
-#endif
-
   }  // ::pfasst::encap
-} // ::pfasst
+}  // ::pfasst
+
+
+

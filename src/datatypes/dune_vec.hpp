@@ -1,159 +1,166 @@
-#ifndef _PFASST_DUNE_VECTOR_HPP_
-#define _PFASST_DUNE_VECTOR_HPP_
+#ifndef _PFASST__ENCAP__DUNE_VEC_HPP_
+#define _PFASST__ENCAP__DUNE_VEC_HPP_
 
 #include <memory>
-//#include <vector>
-using namespace std;
-
-#ifdef WITH_MPI
-#include "pfasst/mpi_communicator.hpp"
-using namespace pfasst::mpi;
-#endif
-
-#include "pfasst/encap/encapsulation.hpp"
-
+#include <type_traits>
+#include <vector>
+using std::shared_ptr;
+using std::vector;
 
 #include <dune/istl/bvector.hh>
 #include <dune/common/fvector.hh>
 
 using Dune::BlockVector;
 using Dune::FieldVector;
+#include "pfasst/globals.hpp"
+#include "pfasst/logging.hpp"
+#include "pfasst/encap/encapsulation.hpp"
+
 
 namespace pfasst
 {
   namespace encap
   {
+
+
+  struct dune_encap_tag
+          : public encap_data_tag
+{};
+
+      /**
+      * Spatialized Type Traits for encapsulation of std::vector.
+      *
+      * @tparam TimePrecision    the time precision, e.g. precision of the integration nodes
+      * @tparam SpatialPrecision the spatial data precision
+      *
+      * @ingroup Traits
+      */
+
+  template<
+          class TimePrecision,
+          class SpatialPrecision,
+          size_t Dim
+  >
+  struct dune_vec_encap_traits
+          : public encap_traits<TimePrecision, SpatialPrecision, Dim, BlockVector<FieldVector<SpatialPrecision,1>>>
+  {
+      using time_t = TimePrecision;
+      using spatial_t = SpatialPrecision;
+      using data_t = BlockVector<FieldVector<spatial_t,1>> ;
+      using tag_t = dune_encap_tag;
+      using dim_t = std::integral_constant<size_t, Dim>;
+      static constexpr size_t  DIM = Dim;
+};
+
+
+
     /**
-     * @tparam scalar
-     *     precision and numerical type of the data values
-     * @tparam time
-     *     precision of the time points; defaults to pfasst::time_precision
+     * Specialization of Encapsulation for `std::vector`.
      */
-    template<typename scalar, typename time = time_precision>
-    class Dune_VectorEncapsulation
-      : public BlockVector<FieldVector<scalar,1>>, //public BlockVector<FieldVector<SpatialPrecision,1>>>
-      //: public vector<scalar>,
-        public Encapsulation<time>
+    template<
+      class EncapsulationTrait
+    >
+    class Encapsulation<EncapsulationTrait,
+                        typename std::enable_if<
+                                   std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+                                 >::type>
+      :   public std::enable_shared_from_this<Encapsulation<EncapsulationTrait>>
+        , public el::Loggable
     {
       public:
+        using traits = EncapsulationTrait;
+        using factory_t = EncapsulationFactory<traits>;
 
-        //! @{
-        Dune_VectorEncapsulation(const size_t size);
+      protected:
+        typename traits::data_t _data;
+        const size_t size;
 
-        /**
-         * Copy constuctor.
-         *
-         * @note delegated to sdt::vector<scalar>
-         */
-        Dune_VectorEncapsulation(const Dune_VectorEncapsulation<scalar, time>& other);
+      public:
+        explicit Encapsulation(const size_t size = 0);
+        Encapsulation(const typename EncapsulationTrait::data_t& data);
+        Encapsulation<EncapsulationTrait>& operator=(const typename EncapsulationTrait::data_t& data);
 
-        /**
-         * @throws std::bad_cast
-         *     if `other` can not be transformed into pfasst::encap::Dune_VectorEncapsulation via
-         *     `dynamic_cast`
-         */
-        Dune_VectorEncapsulation(const Encapsulation<time>& other);
+        virtual       typename EncapsulationTrait::data_t& data();
+        virtual const typename EncapsulationTrait::data_t& get_data() const;
+        virtual size_t get_total_num_dofs() const;
+        // assuming square-shaped space
+        virtual std::array<int, EncapsulationTrait::DIM> get_dimwise_num_dofs() const;
 
-        /**
-         * Move constructor.
-         *
-         * @note delegated to std::vector<scalar>
-         */
-        Dune_VectorEncapsulation(Dune_VectorEncapsulation<scalar, time>&& other);
+        virtual void zero();
+        virtual void scaled_add(const typename EncapsulationTrait::time_t& a,
+                               const shared_ptr<Encapsulation<EncapsulationTrait>> y);
 
-        /**
-         * @throws std::bad_cast
-         *     if `other` can not be transformed into pfasst::encap::Dune_VectorEncapsulation via
-         *     `dynamic_cast`
-         */
-        Dune_VectorEncapsulation(Encapsulation<time>&& other);
+        virtual typename EncapsulationTrait::spatial_t norm0() const;
 
-        virtual ~Dune_VectorEncapsulation();
-        //! @}
+        template<class CommT>
+        bool probe(shared_ptr<CommT> comm, const int src_rank, const int tag);
+        template<class CommT>
+        void send(shared_ptr<CommT> comm, const int dest_rank, const int tag, const bool blocking);
+        template<class CommT>
+        void recv(shared_ptr<CommT> comm, const int src_rank, const int tag, const bool blocking);
+        template<class CommT>
+        void bcast(shared_ptr<CommT> comm, const int root_rank);
 
-        //! @{
-        virtual void zero() override;
-        virtual void copy(shared_ptr<const Encapsulation<time>> x) override;
-        virtual void copy(shared_ptr<const Dune_VectorEncapsulation<scalar, time>> x);
-        //! @}
-
-        //! @{
-        virtual void saxpy(time a, shared_ptr<const Encapsulation<time>> x) override;
-        virtual void saxpy(time a, shared_ptr<const Dune_VectorEncapsulation<scalar, time>> x);
-
-        /**
-         * @note In case any of the elements of `dst` or `src` can not be transformed via
-         *     `dynamic_cast` into pfasst::encap::Dune_VectorEncapsulation std::abort is called.
-         */
-        virtual void mat_apply(vector<shared_ptr<Encapsulation<time>>> dst,
-                               time a, Matrix<time> mat,
-                               vector<shared_ptr<Encapsulation<time>>> src,
-                               bool zero = true) override;
-        virtual void mat_apply(vector<shared_ptr<Dune_VectorEncapsulation<scalar, time>>> dst,
-                               time a, Matrix<time> mat,
-                               vector<shared_ptr<Dune_VectorEncapsulation<scalar, time>>> src,
-                               bool zero = true);
-
-        /**
-         * Maximum norm of contained elements.
-         *
-         * This uses std::max with custom comparison function.
-         */
-        virtual time norm0() const override;
-        //! @}
-
-#ifdef WITH_MPI
-        //! @{
-        MPI_Request recv_request = MPI_REQUEST_NULL;
-        MPI_Request send_request = MPI_REQUEST_NULL;
-        //! @}
-
-        //! @{
-        inline MPICommunicator& as_mpi(ICommunicator* comm)
-        {
-          auto mpi = dynamic_cast<MPICommunicator*>(comm);
-          assert(mpi);
-          return *mpi;
-        }
-        //! @}
-
-        //! @{
-        virtual void post(ICommunicator* comm, int tag) override;
-        virtual void recv(ICommunicator* comm, int tag, bool blocking) override;
-        virtual void send(ICommunicator* comm, int tag, bool blocking) override;
-        virtual void broadcast(ICommunicator* comm) override;
-        //! @}
-#endif
-
+        virtual void log(el::base::type::ostream_t& os) const override;
     };
 
     /**
-     * @tparam scalar
-     *     precision and numerical type of the data values
-     * @tparam time
-     *     precision of the time points; defaults to pfasst::time_precision
+     * Shortcut for encapsulation of `std::vector` data types.
      */
-    template<typename scalar, typename time = time_precision>
-    class Dune_VectorFactory
-      : public EncapFactory<time>
+    template<
+      typename time_precision,
+      typename spatial_precision,
+      size_t Dim
+    >
+    using DuneEncapsulation = Encapsulation<dune_vec_encap_traits<time_precision, spatial_precision, Dim>>;
+
+
+    template<
+      class EncapsulationTrait
+    >
+    class EncapsulationFactory<EncapsulationTrait,
+                               typename std::enable_if<
+                                          std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+                                        >::type>
+      : public std::enable_shared_from_this<EncapsulationFactory<EncapsulationTrait>>
     {
       protected:
-        size_t size;
+        size_t _size;
 
       public:
-        Dune_VectorFactory(const size_t size);
-        virtual shared_ptr<Encapsulation<time>> create(const EncapType) override;
-        size_t dofs() const;
+        explicit EncapsulationFactory(const size_t size = 0);
+        EncapsulationFactory(const EncapsulationFactory<EncapsulationTrait>& other);
+        EncapsulationFactory(EncapsulationFactory<EncapsulationTrait>&& other);
+        virtual ~EncapsulationFactory() = default;
+        EncapsulationFactory<EncapsulationTrait>& operator=(const EncapsulationFactory<EncapsulationTrait>& other);
+        EncapsulationFactory<EncapsulationTrait>& operator=(EncapsulationFactory<EncapsulationTrait>&& other);
+
+        virtual shared_ptr<Encapsulation<EncapsulationTrait>> create() const;
+
+        virtual void set_size(const size_t& size);
+        virtual size_t size() const;
     };
-
-    template<typename scalar, typename time = time_precision>
-    Dune_VectorEncapsulation<scalar,time>& as_vector(shared_ptr<Encapsulation<time>> x);
-
-    template<typename scalar, typename time = time_precision>
-    const Dune_VectorEncapsulation<scalar,time>& as_vector(shared_ptr<const Encapsulation<time>> x);
   }  // ::pfasst::encap
+    template<typename T>
+    static string join(const BlockVector<T>& vec, const string& sep)
+    {
+#ifndef PFASST_NO_LOGGING
+      std::stringstream os;
+      os << "[";
+      for (size_t i = 0; i < vec.size() - 1; ++i) {
+        os << vec[i] << sep;
+      }
+      os << vec[vec.size()-1];
+      os << "]";
+      return os.str();
+#else
+      UNUSED(vec); UNUSED(sep);
+    return "";
+#endif
+    }
 }  // ::pfasst
+
 
 #include "dune_vec_impl.hpp"
 
-#endif
+#endif // _PFASST__ENCAP__DUNE_VEC_HPP_
