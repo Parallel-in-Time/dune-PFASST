@@ -695,30 +695,17 @@ safepdf/fast:
 .PHONY : safepdf/fast
 
 #=============================================================================
-# Target rules for targets named serial_mlsdc
+# Target rules for targets named FE_pfasst
 
 # Build rule for target.
-serial_mlsdc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 serial_mlsdc
-.PHONY : serial_mlsdc
+FE_pfasst: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_pfasst
+.PHONY : FE_pfasst
 
 # fast build rule for target.
-serial_mlsdc/fast:
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/build
-.PHONY : serial_mlsdc/fast
-
-#=============================================================================
-# Target rules for targets named vanilla_sdc
-
-# Build rule for target.
-vanilla_sdc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 vanilla_sdc
-.PHONY : vanilla_sdc
-
-# fast build rule for target.
-vanilla_sdc/fast:
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/build
-.PHONY : vanilla_sdc/fast
+FE_pfasst/fast:
+	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/build
+.PHONY : FE_pfasst/fast
 
 #=============================================================================
 # Target rules for targets named doxyfile
@@ -800,8 +787,7 @@ help:
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... edit_cache"
-	@echo "... vanilla_sdc"
-	@echo "... serial_mlsdc"
+	@echo "... FE_pfasst"
 	@echo "... doxygen_dune-PFASST"
 	@echo "... doxyfile"
 .PHONY : help

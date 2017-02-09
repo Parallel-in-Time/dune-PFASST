@@ -1,4 +1,3 @@
- 
 #include "dune_vec.hpp"
 
 #include <algorithm>
@@ -20,7 +19,7 @@ namespace pfasst
   {
     template<class EncapsulationTrait>
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::Encapsulation(const size_t size)
@@ -31,7 +30,7 @@ namespace pfasst
 
     template<class EncapsulationTrait>
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::Encapsulation(const typename EncapsulationTrait::data_t& data)
@@ -43,7 +42,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     Encapsulation<EncapsulationTrait>&
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::operator=(const typename EncapsulationTrait::data_t& data)
@@ -55,7 +54,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     typename EncapsulationTrait::data_t&
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::data()
@@ -66,7 +65,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     const typename EncapsulationTrait::data_t&
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::get_data() const
@@ -77,7 +76,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     size_t
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::get_total_num_dofs() const
@@ -88,7 +87,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     std::array<int, EncapsulationTrait::DIM>
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::get_dimwise_num_dofs() const
@@ -115,7 +114,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     void
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::zero()
@@ -126,7 +125,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     void
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::scaled_add(const typename EncapsulationTrait::time_t& a,
@@ -145,7 +144,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     typename EncapsulationTrait::spatial_t
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::norm0() const
@@ -160,7 +159,7 @@ namespace pfasst
     template<class CommT>
     bool
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::probe(shared_ptr<CommT> comm, const int src_rank, const int tag)
@@ -172,7 +171,7 @@ namespace pfasst
     template<class CommT>
     void
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::send(shared_ptr<CommT> comm, const int dest_rank,
@@ -192,7 +191,7 @@ namespace pfasst
     template<class CommT>
     void
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::recv(shared_ptr<CommT> comm, const int src_rank,
@@ -212,7 +211,7 @@ namespace pfasst
     template<class CommT>
     void
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::bcast(shared_ptr<CommT> comm, const int root_rank)
@@ -224,7 +223,7 @@ namespace pfasst
     template<class EncapsulationTrait>
     void
     Encapsulation<
-      EncapsulationTrait, 
+      EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::log(el::base::type::ostream_t& os) const
@@ -275,7 +274,4 @@ namespace pfasst
       return this->_size;
     }
   }  // ::pfasst::encap
-}  // ::pfasst
-
-
-
+} // ::pfasst

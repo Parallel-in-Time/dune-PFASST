@@ -1,3 +1,4 @@
+ 
 #ifndef _PFASST__ENCAP__DUNE_VEC_HPP_
 #define _PFASST__ENCAP__DUNE_VEC_HPP_
 
@@ -6,6 +7,7 @@
 #include <vector>
 using std::shared_ptr;
 using std::vector;
+
 
 #include <dune/istl/bvector.hh>
 #include <dune/common/fvector.hh>
@@ -51,6 +53,11 @@ namespace pfasst
       using dim_t = std::integral_constant<size_t, Dim>;
       static constexpr size_t  DIM = Dim;
 };
+
+
+
+
+
 
 
 

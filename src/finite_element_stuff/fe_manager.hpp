@@ -3,6 +3,42 @@
 //#include "assemble.hpp"
 #include <dune/fufem/assemblers/transferoperatorassembler.hh>
 
+
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+
+
+#include <dune/functions/functionspacebases/interpolate.hh>
+
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh>
+
+
+
+
+
+
+
+
+
+
+
 const size_t DIMENSION=1;
 const size_t BASE_ORDER=1;
 const size_t GRID_LEVEL=1;
@@ -19,7 +55,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  typedef Dune::YaspGrid<1> GridType; 
 	  //typedef GridType::LeafGridView GridView;
           typedef GridType::LevelGridView GridView;
-	  using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,BASE_ORDER>;
+	  using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>;// BASE_ORDER>;
 	  //Dune::Functions::PQkNodalBasis<GridType::LeafGridView GridView,BASE_ORDER>;
 
           std::shared_ptr<GridType> grid;
@@ -51,7 +87,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    n_dof = new size_t [nlevels];
 
 	
-
+	    const int DIMENSION=1;
 	    //if(DIMENSION==2){
 	      //Dune::FieldVector<double,DIMENSION> h = {1, 1};
 	    //}

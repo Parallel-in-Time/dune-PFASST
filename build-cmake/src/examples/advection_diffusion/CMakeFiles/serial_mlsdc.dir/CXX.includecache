@@ -649,24 +649,42 @@ string
 /home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/dune_vec.hpp
 memory
 -
-pfasst/mpi_communicator.hpp
-/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/mpi_communicator.hpp
-pfasst/encap/encapsulation.hpp
-/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/encap/encapsulation.hpp
+type_traits
+-
+vector
+-
 dune/istl/bvector.hh
 -
 dune/common/fvector.hh
 -
+pfasst/globals.hpp
+/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/globals.hpp
+pfasst/logging.hpp
+/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/logging.hpp
+pfasst/encap/encapsulation.hpp
+/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/encap/encapsulation.hpp
 dune_vec_impl.hpp
 /home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/dune_vec_impl.hpp
 
 /home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/dune_vec_impl.hpp
+dune_vec.hpp
+/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/dune_vec.hpp
 algorithm
 -
 cassert
 -
-dune_vec.hpp
-/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/dune_vec.hpp
+stdexcept
+-
+memory
+-
+type_traits
+-
+vector
+-
+pfasst/logging.hpp
+/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/logging.hpp
+pfasst/util.hpp
+/home/zam/ruth/software_engineering/dune/dune-PFASST/src/datatypes/pfasst/util.hpp
 
 /home/zam/ruth/software_engineering/dune/dune-PFASST/src/examples/advection_diffusion/advection_diffusion_sweeper.hpp
 cassert
@@ -721,8 +739,6 @@ pfasst/controller/two_level_mlsdc.hpp
 /home/zam/ruth/software_engineering/dune/dune-PFASST/src/finite_element_stuff/spectral_transfer.hpp
 
 /home/zam/ruth/software_engineering/dune/dune-PFASST/src/finite_element_stuff/assemble.hpp
-dune/istl/matrixmarket.hh
--
 dune/common/function.hh
 -
 dune/geometry/quadraturerules.hh

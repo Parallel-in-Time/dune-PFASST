@@ -944,7 +944,7 @@ eigen_include:UNINITIALIZED=/home/zam/ruth/software_engineering/eigen-eigen-69d4
 eigen_include="/home/zam/ruth/software_engineering/eigen-eigen-69d418c06999":STRING=
 
 //No help, variable specified on the command line.
-pfasst_include:UNINITIALIZED=/home/zam/ruth/software_engineering/PFASST
+pfasst_include:UNINITIALIZED=/home/zam/ruth/software_engineering/dune/dune-PFASST/PFASST
 
 //PFASST_DIR
 pfasst_include="/home/zam/ruth/software_engineering/PFASST/include":STRING=

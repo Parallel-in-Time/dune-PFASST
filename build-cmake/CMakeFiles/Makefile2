@@ -1329,111 +1329,72 @@ src/preinstall: src/examples/preinstall
 # Directory level rules for directory src/examples
 
 # Convenience name for "all" pass in the directory.
-src/examples/all: src/examples/advection_diffusion/all
+src/examples/all: src/examples/heat/all
 
 .PHONY : src/examples/all
 
 # Convenience name for "clean" pass in the directory.
-src/examples/clean: src/examples/advection_diffusion/clean
+src/examples/clean: src/examples/heat/clean
 
 .PHONY : src/examples/clean
 
 # Convenience name for "preinstall" pass in the directory.
-src/examples/preinstall: src/examples/advection_diffusion/preinstall
+src/examples/preinstall: src/examples/heat/preinstall
 
 .PHONY : src/examples/preinstall
 
 #=============================================================================
-# Directory level rules for directory src/examples/advection_diffusion
+# Directory level rules for directory src/examples/heat
 
 # Convenience name for "all" pass in the directory.
-src/examples/advection_diffusion/all: src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/all
-src/examples/advection_diffusion/all: src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/all
+src/examples/heat/all: src/examples/heat/CMakeFiles/FE_pfasst.dir/all
 
-.PHONY : src/examples/advection_diffusion/all
+.PHONY : src/examples/heat/all
 
 # Convenience name for "clean" pass in the directory.
-src/examples/advection_diffusion/clean: src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/clean
-src/examples/advection_diffusion/clean: src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/clean
+src/examples/heat/clean: src/examples/heat/CMakeFiles/FE_pfasst.dir/clean
 
-.PHONY : src/examples/advection_diffusion/clean
+.PHONY : src/examples/heat/clean
 
 # Convenience name for "preinstall" pass in the directory.
-src/examples/advection_diffusion/preinstall:
+src/examples/heat/preinstall:
 
-.PHONY : src/examples/advection_diffusion/preinstall
+.PHONY : src/examples/heat/preinstall
 
 #=============================================================================
-# Target rules for target src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir
+# Target rules for target src/examples/heat/CMakeFiles/FE_pfasst.dir
 
 # All Build rule for target.
-src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/all:
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/depend
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=4,5 "Built target serial_mlsdc"
-.PHONY : src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/all
+src/examples/heat/CMakeFiles/FE_pfasst.dir/all:
+	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/depend
+	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=1,2 "Built target FE_pfasst"
+.PHONY : src/examples/heat/CMakeFiles/FE_pfasst.dir/all
 
 # Include target in all.
-all: src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/all
+all: src/examples/heat/CMakeFiles/FE_pfasst.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/rule: cmake_check_build_system
+src/examples/heat/CMakeFiles/FE_pfasst.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/all
+	$(MAKE) -f CMakeFiles/Makefile2 src/examples/heat/CMakeFiles/FE_pfasst.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
-.PHONY : src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/rule
+.PHONY : src/examples/heat/CMakeFiles/FE_pfasst.dir/rule
 
 # Convenience name for target.
-serial_mlsdc: src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/rule
+FE_pfasst: src/examples/heat/CMakeFiles/FE_pfasst.dir/rule
 
-.PHONY : serial_mlsdc
-
-# clean rule for target.
-src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/clean:
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/clean
-.PHONY : src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/clean
+.PHONY : FE_pfasst
 
 # clean rule for target.
-clean: src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir
-
-# All Build rule for target.
-src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/all:
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/depend
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=6,7 "Built target vanilla_sdc"
-.PHONY : src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/all
-
-# Include target in all.
-all: src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
-.PHONY : src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/rule
-
-# Convenience name for target.
-vanilla_sdc: src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/rule
-
-.PHONY : vanilla_sdc
+src/examples/heat/CMakeFiles/FE_pfasst.dir/clean:
+	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/clean
+.PHONY : src/examples/heat/CMakeFiles/FE_pfasst.dir/clean
 
 # clean rule for target.
-src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/clean:
-	$(MAKE) -f src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/build.make src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/clean
-.PHONY : src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/clean
-
-# clean rule for target.
-clean: src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir/clean
+clean: src/examples/heat/CMakeFiles/FE_pfasst.dir/clean
 
 .PHONY : clean
 
@@ -1517,7 +1478,7 @@ doc/doxygen/preinstall:
 doc/doxygen/CMakeFiles/doxyfile.dir/all:
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxyfile.dir/build.make doc/doxygen/CMakeFiles/doxyfile.dir/depend
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxyfile.dir/build.make doc/doxygen/CMakeFiles/doxyfile.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=1 "Built target doxyfile"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=3 "Built target doxyfile"
 .PHONY : doc/doxygen/CMakeFiles/doxyfile.dir/all
 
 # Build rule for subdir invocation for target.
@@ -1549,7 +1510,7 @@ clean: doc/doxygen/CMakeFiles/doxyfile.dir/clean
 doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/all:
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build.make doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/depend
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build.make doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=2,3 "Built target doxygen_dune-PFASST"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=4,5 "Built target doxygen_dune-PFASST"
 .PHONY : doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/all
 
 # Build rule for subdir invocation for target.

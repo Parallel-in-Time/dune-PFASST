@@ -1,8 +1,6 @@
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/OUTPUT.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxyfile.dir
-/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/advection_diffusion/CMakeFiles/serial_mlsdc.dir
-/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/advection_diffusion/CMakeFiles/vanilla_sdc.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/doc.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/html.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ps.dir
@@ -36,6 +34,7 @@
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/NightlyConfigure.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ExperimentalTest.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ExperimentalMemCheck.dir
+/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/heat/CMakeFiles/FE_pfasst.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/Experimental.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/NightlySubmit.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ExperimentalSubmit.dir
