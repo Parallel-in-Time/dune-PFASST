@@ -1,6 +1,10 @@
 #ifndef _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 #define _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 
+#include <dune/grid/io/file/vtk/vtkwriter.hh>
+#include <dune/grid/yaspgrid.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+
 #include <dune/common/densematrix.hh>
 
 #include <dune/istl/bvector.hh>
@@ -9,7 +13,38 @@
 
 #include <dune/grid/yaspgrid.hh>
 
+
+
 #include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#include <dune/functions/functionspacebases/pq1nodalbasis.hh>
+#include <dune/typetree/utility.hh>
+
+#include <dune/fufem/assemblers/transferoperatorassembler.hh>
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+
+
+#include <dune/functions/functionspacebases/interpolate.hh>
+
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh>
+
 
 #include <memory>
 #include <type_traits>
@@ -22,7 +57,10 @@ using std::vector;
 #include <pfasst/sweeper/imex.hpp>
 #include <pfasst/contrib/fft.hpp>
 
-using namespace Dune;
+#include "../../finite_element_stuff/fe_manager_fp.hpp"
+
+
+//using namespace Dune;
 
 namespace pfasst
 {
@@ -85,6 +123,10 @@ namespace pfasst
 	  
 	  typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 
+	  
+	  
+	  std::shared_ptr<fe_manager> FinEl;
+	  
           Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dune;
           Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > A_dune;
 	  
@@ -96,15 +138,17 @@ namespace pfasst
 	  //________________________________________________________
 	  
 
-          
-	  typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
-          std::shared_ptr<GridType> grid;
+	  typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType;
+          //typedef Dune::YaspGrid<1> GridType; 
+	  //typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
+          //std::shared_ptr<GridType> grid;
 
 
 
-          typedef GridType::LeafGridView GridView;
+          //typedef GridType::LeafGridView GridView;
+	  typedef GridType::LevelGridView GridView;
 
-          using BasisFunction = Functions::PQkNodalBasis<GridView,SweeperTrait::BASE_ORDER>;
+          using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
           std::shared_ptr<BasisFunction> basis;
 
         protected:
@@ -130,7 +174,9 @@ namespace pfasst
                                  const typename SweeperTrait::time_t& t);
 
         public:
-          explicit Heat_FE(const size_t nelements, const size_t basisorder);
+          //explicit Heat_FE(const size_t nelements, const size_t basisorder);
+	  explicit Heat_FE(std::shared_ptr<fe_manager>, size_t);
+	  
           Heat_FE(const Heat_FE<SweeperTrait, Enabled>& other) = default;
           Heat_FE(Heat_FE<SweeperTrait, Enabled>&& other) = default;
           virtual ~Heat_FE() = default;
@@ -150,7 +196,7 @@ namespace pfasst
 
           size_t get_num_dofs() const;
 
-          shared_ptr<GridType> get_grid() const;
+          //shared_ptr<GridType> get_grid() const;
 	  
 	
       };

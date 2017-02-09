@@ -2,19 +2,65 @@
 #include <iostream>
 
 #include <vector>
+#include <dune/grid/io/file/vtk/vtkwriter.hh>
+#include <dune/grid/yaspgrid.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+
+#include <dune/common/densematrix.hh>
+
+#include <dune/istl/bvector.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+
+#include <dune/grid/yaspgrid.hh>
+
+#include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#include <dune/functions/functionspacebases/pq1nodalbasis.hh>
+#include <dune/typetree/utility.hh>
+
+#include <dune/fufem/assemblers/transferoperatorassembler.hh>
+
+
+#include <vector>
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+
+
+#include <dune/functions/functionspacebases/interpolate.hh>
+
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh>
 
 #include <dune/grid/io/file/vtk/vtkwriter.hh>
 #include <dune/grid/yaspgrid.hh>
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
-#include <pfasst/encap/dune_vec.hpp>
+//#include <pfasst/encap/dune_vec.hpp>
 #include <pfasst/controller/sdc.hpp>
 #include <pfasst/contrib/spectral_transfer.hpp>
 
 #include <dune/functions/functionspacebases/pqknodalbasis.hh>
 
 #include "FE_sweeper.hpp"
+
+#include "../../datatypes/dune_vec.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -53,8 +99,10 @@ namespace pfasst
         using pfasst::quadrature::quadrature_factory;
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
+	
+	auto FinEl   = make_shared<fe_manager>(nelements,1); 
 
-        auto sweeper = std::make_shared<sweeper_t>(nelements, basisorder);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
@@ -77,7 +125,7 @@ namespace pfasst
         sdc->post_run();
 
 
-        if(BASIS_ORDER==1) {
+        /*if(BASIS_ORDER==1) {
           auto grid = (*sweeper).get_grid();
           typedef GridType::LeafGridView GridView;
           GridType::LeafGridView gridView = grid->leafGridView();
@@ -94,7 +142,7 @@ namespace pfasst
           vtkWriter.addVertexData(w, "initial_data");
 
           vtkWriter.write("flame_result");
-        }
+        }*/
 	  typedef Dune::BlockVector<Dune::FieldVector<double, 1> > VectorType;
           VectorType x = sweeper->get_end_state()->data();
 	  VectorType y = sweeper->exact(t_end)->data();
@@ -107,7 +155,7 @@ namespace pfasst
           std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
 
 	
-	  ofstream f;
+	  /*ofstream f;
 	  stringstream ss;
 	  ss << nelements;
 	  string s = "solution_sdc/" + ss.str() + ".dat";
@@ -127,7 +175,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
 	
 	
         return sdc;

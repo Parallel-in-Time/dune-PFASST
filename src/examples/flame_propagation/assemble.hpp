@@ -1,6 +1,5 @@
 
-#include <leathers/push>
-#include <leathers/all>
+
 
 #include <dune/common/function.hh>
 
@@ -14,7 +13,7 @@
 #include <dune/istl/matrixindexset.hh>
 #include <dune/istl/preconditioners.hh>
 #include <dune/istl/solvers.hh>
-#include <dune/istl/matrixmarket.hh>
+//#include <dune/istl/matrixmarket.hh>
 
 #include <dune/functions/functionspacebases/pqknodalbasis.hh>
 #include <dune/functions/functionspacebases/lagrangedgbasis.hh>
@@ -22,7 +21,7 @@
 
 #include <vector>
 
-#include <leathers/pop>
+
 
 
 
@@ -167,6 +166,7 @@ void assembleProblem(const Basis &basis,
   occupationPattern.exportIdx(A);
   occupationPattern.exportIdx(M);
 
+
   A = 0;
   M = 0;
 
@@ -180,11 +180,11 @@ void assembleProblem(const Basis &basis,
 
     localView.bind(element);
     localIndexSet.bind(localView);
-    Matrix <FieldMatrix<double, 1, 1>> elementMatrix_A;
+    Dune::Matrix <FieldMatrix<double, 1, 1>> elementMatrix_A;
     
     
     assembleElementA(localView, elementMatrix_A);
-    Matrix <FieldMatrix<double, 1, 1>> elementMatrix_M;
+    Dune::Matrix <FieldMatrix<double, 1, 1>> elementMatrix_M;
     assembleElementM(localView, elementMatrix_M);
 
     for (size_t i = 0; i < elementMatrix_A.N(); i++) {
@@ -207,7 +207,7 @@ void assembleProblem(const Basis &basis,
 
 
   }
-
+  //M_invers=M;
 
   //auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.9999 or x[1]<1e-8 or x[1]>0.9999);}; //ruth_dim
 
@@ -220,7 +220,7 @@ void assembleProblem(const Basis &basis,
       auto cIt = A[i].begin();
       auto cEndIt = A[i].end();
       for(; cIt!=cEndIt; ++cIt){
-        *cIt = (i==cIt.index()) ? 1.0 : 0.0;
+        *cIt = 0.0;
       }
     }
   }
@@ -230,7 +230,10 @@ void assembleProblem(const Basis &basis,
       auto cIt = M[i].begin();
       auto cEndIt = M[i].end();
       for(; cIt!=cEndIt; ++cIt){
-        *cIt = 0.0;
+        *cIt = (i==cIt.index()) ? 1.0 : 0.0;
+
+        //
+
       }
     }
   }
