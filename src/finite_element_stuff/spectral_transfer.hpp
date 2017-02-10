@@ -49,9 +49,7 @@ namespace pfasst
 }  // ::pfasst
 
 #include "sp.hpp"
-//#include "pfasst/contrib/spectral_transfer_1d.hpp"
-//#include "pfasst/contrib/spectral_transfer_2d.hpp"
-//#include "pfasst/contrib/spectral_transfer_3d.hpp"
+
 
 
 

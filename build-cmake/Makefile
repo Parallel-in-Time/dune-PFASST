@@ -695,6 +695,19 @@ safepdf/fast:
 .PHONY : safepdf/fast
 
 #=============================================================================
+# Target rules for targets named FE_mlsdc
+
+# Build rule for target.
+FE_mlsdc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_mlsdc
+.PHONY : FE_mlsdc
+
+# fast build rule for target.
+FE_mlsdc/fast:
+	$(MAKE) -f src/examples/heat/CMakeFiles/FE_mlsdc.dir/build.make src/examples/heat/CMakeFiles/FE_mlsdc.dir/build
+.PHONY : FE_mlsdc/fast
+
+#=============================================================================
 # Target rules for targets named FE_pfasst
 
 # Build rule for target.
@@ -706,6 +719,19 @@ FE_pfasst: cmake_check_build_system
 FE_pfasst/fast:
 	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/build
 .PHONY : FE_pfasst/fast
+
+#=============================================================================
+# Target rules for targets named FE_sdc
+
+# Build rule for target.
+FE_sdc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_sdc
+.PHONY : FE_sdc
+
+# fast build rule for target.
+FE_sdc/fast:
+	$(MAKE) -f src/examples/heat/CMakeFiles/FE_sdc.dir/build.make src/examples/heat/CMakeFiles/FE_sdc.dir/build
+.PHONY : FE_sdc/fast
 
 #=============================================================================
 # Target rules for targets named doxyfile
@@ -788,6 +814,8 @@ help:
 	@echo "... list_install_components"
 	@echo "... edit_cache"
 	@echo "... FE_pfasst"
+	@echo "... FE_mlsdc"
+	@echo "... FE_sdc"
 	@echo "... doxygen_dune-PFASST"
 	@echo "... doxyfile"
 .PHONY : help

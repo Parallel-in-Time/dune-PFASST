@@ -239,6 +239,8 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/OUTPUT.dir/DependInfo.cmake"
   "CMakeFiles/ContinuousBuild.dir/DependInfo.cmake"
   "src/examples/heat/CMakeFiles/FE_pfasst.dir/DependInfo.cmake"
+  "src/examples/heat/CMakeFiles/FE_mlsdc.dir/DependInfo.cmake"
+  "src/examples/heat/CMakeFiles/FE_sdc.dir/DependInfo.cmake"
   "doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/DependInfo.cmake"
   "doc/doxygen/CMakeFiles/doxyfile.dir/DependInfo.cmake"
   )

@@ -1,9 +1,6 @@
-//#include <leathers/push>
-//#include <leathers/all>
 
-//#include <dune/istl/matrixmarket.hh>
 
-#include <dune/common/function.hh>
+/*#include <dune/common/function.hh>
 
 #include <dune/geometry/quadraturerules.hh>
 
@@ -17,13 +14,15 @@
 #include <dune/istl/solvers.hh>
 
 
-//#include <dune/functions/functionspacebases/pqknodalbasis.hh>
-//#include <dune/functions/functionspacebases/lagrangedgbasis.hh>
-#include <dune/functions/functionspacebases/interpolate.hh>
+
+#include <dune/functions/functionspacebases/interpolate.hh>*/
+
+
+
 
 #include <vector>
 
-//#include <leathers/pop>
+
 
 
 

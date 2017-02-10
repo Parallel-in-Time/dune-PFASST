@@ -1,6 +1,7 @@
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/OUTPUT.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxyfile.dir
+/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/heat/CMakeFiles/FE_sdc.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/doc.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/html.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ps.dir
@@ -23,6 +24,7 @@
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/NightlyMemoryCheck.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/NightlyMemCheck.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ExperimentalStart.dir
+/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/heat/CMakeFiles/FE_mlsdc.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/doxygen_install.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ContinuousConfigure.dir
 /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/NightlyCoverage.dir

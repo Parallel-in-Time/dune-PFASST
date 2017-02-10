@@ -39,9 +39,9 @@
 
 
 
-const size_t DIMENSION=1;
-const size_t BASE_ORDER=1;
-const size_t GRID_LEVEL=1;
+//const size_t DIMENSION=1;
+//const size_t BASE_ORDER=1;
+//const size_t GRID_LEVEL=1;
 
 typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
 typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
