@@ -1330,19 +1330,16 @@ src/preinstall: src/examples/preinstall
 
 # Convenience name for "all" pass in the directory.
 src/examples/all: src/examples/heat/all
-src/examples/all: src/examples/flame_propagation/all
 
 .PHONY : src/examples/all
 
 # Convenience name for "clean" pass in the directory.
 src/examples/clean: src/examples/heat/clean
-src/examples/clean: src/examples/flame_propagation/clean
 
 .PHONY : src/examples/clean
 
 # Convenience name for "preinstall" pass in the directory.
 src/examples/preinstall: src/examples/heat/preinstall
-src/examples/preinstall: src/examples/flame_propagation/preinstall
 
 .PHONY : src/examples/preinstall
 
@@ -1371,7 +1368,7 @@ src/examples/heat/preinstall:
 src/examples/heat/CMakeFiles/FE_pfasst.dir/all:
 	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/depend
 	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=3,4 "Built target FE_pfasst"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=1,2 "Built target FE_pfasst"
 .PHONY : src/examples/heat/CMakeFiles/FE_pfasst.dir/all
 
 # Include target in all.
@@ -1398,139 +1395,6 @@ src/examples/heat/CMakeFiles/FE_pfasst.dir/clean:
 
 # clean rule for target.
 clean: src/examples/heat/CMakeFiles/FE_pfasst.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Directory level rules for directory src/examples/flame_propagation
-
-# Convenience name for "all" pass in the directory.
-src/examples/flame_propagation/all: src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/all
-src/examples/flame_propagation/all: src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/all
-src/examples/flame_propagation/all: src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/all
-
-.PHONY : src/examples/flame_propagation/all
-
-# Convenience name for "clean" pass in the directory.
-src/examples/flame_propagation/clean: src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/clean
-src/examples/flame_propagation/clean: src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/clean
-src/examples/flame_propagation/clean: src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/clean
-
-.PHONY : src/examples/flame_propagation/clean
-
-# Convenience name for "preinstall" pass in the directory.
-src/examples/flame_propagation/preinstall:
-
-.PHONY : src/examples/flame_propagation/preinstall
-
-#=============================================================================
-# Target rules for target src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir
-
-# All Build rule for target.
-src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/all:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/depend
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=1,2 "Built target FE_mlsdcFP"
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/all
-
-# Include target in all.
-all: src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/rule
-
-# Convenience name for target.
-FE_mlsdcFP: src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/rule
-
-.PHONY : FE_mlsdcFP
-
-# clean rule for target.
-src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/clean:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/clean
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/clean
-
-# clean rule for target.
-clean: src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir
-
-# All Build rule for target.
-src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/all:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/depend
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=5,6 "Built target FE_pfasstFP"
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/all
-
-# Include target in all.
-all: src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/rule
-
-# Convenience name for target.
-FE_pfasstFP: src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/rule
-
-.PHONY : FE_pfasstFP
-
-# clean rule for target.
-src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/clean:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/clean
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/clean
-
-# clean rule for target.
-clean: src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir
-
-# All Build rule for target.
-src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/all:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/depend
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=7,8 "Built target FE_sdcFP"
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/all
-
-# Include target in all.
-all: src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/all
-
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/rule
-
-# Convenience name for target.
-FE_sdcFP: src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/rule
-
-.PHONY : FE_sdcFP
-
-# clean rule for target.
-src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/clean:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/clean
-.PHONY : src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/clean
-
-# clean rule for target.
-clean: src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/clean
 
 .PHONY : clean
 
@@ -1614,7 +1478,7 @@ doc/doxygen/preinstall:
 doc/doxygen/CMakeFiles/doxyfile.dir/all:
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxyfile.dir/build.make doc/doxygen/CMakeFiles/doxyfile.dir/depend
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxyfile.dir/build.make doc/doxygen/CMakeFiles/doxyfile.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=9 "Built target doxyfile"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=3 "Built target doxyfile"
 .PHONY : doc/doxygen/CMakeFiles/doxyfile.dir/all
 
 # Build rule for subdir invocation for target.
@@ -1646,7 +1510,7 @@ clean: doc/doxygen/CMakeFiles/doxyfile.dir/clean
 doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/all:
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build.make doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/depend
 	$(MAKE) -f doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build.make doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=10,11 "Built target doxygen_dune-PFASST"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=4,5 "Built target doxygen_dune-PFASST"
 .PHONY : doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/all
 
 # Build rule for subdir invocation for target.

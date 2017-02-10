@@ -10,13 +10,13 @@ using std::shared_ptr;
 #include <pfasst/quadrature.hpp>
 
 //#include <pfasst/encap/dune_vec.hpp>
-#include <pfasst/encap/dune_vec_multi.hpp>
+#include "dune_vec_multi.hpp"
 
 #include <pfasst/controller/two_level_mlsdc.hpp>
-#include <pfasst/contrib/spectral_transfer.hpp>
+
 
 #include "FE_sweeper.hpp"
-
+#include "../../finite_element_stuff/spectral_transfer_gs.hpp"
 
 
 
@@ -117,27 +117,27 @@ namespace pfasst
 
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
-	      std::cout <<"vor grid builder" << std::endl;
-        mlsdc->grid_builder(nelements);
-        std::cout <<"grid builder" << std::endl;
+auto FinEl = make_shared<fe_manager>(nelements, 2); //spatial_dofs
 
         using pfasst::quadrature::quadrature_factory;
 
-        auto coarse = std::make_shared<sweeper_t>(nelements, basisorder, 0);
+        auto coarse = std::make_shared<sweeper_t>(FinEl, 1);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<sweeper_t>(nelements, basisorder, coarse_factor);
+        auto fine = std::make_shared<sweeper_t>(FinEl, 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	
         std::cout <<"transfer" << std::endl;
         auto transfer = std::make_shared<transfer_t>();
-
+    transfer->create(FinEl);
         //mlsdc->add_sweeper(coarse, true);
         //mlsdc->add_sweeper(fine, false);
 
 
 	      std::cout <<"vor add_transfer" << std::endl;
-        mlsdc->add_transfer(transfer);
-        mlsdc->add_sweeper(coarse, fine);
+          mlsdc->add_sweeper(coarse, true);
+      mlsdc->add_sweeper(fine, false);
+          mlsdc->add_transfer(transfer);
+
         std::cout <<"vor set_options" << std::endl;
         mlsdc->set_options();
 
@@ -178,7 +178,7 @@ namespace pfasst
 
 
 
-        ofstream ff;
+        /*ofstream ff;
         stringstream sss;
         sss << nelements << "_iter";
         string st = "solution_mlsdc/" + sss.str() + ".dat";
@@ -188,7 +188,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
         //return mlsdc;
         /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();

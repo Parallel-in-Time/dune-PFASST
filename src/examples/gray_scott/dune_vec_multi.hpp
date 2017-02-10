@@ -7,11 +7,10 @@
 using std::shared_ptr;
 using std::vector;
 
-#include <leathers/push>
-#include <leathers/all>
+
 #include <dune/istl/bvector.hh>
 #include <dune/common/fvector.hh>
-#include <leathers/pop>
+
 using Dune::BlockVector;
 using Dune::FieldVector;
 #include "pfasst/globals.hpp"
@@ -152,7 +151,7 @@ namespace pfasst
     {
 #ifndef PFASST_NO_LOGGING
       std::stringstream os;
-      os << "[" << LOG_FLOAT;
+      os << "[" ;
       for (size_t i = 0; i < vec.size() - 1; ++i) {
         os << vec[i] << sep;
       }
@@ -167,6 +166,6 @@ namespace pfasst
 }  // ::pfasst
 
 
-#include "pfasst/encap/dune_vec_multi_impl.hpp"
+#include "dune_vec_multi_impl.hpp"
 
 #endif  // _PFASST__ENCAP__DUNE_VEC_HPP_

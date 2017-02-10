@@ -1,4 +1,4 @@
-#include "pfasst/encap/dune_vec_multi.hpp"
+#include "dune_vec_multi.hpp"
 
 #include <algorithm>
 #include <cassert>

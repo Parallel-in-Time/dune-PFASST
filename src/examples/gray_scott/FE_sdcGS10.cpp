@@ -8,7 +8,7 @@
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
-#include <pfasst/encap/dune_vec_multi.hpp>
+#include "dune_vec_multi.hpp"
 #include <pfasst/controller/sdc.hpp>
 #include <pfasst/contrib/spectral_transfer.hpp>
 
@@ -59,7 +59,12 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
 
-        auto sweeper = std::make_shared<sweeper_t>(nelements, basisorder, 0);
+        //auto sweeper = std::make_shared<sweeper_t>(nelements, basisorder, 0);
+
+
+
+        auto FinEl   = make_shared<fe_manager>(nelements,1);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
@@ -145,7 +150,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 
 
 
-        ofstream ff;
+        /*ofstream ff;
         stringstream sss;
         sss << nelements << "_iter";
         string st = "solution_sdc/" + sss.str() + ".dat";
@@ -155,7 +160,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
 
 /*	ofstream f;
 	stringstream ss;

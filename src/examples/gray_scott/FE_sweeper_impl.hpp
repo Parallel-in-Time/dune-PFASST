@@ -14,10 +14,9 @@
 using std::shared_ptr;
 using std::vector;
 #include <dune/functions/functionspacebases/interpolate.hh>
-#include <leathers/push>
-#include <leathers/all>
+
 #include <boost/math/constants/constants.hpp>
-#include <leathers/pop>
+
 using boost::math::constants::pi;
 using boost::math::constants::two_pi;
 using boost::math::constants::pi_sqr;
@@ -39,26 +38,31 @@ namespace pfasst
       void
       Heat_FE<SweeperTrait, Enabled>::init_opts()
       {
-        config::options::add_option<size_t>("Heat FE", "num_dofs",
+        /*config::options::add_option<size_t>("Heat FE", "num_dofs",
                                             "number spatial degrees of freedom per dimension on fine level");
         config::options::add_option<size_t>("Heat FE", "coarse_factor",
                                             "coarsening factor");
         config::options::add_option<spatial_t>("Heat FE", "nu",
-                                               "thermal diffusivity");
+                                               "thermal diffusivity");*/
       }
 
 
         template<class SweeperTrait, typename Enabled>
-      Heat_FE<SweeperTrait, Enabled>::Heat_FE(const size_t nelements, const size_t basisorder, const int finer)
+      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<fe_manager> FinEl, size_t nlevel)
         :   IMEX<SweeperTrait, Enabled>()
 
       {
-        //Konstruktor
 
-        //const unsigned int dim = 2;
-        //Dune::FieldVector<typename GridType::ctype,dim> L(1.0);
+		this->FinEl = FinEl;
+	basis = FinEl->get_basis(nlevel);
+	    
+	assembleProblem(basis, A_dune, M_dune);
 
-        const unsigned int dim = 2;
+        const auto bs = basis->size();
+        std::cout << "Finite Element basis consists of " <<  basis->size() << " elements " << std::endl;
+
+        this->encap_factory()->set_size(bs);
+        /*const unsigned int dim = 2;
         Dune::FieldVector<typename GridType::ctype,dim> L;
         L[0]=1; L[1]=1;
         typename Dune::array<int,dim> s;
@@ -68,19 +72,9 @@ namespace pfasst
 
         grid        = std::make_shared<GridType>(L,s,periodic,0);
 
-        //hier wird das Gitter gebaut und die Basis des FE-Raums gewaehlt
 
-        /*Dune::FieldVector<double,SweeperTrait::DIM> h = {1 , 1}; //ruth_dim
-
-        array<int,SweeperTrait::DIM> n;
-
-	      std::fill(n.begin(), n.end(), nelements);
-
-	      this->grid = std::make_shared<GridType>( h,n);*/
         grid->globalRefine(finer);
         this->finer = finer;
-       
-        //grid.globalRefine(0);
 
         typedef GridType::LeafGridView GridView;
         GridType::LeafGridView gridView = grid->leafGridView();
@@ -92,7 +86,7 @@ namespace pfasst
 
         std::cout << "***** Basis erstellt mit " <<  basis->size() << " Elementen " << std::endl;
 
-        this->encap_factory()->set_size(basis->size());
+        this->encap_factory()->set_size(basis->size());*/
 	
       }
 
@@ -108,7 +102,7 @@ namespace pfasst
 
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
-        assembleProblem(basis, A_dune, M_dune); //das muss bei mlsdc raus bei sdc rein!!
+        //assembleProblem(basis, A_dune, M_dune); //das muss bei mlsdc raus bei sdc rein!!
 
 
       }
@@ -206,13 +200,13 @@ namespace pfasst
         typedef Dune::BlockVector<Dune::FieldVector<double, 2> > VectorType;
         typedef Dune::BlockVector<Dune::FieldVector<double, 1> > ColumnType;
         typedef Dune::YaspGrid<2> GridType; //ruth_dim
-        typedef GridType::LeafGridView GridView;
-        GridType::LeafGridView gridView = grid->leafGridView();
-        Dune::VTKWriter<GridView> vtkWriter(gridView);
+        //typedef GridType::LevelGridView GridView;
+        //GridType::LevelGridView gridView = grid->leafGridView();
+        //Dune::VTKWriter<GridView> vtkWriter(gridView);
 
 
 
-        string name = "initial";
+        /*string name = "initial";
 
         ColumnType sol_u, sol_v;
         sol_u.resize(result->data().size());
@@ -228,7 +222,7 @@ namespace pfasst
         vtkWriter.addVertexData(sol_v, "fe_solution_v");
 
 
-        vtkWriter.write("gray_scott" + name);
+        vtkWriter.write("gray_scott" + name);*/
 
 
 
@@ -275,18 +269,18 @@ namespace pfasst
                           : std::string("iteration ") + std::to_string(this->get_status()->get_iteration())));
           for (size_t m = 0; m < num_nodes; ++m) {
             ML_CVLOG(1, this->get_logger_id(),
-                     "  t["<<m<<"]=" << LOG_FIXED << (t + dt * nodes[m])
-                     << "      |abs residual| = " << LOG_FLOAT << this->_abs_res_norms[m]
-                     << "      |rel residual| = " << LOG_FLOAT << this->_rel_res_norms[m]
-//                      << "      |abs error| = " << LOG_FLOAT << encap::norm0(error[m])
-//                      << "      |rel error| = " << LOG_FLOAT << encap::norm0(rel_error[m])
+                     "  t["<<m<<"]=" << (t + dt * nodes[m])
+                     << "      |abs residual| = " <<  this->_abs_res_norms[m]
+                     << "      |rel residual| = " <<  this->_rel_res_norms[m]
+//                      << "      |abs error| = " << encap::norm0(error[m])
+//                      << "      |rel error| = " << encap::norm0(rel_error[m])
                     );
           }
           ML_CLOG(INFO, this->get_logger_id(),
-                  "  t["<<num_nodes<<"]=" << LOG_FIXED << (t + dt * nodes[num_nodes])
-                  << "      |abs residual| = " << LOG_FLOAT << this->_abs_res_norms[num_nodes]
-                  << "      |rel residual| = " << LOG_FLOAT << this->_rel_res_norms[num_nodes]
-//                   << "      |abs error| = " << LOG_FLOAT << encap::norm0(error[num_nodes])
+                  "  t["<<num_nodes<<"]=" << (t + dt * nodes[num_nodes])
+                  << "      |abs residual| = " << this->_abs_res_norms[num_nodes]
+                  << "      |rel residual| = " << this->_rel_res_norms[num_nodes]
+//                   << "      |abs error| = " << encap::norm0(error[num_nodes])
 //                   << "      |rel error| = " << LOG_FLOAT << encap::norm0(rel_error[num_nodes])
                  );
         }
@@ -376,7 +370,7 @@ namespace pfasst
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
       {
         UNUSED(u);
-        ML_CVLOG(4, this->get_logger_id(), LOG_FIXED << "evaluating EXPLICIT part at t=" << t);
+        ML_CVLOG(4, this->get_logger_id(), "evaluating EXPLICIT part at t=" << t);
 
         auto result = this->get_encap_factory().create();
 	
@@ -405,7 +399,7 @@ namespace pfasst
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
       {
 
-        ML_CVLOG(4, this->get_logger_id(), LOG_FIXED << "evaluating IMPLICIT part at t=" << t);
+        ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << t);
 
 
         auto result = this->get_encap_factory().create();
@@ -505,7 +499,7 @@ namespace pfasst
 	
 	std::cout << " " << std::endl; 
         ML_CVLOG(4, this->get_logger_id(),
-                 LOG_FIXED << "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
+                 "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
         for (size_t i = 0; i < u->data().size(); i++) {

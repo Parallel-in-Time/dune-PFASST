@@ -23,6 +23,8 @@ using std::vector;
 #include <pfasst/contrib/fft.hpp>
 //#include "../../../dune-installation/include/dune/istl/bcrsmatrix.hh"
 #include <dune/istl/bcrsmatrix.hh>
+#include "../../finite_element_stuff/fe_manager_gs.hpp"
+
 
 using namespace Dune;
 
@@ -86,7 +88,7 @@ namespace pfasst
 	  
 	  
 	
-
+	  std::shared_ptr<fe_manager> FinEl;
 	  
 	  
           typedef Dune::BCRSMatrix<Dune::FieldMatrix<double, SweeperTrait::NR_OF_COMP,  SweeperTrait::NR_OF_COMP> > MatrixType;
@@ -103,7 +105,7 @@ namespace pfasst
 
 
 
-          typedef GridType::LeafGridView GridView;
+          typedef GridType::LevelGridView GridView;
 
           using BasisFunction = Functions::PQkNodalBasis<GridView,SweeperTrait::BASE_ORDER>;
           std::shared_ptr<BasisFunction> basis;
@@ -131,8 +133,10 @@ namespace pfasst
                                  const typename SweeperTrait::time_t& t);
 
         public:
-          explicit Heat_FE(const size_t nelements, const size_t basisorder);
-          explicit Heat_FE(const size_t nelements, const size_t basisorder, const int finer);
+	  
+	  explicit Heat_FE(std::shared_ptr<fe_manager>, size_t);
+          //explicit Heat_FE(const size_t nelements, const size_t basisorder);
+          //explicit Heat_FE(const size_t nelements, const size_t basisorder, const int finer);
 
           Heat_FE(const Heat_FE<SweeperTrait, Enabled>& other) = default;
           Heat_FE(Heat_FE<SweeperTrait, Enabled>&& other) = default;
