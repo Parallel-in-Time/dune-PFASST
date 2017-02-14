@@ -46,7 +46,7 @@ assembleElementA(const LocalView &localView, MatrixType &elementMatrix) {
 
 
 
-  int order = 2 * (dim * localFiniteElement.localBasis().order());
+  int order = 2 * (dim * localFiniteElement.localBasis().order() -1 );
 
 
   const auto &quad = QuadratureRules<double, dim>::rule(element.type(), order);

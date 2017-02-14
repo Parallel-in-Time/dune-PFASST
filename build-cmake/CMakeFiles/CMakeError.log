@@ -1371,3 +1371,168 @@ Determining location of psurface failed:
 Include directory: 
 Library directory: 
 
+Determing location of GMP failed:
+Include directory: /usr/include
+gmp library directory: /usr/lib64/libgmp.so
+gmpx library directory: /usr/lib64/libgmpxx.so
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of SuperLU failed:
+Include directory: 
+Library directory: 
+Found unsupported version: SuperLU < 4.0
+
+Determing location of ARPACK failed:
+Libraries to link against: 
+
+Determing location of ARPACK++ failed:
+Include directory: 
+Libraries to link against: 
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of UG failed:
+Include directories: 
+Libraries: 
+
+Determining location of psurface failed:
+Include directory: 
+Library directory: 
+
+Determing location of GMP failed:
+Include directory: /usr/include
+gmp library directory: /usr/lib64/libgmp.so
+gmpx library directory: /usr/lib64/libgmpxx.so
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of SuperLU failed:
+Include directory: 
+Library directory: 
+Found unsupported version: SuperLU < 4.0
+
+Determing location of ARPACK failed:
+Libraries to link against: 
+
+Determing location of ARPACK++ failed:
+Include directory: 
+Libraries to link against: 
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of UG failed:
+Include directories: 
+Libraries: 
+
+Determining location of psurface failed:
+Include directory: 
+Library directory: 
+
+Determing location of GMP failed:
+Include directory: /usr/include
+gmp library directory: /usr/lib64/libgmp.so
+gmpx library directory: /usr/lib64/libgmpxx.so
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of SuperLU failed:
+Include directory: 
+Library directory: 
+Found unsupported version: SuperLU < 4.0
+
+Determing location of ARPACK failed:
+Libraries to link against: 
+
+Determing location of ARPACK++ failed:
+Include directory: 
+Libraries to link against: 
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of UG failed:
+Include directories: 
+Libraries: 
+
+Determining location of psurface failed:
+Include directory: 
+Library directory: 
+
+Determing location of GMP failed:
+Include directory: /usr/include
+gmp library directory: /usr/lib64/libgmp.so
+gmpx library directory: /usr/lib64/libgmpxx.so
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of SuperLU failed:
+Include directory: 
+Library directory: 
+Found unsupported version: SuperLU < 4.0
+
+Determing location of ARPACK failed:
+Libraries to link against: 
+
+Determing location of ARPACK++ failed:
+Include directory: 
+Libraries to link against: 
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of UG failed:
+Include directories: 
+Libraries: 
+
+Determining location of psurface failed:
+Include directory: 
+Library directory: 
+
+Determing location of GMP failed:
+Include directory: /usr/include
+gmp library directory: /usr/lib64/libgmp.so
+gmpx library directory: /usr/lib64/libgmpxx.so
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of SuperLU failed:
+Include directory: 
+Library directory: 
+Found unsupported version: SuperLU < 4.0
+
+Determing location of ARPACK failed:
+Libraries to link against: 
+
+Determing location of ARPACK++ failed:
+Include directory: 
+Libraries to link against: 
+
+Determing location of METIS failed:
+Include directory: 
+Library directory: 
+
+Determining location of UG failed:
+Include directories: 
+Libraries: 
+
+Determining location of psurface failed:
+Include directory: 
+Library directory: 
+

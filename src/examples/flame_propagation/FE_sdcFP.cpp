@@ -2,53 +2,8 @@
 #include <iostream>
 
 #include <vector>
-#include <dune/grid/io/file/vtk/vtkwriter.hh>
-#include <dune/grid/yaspgrid.hh>
-#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
 
-#include <dune/common/densematrix.hh>
-
-#include <dune/istl/bvector.hh>
-#include <dune/istl/bcrsmatrix.hh>
-#include <dune/istl/multitypeblockmatrix.hh>
-
-#include <dune/grid/yaspgrid.hh>
-
-#include <dune/functions/functionspacebases/pqknodalbasis.hh>
-#include <dune/functions/functionspacebases/pq1nodalbasis.hh>
-#include <dune/typetree/utility.hh>
-
-#include <dune/fufem/assemblers/transferoperatorassembler.hh>
-
-
-#include <vector>
-#include <dune/common/function.hh>
-#include <dune/common/bitsetvector.hh>
-#include <dune/common/indices.hh>
-#include <dune/geometry/quadraturerules.hh>
-
-#include <dune/grid/yaspgrid.hh>
-#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
-
-#include <dune/istl/matrix.hh>
-#include <dune/istl/bcrsmatrix.hh>
-#include <dune/istl/multitypeblockmatrix.hh>
-
-#include <dune/istl/multitypeblockvector.hh>
-#include <dune/istl/matrixindexset.hh>
-#include <dune/istl/solvers.hh>
-#include <dune/istl/preconditioners.hh>
-
-
-#include <dune/functions/functionspacebases/interpolate.hh>
-
-#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
-#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
-#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
-#include <dune/functions/gridfunctions/gridviewfunction.hh>
-
-#include <dune/grid/io/file/vtk/vtkwriter.hh>
-#include <dune/grid/yaspgrid.hh>
+#include "dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -68,7 +23,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-const size_t DIM = 1;            //R�umliche Dimension des Rechengebiets ruth_dim
+const size_t DIM = 1;            //Raeumliche Dimension des Rechengebiets ruth_dim
 
 const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
@@ -77,7 +32,7 @@ const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
 using std::shared_ptr;
 
-using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>; //ruth_dim
+using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>; 
 
 namespace pfasst
 {

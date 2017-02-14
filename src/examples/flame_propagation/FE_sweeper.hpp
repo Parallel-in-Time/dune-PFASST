@@ -1,51 +1,6 @@
 #ifndef _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 #define _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 
-#include <dune/grid/io/file/vtk/vtkwriter.hh>
-#include <dune/grid/yaspgrid.hh>
-#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
-
-#include <dune/common/densematrix.hh>
-
-#include <dune/istl/bvector.hh>
-#include <dune/istl/bcrsmatrix.hh>
-#include <dune/istl/multitypeblockmatrix.hh>
-
-#include <dune/grid/yaspgrid.hh>
-
-
-
-#include <dune/functions/functionspacebases/pqknodalbasis.hh>
-#include <dune/functions/functionspacebases/pq1nodalbasis.hh>
-#include <dune/typetree/utility.hh>
-
-#include <dune/fufem/assemblers/transferoperatorassembler.hh>
-#include <dune/common/function.hh>
-#include <dune/common/bitsetvector.hh>
-#include <dune/common/indices.hh>
-#include <dune/geometry/quadraturerules.hh>
-
-#include <dune/grid/yaspgrid.hh>
-#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
-
-#include <dune/istl/matrix.hh>
-#include <dune/istl/bcrsmatrix.hh>
-#include <dune/istl/multitypeblockmatrix.hh>
-
-#include <dune/istl/multitypeblockvector.hh>
-#include <dune/istl/matrixindexset.hh>
-#include <dune/istl/solvers.hh>
-#include <dune/istl/preconditioners.hh>
-
-
-#include <dune/functions/functionspacebases/interpolate.hh>
-
-#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
-#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
-#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
-#include <dune/functions/gridfunctions/gridviewfunction.hh>
-
-
 #include <memory>
 #include <type_traits>
 

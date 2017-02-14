@@ -1,15 +1,6 @@
 #ifndef _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 #define _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 
-#include <dune/common/densematrix.hh>
-#include <dune/functions/functionspacebases/interpolate.hh>
-#include <dune/istl/bvector.hh>
-#include <dune/istl/bcrsmatrix.hh>
-#include <dune/istl/multitypeblockmatrix.hh>
-
-#include <dune/grid/yaspgrid.hh>
-
-#include <dune/functions/functionspacebases/pqknodalbasis.hh>
 
 #include <memory>
 #include <type_traits>
@@ -21,12 +12,12 @@ using std::vector;
 
 #include <pfasst/sweeper/imex.hpp>
 #include <pfasst/contrib/fft.hpp>
-//#include "../../../dune-installation/include/dune/istl/bcrsmatrix.hh"
-#include <dune/istl/bcrsmatrix.hh>
+
+//#include <dune/istl/bcrsmatrix.hh>
 #include "../../finite_element_stuff/fe_manager_gs.hpp"
 
 
-using namespace Dune;
+//using namespace Dune;
 
 namespace pfasst
 {
@@ -107,7 +98,7 @@ namespace pfasst
 
           typedef GridType::LevelGridView GridView;
 
-          using BasisFunction = Functions::PQkNodalBasis<GridView,SweeperTrait::BASE_ORDER>;
+          using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,SweeperTrait::BASE_ORDER>;
           std::shared_ptr<BasisFunction> basis;
 
         protected:

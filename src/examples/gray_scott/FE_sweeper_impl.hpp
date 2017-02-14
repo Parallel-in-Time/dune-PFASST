@@ -13,7 +13,7 @@
 #include <vector>
 using std::shared_ptr;
 using std::vector;
-#include <dune/functions/functionspacebases/interpolate.hh>
+//#include <dune/functions/functionspacebases/interpolate.hh>
 
 #include <boost/math/constants/constants.hpp>
 
@@ -152,7 +152,7 @@ namespace pfasst
         spatial_t nu = this-> _nu; 
 	
 	
-	auto exact_solution1 = [t,  nu, dim](const FieldVector<double,dim>&x){
+	auto exact_solution1 = [t,  nu, dim](const Dune::FieldVector<double,dim>&x){
              
 	   
 	   double eps = 1e-8;
@@ -163,7 +163,7 @@ namespace pfasst
             
         };
 
-	auto exact_solution2 = [t, nu, dim](const FieldVector<double,dim>&x){
+	auto exact_solution2 = [t, nu, dim](const Dune::FieldVector<double,dim>&x){
           double eps = 1e-8; 
 
 	   if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
@@ -171,12 +171,12 @@ namespace pfasst
 	   return 0.0;
 	};
 	
-	 auto N_x = [t](const FieldVector<double,dim>&x){
+	 auto N_x = [t](const Dune::FieldVector<double,dim>&x){
             return x;
 
         };
 
-        BlockVector<FieldVector<double,dim>> x_node;
+        Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
 	Dune::BlockVector<Dune::FieldVector<double,1>> pom1, pom2;
 	pom1.resize(basis->size());
 	pom2.resize(basis->size());
@@ -419,16 +419,16 @@ namespace pfasst
         //auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.9999 or x[1]<1e-8 or x[1]>0.9999);}; //ruth_dim
 
 
-        MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dune);
+        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dune);
 
-        SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dune,1.0);
+        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dune,1.0);
 
-        CGSolver<VectorType> cg(linearOperator,
+        Dune::CGSolver<VectorType> cg(linearOperator,
                                 preconditioner,
                                 1e-10, // desired residual reduction factor
                                 500,    // maximum number of iterations
                                 0);    // verbosity of the solver
-        InverseOperatorResult statistics ;
+        Dune::InverseOperatorResult statistics ;
 
         cg.apply(result->data(), rhs->data() , statistics );
 
@@ -479,11 +479,11 @@ namespace pfasst
 	
 	
 
-        MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
+        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
 
-        SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
+        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
 
-        BiCGSTABSolver<VectorType> cg(linearOperator,
+        Dune::BiCGSTABSolver<VectorType> cg(linearOperator,
                               preconditioner,
                               1e-15, // desired residual reduction factor
                               500,    // maximum number of iterations
@@ -491,7 +491,7 @@ namespace pfasst
 	
 	
 	typedef Dune::FieldVector<double, 2> Block;
-        InverseOperatorResult statistics ;
+        Dune::InverseOperatorResult statistics ;
 	
 	cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
 

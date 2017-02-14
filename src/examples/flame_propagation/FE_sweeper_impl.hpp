@@ -81,7 +81,7 @@ namespace pfasst
 	assembleProblem(basis, A_dune, M_dune);
 
         const auto bs = basis->size();
-        std::cout << "Finite Element basis consists of " <<  basis->size() << " elements " << std::endl;
+        std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
 
         this->encap_factory()->set_size(bs);
 
@@ -113,7 +113,8 @@ namespace pfasst
         const auto dim = 1; //SweeperTrait::DIM;
         spatial_t nu = this-> _nu; 
 	spatial_t delta = this->_delta;
-	//std::cout << "nu = " << this->_nu << std::endl;
+	std::cout << "nu = " << this->_nu << std::endl;
+	std::cout << "delta = " << this->_delta << std::endl;
         auto exact_solution = [t, nu, dim, delta](const Dune::FieldVector<double,dim>&x){
           double c = 2./delta;  
 	  return 0.5*(1.0-std::tanh((x[0] - c*t*nu)/(delta)));
@@ -132,7 +133,9 @@ namespace pfasst
 
         interpolate(*basis, result->data(), exact_solution);
 
-
+	for (int i=0; i< result->data().size(); i++){
+	std::cout << "result = " << result->data()[i] << std::endl;
+	}
         return result;
       }
       
@@ -156,7 +159,8 @@ namespace pfasst
             double solution=1.0;
             //for(int i=0; i<SweeperTrait::DIM; i++){solution *=x[i];}    //
             
-	    
+	    std::cout << "PI = " << PI << std::endl;
+	    std::exit(0);
 	    return 2*t + PI*PI*(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1])  - 2*PI*(std::cos(PI*x[0]) + std::cos(PI*x[1])) + pow(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1] + t*t, 2) ;
         };
 
@@ -400,12 +404,12 @@ namespace pfasst
         auto neu = this->get_encap_factory().create();
         rhs2->scaled_add(-1.0 , var)  ;
 
-        //result->data() *= nu;
+        result->data() *= nu;
         /*std::cout << "f_impl mit evaluate" << std::endl;
         for (size_t i = 0; i < result->data().size(); i++) {
           std::cout << result->data()[i] << std::endl;
         }*/
-		std::cout << "************************ implcit ******************************* " << std::endl;
+		std::cout << "************************ implcit ******************************** " << std::endl;
 
         return result;
       }
@@ -435,24 +439,21 @@ namespace pfasst
 	std::vector<double> dirichletLeftNodes;
 	interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  //tu valjda interpoliramo kao na nrpdju
 
-  std::vector<double> dirichletRightNodes;
-  interpolate(*basis, dirichletRightNodes, isRightDirichlet);
+  	std::vector<double> dirichletRightNodes;
+  	interpolate(*basis, dirichletRightNodes, isRightDirichlet);
 	
 	for(int i=0; i<rhs->data().size(); ++i){
 	
 	  if(dirichletLeftNodes[i])
 	  M_rhs_dune[i] = 1;
 
-    if(dirichletRightNodes[i])
-      M_rhs_dune[i] = 0;
+    	  if(dirichletRightNodes[i])
+          M_rhs_dune[i] = 0;
 
 
 	  
 	}
-	  
-	
-	
-	
+	  	
 	
         Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(A_dune);
         M_dtA_dune *= (dt * this->_nu);
@@ -484,11 +485,11 @@ namespace pfasst
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
-        /*std::cout << "f_impl mit impl_solve" << std::endl;
+        //std::cout << "f_impl mit impl_solve" << std::endl;
         for (size_t i = 0; i < u->data().size(); i++) {
           f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
-          std::cout << f->data()[i] << std::endl;
-        }*/
+          //std::cout << f->data()[i] << std::endl;
+        }
         //evaluate_rhs_impl(0, u);
         //std::exit(0);
         this->_num_impl_solves++;
