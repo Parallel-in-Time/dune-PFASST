@@ -53,10 +53,11 @@ namespace pfasst
 
       {
 
-		this->FinEl = FinEl;
-	basis = FinEl->get_basis(nlevel);
-	    
-	assembleProblem(basis, A_dune, M_dune);
+		    this->FinEl = FinEl;
+	      basis = FinEl->get_basis(nlevel);
+        grid  = FinEl->get_grid();
+
+        assembleProblem(basis, A_dune, M_dune);
 
         const auto bs = basis->size();
         std::cout << "Finite Element basis consists of " <<  basis->size() << " elements " << std::endl;
