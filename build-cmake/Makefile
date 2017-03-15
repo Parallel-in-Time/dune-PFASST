@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST
+CMAKE_SOURCE_DIR = /home0/ruth/software_engineering/dune/dune-PFASST
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake
+CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -81,7 +81,7 @@ test/fast: test
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	/usr/bin/cpack --config ./CPackSourceConfig.cmake /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CPackSourceConfig.cmake
+	/usr/bin/cpack --config ./CPackSourceConfig.cmake /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -157,9 +157,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -695,69 +695,17 @@ safepdf/fast:
 .PHONY : safepdf/fast
 
 #=============================================================================
-# Target rules for targets named FE_mlsdc
+# Target rules for targets named sdcFP
 
 # Build rule for target.
-FE_mlsdc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_mlsdc
-.PHONY : FE_mlsdc
+sdcFP: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcFP
+.PHONY : sdcFP
 
 # fast build rule for target.
-FE_mlsdc/fast:
-	$(MAKE) -f src/examples/heat/CMakeFiles/FE_mlsdc.dir/build.make src/examples/heat/CMakeFiles/FE_mlsdc.dir/build
-.PHONY : FE_mlsdc/fast
-
-#=============================================================================
-# Target rules for targets named FE_pfasst
-
-# Build rule for target.
-FE_pfasst: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_pfasst
-.PHONY : FE_pfasst
-
-# fast build rule for target.
-FE_pfasst/fast:
-	$(MAKE) -f src/examples/heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/heat/CMakeFiles/FE_pfasst.dir/build
-.PHONY : FE_pfasst/fast
-
-#=============================================================================
-# Target rules for targets named FE_sdc
-
-# Build rule for target.
-FE_sdc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_sdc
-.PHONY : FE_sdc
-
-# fast build rule for target.
-FE_sdc/fast:
-	$(MAKE) -f src/examples/heat/CMakeFiles/FE_sdc.dir/build.make src/examples/heat/CMakeFiles/FE_sdc.dir/build
-.PHONY : FE_sdc/fast
-
-#=============================================================================
-# Target rules for targets named FE_mlsdcFP
-
-# Build rule for target.
-FE_mlsdcFP: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_mlsdcFP
-.PHONY : FE_mlsdcFP
-
-# fast build rule for target.
-FE_mlsdcFP/fast:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_mlsdcFP.dir/build
-.PHONY : FE_mlsdcFP/fast
-
-#=============================================================================
-# Target rules for targets named FE_pfasstFP
-
-# Build rule for target.
-FE_pfasstFP: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_pfasstFP
-.PHONY : FE_pfasstFP
-
-# fast build rule for target.
-FE_pfasstFP/fast:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_pfasstFP.dir/build
-.PHONY : FE_pfasstFP/fast
+sdcFP/fast:
+	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/sdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/sdcFP.dir/build
+.PHONY : sdcFP/fast
 
 #=============================================================================
 # Target rules for targets named FE_sdcFP
@@ -769,47 +717,8 @@ FE_sdcFP: cmake_check_build_system
 
 # fast build rule for target.
 FE_sdcFP/fast:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/FE_sdcFP.dir/build
+	$(MAKE) -f src/examples/FE_flame_propagation/CMakeFiles/FE_sdcFP.dir/build.make src/examples/FE_flame_propagation/CMakeFiles/FE_sdcFP.dir/build
 .PHONY : FE_sdcFP/fast
-
-#=============================================================================
-# Target rules for targets named FE_mlsdcGS
-
-# Build rule for target.
-FE_mlsdcGS: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_mlsdcGS
-.PHONY : FE_mlsdcGS
-
-# fast build rule for target.
-FE_mlsdcGS/fast:
-	$(MAKE) -f src/examples/gray_scott/CMakeFiles/FE_mlsdcGS.dir/build.make src/examples/gray_scott/CMakeFiles/FE_mlsdcGS.dir/build
-.PHONY : FE_mlsdcGS/fast
-
-#=============================================================================
-# Target rules for targets named FE_pfasstGS
-
-# Build rule for target.
-FE_pfasstGS: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_pfasstGS
-.PHONY : FE_pfasstGS
-
-# fast build rule for target.
-FE_pfasstGS/fast:
-	$(MAKE) -f src/examples/gray_scott/CMakeFiles/FE_pfasstGS.dir/build.make src/examples/gray_scott/CMakeFiles/FE_pfasstGS.dir/build
-.PHONY : FE_pfasstGS/fast
-
-#=============================================================================
-# Target rules for targets named FE_sdcGS
-
-# Build rule for target.
-FE_sdcGS: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_sdcGS
-.PHONY : FE_sdcGS
-
-# fast build rule for target.
-FE_sdcGS/fast:
-	$(MAKE) -f src/examples/gray_scott/CMakeFiles/FE_sdcGS.dir/build.make src/examples/gray_scott/CMakeFiles/FE_sdcGS.dir/build
-.PHONY : FE_sdcGS/fast
 
 #=============================================================================
 # Target rules for targets named doxyfile
@@ -891,15 +800,8 @@ help:
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... edit_cache"
-	@echo "... FE_pfasst"
-	@echo "... FE_mlsdc"
-	@echo "... FE_sdc"
-	@echo "... FE_pfasstFP"
+	@echo "... sdcFP"
 	@echo "... FE_sdcFP"
-	@echo "... FE_mlsdcFP"
-	@echo "... FE_sdcGS"
-	@echo "... FE_mlsdcGS"
-	@echo "... FE_pfasstGS"
 	@echo "... doxygen_dune-PFASST"
 	@echo "... doxyfile"
 .PHONY : help

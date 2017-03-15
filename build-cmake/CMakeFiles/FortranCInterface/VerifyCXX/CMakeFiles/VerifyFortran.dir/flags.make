@@ -6,5 +6,5 @@ Fortran_FLAGS = -O3
 
 Fortran_DEFINES = -DVERIFY_CXX
 
-Fortran_INCLUDES = -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX 
+Fortran_INCLUDES = -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX 
 

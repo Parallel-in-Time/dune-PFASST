@@ -6,7 +6,7 @@ set(dune-PFASST_INSTALLED OFF)
 
 # Package initialization
 # Set prefix to source dir
-set(PACKAGE_PREFIX_DIR /home/zam/ruth/software_engineering/dune/dune-PFASST)
+set(PACKAGE_PREFIX_DIR /home0/ruth/software_engineering/dune/dune-PFASST)
 macro(set_and_check _var _file)
   set(${_var} "${_file}")
   if(NOT EXISTS "${_file}")
@@ -16,7 +16,7 @@ endmacro()
 
 #report other information
 set_and_check(dune-PFASST_PREFIX "${PACKAGE_PREFIX_DIR}")
-set_and_check(dune-PFASST_INCLUDE_DIRS "/home/zam/ruth/software_engineering/dune/dune-PFASST")
+set_and_check(dune-PFASST_INCLUDE_DIRS "/home0/ruth/software_engineering/dune/dune-PFASST")
 set(dune-PFASST_CXX_FLAGS " -std=c++14 ")
 set(dune-PFASST_CXX_FLAGS_DEBUG "-g")
 set(dune-PFASST_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG")
@@ -24,7 +24,7 @@ set(dune-PFASST_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 set(dune-PFASST_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -DNDEBUG")
 set(dune-PFASST_DEPENDS "dune-common;dune-geometry;dune-grid;dune-localfunctions;dune-istl;dune-typetree;dune-functions;dune-matrix-vector;dune-fufem")
 set(dune-PFASST_SUGGESTS "")
-set(dune-PFASST_MODULE_PATH "/home/zam/ruth/software_engineering/dune/dune-PFASST/cmake/modules")
+set(dune-PFASST_MODULE_PATH "/home0/ruth/software_engineering/dune/dune-PFASST/cmake/modules")
 set(dune-PFASST_LIBRARIES "")
 
 # Lines that are set by the CMake build system via the variable DUNE_CUSTOM_PKG_CONFIG_SECTION

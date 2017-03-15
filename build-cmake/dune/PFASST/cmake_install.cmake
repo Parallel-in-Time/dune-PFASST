@@ -1,4 +1,4 @@
-# Install script for directory: /home/zam/ruth/software_engineering/dune/dune-PFASST/dune/PFASST
+# Install script for directory: /home0/ruth/software_engineering/dune/dune-PFASST/dune/PFASST
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,6 +33,6 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/dune/PFASST" TYPE FILE FILES "/home/zam/ruth/software_engineering/dune/dune-PFASST/dune/PFASST/PFASST.hh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/dune/PFASST" TYPE FILE FILES "/home0/ruth/software_engineering/dune/dune-PFASST/dune/PFASST/PFASST.hh")
 endif()
 

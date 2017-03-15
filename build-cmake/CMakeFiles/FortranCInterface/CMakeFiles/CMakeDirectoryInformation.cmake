@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/usr/share/cmake/Modules/FortranCInterface")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)

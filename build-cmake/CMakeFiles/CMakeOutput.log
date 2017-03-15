@@ -10,33 +10,33 @@ The output was:
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
 
-The CXX compiler identification is GNU, found in "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/3.4.1/CompilerIdCXX/a.out"
+The CXX compiler identification is GNU, found in "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/3.4.1/CompilerIdCXX/a.out"
 
 Determining if the CXX compiler works passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_4960d/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_4960d.dir/build.make CMakeFiles/cmTC_4960d.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_0da63/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_0da63.dir/build.make CMakeFiles/cmTC_0da63.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_4960d.dir/testCXXCompiler.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++      -o CMakeFiles/cmTC_4960d.dir/testCXXCompiler.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_4960d
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4960d.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_4960d.dir/testCXXCompiler.cxx.o  -o cmTC_4960d -rdynamic 
+Building CXX object CMakeFiles/cmTC_0da63.dir/testCXXCompiler.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++      -o CMakeFiles/cmTC_0da63.dir/testCXXCompiler.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_0da63
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0da63.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_0da63.dir/testCXXCompiler.cxx.o  -o cmTC_0da63 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Detecting CXX compiler ABI info compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_a03d6/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_a03d6.dir/build.make CMakeFiles/cmTC_a03d6.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_617f2/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_617f2.dir/build.make CMakeFiles/cmTC_617f2.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++      -o CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_a03d6
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a03d6.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++       -v CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_a03d6 -rdynamic  
+Building CXX object CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++      -o CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTC_617f2
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_617f2.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++       -v CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_617f2 -rdynamic  
 Using built-in specs.
 COLLECT_GCC=/usr/local_64/gcc/gcc-5.3.0/bin/g++
 COLLECT_LTO_WRAPPER=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper
@@ -46,23 +46,23 @@ Thread model: posix
 gcc version 5.3.0 (GCC) 
 COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/
 LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a03d6' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/cc4K66Un.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_a03d6 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_617f2' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/cc3RbZGR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_617f2 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
-  ignore line: [Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp]
+  ignore line: [Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_a03d6/fast"]
-  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_a03d6.dir/build.make CMakeFiles/cmTC_a03d6.dir/build]
+  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_617f2/fast"]
+  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_617f2.dir/build.make CMakeFiles/cmTC_617f2.dir/build]
   ignore line: [gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/g++      -o CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Linking CXX executable cmTC_a03d6]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a03d6.dir/link.txt --verbose=1]
-  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/g++       -v CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_a03d6 -rdynamic  ]
+  ignore line: [Building CXX object CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/g++      -o CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTC_617f2]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_617f2.dir/link.txt --verbose=1]
+  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/g++       -v CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_617f2 -rdynamic  ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/local_64/gcc/gcc-5.3.0/bin/g++]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper]
@@ -72,13 +72,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [gcc version 5.3.0 (GCC) ]
   ignore line: [COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/]
   ignore line: [LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_a03d6' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/cc4K66Un.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_a03d6 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_617f2' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/cc3RbZGR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_617f2 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o]
     arg [/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc4K66Un.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cc3RbZGR.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -91,7 +91,7 @@ Parsed CXX implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_a03d6] ==> ignore
+    arg [cmTC_617f2] ==> ignore
     arg [/usr/lib/../lib64/crt1.o] ==> ignore
     arg [/usr/lib/../lib64/crti.o] ==> ignore
     arg [/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o] ==> ignore
@@ -105,7 +105,7 @@ Parsed CXX implicit link information from above output:
     arg [-L/home/zam/ruth/lib] ==> dir [/home/zam/ruth/lib]
     arg [-L.] ==> ignore
     arg [-L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../..] ==> dir [/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../..]
-    arg [CMakeFiles/cmTC_a03d6.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_617f2.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -136,16 +136,16 @@ Parsed CXX implicit link information from above output:
 
 
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_c8695/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_c8695.dir/build.make CMakeFiles/cmTC_c8695.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_dd1f8/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_dd1f8.dir/build.make CMakeFiles/cmTC_dd1f8.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_c8695.dir/feature_tests.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14 -o CMakeFiles/cmTC_c8695.dir/feature_tests.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_c8695
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c8695.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_c8695.dir/feature_tests.cxx.o  -o cmTC_c8695 -rdynamic 
+Building CXX object CMakeFiles/cmTC_dd1f8.dir/feature_tests.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14 -o CMakeFiles/cmTC_dd1f8.dir/feature_tests.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_dd1f8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dd1f8.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_dd1f8.dir/feature_tests.cxx.o  -o cmTC_dd1f8 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
@@ -209,16 +209,16 @@ gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/b
 
 
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_bd5df/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_bd5df.dir/build.make CMakeFiles/cmTC_bd5df.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_8714c/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_8714c.dir/build.make CMakeFiles/cmTC_8714c.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_bd5df.dir/feature_tests.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++11 -o CMakeFiles/cmTC_bd5df.dir/feature_tests.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_bd5df
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bd5df.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_bd5df.dir/feature_tests.cxx.o  -o cmTC_bd5df -rdynamic 
+Building CXX object CMakeFiles/cmTC_8714c.dir/feature_tests.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++11 -o CMakeFiles/cmTC_8714c.dir/feature_tests.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_8714c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8714c.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_8714c.dir/feature_tests.cxx.o  -o cmTC_8714c -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
@@ -282,16 +282,16 @@ gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/b
 
 
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_94db1/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_94db1.dir/build.make CMakeFiles/cmTC_94db1.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_db19f/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_db19f.dir/build.make CMakeFiles/cmTC_db19f.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_94db1.dir/feature_tests.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++98 -o CMakeFiles/cmTC_94db1.dir/feature_tests.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_94db1
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_94db1.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_94db1.dir/feature_tests.cxx.o  -o cmTC_94db1 -rdynamic 
+Building CXX object CMakeFiles/cmTC_db19f.dir/feature_tests.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++98 -o CMakeFiles/cmTC_db19f.dir/feature_tests.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_db19f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_db19f.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++        CMakeFiles/cmTC_db19f.dir/feature_tests.cxx.o  -o cmTC_db19f -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
@@ -363,33 +363,33 @@ The output was:
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
 
-The C compiler identification is GNU, found in "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/3.4.1/CompilerIdC/a.out"
+The C compiler identification is GNU, found in "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/3.4.1/CompilerIdC/a.out"
 
 Determining if the C compiler works passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_910ec/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_910ec.dir/build.make CMakeFiles/cmTC_910ec.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_f2d36/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_f2d36.dir/build.make CMakeFiles/cmTC_f2d36.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_910ec.dir/testCCompiler.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_910ec.dir/testCCompiler.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_910ec
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_910ec.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_910ec.dir/testCCompiler.c.o  -o cmTC_910ec -rdynamic 
+Building C object CMakeFiles/cmTC_f2d36.dir/testCCompiler.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_f2d36.dir/testCCompiler.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_f2d36
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f2d36.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_f2d36.dir/testCCompiler.c.o  -o cmTC_f2d36 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Detecting C compiler ABI info compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_11133/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_11133.dir/build.make CMakeFiles/cmTC_11133.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_4b736/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_4b736.dir/build.make CMakeFiles/cmTC_4b736.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
-Linking C executable cmTC_11133
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_11133.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc      -v CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o  -o cmTC_11133 -rdynamic  
+Building C object CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_4b736
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4b736.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc      -v CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o  -o cmTC_4b736 -rdynamic  
 Using built-in specs.
 COLLECT_GCC=/usr/local_64/gcc/gcc-5.3.0/bin/gcc
 COLLECT_LTO_WRAPPER=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper
@@ -399,23 +399,23 @@ Thread model: posix
 gcc version 5.3.0 (GCC) 
 COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/
 LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_11133' '-rdynamic' '-mtune=generic' '-march=x86-64'
- /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccBxFgoc.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_11133 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_4b736' '-rdynamic' '-mtune=generic' '-march=x86-64'
+ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/cc3yPXHX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_4b736 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
-  ignore line: [Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp]
+  ignore line: [Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_11133/fast"]
-  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_11133.dir/build.make CMakeFiles/cmTC_11133.dir/build]
+  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_4b736/fast"]
+  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_4b736.dir/build.make CMakeFiles/cmTC_4b736.dir/build]
   ignore line: [gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
-  ignore line: [Linking C executable cmTC_11133]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_11133.dir/link.txt --verbose=1]
-  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gcc      -v CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o  -o cmTC_11133 -rdynamic  ]
+  ignore line: [Building C object CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_4b736]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4b736.dir/link.txt --verbose=1]
+  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gcc      -v CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o  -o cmTC_4b736 -rdynamic  ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/local_64/gcc/gcc-5.3.0/bin/gcc]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper]
@@ -425,13 +425,13 @@ Parsed C implicit link information from above output:
   ignore line: [gcc version 5.3.0 (GCC) ]
   ignore line: [COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/]
   ignore line: [LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_11133' '-rdynamic' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccBxFgoc.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_11133 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_4b736' '-rdynamic' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/cc3yPXHX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_4b736 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o]
     arg [/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccBxFgoc.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cc3yPXHX.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -444,7 +444,7 @@ Parsed C implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_11133] ==> ignore
+    arg [cmTC_4b736] ==> ignore
     arg [/usr/lib/../lib64/crt1.o] ==> ignore
     arg [/usr/lib/../lib64/crti.o] ==> ignore
     arg [/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o] ==> ignore
@@ -458,7 +458,7 @@ Parsed C implicit link information from above output:
     arg [-L/home/zam/ruth/lib] ==> dir [/home/zam/ruth/lib]
     arg [-L.] ==> ignore
     arg [-L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../..] ==> dir [/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../..]
-    arg [CMakeFiles/cmTC_11133.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_4b736.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [--as-needed] ==> ignore
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -491,16 +491,16 @@ Parsed C implicit link information from above output:
 
 
 Detecting C [-std=c11] compiler features compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_19858/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_19858.dir/build.make CMakeFiles/cmTC_19858.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_75ccb/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_75ccb.dir/build.make CMakeFiles/cmTC_75ccb.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_19858.dir/feature_tests.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -std=c11 -o CMakeFiles/cmTC_19858.dir/feature_tests.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.c
-Linking C executable cmTC_19858
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_19858.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_19858.dir/feature_tests.c.o  -o cmTC_19858 -rdynamic 
+Building C object CMakeFiles/cmTC_75ccb.dir/feature_tests.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -std=c11 -o CMakeFiles/cmTC_75ccb.dir/feature_tests.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.c
+Linking C executable cmTC_75ccb
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_75ccb.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_75ccb.dir/feature_tests.c.o  -o cmTC_75ccb -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
@@ -511,16 +511,16 @@ gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/b
 
 
 Detecting C [-std=c99] compiler features compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_b31c5/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_b31c5.dir/build.make CMakeFiles/cmTC_b31c5.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_ce3cc/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_ce3cc.dir/build.make CMakeFiles/cmTC_ce3cc.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_b31c5.dir/feature_tests.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -std=c99 -o CMakeFiles/cmTC_b31c5.dir/feature_tests.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.c
-Linking C executable cmTC_b31c5
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b31c5.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_b31c5.dir/feature_tests.c.o  -o cmTC_b31c5 -rdynamic 
+Building C object CMakeFiles/cmTC_ce3cc.dir/feature_tests.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -std=c99 -o CMakeFiles/cmTC_ce3cc.dir/feature_tests.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.c
+Linking C executable cmTC_ce3cc
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ce3cc.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_ce3cc.dir/feature_tests.c.o  -o cmTC_ce3cc -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
@@ -531,16 +531,16 @@ gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/b
 
 
 Detecting C [-std=c90] compiler features compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_f1530/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_f1530.dir/build.make CMakeFiles/cmTC_f1530.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_bb572/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_bb572.dir/build.make CMakeFiles/cmTC_bb572.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_f1530.dir/feature_tests.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -std=c90 -o CMakeFiles/cmTC_f1530.dir/feature_tests.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.c
-Linking C executable cmTC_f1530
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f1530.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_f1530.dir/feature_tests.c.o  -o cmTC_f1530 -rdynamic 
+Building C object CMakeFiles/cmTC_bb572.dir/feature_tests.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -std=c90 -o CMakeFiles/cmTC_bb572.dir/feature_tests.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/feature_tests.c
+Linking C executable cmTC_bb572
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bb572.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_bb572.dir/feature_tests.c.o  -o cmTC_bb572 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
@@ -564,7 +564,7 @@ Configured with: ../gcc-5.3.0-src/gcc-5.3.0/configure --prefix=/usr/local_64/gcc
 Thread model: posix
 gcc version 5.3.0 (GCC) 
 COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/f951 CMakeFortranCompilerId.F -ffixed-form -cpp=/tmp/ccZnXg3E.f90 -quiet -v CMakeFortranCompilerId.F -quiet -dumpbase CMakeFortranCompilerId.F -mtune=generic -march=x86-64 -auxbase CMakeFortranCompilerId -version -fintrinsic-modules-path /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/finclude -o /tmp/ccw1Fbji.s
+ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/f951 CMakeFortranCompilerId.F -ffixed-form -cpp=/tmp/ccFQMQkv.f90 -quiet -v CMakeFortranCompilerId.F -quiet -dumpbase CMakeFortranCompilerId.F -mtune=generic -march=x86-64 -auxbase CMakeFortranCompilerId -version -fintrinsic-modules-path /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/finclude -o /tmp/ccORrvXg.s
 GNU Fortran (GCC) version 5.3.0 (x86_64-unknown-linux-gnu)
 	compiled by GNU C version 5.3.0, GMP version 5.1.2, MPFR version 3.1.2, MPC version 0.9
 warning: MPC header version 0.9 differs from library version 1.0.
@@ -584,7 +584,7 @@ GNU Fortran2008 (GCC) version 5.3.0 (x86_64-unknown-linux-gnu)
 warning: MPC header version 0.9 differs from library version 1.0.
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- as -v --64 -o /tmp/ccOoTHyW.o /tmp/ccw1Fbji.s
+ as -v --64 -o /tmp/ccDqDPF2.o /tmp/ccORrvXg.s
 GNU assembler version 2.23.2 (x86_64-suse-linux) using BFD version (GNU Binutils; openSUSE 13.1) 2.23.2
 Reading specs from /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/libgfortran.spec
 rename spec lib to liborig
@@ -592,39 +592,39 @@ COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
 COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/
 LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/
 COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccwypzPA.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. /tmp/ccOoTHyW.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
+ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccMt4wpO.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. /tmp/ccDqDPF2.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
 
 
 Compilation of the Fortran compiler identification source "CMakeFortranCompilerId.F" produced "a.out"
 
-The Fortran compiler identification is GNU, found in "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/3.4.1/CompilerIdFortran/a.out"
+The Fortran compiler identification is GNU, found in "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/3.4.1/CompilerIdFortran/a.out"
 
 Determining if the Fortran compiler works passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_1aa36/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_1aa36.dir/build.make CMakeFiles/cmTC_1aa36.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_8d0c7/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_8d0c7.dir/build.make CMakeFiles/cmTC_8d0c7.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_1aa36.dir/testFortranCompiler.f.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_1aa36.dir/testFortranCompiler.f.o
-Linking Fortran executable cmTC_1aa36
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1aa36.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_1aa36.dir/testFortranCompiler.f.o  -o cmTC_1aa36  
+Building Fortran object CMakeFiles/cmTC_8d0c7.dir/testFortranCompiler.f.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_8d0c7.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTC_8d0c7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8d0c7.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_8d0c7.dir/testFortranCompiler.f.o  -o cmTC_8d0c7  
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Detecting Fortran compiler ABI info compiled with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_c6c41/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_c6c41.dir/build.make CMakeFiles/cmTC_c6c41.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_ec470/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_ec470.dir/build.make CMakeFiles/cmTC_ec470.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o
-Linking Fortran executable cmTC_c6c41
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c6c41.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran    -v   CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o  -o cmTC_c6c41   
-Driving: /usr/local_64/gcc/gcc-5.3.0/bin/gfortran -v CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o -o cmTC_c6c41 -l gfortran -l m -shared-libgcc
+Building Fortran object CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o
+Linking Fortran executable cmTC_ec470
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ec470.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran    -v   CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o  -o cmTC_ec470   
+Driving: /usr/local_64/gcc/gcc-5.3.0/bin/gfortran -v CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o -o cmTC_ec470 -l gfortran -l m -shared-libgcc
 Using built-in specs.
 COLLECT_GCC=/usr/local_64/gcc/gcc-5.3.0/bin/gfortran
 COLLECT_LTO_WRAPPER=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper
@@ -634,27 +634,27 @@ Thread model: posix
 gcc version 5.3.0 (GCC) 
 Reading specs from /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/libgfortran.spec
 rename spec lib to liborig
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c6c41' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec470' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
 COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/
 LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c6c41' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccnb3diN.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_c6c41 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec470' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFv9kZD.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_ec470 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Parsed Fortran implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
-  ignore line: [Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp]
+  ignore line: [Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_c6c41/fast"]
-  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_c6c41.dir/build.make CMakeFiles/cmTC_c6c41.dir/build]
+  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_ec470/fast"]
+  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_ec470.dir/build.make CMakeFiles/cmTC_ec470.dir/build]
   ignore line: [gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp']
-  ignore line: [Building Fortran object CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o]
-  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o]
-  ignore line: [Linking Fortran executable cmTC_c6c41]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c6c41.dir/link.txt --verbose=1]
-  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gfortran    -v   CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o  -o cmTC_c6c41   ]
-  ignore line: [Driving: /usr/local_64/gcc/gcc-5.3.0/bin/gfortran -v CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o -o cmTC_c6c41 -l gfortran -l m -shared-libgcc]
+  ignore line: [Building Fortran object CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [Linking Fortran executable cmTC_ec470]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ec470.dir/link.txt --verbose=1]
+  ignore line: [/usr/local_64/gcc/gcc-5.3.0/bin/gfortran    -v   CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o  -o cmTC_ec470   ]
+  ignore line: [Driving: /usr/local_64/gcc/gcc-5.3.0/bin/gfortran -v CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o -o cmTC_ec470 -l gfortran -l m -shared-libgcc]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/local_64/gcc/gcc-5.3.0/bin/gfortran]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper]
@@ -664,16 +664,16 @@ Parsed Fortran implicit link information from above output:
   ignore line: [gcc version 5.3.0 (GCC) ]
   ignore line: [Reading specs from /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/libgfortran.spec]
   ignore line: [rename spec lib to liborig]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c6c41' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec470' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
   ignore line: [COMPILER_PATH=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/]
   ignore line: [LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_c6c41' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccnb3diN.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_c6c41 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec470' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2 -plugin /usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so -plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFv9kZD.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_ec470 /usr/lib/../lib64/crt1.o /usr/lib/../lib64/crti.o /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0 -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../.. CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtend.o /usr/lib/../lib64/crtn.o]
     arg [/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/local_64/gcc/gcc-5.3.0/lib/gcc/x86_64-unknown-linux-gnu/5.3.0/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccnb3diN.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccFv9kZD.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lquadmath] ==> ignore
@@ -689,7 +689,7 @@ Parsed Fortran implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_c6c41] ==> ignore
+    arg [cmTC_ec470] ==> ignore
     arg [/usr/lib/../lib64/crt1.o] ==> ignore
     arg [/usr/lib/../lib64/crti.o] ==> ignore
     arg [/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/crtbegin.o] ==> ignore
@@ -703,7 +703,7 @@ Parsed Fortran implicit link information from above output:
     arg [-L/home/zam/ruth/lib] ==> dir [/home/zam/ruth/lib]
     arg [-L.] ==> ignore
     arg [-L/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../..] ==> dir [/usr/local_64/gcc/gcc-5.3.0/lib64/gcc/x86_64-unknown-linux-gnu/5.3.0/../../..]
-    arg [CMakeFiles/cmTC_c6c41.dir/CMakeFortranCompilerABI.F.o] ==> ignore
+    arg [CMakeFiles/cmTC_ec470.dir/CMakeFortranCompilerABI.F.o] ==> ignore
     arg [-lgfortran] ==> lib [gfortran]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -738,45 +738,45 @@ Parsed Fortran implicit link information from above output:
 
 
 Determining if the Fortran compiler supports Fortran 90 passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_a9ab7/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_a9ab7.dir/build.make CMakeFiles/cmTC_a9ab7.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_3bdcc/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_3bdcc.dir/build.make CMakeFiles/cmTC_3bdcc.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_a9ab7.dir/testFortranCompilerF90.f90.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTC_a9ab7.dir/testFortranCompilerF90.f90.o
-Linking Fortran executable cmTC_a9ab7
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a9ab7.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_a9ab7.dir/testFortranCompilerF90.f90.o  -o cmTC_a9ab7  
+Building Fortran object CMakeFiles/cmTC_3bdcc.dir/testFortranCompilerF90.f90.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTC_3bdcc.dir/testFortranCompilerF90.f90.o
+Linking Fortran executable cmTC_3bdcc
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3bdcc.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_3bdcc.dir/testFortranCompilerF90.f90.o  -o cmTC_3bdcc  
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Performing C++ SOURCE FILE Test cxx_std_flag_14 succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_f51af/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_f51af.dir/build.make CMakeFiles/cmTC_f51af.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_8fdf9/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_8fdf9.dir/build.make CMakeFiles/cmTC_8fdf9.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_f51af.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -Dcxx_std_flag_14   -std=c++14 -o CMakeFiles/cmTC_f51af.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_f51af
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f51af.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -Dcxx_std_flag_14    CMakeFiles/cmTC_f51af.dir/src.cxx.o  -o cmTC_f51af -rdynamic 
+Building CXX object CMakeFiles/cmTC_8fdf9.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -Dcxx_std_flag_14   -std=c++14 -o CMakeFiles/cmTC_8fdf9.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_8fdf9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8fdf9.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -Dcxx_std_flag_14    CMakeFiles/cmTC_8fdf9.dir/src.cxx.o  -o cmTC_8fdf9 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
 int main() { return 0; }
 Performing C++ SOURCE FILE Test compiler_supports_cxx14 succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_13ef8/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_13ef8.dir/build.make CMakeFiles/cmTC_13ef8.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_80275/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_80275.dir/build.make CMakeFiles/cmTC_80275.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_13ef8.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -Dcompiler_supports_cxx14  -std=c++14   -o CMakeFiles/cmTC_13ef8.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_13ef8
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_13ef8.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -Dcompiler_supports_cxx14  -std=c++14    CMakeFiles/cmTC_13ef8.dir/src.cxx.o  -o cmTC_13ef8 -rdynamic 
+Building CXX object CMakeFiles/cmTC_80275.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -Dcompiler_supports_cxx14  -std=c++14   -o CMakeFiles/cmTC_80275.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_80275
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_80275.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -Dcompiler_supports_cxx14  -std=c++14    CMakeFiles/cmTC_80275.dir/src.cxx.o  -o cmTC_80275 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -793,16 +793,16 @@ Source file was:
   }
   
 Performing C++ SOURCE FILE Test HAS_ATTRIBUTE_UNUSED succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_9ff18/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_9ff18.dir/build.make CMakeFiles/cmTC_9ff18.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_a0458/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_a0458.dir/build.make CMakeFiles/cmTC_a0458.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_9ff18.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAS_ATTRIBUTE_UNUSED   -o CMakeFiles/cmTC_9ff18.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_9ff18
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9ff18.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAS_ATTRIBUTE_UNUSED    CMakeFiles/cmTC_9ff18.dir/src.cxx.o  -o cmTC_9ff18 -rdynamic 
+Building CXX object CMakeFiles/cmTC_a0458.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAS_ATTRIBUTE_UNUSED   -o CMakeFiles/cmTC_a0458.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_a0458
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a0458.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAS_ATTRIBUTE_UNUSED    CMakeFiles/cmTC_a0458.dir/src.cxx.o  -o cmTC_a0458 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -814,16 +814,16 @@ Source file was:
    };
 
 Performing C++ SOURCE FILE Test HAS_ATTRIBUTE_DEPRECATED succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_4db33/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_4db33.dir/build.make CMakeFiles/cmTC_4db33.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_ee3ea/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_ee3ea.dir/build.make CMakeFiles/cmTC_ee3ea.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_4db33.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED   -o CMakeFiles/cmTC_4db33.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_4db33
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4db33.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED    CMakeFiles/cmTC_4db33.dir/src.cxx.o  -o cmTC_4db33 -rdynamic 
+Building CXX object CMakeFiles/cmTC_ee3ea.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED   -o CMakeFiles/cmTC_ee3ea.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_ee3ea
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ee3ea.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED    CMakeFiles/cmTC_ee3ea.dir/src.cxx.o  -o cmTC_ee3ea -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -857,16 +857,16 @@ Source file was:
    };
 
 Performing C++ SOURCE FILE Test HAS_ATTRIBUTE_DEPRECATED_MSG succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_f93ef/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_f93ef.dir/build.make CMakeFiles/cmTC_f93ef.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_a1cd2/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_a1cd2.dir/build.make CMakeFiles/cmTC_a1cd2.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_f93ef.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED_MSG   -o CMakeFiles/cmTC_f93ef.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_f93ef
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f93ef.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED_MSG    CMakeFiles/cmTC_f93ef.dir/src.cxx.o  -o cmTC_f93ef -rdynamic 
+Building CXX object CMakeFiles/cmTC_a1cd2.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED_MSG   -o CMakeFiles/cmTC_a1cd2.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_a1cd2
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a1cd2.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAS_ATTRIBUTE_DEPRECATED_MSG    CMakeFiles/cmTC_a1cd2.dir/src.cxx.o  -o cmTC_a1cd2 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -900,16 +900,16 @@ Source file was:
    };
 
 Performing C++ SOURCE FILE Test HAVE_IS_INDEXABLE_SUPPORT succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_b63e7/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_b63e7.dir/build.make CMakeFiles/cmTC_b63e7.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_68f58/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_68f58.dir/build.make CMakeFiles/cmTC_68f58.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_b63e7.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_IS_INDEXABLE_SUPPORT   -o CMakeFiles/cmTC_b63e7.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_b63e7
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b63e7.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_IS_INDEXABLE_SUPPORT    CMakeFiles/cmTC_b63e7.dir/src.cxx.o  -o cmTC_b63e7 -rdynamic 
+Building CXX object CMakeFiles/cmTC_68f58.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_IS_INDEXABLE_SUPPORT   -o CMakeFiles/cmTC_68f58.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_68f58
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_68f58.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_IS_INDEXABLE_SUPPORT    CMakeFiles/cmTC_68f58.dir/src.cxx.o  -o cmTC_68f58 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -959,30 +959,30 @@ Source file was:
   }
 
 Determining if the include file pthread.h exists passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_25df1/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_25df1.dir/build.make CMakeFiles/cmTC_25df1.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_db5dc/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_db5dc.dir/build.make CMakeFiles/cmTC_db5dc.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_25df1.dir/CheckIncludeFile.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_25df1.dir/CheckIncludeFile.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_25df1
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_25df1.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_25df1.dir/CheckIncludeFile.c.o  -o cmTC_25df1 -rdynamic 
+Building C object CMakeFiles/cmTC_db5dc.dir/CheckIncludeFile.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_db5dc.dir/CheckIncludeFile.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_db5dc
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_db5dc.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_db5dc.dir/CheckIncludeFile.c.o  -o cmTC_db5dc -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Performing C++ SOURCE FILE Test STDTHREAD_WORKS succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_e4aa2/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_e4aa2.dir/build.make CMakeFiles/cmTC_e4aa2.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_baf16/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_baf16.dir/build.make CMakeFiles/cmTC_baf16.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_e4aa2.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DSTDTHREAD_WORKS   -o CMakeFiles/cmTC_e4aa2.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_e4aa2
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e4aa2.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DSTDTHREAD_WORKS    CMakeFiles/cmTC_e4aa2.dir/src.cxx.o  -o cmTC_e4aa2 -rdynamic -pthread 
+Building CXX object CMakeFiles/cmTC_baf16.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DSTDTHREAD_WORKS   -o CMakeFiles/cmTC_baf16.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_baf16
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_baf16.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DSTDTHREAD_WORKS    CMakeFiles/cmTC_baf16.dir/src.cxx.o  -o cmTC_baf16 -rdynamic -pthread 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Return value: 1
@@ -998,16 +998,16 @@ Source file was:
       }
     
 Performing C++ SOURCE FILE Test HAVE_CXA_DEMANGLE succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_6b6c7/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_6b6c7.dir/build.make CMakeFiles/cmTC_6b6c7.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_20cb1/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_20cb1.dir/build.make CMakeFiles/cmTC_20cb1.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_6b6c7.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_CXA_DEMANGLE   -o CMakeFiles/cmTC_6b6c7.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_6b6c7
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6b6c7.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_CXA_DEMANGLE    CMakeFiles/cmTC_6b6c7.dir/src.cxx.o  -o cmTC_6b6c7 -rdynamic 
+Building CXX object CMakeFiles/cmTC_20cb1.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_CXA_DEMANGLE   -o CMakeFiles/cmTC_20cb1.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_20cb1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_20cb1.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_CXA_DEMANGLE    CMakeFiles/cmTC_20cb1.dir/src.cxx.o  -o cmTC_20cb1 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1020,16 +1020,16 @@ int main(void){
     char *demangled = abi::__cxa_demangle( foo, 0, 0, &status );
 }
 Verifying Fortran/CXX Compiler Compatibility passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX
 
 Run Build Command:"/usr/bin/gmake"
-/usr/bin/cmake -H/usr/share/cmake/Modules/FortranCInterface/Verify -B/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX --check-build-system CMakeFiles/Makefile.cmake 0
-/usr/bin/cmake -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/progress.marks
+/usr/bin/cmake -H/usr/share/cmake/Modules/FortranCInterface/Verify -B/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/cmake -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/progress.marks
 /usr/bin/gmake -f CMakeFiles/Makefile2 all
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
 /usr/bin/gmake -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/depend
 gmake[2]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
-cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /usr/share/cmake/Modules/FortranCInterface/Verify /usr/share/cmake/Modules/FortranCInterface/Verify /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortran.dir/DependInfo.cmake
+cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /usr/share/cmake/Modules/FortranCInterface/Verify /usr/share/cmake/Modules/FortranCInterface/Verify /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortran.dir/DependInfo.cmake
 Scanning dependencies of target VerifyFortran
 gmake[2]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
 /usr/bin/gmake -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/requires
@@ -1039,7 +1039,7 @@ gmake[2]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/b
 /usr/bin/gmake -f CMakeFiles/VerifyFortran.dir/build.make CMakeFiles/VerifyFortran.dir/build
 gmake[2]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
 [ 16%] Building Fortran object CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran  -DVERIFY_CXX -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -O3   -c /usr/share/cmake/Modules/FortranCInterface/Verify/VerifyFortran.f -o CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran  -DVERIFY_CXX -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -O3   -c /usr/share/cmake/Modules/FortranCInterface/Verify/VerifyFortran.f -o CMakeFiles/VerifyFortran.dir/VerifyFortran.f.o
 [ 33%] Linking Fortran static library libVerifyFortran.a
 /usr/bin/cmake -P CMakeFiles/VerifyFortran.dir/cmake_clean_target.cmake
 /usr/bin/cmake -E cmake_link_script CMakeFiles/VerifyFortran.dir/link.txt --verbose=1
@@ -1049,93 +1049,93 @@ gmake[2]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/b
 [ 33%] Built target VerifyFortran
 /usr/bin/gmake -f CMakeFiles/VerifyFortranC.dir/build.make CMakeFiles/VerifyFortranC.dir/depend
 gmake[2]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
-cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /usr/share/cmake/Modules/FortranCInterface/Verify /usr/share/cmake/Modules/FortranCInterface/Verify /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortranC.dir/DependInfo.cmake
+cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX && /usr/bin/cmake -E cmake_depends "Unix Makefiles" /usr/share/cmake/Modules/FortranCInterface/Verify /usr/share/cmake/Modules/FortranCInterface/Verify /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles/VerifyFortranC.dir/DependInfo.cmake
 Scanning dependencies of target VerifyFortranC
 gmake[2]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
 /usr/bin/gmake -f CMakeFiles/VerifyFortranC.dir/build.make CMakeFiles/VerifyFortranC.dir/build
 gmake[2]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
 [ 50%] Building C object CMakeFiles/VerifyFortranC.dir/main.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc  -DVERIFY_CXX -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -O3 -DNDEBUG   -o CMakeFiles/VerifyFortranC.dir/main.c.o   -c /usr/share/cmake/Modules/FortranCInterface/Verify/main.c
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc  -DVERIFY_CXX -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -O3 -DNDEBUG   -o CMakeFiles/VerifyFortranC.dir/main.c.o   -c /usr/share/cmake/Modules/FortranCInterface/Verify/main.c
 [ 66%] Building C object CMakeFiles/VerifyFortranC.dir/VerifyC.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc  -DVERIFY_CXX -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -O3 -DNDEBUG   -o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o   -c /usr/share/cmake/Modules/FortranCInterface/Verify/VerifyC.c
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc  -DVERIFY_CXX -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -O3 -DNDEBUG   -o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o   -c /usr/share/cmake/Modules/FortranCInterface/Verify/VerifyC.c
 [ 83%] Building CXX object CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++   -DVERIFY_CXX -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -std=c++14 -O3 -DNDEBUG   -o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o -c /usr/share/cmake/Modules/FortranCInterface/Verify/VerifyCXX.cxx
+/usr/local_64/gcc/gcc-5.3.0/bin/g++   -DVERIFY_CXX -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX  -std=c++14 -O3 -DNDEBUG   -o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o -c /usr/share/cmake/Modules/FortranCInterface/Verify/VerifyCXX.cxx
 [100%] Linking CXX executable VerifyFortranC
 /usr/bin/cmake -E cmake_link_script CMakeFiles/VerifyFortranC.dir/link.txt --verbose=1
 /usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14 -O3 -DNDEBUG   CMakeFiles/VerifyFortranC.dir/main.c.o CMakeFiles/VerifyFortranC.dir/VerifyC.c.o CMakeFiles/VerifyFortranC.dir/VerifyCXX.cxx.o  -o VerifyFortranC libVerifyFortran.a -lgfortran -lquadmath 
 gmake[2]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
 [100%] Built target VerifyFortranC
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX'
-/usr/bin/cmake -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 0
+/usr/bin/cmake -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX/CMakeFiles 0
 
 
 Determining if the Fortran sgemm exists passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_d7b2b/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_d7b2b.dir/build.make CMakeFiles/cmTC_d7b2b.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_5b93a/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_5b93a.dir/build.make CMakeFiles/cmTC_5b93a.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_d7b2b.dir/testFortranCompiler.f.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_d7b2b.dir/testFortranCompiler.f.o
-Linking Fortran executable cmTC_d7b2b
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d7b2b.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_d7b2b.dir/testFortranCompiler.f.o  -o cmTC_d7b2b  /usr/lib64/libblas.so 
+Building Fortran object CMakeFiles/cmTC_5b93a.dir/testFortranCompiler.f.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_5b93a.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTC_5b93a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5b93a.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_5b93a.dir/testFortranCompiler.f.o  -o cmTC_5b93a  /usr/lib64/libblas.so 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Determining if the Fortran cheev exists passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_992df/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_992df.dir/build.make CMakeFiles/cmTC_992df.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_f411b/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_f411b.dir/build.make CMakeFiles/cmTC_f411b.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_992df.dir/testFortranCompiler.f.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_992df.dir/testFortranCompiler.f.o
-Linking Fortran executable cmTC_992df
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_992df.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_992df.dir/testFortranCompiler.f.o  -o cmTC_992df  /usr/lib64/liblapack.so /usr/lib64/libblas.so 
+Building Fortran object CMakeFiles/cmTC_f411b.dir/testFortranCompiler.f.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran     -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_f411b.dir/testFortranCompiler.f.o
+Linking Fortran executable cmTC_f411b
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f411b.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gfortran       CMakeFiles/cmTC_f411b.dir/testFortranCompiler.f.o  -o cmTC_f411b  /usr/lib64/liblapack.so /usr/lib64/libblas.so 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Determining if the function __gmpz_abs exists in the /usr/lib64/libgmp.so passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_13928/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_13928.dir/build.make CMakeFiles/cmTC_13928.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_7b2c7/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_7b2c7.dir/build.make CMakeFiles/cmTC_7b2c7.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_13928.dir/CheckFunctionExists.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DCHECK_FUNCTION_EXISTS=__gmpz_abs   -o CMakeFiles/cmTC_13928.dir/CheckFunctionExists.c.o   -c /usr/share/cmake/Modules/CheckFunctionExists.c
-Linking C executable cmTC_13928
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_13928.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DCHECK_FUNCTION_EXISTS=__gmpz_abs    CMakeFiles/cmTC_13928.dir/CheckFunctionExists.c.o  -o cmTC_13928 -rdynamic /usr/lib64/libgmp.so 
+Building C object CMakeFiles/cmTC_7b2c7.dir/CheckFunctionExists.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DCHECK_FUNCTION_EXISTS=__gmpz_abs   -o CMakeFiles/cmTC_7b2c7.dir/CheckFunctionExists.c.o   -c /usr/share/cmake/Modules/CheckFunctionExists.c
+Linking C executable cmTC_7b2c7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7b2c7.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DCHECK_FUNCTION_EXISTS=__gmpz_abs    CMakeFiles/cmTC_7b2c7.dir/CheckFunctionExists.c.o  -o cmTC_7b2c7 -rdynamic /usr/lib64/libgmp.so 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Determining if the include file sys/mman.h exists passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_772b4/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_772b4.dir/build.make CMakeFiles/cmTC_772b4.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_1307d/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_1307d.dir/build.make CMakeFiles/cmTC_1307d.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_772b4.dir/CheckIncludeFile.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_772b4.dir/CheckIncludeFile.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_772b4
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_772b4.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_772b4.dir/CheckIncludeFile.c.o  -o cmTC_772b4 -rdynamic 
+Building C object CMakeFiles/cmTC_1307d.dir/CheckIncludeFile.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc     -o CMakeFiles/cmTC_1307d.dir/CheckIncludeFile.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_1307d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1307d.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc       CMakeFiles/cmTC_1307d.dir/CheckIncludeFile.c.o  -o cmTC_1307d -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 
 Performing C SOURCE FILE Test HAVE_MPROTECT succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_391f1/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_391f1.dir/build.make CMakeFiles/cmTC_391f1.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_ca174/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_ca174.dir/build.make CMakeFiles/cmTC_ca174.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_391f1.dir/src.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DHAVE_MPROTECT   -o CMakeFiles/cmTC_391f1.dir/src.c.o   -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_391f1
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_391f1.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DHAVE_MPROTECT    CMakeFiles/cmTC_391f1.dir/src.c.o  -o cmTC_391f1 -rdynamic 
+Building C object CMakeFiles/cmTC_ca174.dir/src.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DHAVE_MPROTECT   -o CMakeFiles/cmTC_ca174.dir/src.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_ca174
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ca174.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DHAVE_MPROTECT    CMakeFiles/cmTC_ca174.dir/src.c.o  -o cmTC_ca174 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1145,16 +1145,16 @@ int main(void){
   mprotect(0,0,PROT_NONE);
 }
 Performing C++ SOURCE FILE Test HAVE_TEMPLATE_ALIASES succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_c365f/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_c365f.dir/build.make CMakeFiles/cmTC_c365f.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_ee18a/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_ee18a.dir/build.make CMakeFiles/cmTC_ee18a.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_c365f.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_TEMPLATE_ALIASES   -o CMakeFiles/cmTC_c365f.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_c365f
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c365f.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_TEMPLATE_ALIASES    CMakeFiles/cmTC_c365f.dir/src.cxx.o  -o cmTC_c365f -rdynamic 
+Building CXX object CMakeFiles/cmTC_ee18a.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_TEMPLATE_ALIASES   -o CMakeFiles/cmTC_ee18a.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_ee18a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ee18a.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_TEMPLATE_ALIASES    CMakeFiles/cmTC_ee18a.dir/src.cxx.o  -o cmTC_ee18a -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1183,16 +1183,16 @@ Source file was:
     return 0;
   }
 Performing C++ SOURCE FILE Test HAVE_STD_DECLTYPE succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_3c7ac/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_3c7ac.dir/build.make CMakeFiles/cmTC_3c7ac.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_7b82c/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_7b82c.dir/build.make CMakeFiles/cmTC_7b82c.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_3c7ac.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_STD_DECLTYPE   -o CMakeFiles/cmTC_3c7ac.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_3c7ac
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3c7ac.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_STD_DECLTYPE    CMakeFiles/cmTC_3c7ac.dir/src.cxx.o  -o cmTC_3c7ac -rdynamic 
+Building CXX object CMakeFiles/cmTC_7b82c.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_STD_DECLTYPE   -o CMakeFiles/cmTC_7b82c.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_7b82c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7b82c.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_STD_DECLTYPE    CMakeFiles/cmTC_7b82c.dir/src.cxx.o  -o cmTC_7b82c -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1214,16 +1214,16 @@ Source file was:
       return check_equal<decltype(foo()),const A&>::result;
   }
 Performing C++ SOURCE FILE Test HAVE_GCC___TYPEOF__ succeded with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_a3594/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_a3594.dir/build.make CMakeFiles/cmTC_a3594.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_78a48/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_78a48.dir/build.make CMakeFiles/cmTC_78a48.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_a3594.dir/src.cxx.o
-/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_GCC___TYPEOF__   -o CMakeFiles/cmTC_a3594.dir/src.cxx.o -c /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_a3594
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a3594.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_GCC___TYPEOF__    CMakeFiles/cmTC_a3594.dir/src.cxx.o  -o cmTC_a3594 -rdynamic 
+Building CXX object CMakeFiles/cmTC_78a48.dir/src.cxx.o
+/usr/local_64/gcc/gcc-5.3.0/bin/g++     -std=c++14  -DHAVE_GCC___TYPEOF__   -o CMakeFiles/cmTC_78a48.dir/src.cxx.o -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_78a48
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_78a48.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/g++    -std=c++14  -DHAVE_GCC___TYPEOF__    CMakeFiles/cmTC_78a48.dir/src.cxx.o  -o cmTC_78a48 -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 Source file was:
@@ -1245,16 +1245,16 @@ Source file was:
       return check_equal<__typeof__(foo()),A>::result;
   }
 Determining if the function mkstemp exists passed with the following output:
-Change Dir: /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
+Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_a8e96/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_a8e96.dir/build.make CMakeFiles/cmTC_a8e96.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_97e2c/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_97e2c.dir/build.make CMakeFiles/cmTC_97e2c.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_a8e96.dir/CheckFunctionExists.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DCHECK_FUNCTION_EXISTS=mkstemp   -o CMakeFiles/cmTC_a8e96.dir/CheckFunctionExists.c.o   -c /usr/share/cmake/Modules/CheckFunctionExists.c
-Linking C executable cmTC_a8e96
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a8e96.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DCHECK_FUNCTION_EXISTS=mkstemp    CMakeFiles/cmTC_a8e96.dir/CheckFunctionExists.c.o  -o cmTC_a8e96 -rdynamic 
+Building C object CMakeFiles/cmTC_97e2c.dir/CheckFunctionExists.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DCHECK_FUNCTION_EXISTS=mkstemp   -o CMakeFiles/cmTC_97e2c.dir/CheckFunctionExists.c.o   -c /usr/share/cmake/Modules/CheckFunctionExists.c
+Linking C executable cmTC_97e2c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_97e2c.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DCHECK_FUNCTION_EXISTS=mkstemp    CMakeFiles/cmTC_97e2c.dir/CheckFunctionExists.c.o  -o cmTC_97e2c -rdynamic 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/CMakeTmp'
 
 

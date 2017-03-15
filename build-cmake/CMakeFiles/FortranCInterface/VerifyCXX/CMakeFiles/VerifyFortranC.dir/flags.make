@@ -7,11 +7,11 @@ C_FLAGS = -O3 -DNDEBUG
 
 C_DEFINES = -DVERIFY_CXX
 
-C_INCLUDES = -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX 
+C_INCLUDES = -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX 
 
 CXX_FLAGS =  -std=c++14 -O3 -DNDEBUG  
 
 CXX_DEFINES = -DVERIFY_CXX
 
-CXX_INCLUDES = -I/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX 
+CXX_INCLUDES = -I/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/VerifyCXX 
 

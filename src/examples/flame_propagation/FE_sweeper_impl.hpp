@@ -351,10 +351,10 @@ namespace pfasst
         auto result = this->get_encap_factory().create();
         result->zero();
 
-	for (int i=0; i<result->data().size(); ++i)
-	{result->data()[i]= 8*this->_nu*this->_nu*u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta); /*this->source(t)->data()[i]*/;
+	//for (int i=0; i<result->data().size(); ++i)
+	//{result->data()[i]= 8*this->_nu*this->_nu*u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta); /*this->source(t)->data()[i]*/;
 	//std::cout << u->data()[i] << " "<< result->data()[i] <<" "<< this->_delta <<std::endl; 
-	}
+	//}
 	
 	
 	
@@ -371,7 +371,7 @@ namespace pfasst
 	
         ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << t);
 
-	std::cout << "************************ implcit ******************************* " << std::endl;
+
 
         auto result = this->get_encap_factory().create();
         auto rhs = this->get_encap_factory().create();
@@ -409,7 +409,7 @@ namespace pfasst
         for (size_t i = 0; i < result->data().size(); i++) {
           std::cout << result->data()[i] << std::endl;
         }*/
-		std::cout << "************************ implcit ******************************** " << std::endl;
+
 
         return result;
       }
@@ -423,7 +423,7 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
 	
-	std::cout << "************************ implcit solve ******************************* " << std::endl;
+
         Dune::BlockVector<Dune::FieldVector<double,1> > M_rhs_dune ;
         M_rhs_dune.resize(rhs->get_data().size());
 
@@ -493,7 +493,7 @@ namespace pfasst
         //evaluate_rhs_impl(0, u);
         //std::exit(0);
         this->_num_impl_solves++;
-	std::cout << "*****************************implcit solve ende ************************** " << std::endl;
+
 
 
       }
