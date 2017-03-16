@@ -351,10 +351,10 @@ namespace pfasst
         auto result = this->get_encap_factory().create();
         result->zero();
 
-	//for (int i=0; i<result->data().size(); ++i)
-	//{result->data()[i]= 8*this->_nu*this->_nu*u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta); /*this->source(t)->data()[i]*/;
+	for (int i=0; i<result->data().size(); ++i)
+	{result->data()[i]= 8*this->_nu*this->_nu*u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta); /*this->source(t)->data()[i]*/;
 	//std::cout << u->data()[i] << " "<< result->data()[i] <<" "<< this->_delta <<std::endl; 
-	//}
+	}
 	
 	
 	
@@ -445,10 +445,10 @@ namespace pfasst
 	for(int i=0; i<rhs->data().size(); ++i){
 	
 	  if(dirichletLeftNodes[i])
-	  M_rhs_dune[i] = 1;
+	  M_rhs_dune[i] = 1*dt;
 
-    	  if(dirichletRightNodes[i])
-          M_rhs_dune[i] = 0;
+    	  //if(dirichletRightNodes[i])
+          //M_rhs_dune[i] = 0;
 
 
 	  

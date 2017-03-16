@@ -106,10 +106,11 @@ namespace pfasst
 	  x-=y;
 	 // x/=y.infinity_norm();
 	  
-	  sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
-          std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
+	  //sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
+          //std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
 
-	
+	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
 	  /*ofstream f;
 	  stringstream ss;
 	  ss << nelements;
@@ -151,12 +152,12 @@ namespace pfasst
 
     pfasst::init(argc, argv, sweeper_t::init_opts);
 
-    const size_t nelements = get_value<size_t>("num_elements", 30); //Anzahl der Elemente pro Dimension
+    const size_t nelements = get_value<size_t>("num_elements", 8000); //Anzahl der Elemente pro Dimension
     const size_t nnodes = get_value<size_t>("num_nodes", 3);
     const QuadratureType quad_type = QuadratureType::GaussRadau;
     const double t_0 = 0.0;
     const double dt = get_value<double>("dt", 0.05);
-    double t_end = get_value<double>("tend", 0.4);
+    double t_end = get_value<double>("tend", 0.5);
     size_t nsteps = get_value<size_t>("num_steps", 0);
     if (t_end == -1 && nsteps == 0) {
       ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");

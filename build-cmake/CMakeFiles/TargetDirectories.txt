@@ -1,6 +1,8 @@
 /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir
 /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/OUTPUT.dir
 /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxyfile.dir
+/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/FE_flame_propagation/CMakeFiles/FE_mlsdcFP.dir
+/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/flame_propagation/CMakeFiles/mlsdcFP.dir
 /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/examples/flame_propagation/CMakeFiles/sdcFP.dir
 /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/doc.dir
 /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/html.dir
