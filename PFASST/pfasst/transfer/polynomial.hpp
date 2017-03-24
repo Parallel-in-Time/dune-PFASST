@@ -55,6 +55,9 @@ namespace pfasst
                             const bool initial = false);
       virtual void restrict_data(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
                                  shared_ptr<typename TransferTraits::coarse_encap_t> coarse);
+      
+      virtual void restrict_u(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
+                                 shared_ptr<typename TransferTraits::coarse_encap_t> coarse);
 
       virtual void fas(const typename TransferTraits::fine_time_t& dt,
                        const shared_ptr<typename TransferTraits::fine_sweeper_t> fine,

@@ -87,6 +87,12 @@ namespace pfasst
   {
     Sweeper<SweeperTrait, Enabled>::predict();
 
+
+    	/*std::cout <<  "grob" << std::endl;
+        for (int i=0; i< this->get_end_state()->data().size(); i++){
+          std::cout <<  this->get_states().front()->data()[i] << std::endl;
+        }*/
+
     assert(this->get_quadrature() != nullptr);
     assert(this->get_status() != nullptr);
 
@@ -126,7 +132,11 @@ namespace pfasst
       ML_CVLOG(2, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m + 1, m + 1), rhs);
 //       ML_CVLOG(2, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));
-     
+         	std::cout <<  "grob" << std::endl;
+        /*for (int i=0; i< this->get_end_state()->data().size(); i++){
+          std::cout <<  this->get_end_state()->data()[i] << std::endl;
+        }*/
+
       // reevaluate the explicit part with the new solution value
       tm += dt * this->_q_delta_expl(m + 1, m);
       this->_expl_rhs[m + 1] = this->evaluate_rhs_expl(tm, this->get_states()[m + 1]);
@@ -154,6 +164,11 @@ namespace pfasst
 
     assert(this->get_quadrature() != nullptr);
     assert(this->get_status() != nullptr);
+
+        	/*std::cout <<  "grob" << std::endl;
+        for (int i=0; i< this->get_end_state()->data().size(); i++){
+          std::cout <<  this->get_states().front()->data()[i] << std::endl;
+        }*/
 
     ML_CLOG_IF(this->get_quadrature()->left_is_node(), WARNING, this->get_logger_id(),
       "IMEX Sweeper for quadrature nodes containing t_0 not implemented and tested.");
@@ -210,6 +225,13 @@ namespace pfasst
   void
   IMEX<SweeperTrait, Enabled>::sweep()
   {
+    
+	std::cout <<  "sweep" << std::endl;
+        for (int i=0; i< this->get_end_state()->data().size(); i++){
+          std::cout <<  this->get_states().front()->data()[i] << std::endl;
+        }
+
+
     Sweeper<SweeperTrait, Enabled>::sweep();
 
     assert(this->get_quadrature() != nullptr);
@@ -263,7 +285,11 @@ namespace pfasst
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m+1, m+1), rhs);
-      
+      	std::cout <<  "sweeper nach imp solve " << std::endl;
+        for (int i=0; i< this->get_end_state()->data().size(); i++){
+          std::cout <<  this->get_states().front()->data()[i] << std::endl;
+        }
+        //std::exit(0);
 
 //       ML_CVLOG(5, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));
 
@@ -422,7 +448,13 @@ namespace pfasst
 
   //       ML_CVLOG(5, this->get_logger_id(), "  res["<<m<<"] = u[0]   = " << to_string(this->get_initial_state()));
         this->residuals()[m]->data() = this->get_initial_state()->get_data();
-	
+
+	/*std::cout <<  "schleife u " <<  std::endl;
+	for (int i=0; i< this->get_end_state()->data().size(); i++){
+          std::cout <<   std::endl;
+	  std::cout <<  "m " << this->M_dune[i][i] << std::endl;
+        }*/
+        
   //       ML_CVLOG(5, this->get_logger_id(), "        -= u["<<m<<"]   = " << to_string(this->get_states()[m]));
         this->residuals()[m]->scaled_add(-1.0, this->get_states()[m]);
 

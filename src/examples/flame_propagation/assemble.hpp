@@ -220,7 +220,7 @@ void assembleProblem(const Basis &basis,
       auto cIt = A[i].begin();
       auto cEndIt = A[i].end();
       for(; cIt!=cEndIt; ++cIt){
-        *cIt =  (i==cIt.index()) ? 1.0 : 0.0; 
+        *cIt =0.0;  
       }
     }
   }
@@ -230,7 +230,7 @@ void assembleProblem(const Basis &basis,
       auto cIt = M[i].begin();
       auto cEndIt = M[i].end();
       for(; cIt!=cEndIt; ++cIt){
-        *cIt =0.0;
+        *cIt = (i==cIt.index()) ? 1.0 : 0.0; 
 
         //
 

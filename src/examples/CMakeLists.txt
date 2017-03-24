@@ -1,2 +1,3 @@
-add_subdirectory(flame_propagation)
 add_subdirectory(FE_flame_propagation)
+add_subdirectory(FE_gray_scott)
+add_subdirectory(gray_scott)

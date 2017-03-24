@@ -133,9 +133,9 @@ namespace pfasst
 
         interpolate(*basis, result->data(), exact_solution);
 
-	for (int i=0; i< result->data().size(); i++){
+	/*for (int i=0; i< result->data().size(); i++){
 	std::cout << "result = " << result->data()[i] << std::endl;
-	}
+	}*/
         return result;
       }
       
@@ -399,10 +399,10 @@ namespace pfasst
 
         cg.apply(result->data(), rhs->data() , statistics );
 
-        auto var = this->get_encap_factory().create();
-        M_dune.mv(result->data(), var->data());
-        auto neu = this->get_encap_factory().create();
-        rhs2->scaled_add(-1.0 , var)  ;
+        //auto var = this->get_encap_factory().create();
+        //M_dune.mv(result->data(), var->data());
+        //auto neu = this->get_encap_factory().create();
+        //rhs2->scaled_add(-1.0 , var)  ;
 
         result->data() *= nu;
         /*std::cout << "f_impl mit evaluate" << std::endl;
@@ -445,10 +445,10 @@ namespace pfasst
 	for(int i=0; i<rhs->data().size(); ++i){
 	
 	  if(dirichletLeftNodes[i])
-	  M_rhs_dune[i] = 1*dt;
+	  M_rhs_dune[i] = 1;
 
-    	  //if(dirichletRightNodes[i])
-          //M_rhs_dune[i] = 0;
+    	  if(dirichletRightNodes[i])
+          M_rhs_dune[i] = 0;
 
 
 	  

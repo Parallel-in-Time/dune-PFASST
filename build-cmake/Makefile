@@ -695,32 +695,6 @@ safepdf/fast:
 .PHONY : safepdf/fast
 
 #=============================================================================
-# Target rules for targets named mlsdcFP
-
-# Build rule for target.
-mlsdcFP: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mlsdcFP
-.PHONY : mlsdcFP
-
-# fast build rule for target.
-mlsdcFP/fast:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/mlsdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/mlsdcFP.dir/build
-.PHONY : mlsdcFP/fast
-
-#=============================================================================
-# Target rules for targets named sdcFP
-
-# Build rule for target.
-sdcFP: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 sdcFP
-.PHONY : sdcFP
-
-# fast build rule for target.
-sdcFP/fast:
-	$(MAKE) -f src/examples/flame_propagation/CMakeFiles/sdcFP.dir/build.make src/examples/flame_propagation/CMakeFiles/sdcFP.dir/build
-.PHONY : sdcFP/fast
-
-#=============================================================================
 # Target rules for targets named FE_mlsdcFP
 
 # Build rule for target.
@@ -745,6 +719,84 @@ FE_sdcFP: cmake_check_build_system
 FE_sdcFP/fast:
 	$(MAKE) -f src/examples/FE_flame_propagation/CMakeFiles/FE_sdcFP.dir/build.make src/examples/FE_flame_propagation/CMakeFiles/FE_sdcFP.dir/build
 .PHONY : FE_sdcFP/fast
+
+#=============================================================================
+# Target rules for targets named FE_mlsdcGS
+
+# Build rule for target.
+FE_mlsdcGS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_mlsdcGS
+.PHONY : FE_mlsdcGS
+
+# fast build rule for target.
+FE_mlsdcGS/fast:
+	$(MAKE) -f src/examples/FE_gray_scott/CMakeFiles/FE_mlsdcGS.dir/build.make src/examples/FE_gray_scott/CMakeFiles/FE_mlsdcGS.dir/build
+.PHONY : FE_mlsdcGS/fast
+
+#=============================================================================
+# Target rules for targets named FE_pfasstGS
+
+# Build rule for target.
+FE_pfasstGS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_pfasstGS
+.PHONY : FE_pfasstGS
+
+# fast build rule for target.
+FE_pfasstGS/fast:
+	$(MAKE) -f src/examples/FE_gray_scott/CMakeFiles/FE_pfasstGS.dir/build.make src/examples/FE_gray_scott/CMakeFiles/FE_pfasstGS.dir/build
+.PHONY : FE_pfasstGS/fast
+
+#=============================================================================
+# Target rules for targets named FE_sdcGS
+
+# Build rule for target.
+FE_sdcGS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_sdcGS
+.PHONY : FE_sdcGS
+
+# fast build rule for target.
+FE_sdcGS/fast:
+	$(MAKE) -f src/examples/FE_gray_scott/CMakeFiles/FE_sdcGS.dir/build.make src/examples/FE_gray_scott/CMakeFiles/FE_sdcGS.dir/build
+.PHONY : FE_sdcGS/fast
+
+#=============================================================================
+# Target rules for targets named mlsdcGS
+
+# Build rule for target.
+mlsdcGS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mlsdcGS
+.PHONY : mlsdcGS
+
+# fast build rule for target.
+mlsdcGS/fast:
+	$(MAKE) -f src/examples/gray_scott/CMakeFiles/mlsdcGS.dir/build.make src/examples/gray_scott/CMakeFiles/mlsdcGS.dir/build
+.PHONY : mlsdcGS/fast
+
+#=============================================================================
+# Target rules for targets named pfasstGS
+
+# Build rule for target.
+pfasstGS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pfasstGS
+.PHONY : pfasstGS
+
+# fast build rule for target.
+pfasstGS/fast:
+	$(MAKE) -f src/examples/gray_scott/CMakeFiles/pfasstGS.dir/build.make src/examples/gray_scott/CMakeFiles/pfasstGS.dir/build
+.PHONY : pfasstGS/fast
+
+#=============================================================================
+# Target rules for targets named sdcGS
+
+# Build rule for target.
+sdcGS: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdcGS
+.PHONY : sdcGS
+
+# fast build rule for target.
+sdcGS/fast:
+	$(MAKE) -f src/examples/gray_scott/CMakeFiles/sdcGS.dir/build.make src/examples/gray_scott/CMakeFiles/sdcGS.dir/build
+.PHONY : sdcGS/fast
 
 #=============================================================================
 # Target rules for targets named doxyfile
@@ -826,10 +878,14 @@ help:
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... edit_cache"
-	@echo "... sdcFP"
-	@echo "... mlsdcFP"
 	@echo "... FE_sdcFP"
 	@echo "... FE_mlsdcFP"
+	@echo "... FE_sdcGS"
+	@echo "... FE_mlsdcGS"
+	@echo "... FE_pfasstGS"
+	@echo "... mlsdcGS"
+	@echo "... pfasstGS"
+	@echo "... sdcGS"
 	@echo "... doxygen_dune-PFASST"
 	@echo "... doxyfile"
 .PHONY : help

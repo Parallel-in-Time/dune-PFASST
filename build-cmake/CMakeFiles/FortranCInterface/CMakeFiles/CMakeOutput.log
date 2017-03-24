@@ -1,14 +1,14 @@
 Performing C SOURCE FILE Test C_SUPPORTS_DOLLAR succeded with the following output:
 Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_45ebf/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_45ebf.dir/build.make CMakeFiles/cmTC_45ebf.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_0711e/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_0711e.dir/build.make CMakeFiles/cmTC_0711e.dir/build
 gmake[1]: Entering directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_45ebf.dir/src.c.o
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DC_SUPPORTS_DOLLAR   -o CMakeFiles/cmTC_45ebf.dir/src.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_45ebf
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_45ebf.dir/link.txt --verbose=1
-/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DC_SUPPORTS_DOLLAR    CMakeFiles/cmTC_45ebf.dir/src.c.o  -o cmTC_45ebf 
+Building C object CMakeFiles/cmTC_0711e.dir/src.c.o
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc    -DC_SUPPORTS_DOLLAR   -o CMakeFiles/cmTC_0711e.dir/src.c.o   -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_0711e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0711e.dir/link.txt --verbose=1
+/usr/local_64/gcc/gcc-5.3.0/bin/gcc   -DC_SUPPORTS_DOLLAR    CMakeFiles/cmTC_0711e.dir/src.c.o  -o cmTC_0711e 
 gmake[1]: Leaving directory `/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/FortranCInterface/CMakeFiles/CMakeTmp'
 
 Source file was:

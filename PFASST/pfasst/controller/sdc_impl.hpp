@@ -126,12 +126,20 @@ namespace pfasst
         const bool do_prediction = this->get_status()->get_iteration() == 0;
 
         if (do_prediction) {
+	        
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration 0 (SDC Prediction)");
           this->get_sweeper()->pre_predict();
-          this->get_sweeper()->predict();
+
+
+	  this->get_sweeper()->predict();
+	  	        
+
           this->get_sweeper()->post_predict();
+	        
+
         } else {
+	        
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration " << this->get_status()->get_iteration());
           this->get_sweeper()->pre_sweep();

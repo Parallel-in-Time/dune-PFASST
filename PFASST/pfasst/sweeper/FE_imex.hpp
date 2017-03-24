@@ -8,7 +8,7 @@ using std::vector;
 
 #include "pfasst/sweeper/sweeper.hpp"
 
-#include "../../../src/finite_element_stuff/fe_manager_fp.hpp"
+//#include "../../../src/finite_element_stuff/fe_manager_fp.hpp"
 
 namespace pfasst
 {
@@ -42,18 +42,20 @@ namespace pfasst
     protected:
 
 
-      typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
+      //typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
 
 
-      typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
+      //typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 
 
 
-      std::shared_ptr<fe_manager> FinEl;
+      //std::shared_ptr<fe_manager> FinEl;
 
+      //std::shared_ptr<MatrixType> M_dune;
       MatrixType M_dune;
       MatrixType A_dune;
 
+      //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
       /**
        * Delta Matrix for the explicit function evaluations.
@@ -95,6 +97,8 @@ namespace pfasst
        * @copybrief Sweeper::compute_residuals(const bool&)
        */
       virtual void compute_residuals(const bool& only_last) override;
+
+      //virtual void test_m(MatrixType M) override;
       /**
        * @copybrief Sweeper::compute_residuals()
        */
