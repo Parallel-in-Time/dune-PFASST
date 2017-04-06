@@ -69,7 +69,6 @@ UpdateType: git
 
 # Compiler info
 Compiler: /usr/local_64/gcc/gcc-5.3.0/bin/g++
-CompilerVersion: 5.3.0
 
 # Dynamic analysis (MemCheck)
 PurifyCommand: 
@@ -95,10 +94,6 @@ SlurmRunCommand: SLURM_SRUN_COMMAND-NOTFOUND
 # process will be summarily terminated.
 # Currently set to 25 minutes
 TimeOut: 1500
-
-# During parallel testing CTest will not start a new test if doing
-# so would cause the system load to exceed this value.
-TestLoad: 
 
 UseLaunchers: 
 CurlOptions: 

@@ -367,6 +367,9 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Path to a program.
 CMAKE_STRIP:FILEPATH=/usr/bin/strip
 
+//If true, cmake will use relative paths in makefiles and projects.
+CMAKE_USE_RELATIVE_PATHS:BOOL=OFF
+
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
@@ -692,7 +695,7 @@ MPIEXEC_POSTFLAGS:STRING=
 // run by MPIEXEC.
 MPIEXEC_PREFLAGS:STRING=
 
-//Path to a program.
+//Cleared
 MPI_CXX_COMPILER:FILEPATH=/usr/lib64/mpi/gcc/openmpi/bin/mpicxx
 
 //MPI CXX compilation flags
@@ -707,7 +710,7 @@ MPI_CXX_LIBRARIES:STRING=/usr/lib64/mpi/gcc/openmpi/lib64/libmpi_cxx.so;/usr/lib
 //MPI CXX linking flags
 MPI_CXX_LINK_FLAGS:STRING=
 
-//Path to a program.
+//Cleared
 MPI_C_COMPILER:FILEPATH=/usr/lib64/mpi/gcc/openmpi/bin/mpicc
 
 //MPI C compilation flags
@@ -737,7 +740,7 @@ MPI_DUNE_LINK_FLAGS:STRING=
 //Extra MPI libraries to link against
 MPI_EXTRA_LIBRARY:STRING=/usr/lib64/mpi/gcc/openmpi/lib64/libmpi.so
 
-//Path to a program.
+//Cleared
 MPI_Fortran_COMPILER:FILEPATH=/usr/lib64/mpi/gcc/openmpi/bin/mpif90
 
 //MPI Fortran compilation flags
@@ -943,6 +946,9 @@ eigen_include:UNINITIALIZED=/home/zam/ruth/software_engineering/eigen-eigen-69d4
 //PFASST_DIR
 eigen_include="/home/zam/ruth/software_engineering/eigen-eigen-69d418c06999":STRING=
 
+//Path to a program.
+file_cmd:FILEPATH=/usr/bin/file
+
 //No help, variable specified on the command line.
 pfasst_include:UNINITIALIZED=/home/zam/ruth/software_engineering/dune/dune-PFASST/PFASST
 
@@ -1047,9 +1053,9 @@ CMAKE_CACHEFILE_DIR:INTERNAL=/home0/ruth/software_engineering/dune/dune-PFASST/b
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
-CMAKE_CACHE_MINOR_VERSION:INTERNAL=4
+CMAKE_CACHE_MINOR_VERSION:INTERNAL=3
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=1
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
 CMAKE_COLOR_MAKEFILE-ADVANCED:INTERNAL=1
 //Path to CMake executable.
@@ -1176,7 +1182,9 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
+CMAKE_NUMBER_OF_LOCAL_GENERATORS:INTERNAL=11
+//number of local generators
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -1213,6 +1221,8 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_STRIP-ADVANCED:INTERNAL=1
 //uname command
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
+//ADVANCED property for variable: CMAKE_USE_RELATIVE_PATHS
+CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: COLAMD_INCLUDE_DIR
@@ -1278,11 +1288,11 @@ FIND_PACKAGE_MESSAGE_DETAILS_CXXDecltype:INTERNAL=[1][v()]
 //Details about finding CXXTemplateAliases
 FIND_PACKAGE_MESSAGE_DETAILS_CXXTemplateAliases:INTERNAL=[1][v()]
 //Details about finding Doxygen
-FIND_PACKAGE_MESSAGE_DETAILS_Doxygen:INTERNAL=[/usr/bin/doxygen][v1.8.5()]
+FIND_PACKAGE_MESSAGE_DETAILS_Doxygen:INTERNAL=[/usr/bin/doxygen][v1.8.6()]
 //Details about finding GCCTypeof
 FIND_PACKAGE_MESSAGE_DETAILS_GCCTypeof:INTERNAL=[1][v()]
 //Details about finding HDF5
-FIND_PACKAGE_MESSAGE_DETAILS_HDF5:INTERNAL=[/usr/lib64/libhdf5.so;/usr/lib64/libpthread.so;/usr/lib64/libz.so;/usr/lib64/libdl.so;/usr/lib64/libm.so;/usr/lib64/libhdf5_hl.so;/usr/lib64/libhdf5.so;/usr/lib64/libpthread.so;/usr/lib64/libz.so;/usr/lib64/libdl.so;/usr/lib64/libm.so][/usr/include][v1.8.15()]
+FIND_PACKAGE_MESSAGE_DETAILS_HDF5:INTERNAL=[/usr/lib64/libhdf5.so;/usr/lib64/libpthread.so;/usr/lib64/libz.so;/usr/lib64/libdl.so;/usr/lib64/libm.so;/usr/lib64/libhdf5_hl.so;/usr/lib64/libhdf5.so][/usr/include][v1.10.0()]
 //Details about finding LATEX
 FIND_PACKAGE_MESSAGE_DETAILS_LATEX:INTERNAL=[/usr/bin/latex][c ][v()]
 //Details about finding MPI_C
@@ -1294,9 +1304,9 @@ FIND_PACKAGE_MESSAGE_DETAILS_MPI_Fortran:INTERNAL=[/usr/lib64/mpi/gcc/openmpi/li
 //Details about finding PkgConfig
 FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v0.28()]
 //Details about finding PythonInterp
-FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/home/zam/ruth/.pyenv/shims/python][v2.7.6()]
+FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/home/zam/ruth/.pyenv/shims/python][v2.7.12()]
 //Details about finding PythonLibs
-FIND_PACKAGE_MESSAGE_DETAILS_PythonLibs:INTERNAL=[/usr/lib64/libpython2.7.so][/usr/include/python2.7][v2.7.6()]
+FIND_PACKAGE_MESSAGE_DETAILS_PythonLibs:INTERNAL=[/usr/lib64/libpython2.7.so][/usr/include/python2.7][v2.7.12()]
 //Details about finding Sphinx
 FIND_PACKAGE_MESSAGE_DETAILS_Sphinx:INTERNAL=[/home/zam/ruth/.pyenv/shims/sphinx-build][v()]
 //Details about finding Threads
@@ -1692,5 +1702,7 @@ dune-uggrid_dune-uggrid _INCLUDEDIR:INTERNAL=
 dune-uggrid_dune-uggrid _LIBDIR:INTERNAL=
 dune-uggrid_dune-uggrid _PREFIX:INTERNAL=
 dune-uggrid_dune-uggrid _VERSION:INTERNAL=
+//ADVANCED property for variable: file_cmd
+file_cmd-ADVANCED:INTERNAL=1
 prefix_result:INTERNAL=/private/home/lib64
 

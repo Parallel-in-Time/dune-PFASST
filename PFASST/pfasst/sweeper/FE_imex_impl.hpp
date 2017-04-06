@@ -136,6 +136,8 @@ namespace pfasst
 
       // solve the implicit part
       ML_CVLOG(2, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
+      //afangswert setzen
+      this->states()[m + 1]->data() = this->states()[m + 1]->get_data();
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m + 1, m + 1), rhs);
 //       ML_CVLOG(2, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));
     	/*std::cout <<  "predict nach impl solve" << std::endl;
@@ -308,6 +310,8 @@ namespace pfasst
 
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
+      //afangswert setzen
+      this->states()[m + 1]->data() = this->states()[m + 1]->get_data();
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m+1, m+1), rhs);
 //       ML_CVLOG(5, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));
 

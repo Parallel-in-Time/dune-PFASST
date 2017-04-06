@@ -4,6 +4,6 @@
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
-subdirs(FE_flame_propagation)
-subdirs(FE_gray_scott)
-subdirs(gray_scott)
+subdirs(flame_propagation)
+subdirs(FE_Newton)
+subdirs(FE_flame_propagation_Newton)
