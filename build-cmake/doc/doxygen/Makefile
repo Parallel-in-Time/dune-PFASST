@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home0/ruth/software_engineering/dune/dune-PFASST
+CMAKE_SOURCE_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
+CMAKE_BINARY_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
 # Special rule for the target package
 package: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackConfig.cmake
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackConfig.cmake
 .PHONY : package
 
 # Special rule for the target package
@@ -136,7 +136,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CPackSourceConfig.cmake
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -157,14 +157,14 @@ test/fast: test
 
 # The main all target
 all: cmake_check_build_system
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/progress.marks
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/progress.marks
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/clean
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/clean
 .PHONY : clean
 
 # The main clean target
@@ -174,22 +174,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/preinstall
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/preinstall
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 doc/doxygen/CMakeFiles/doxyfile.dir/rule:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/CMakeFiles/doxyfile.dir/rule
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/CMakeFiles/doxyfile.dir/rule
 .PHONY : doc/doxygen/CMakeFiles/doxyfile.dir/rule
 
 # Convenience name for target.
@@ -199,12 +199,12 @@ doxyfile: doc/doxygen/CMakeFiles/doxyfile.dir/rule
 
 # fast build rule for target.
 doxyfile/fast:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f doc/doxygen/CMakeFiles/doxyfile.dir/build.make doc/doxygen/CMakeFiles/doxyfile.dir/build
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f doc/doxygen/CMakeFiles/doxyfile.dir/build.make doc/doxygen/CMakeFiles/doxyfile.dir/build
 .PHONY : doxyfile/fast
 
 # Convenience name for target.
 doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/rule:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/rule
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/rule
 .PHONY : doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/rule
 
 # Convenience name for target.
@@ -214,7 +214,7 @@ doxygen_dune-PFASST: doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/rule
 
 # fast build rule for target.
 doxygen_dune-PFASST/fast:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build.make doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build.make doc/doxygen/CMakeFiles/doxygen_dune-PFASST.dir/build
 .PHONY : doxygen_dune-PFASST/fast
 
 # Help Target
@@ -245,6 +245,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

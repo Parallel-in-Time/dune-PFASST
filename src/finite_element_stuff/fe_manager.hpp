@@ -122,7 +122,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    
 	      //while(basis.size() < nlevels)
 	      auto view = grid->levelGridView(i);
-              fe_basis[nlevels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+          fe_basis[nlevels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
 	      n_dof[nlevels-i-1]    = fe_basis[nlevels-i-1]->size();
 
 	    } 

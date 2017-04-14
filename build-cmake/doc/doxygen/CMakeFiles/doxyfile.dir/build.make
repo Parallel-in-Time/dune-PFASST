@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home0/ruth/software_engineering/dune/dune-PFASST
+CMAKE_SOURCE_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
+CMAKE_BINARY_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake
 
 # Utility rule file for doxyfile.
 
@@ -59,8 +59,8 @@ doc/doxygen/CMakeFiles/doxyfile: doc/doxygen/Doxyfile.in
 
 doc/doxygen/Doxyfile.in: /home/zam/ruth/software_engineering/dune/dune-common/doc/doxygen/Doxystyle
 doc/doxygen/Doxyfile.in: ../doc/doxygen/Doxylocal
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Creating Doxyfile.in"
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen && /usr/bin/cmake -D DOT_TRUE= -D DUNE_MOD_NAME=dune-PFASST -D DUNE_MOD_VERSION=1.0 -D DOXYSTYLE=/home/zam/ruth/software_engineering/dune/dune-common/doc/doxygen/Doxystyle -D DOXYLOCAL=/home0/ruth/software_engineering/dune/dune-PFASST/doc/doxygen/Doxylocal -D abs_top_srcdir=/home0/ruth/software_engineering/dune/dune-PFASST -D srcdir=/home0/ruth/software_engineering/dune/dune-PFASST/doc/doxygen -D top_srcdir=/home0/ruth/software_engineering/dune/dune-PFASST -P /home/zam/ruth/software_engineering/dune/dune-common/cmake/scripts/CreateDoxyFile.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Creating Doxyfile.in"
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen && /usr/bin/cmake -D DOT_TRUE= -D DUNE_MOD_NAME=dune-PFASST -D DUNE_MOD_VERSION=1.0 -D DOXYSTYLE=/home/zam/ruth/software_engineering/dune/dune-common/doc/doxygen/Doxystyle -D DOXYLOCAL=/home/zam/ruth/software_engineering/dune/dune-PFASST/doc/doxygen/Doxylocal -D abs_top_srcdir=/home/zam/ruth/software_engineering/dune/dune-PFASST -D srcdir=/home/zam/ruth/software_engineering/dune/dune-PFASST/doc/doxygen -D top_srcdir=/home/zam/ruth/software_engineering/dune/dune-PFASST -P /home/zam/ruth/software_engineering/dune/dune-common/cmake/scripts/CreateDoxyFile.cmake
 
 doc/doxygen/Doxyfile: doc/doxygen/Doxyfile.in
 	@$(CMAKE_COMMAND) -E touch_nocreate doc/doxygen/Doxyfile
@@ -78,10 +78,10 @@ doc/doxygen/CMakeFiles/doxyfile.dir/build: doxyfile
 .PHONY : doc/doxygen/CMakeFiles/doxyfile.dir/build
 
 doc/doxygen/CMakeFiles/doxyfile.dir/clean:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen && $(CMAKE_COMMAND) -P CMakeFiles/doxyfile.dir/cmake_clean.cmake
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen && $(CMAKE_COMMAND) -P CMakeFiles/doxyfile.dir/cmake_clean.cmake
 .PHONY : doc/doxygen/CMakeFiles/doxyfile.dir/clean
 
 doc/doxygen/CMakeFiles/doxyfile.dir/depend:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home0/ruth/software_engineering/dune/dune-PFASST /home0/ruth/software_engineering/dune/dune-PFASST/doc/doxygen /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxyfile.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/zam/ruth/software_engineering/dune/dune-PFASST /home/zam/ruth/software_engineering/dune/dune-PFASST/doc/doxygen /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/CMakeFiles/doxyfile.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : doc/doxygen/CMakeFiles/doxyfile.dir/depend
 

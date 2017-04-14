@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home0/ruth/software_engineering/dune/dune-PFASST
+CMAKE_SOURCE_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
+CMAKE_BINARY_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
 # Special rule for the target package
 package: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackConfig.cmake
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackConfig.cmake
 .PHONY : package
 
 # Special rule for the target package
@@ -81,7 +81,7 @@ test/fast: test
 # Special rule for the target package_source
 package_source:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CPackSourceConfig.cmake
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CPackSourceConfig.cmake
 .PHONY : package_source
 
 # Special rule for the target package_source
@@ -157,14 +157,14 @@ install/strip/fast: install/strip
 
 # The main all target
 all: cmake_check_build_system
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/CMakeFiles/progress.marks
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/CMakeFiles/progress.marks
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/clean
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -174,17 +174,17 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Help Target
@@ -213,6 +213,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

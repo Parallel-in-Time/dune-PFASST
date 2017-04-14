@@ -212,17 +212,17 @@ namespace pfasst
 
     const auto coarse_integral = coarse->integrate(dt);  
     
-    for (size_t m = 1; m < num_coarse_nodes; ++m) {
+    /*for (size_t m = 1; m < num_coarse_nodes; ++m) {
       coarse->get_M_dune()->mv(coarse->get_states()[m]->get_data(),  coarse_integral[m]->data());
       coarse_integral[m]->scaled_add(-1,  coarse->integrate(dt)[m]);
-    }
+    }*/
     
     const auto fine_integral = fine->integrate(dt);
     
-    for (size_t m = 1; m < num_coarse_nodes; ++m) {
+    /*for (size_t m = 1; m < num_coarse_nodes; ++m) {
       fine->get_M_dune()->mv(fine->get_states()[m]->get_data(),  fine_integral[m]->data());
       fine_integral[m]->scaled_add(-1,  fine->integrate(dt)[m]);
-    } //einklammern falsch
+    }*/ //einklammern falsch
     
 
 

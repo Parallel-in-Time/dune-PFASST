@@ -211,7 +211,7 @@ void assembleProblem(const Basis &basis,
 
   //auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.9999 or x[1]<1e-8 or x[1]>0.9999);}; //ruth_dim
 
-  auto isDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 or x[0] > 20.0-1e-8) ;};
+  /*auto isDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 or x[0] > 20.0-1e-8) ;};
   std::vector<char> dirichletNodes;
   interpolate(*basis, dirichletNodes, isDirichlet);  //tu valjda interpoliramo kao na nrpdju
 
@@ -236,6 +236,6 @@ void assembleProblem(const Basis &basis,
 
       }
     }
-  }
+  }*/
 
 }

@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home0/ruth/software_engineering/dune/dune-PFASST
+CMAKE_SOURCE_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake
+CMAKE_BINARY_DIR = /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake
 
 # Utility rule file for ps.
 
@@ -67,6 +67,6 @@ CMakeFiles/ps.dir/clean:
 .PHONY : CMakeFiles/ps.dir/clean
 
 CMakeFiles/ps.dir/depend:
-	cd /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home0/ruth/software_engineering/dune/dune-PFASST /home0/ruth/software_engineering/dune/dune-PFASST /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ps.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/zam/ruth/software_engineering/dune/dune-PFASST /home/zam/ruth/software_engineering/dune/dune-PFASST /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/CMakeFiles/ps.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/ps.dir/depend
 

@@ -25,6 +25,7 @@ namespace pfasst
       using comm_t = CommT;
       using time_t = typename transfer_t::traits::fine_time_t;
 
+      
       static void init_loggers();
 
     protected:
@@ -51,6 +52,10 @@ namespace pfasst
 
       template<class SweeperT>
       void add_sweeper(shared_ptr<SweeperT> sweeper, const bool as_coarse);
+
+      template<class SweeperT>
+      void add_sweeper(shared_ptr<SweeperT> sweeper);      
+      
 
       virtual const shared_ptr<typename TransferT::traits::coarse_sweeper_t> get_coarse() const;
       virtual       shared_ptr<typename TransferT::traits::coarse_sweeper_t> get_coarse();

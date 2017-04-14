@@ -1,4 +1,4 @@
-# Install script for directory: /home0/ruth/software_engineering/dune/dune-PFASST
+# Install script for directory: /home/zam/ruth/software_engineering/dune/dune-PFASST
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,30 +33,30 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/dunecontrol/dune-PFASST" TYPE FILE FILES "/home0/ruth/software_engineering/dune/dune-PFASST/dune.module")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/dunecontrol/dune-PFASST" TYPE FILE FILES "/home/zam/ruth/software_engineering/dune/dune-PFASST/dune.module")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/dune-PFASST" TYPE FILE FILES
-    "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/cmake/pkg/dune-PFASST-config.cmake"
-    "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/dune-PFASST-config-version.cmake"
+    "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/cmake/pkg/dune-PFASST-config.cmake"
+    "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/dune-PFASST-config-version.cmake"
     )
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/dune-PFASST" TYPE FILE FILES "/home0/ruth/software_engineering/dune/dune-PFASST/config.h.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/dune-PFASST" TYPE FILE FILES "/home/zam/ruth/software_engineering/dune/dune-PFASST/config.h.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/dune-PFASST.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/dune-PFASST.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/cmake_install.cmake")
-  include("/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/dune/cmake_install.cmake")
-  include("/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/cmake_install.cmake")
-  include("/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/cmake/modules/cmake_install.cmake")
+  include("/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/src/cmake_install.cmake")
+  include("/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/dune/cmake_install.cmake")
+  include("/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/cmake_install.cmake")
+  include("/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/cmake/modules/cmake_install.cmake")
 
 endif()
 
@@ -68,5 +68,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

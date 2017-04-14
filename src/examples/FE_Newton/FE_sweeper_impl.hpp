@@ -93,6 +93,7 @@ namespace pfasst
       {
 
 
+        std::cout << " set_options " <<  std::endl;  
         IMEX<SweeperTrait, Enabled>::set_options();
 
         this->_nu = config::get_value<spatial_t>("nu", this->_nu);
@@ -100,7 +101,7 @@ namespace pfasst
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
         //assembleProblem(basis, A_dune, M_dune);
-
+        std::cout << " set_options " <<  std::endl; 
 
       }
 
@@ -113,7 +114,7 @@ namespace pfasst
         
                 const auto dim = 1; //SweeperTrait::DIM;
 	spatial_t n  = this-> _n;
-        spatial_t l0 = this-> _nu;
+    spatial_t l0 = this-> _nu;
 	spatial_t l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
 	spatial_t d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
 	//std::cout << "nu = " << this->_nu << std::endl;
@@ -383,35 +384,34 @@ namespace pfasst
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
       {
 	
-        ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << t);
+         ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << t);
 
 
 
         auto result = this->get_encap_factory().create();
-        auto rhs = this->get_encap_factory().create();
-        auto rhs2 = this->get_encap_factory().create();
+        auto u2 = this->get_encap_factory().create();
         double nu =this->_nu;
 
+	u2->zero();
+	for (int i=0; i<u->get_data().size(); ++i)
+	    {
+	    u2->data()[i]= -pow(u->get_data()[i], _n+1);	
+	    }
+	this->M_dune.mv(u2->get_data(), result->data());
+	this->M_dune.umv(u->get_data(), result->data());
+	result->data()*=_nu*_nu;
+	this->A_dune.umv(u->get_data(), result->data());
+
 	
-	this->A_dune.mv(u->get_data(), result->data());
+
+        //result->data() *= nu;
+	/*std::cout << "evaluate  " << std::endl;
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+
+	  std::cout << "f " << result->data()[i] << std::endl;
+
+//         }*/
         
-
-        result->data() *= nu;
-	
-	auto result2 = this->get_encap_factory().create();
-	auto Mresult = this->get_encap_factory().create();
-        result2->zero();
-
-	for (int i=0; i<result2->data().size(); ++i)
-	{result2->data()[i]= 8*this->_nu*this->_nu*u->data()[i]*u->data()[i] * (1.00-u->data()[i])/(this->_delta*this->_delta); 
-	}
-	
-	this->M_dune.mv(result2->data(), Mresult->data());
-
-	result->data() += Mresult->data();
-	
-
-
         return result;
       }
 
@@ -458,7 +458,7 @@ namespace pfasst
 	  std::vector<double> dirichletRightNodes;
 	  interpolate(*basis, dirichletRightNodes, isRightDirichlet);
 	
-	  for(int i=0; i<rhs->data().size(); ++i){
+	  /*for(int i=0; i<rhs->data().size(); ++i){
 	
 	    if(dirichletLeftNodes[i])
 	    newton_rhs[i] = exact(t)->get_data()[i]; //1;//-dt;
@@ -477,7 +477,7 @@ namespace pfasst
 		  *cIt = (j==cIt.index()) ? 1.0 : 0.0;
 	      }
 	    }
-	  }
+	  }*/
 	  //std::cout << "5"<<std::endl;
 
   
@@ -516,7 +516,7 @@ namespace pfasst
         M_u.resize(u->get_data().size());
 	this->M_dune.mv(u->get_data(), M_u);
 
-
+//std::cout << "impl solve "  << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
 	  //std::cout << "f " << f->data()[i] << std::endl;

@@ -49,11 +49,7 @@ namespace pfasst
   void
   TwoLevelMLSDC<TransferT, CommT>::add_sweeper(shared_ptr<SweeperT> sweeper, const bool as_coarse)
   {
-    static_assert(std::is_same<SweeperT, typename TransferT::traits::fine_sweeper_t>::value
-                  || std::is_same<SweeperT, typename TransferT::traits::coarse_sweeper_t>::value,
-                  "Sweeper must be either a Coarse or Fine Sweeper Type.");
 
-    if (as_coarse) {
       if (std::is_same<SweeperT, typename transfer_t::traits::coarse_sweeper_t>::value) {
         this->_coarse_level = sweeper;
         this->get_coarse()->set_logger_id("LVL_COARSE");
@@ -63,18 +59,36 @@ namespace pfasst
           << typeid(typename transfer_t::traits::coarse_sweeper_t).name() << ").");
         throw std::logic_error("given sweeper can not be used as coarse sweeper");
       }
-    } else {
+    
+    
+  }
+  
+  
+  template<class TransferT, class CommT>
+  template<class SweeperT>
+  void
+  TwoLevelMLSDC<TransferT, CommT>::add_sweeper(shared_ptr<SweeperT> sweeper)
+  {
+   
+
       if (std::is_same<SweeperT, typename transfer_t::traits::fine_sweeper_t>::value) {
+        
+        
         this->_fine_level = sweeper;
         this->get_fine()->set_logger_id("LVL_FINE");
+        
+        
+        
       } else {
         ML_CLOG(ERROR, this->get_logger_id(), "Type of given Sweeper ("
           << typeid(SweeperT).name() << ") is not applicable as Fine Sweeper ("
           << typeid(typename transfer_t::traits::fine_sweeper_t).name() << ").");
         throw std::logic_error("given sweeper can not be used as fine sweeper");
       }
-    }
+    
   }
+  
+  
 
   template<class TransferT, class CommT>
   const shared_ptr<typename TransferT::traits::coarse_sweeper_t>

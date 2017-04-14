@@ -1,4 +1,4 @@
-# Install script for directory: /home0/ruth/software_engineering/dune/dune-PFASST/doc/doxygen
+# Install script for directory: /home/zam/ruth/software_engineering/dune/dune-PFASST/doc/doxygen
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -33,13 +33,13 @@ if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
 endif()
 
 if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  execute_process(COMMAND /usr/bin/cmake --build /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake --target doxygen_dune-PFASST
-        WORKING_DIRECTORY /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen)
+  execute_process(COMMAND /usr/bin/cmake --build /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake --target doxygen_dune-PFASST
+        WORKING_DIRECTORY /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen)
       file(GLOB doxygenfiles
-        GLOB /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.html
-        /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.png
-        /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.css
-        /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.gif)
+        GLOB /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.html
+        /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.png
+        /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.css
+        /home/zam/ruth/software_engineering/dune/dune-PFASST/build-cmake/doc/doxygen/html/*.gif)
       set(doxygenfiles "${doxygenfiles}")
       foreach(_file ${doxygenfiles})
          get_filename_component(_basename ${_file} NAME)
