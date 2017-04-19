@@ -704,8 +704,21 @@ FE_mlsdc: cmake_check_build_system
 
 # fast build rule for target.
 FE_mlsdc/fast:
-	$(MAKE) -f src/examples/hi_heat/CMakeFiles/FE_mlsdc.dir/build.make src/examples/hi_heat/CMakeFiles/FE_mlsdc.dir/build
+	$(MAKE) -f src/examples/FE_heat/CMakeFiles/FE_mlsdc.dir/build.make src/examples/FE_heat/CMakeFiles/FE_mlsdc.dir/build
 .PHONY : FE_mlsdc/fast
+
+#=============================================================================
+# Target rules for targets named FE_pfasst
+
+# Build rule for target.
+FE_pfasst: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FE_pfasst
+.PHONY : FE_pfasst
+
+# fast build rule for target.
+FE_pfasst/fast:
+	$(MAKE) -f src/examples/FE_heat/CMakeFiles/FE_pfasst.dir/build.make src/examples/FE_heat/CMakeFiles/FE_pfasst.dir/build
+.PHONY : FE_pfasst/fast
 
 #=============================================================================
 # Target rules for targets named FE_sdc
@@ -717,34 +730,47 @@ FE_sdc: cmake_check_build_system
 
 # fast build rule for target.
 FE_sdc/fast:
-	$(MAKE) -f src/examples/hi_heat/CMakeFiles/FE_sdc.dir/build.make src/examples/hi_heat/CMakeFiles/FE_sdc.dir/build
+	$(MAKE) -f src/examples/FE_heat/CMakeFiles/FE_sdc.dir/build.make src/examples/FE_heat/CMakeFiles/FE_sdc.dir/build
 .PHONY : FE_sdc/fast
 
 #=============================================================================
-# Target rules for targets named FE_mlsdcNFP
+# Target rules for targets named mlsdc
 
 # Build rule for target.
-FE_mlsdcNFP: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_mlsdcNFP
-.PHONY : FE_mlsdcNFP
+mlsdc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mlsdc
+.PHONY : mlsdc
 
 # fast build rule for target.
-FE_mlsdcNFP/fast:
-	$(MAKE) -f src/examples/FE_Newton/CMakeFiles/FE_mlsdcNFP.dir/build.make src/examples/FE_Newton/CMakeFiles/FE_mlsdcNFP.dir/build
-.PHONY : FE_mlsdcNFP/fast
+mlsdc/fast:
+	$(MAKE) -f src/examples/heat/CMakeFiles/mlsdc.dir/build.make src/examples/heat/CMakeFiles/mlsdc.dir/build
+.PHONY : mlsdc/fast
 
 #=============================================================================
-# Target rules for targets named FE_sdcNFP
+# Target rules for targets named pfasst
 
 # Build rule for target.
-FE_sdcNFP: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 FE_sdcNFP
-.PHONY : FE_sdcNFP
+pfasst: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pfasst
+.PHONY : pfasst
 
 # fast build rule for target.
-FE_sdcNFP/fast:
-	$(MAKE) -f src/examples/FE_Newton/CMakeFiles/FE_sdcNFP.dir/build.make src/examples/FE_Newton/CMakeFiles/FE_sdcNFP.dir/build
-.PHONY : FE_sdcNFP/fast
+pfasst/fast:
+	$(MAKE) -f src/examples/heat/CMakeFiles/pfasst.dir/build.make src/examples/heat/CMakeFiles/pfasst.dir/build
+.PHONY : pfasst/fast
+
+#=============================================================================
+# Target rules for targets named sdc
+
+# Build rule for target.
+sdc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 sdc
+.PHONY : sdc
+
+# fast build rule for target.
+sdc/fast:
+	$(MAKE) -f src/examples/heat/CMakeFiles/sdc.dir/build.make src/examples/heat/CMakeFiles/sdc.dir/build
+.PHONY : sdc/fast
 
 #=============================================================================
 # Target rules for targets named doxyfile
@@ -826,10 +852,12 @@ help:
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... edit_cache"
+	@echo "... FE_pfasst"
 	@echo "... FE_mlsdc"
 	@echo "... FE_sdc"
-	@echo "... FE_mlsdcNFP"
-	@echo "... FE_sdcNFP"
+	@echo "... pfasst"
+	@echo "... sdc"
+	@echo "... mlsdc"
 	@echo "... doxygen_dune-PFASST"
 	@echo "... doxyfile"
 .PHONY : help

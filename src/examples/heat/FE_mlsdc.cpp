@@ -14,8 +14,8 @@ using std::shared_ptr;
 #include "FE_sweeper.hpp"
 
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
-
+//#include "../../finite_element_stuff/spectral_transfer.hpp"
+#include "../../finite_element_stuff/spectral_transfer_ohneFE.hpp"
 
 
 

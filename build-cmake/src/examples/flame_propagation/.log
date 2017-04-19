@@ -1,0 +1,853 @@
+[37m13:43:53,524[0m [34m[default   , INFO ] PFASST++ version mixed together from https://github.com/Parallel-in-Time/PFASST and https://github.com/torbjoernk/PFASST[0m
+2017-04-15 13:43:53,527 INFO  [SWEEPER] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17
+2017-04-15 13:43:53,527 INFO  [SWEEPER] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17
+2017-04-15 13:43:53,528 INFO  [SWEEPER] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17
+[37m13:43:53,528[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ] Sequential SDC[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ]   t0:        0[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ]   dt:        0.05[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ]   T:         0.5[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ]   num steps: 10[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ]   max iter:  1000[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ] Time Step 1 of 10[0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,528[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,529 INFO  [SWEEPER] Predicting from t=0 over 3 nodes to t=0.05 (dt=0.05)
+2017-04-15 13:43:53,530 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,530 INFO  [SWEEPER]   t[3]=0.05      |abs residual| = 0.000898067      |rel residual| = 0.000898067
+[37m13:43:53,530[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,530[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,530 INFO  [SWEEPER] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)
+2017-04-15 13:43:53,531 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,531 INFO  [SWEEPER]   t[3]=0.05      |abs residual| = 1.55749e-05      |rel residual| = 1.55749e-05
+[37m13:43:53,531[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,531[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,531 INFO  [SWEEPER] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)
+2017-04-15 13:43:53,533 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 3.05919e-07 < 1e-06
+2017-04-15 13:43:53,533 INFO  [SWEEPER]   t[3]=0.05      |abs residual| = 3.05919e-07      |rel residual| = 3.05919e-07
+[37m13:43:53,533[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,533 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,533 INFO  [SWEEPER]   expl:        12
+2017-04-15 13:43:53,533 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,533 INFO  [SWEEPER]   impl solves: 9
+[37m13:43:53,533[0m [34m[SDC       , INFO ] Number Iterations: 2[0m
+[37m13:43:53,533[0m [34m[SDC       , INFO ] Absolute Residual: 3.05919e-07[0m
+[37m13:43:53,533[0m [34m[SDC       , INFO ] Absolute Residual: 3.05919e-07[0m
+[37m13:43:53,533[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,533[0m [34m[SDC       , INFO ] Time Step 2 of 10[0m
+[37m13:43:53,533[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,533[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,533 INFO  [SWEEPER] Predicting from t=0.05 over 3 nodes to t=0.1 (dt=0.05)
+2017-04-15 13:43:53,534 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,534 INFO  [SWEEPER]   t[3]=0.1      |abs residual| = 0.000668035      |rel residual| = 0.000668035
+[37m13:43:53,534[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,534[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,534 INFO  [SWEEPER] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)
+2017-04-15 13:43:53,535 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,535 INFO  [SWEEPER]   t[3]=0.1      |abs residual| = 7.08132e-06      |rel residual| = 7.08132e-06
+[37m13:43:53,535[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,535[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,535 INFO  [SWEEPER] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)
+2017-04-15 13:43:53,536 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 9.28866e-08 < 1e-06
+2017-04-15 13:43:53,536 INFO  [SWEEPER]   t[3]=0.1      |abs residual| = 9.24936e-08      |rel residual| = 9.24936e-08
+[37m13:43:53,536[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,536 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,536 INFO  [SWEEPER]   expl:        12
+2017-04-15 13:43:53,536 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,536 INFO  [SWEEPER]   impl solves: 9
+[37m13:43:53,536[0m [34m[SDC       , INFO ] Number Iterations: 2[0m
+[37m13:43:53,536[0m [34m[SDC       , INFO ] Absolute Residual: 9.28866e-08[0m
+[37m13:43:53,536[0m [34m[SDC       , INFO ] Absolute Residual: 9.28866e-08[0m
+[37m13:43:53,536[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,536[0m [34m[SDC       , INFO ] Time Step 3 of 10[0m
+[37m13:43:53,536[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,536[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,536 INFO  [SWEEPER] Predicting from t=0.1 over 3 nodes to t=0.15 (dt=0.05)
+2017-04-15 13:43:53,537 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,537 INFO  [SWEEPER]   t[3]=0.15      |abs residual| = 0.000271289      |rel residual| = 0.000271289
+[37m13:43:53,537[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,537[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,537 INFO  [SWEEPER] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)
+2017-04-15 13:43:53,538 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 9.92057e-07 < 1e-06
+2017-04-15 13:43:53,538 INFO  [SWEEPER]   t[3]=0.15      |abs residual| = 4.50118e-07      |rel residual| = 4.50118e-07
+[37m13:43:53,538[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,538 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,538 INFO  [SWEEPER]   expl:        8
+2017-04-15 13:43:53,538 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,538 INFO  [SWEEPER]   impl solves: 6
+[37m13:43:53,538[0m [34m[SDC       , INFO ] Number Iterations: 1[0m
+[37m13:43:53,538[0m [34m[SDC       , INFO ] Absolute Residual: 9.92057e-07[0m
+[37m13:43:53,538[0m [34m[SDC       , INFO ] Absolute Residual: 9.92057e-07[0m
+[37m13:43:53,538[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,538[0m [34m[SDC       , INFO ] Time Step 4 of 10[0m
+[37m13:43:53,538[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,538[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,538 INFO  [SWEEPER] Predicting from t=0.15 over 3 nodes to t=0.2 (dt=0.05)
+2017-04-15 13:43:53,539 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,539 INFO  [SWEEPER]   t[3]=0.2      |abs residual| = 0.00026797      |rel residual| = 0.00026797
+[37m13:43:53,539[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,539[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,539 INFO  [SWEEPER] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)
+2017-04-15 13:43:53,539 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,540 INFO  [SWEEPER]   t[3]=0.2      |abs residual| = 2.15949e-06      |rel residual| = 2.15949e-06
+[37m13:43:53,540[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,540[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,540 INFO  [SWEEPER] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)
+2017-04-15 13:43:53,540 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 1.53065e-08 < 1e-06
+2017-04-15 13:43:53,540 INFO  [SWEEPER]   t[3]=0.2      |abs residual| = 1.53065e-08      |rel residual| = 1.53065e-08
+[37m13:43:53,540[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,540 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,540 INFO  [SWEEPER]   expl:        12
+2017-04-15 13:43:53,540 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,541 INFO  [SWEEPER]   impl solves: 9
+[37m13:43:53,541[0m [34m[SDC       , INFO ] Number Iterations: 2[0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] Absolute Residual: 1.53065e-08[0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] Absolute Residual: 1.53065e-08[0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] Time Step 5 of 10[0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,541 INFO  [SWEEPER] Predicting from t=0.2 over 3 nodes to t=0.25 (dt=0.05)
+2017-04-15 13:43:53,541 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,541 INFO  [SWEEPER]   t[3]=0.25      |abs residual| = 0.000857314      |rel residual| = 0.000857314
+[37m13:43:53,541[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,541[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,541 INFO  [SWEEPER] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)
+2017-04-15 13:43:53,542 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,542 INFO  [SWEEPER]   t[3]=0.25      |abs residual| = 1.7115e-05      |rel residual| = 1.7115e-05
+[37m13:43:53,542[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,542[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,542 INFO  [SWEEPER] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)
+2017-04-15 13:43:53,543 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 3.35445e-07 < 1e-06
+2017-04-15 13:43:53,543 INFO  [SWEEPER]   t[3]=0.25      |abs residual| = 3.35445e-07      |rel residual| = 3.35445e-07
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,543 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,543 INFO  [SWEEPER]   expl:        12
+2017-04-15 13:43:53,543 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,543 INFO  [SWEEPER]   impl solves: 9
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Number Iterations: 2[0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Absolute Residual: 3.35445e-07[0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Absolute Residual: 3.35445e-07[0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Time Step 6 of 10[0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,543 INFO  [SWEEPER] Predicting from t=0.25 over 3 nodes to t=0.3 (dt=0.05)
+2017-04-15 13:43:53,543 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,543 INFO  [SWEEPER]   t[3]=0.3      |abs residual| = 0.00135856      |rel residual| = 0.00135856
+[37m13:43:53,543[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,543[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,543 INFO  [SWEEPER] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)
+2017-04-15 13:43:53,544 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,544 INFO  [SWEEPER]   t[3]=0.3      |abs residual| = 4.32905e-05      |rel residual| = 4.32905e-05
+[37m13:43:53,544[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,544[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,544 INFO  [SWEEPER] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)
+2017-04-15 13:43:53,544 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,544 INFO  [SWEEPER]   t[3]=0.3      |abs residual| = 1.42046e-06      |rel residual| = 1.42046e-06
+[37m13:43:53,545[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Iteration 3[0m
+2017-04-15 13:43:53,545 INFO  [SWEEPER] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)
+2017-04-15 13:43:53,545 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 4.78218e-08 < 1e-06
+2017-04-15 13:43:53,545 INFO  [SWEEPER]   t[3]=0.3      |abs residual| = 4.78218e-08      |rel residual| = 4.78218e-08
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,545 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,545 INFO  [SWEEPER]   expl:        16
+2017-04-15 13:43:53,545 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,545 INFO  [SWEEPER]   impl solves: 12
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Number Iterations: 3[0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Absolute Residual: 4.78218e-08[0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Absolute Residual: 4.78218e-08[0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Time Step 7 of 10[0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,545[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,545 INFO  [SWEEPER] Predicting from t=0.3 over 3 nodes to t=0.35 (dt=0.05)
+2017-04-15 13:43:53,546 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,546 INFO  [SWEEPER]   t[3]=0.35      |abs residual| = 0.00165323      |rel residual| = 0.00165323
+[37m13:43:53,546[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,546[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,546 INFO  [SWEEPER] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)
+2017-04-15 13:43:53,546 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,546 INFO  [SWEEPER]   t[3]=0.35      |abs residual| = 7.10667e-05      |rel residual| = 7.10667e-05
+[37m13:43:53,546[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,546[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,546 INFO  [SWEEPER] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)
+2017-04-15 13:43:53,547 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,547 INFO  [SWEEPER]   t[3]=0.35      |abs residual| = 3.24612e-06      |rel residual| = 3.24612e-06
+[37m13:43:53,547[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Iteration 3[0m
+2017-04-15 13:43:53,547 INFO  [SWEEPER] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)
+2017-04-15 13:43:53,547 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 1.56582e-07 < 1e-06
+2017-04-15 13:43:53,547 INFO  [SWEEPER]   t[3]=0.35      |abs residual| = 1.56582e-07      |rel residual| = 1.56582e-07
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,547 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,547 INFO  [SWEEPER]   expl:        16
+2017-04-15 13:43:53,547 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,547 INFO  [SWEEPER]   impl solves: 12
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Number Iterations: 3[0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Absolute Residual: 1.56582e-07[0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Absolute Residual: 1.56582e-07[0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Time Step 8 of 10[0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,547[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,547 INFO  [SWEEPER] Predicting from t=0.35 over 3 nodes to t=0.4 (dt=0.05)
+2017-04-15 13:43:53,548 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,548 INFO  [SWEEPER]   t[3]=0.4      |abs residual| = 0.00170323      |rel residual| = 0.00170323
+[37m13:43:53,548[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,548[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,548 INFO  [SWEEPER] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)
+2017-04-15 13:43:53,548 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,548 INFO  [SWEEPER]   t[3]=0.4      |abs residual| = 8.96253e-05      |rel residual| = 8.96253e-05
+[37m13:43:53,548[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,548[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,549 INFO  [SWEEPER] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)
+2017-04-15 13:43:53,549 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,549 INFO  [SWEEPER]   t[3]=0.4      |abs residual| = 5.13144e-06      |rel residual| = 5.13144e-06
+[37m13:43:53,549[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,549[0m [34m[SDC       , INFO ] Iteration 3[0m
+2017-04-15 13:43:53,549 INFO  [SWEEPER] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)
+2017-04-15 13:43:53,550 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 3.16548e-07 < 1e-06
+2017-04-15 13:43:53,550 INFO  [SWEEPER]   t[3]=0.4      |abs residual| = 3.16548e-07      |rel residual| = 3.16548e-07
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,550 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,550 INFO  [SWEEPER]   expl:        16
+2017-04-15 13:43:53,550 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,550 INFO  [SWEEPER]   impl solves: 12
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Number Iterations: 3[0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Absolute Residual: 3.16548e-07[0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Absolute Residual: 3.16548e-07[0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Time Step 9 of 10[0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,550 INFO  [SWEEPER] Predicting from t=0.4 over 3 nodes to t=0.45 (dt=0.05)
+2017-04-15 13:43:53,550 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,550 INFO  [SWEEPER]   t[3]=0.45      |abs residual| = 0.00155613      |rel residual| = 0.00155613
+[37m13:43:53,550[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,550[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,550 INFO  [SWEEPER] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)
+2017-04-15 13:43:53,551 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,551 INFO  [SWEEPER]   t[3]=0.45      |abs residual| = 9.40404e-05      |rel residual| = 9.40404e-05
+[37m13:43:53,551[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,551[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,551 INFO  [SWEEPER] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)
+2017-04-15 13:43:53,551 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,551 INFO  [SWEEPER]   t[3]=0.45      |abs residual| = 6.29735e-06      |rel residual| = 6.29735e-06
+[37m13:43:53,551[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,551[0m [34m[SDC       , INFO ] Iteration 3[0m
+2017-04-15 13:43:53,551 INFO  [SWEEPER] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)
+2017-04-15 13:43:53,552 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 4.61057e-07 < 1e-06
+2017-04-15 13:43:53,552 INFO  [SWEEPER]   t[3]=0.45      |abs residual| = 4.61057e-07      |rel residual| = 4.61057e-07
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,552 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,552 INFO  [SWEEPER]   expl:        16
+2017-04-15 13:43:53,552 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,552 INFO  [SWEEPER]   impl solves: 12
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Number Iterations: 3[0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Absolute Residual: 4.61057e-07[0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Absolute Residual: 4.61057e-07[0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Time Step 10 of 10[0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Iteration 0 (SDC Prediction)[0m
+2017-04-15 13:43:53,552 INFO  [SWEEPER] Predicting from t=0.45 over 3 nodes to t=0.5 (dt=0.05)
+2017-04-15 13:43:53,552 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,552 INFO  [SWEEPER]   t[3]=0.5      |abs residual| = 0.00130091      |rel residual| = 0.00130091
+[37m13:43:53,552[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,552[0m [34m[SDC       , INFO ] Iteration 1[0m
+2017-04-15 13:43:53,552 INFO  [SWEEPER] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)
+2017-04-15 13:43:53,553 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,553 INFO  [SWEEPER]   t[3]=0.5      |abs residual| = 8.6422e-05      |rel residual| = 8.6422e-05
+[37m13:43:53,553[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,553[0m [34m[SDC       , INFO ] Iteration 2[0m
+2017-04-15 13:43:53,553 INFO  [SWEEPER] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)
+2017-04-15 13:43:53,553 INFO  [SWEEPER] Sweeper has not yet converged to neither residual tolerance.
+2017-04-15 13:43:53,553 INFO  [SWEEPER]   t[3]=0.5      |abs residual| = 6.45029e-06      |rel residual| = 6.45029e-06
+[37m13:43:53,553[0m [34m[SDC       , INFO ] [0m
+[37m13:43:53,553[0m [34m[SDC       , INFO ] Iteration 3[0m
+2017-04-15 13:43:53,554 INFO  [SWEEPER] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)
+2017-04-15 13:43:53,554 INFO  [SWEEPER] Sweeper has converged w.r.t. absolute residual tolerance: 5.32032e-07 < 1e-06
+2017-04-15 13:43:53,554 INFO  [SWEEPER]   t[3]=0.5      |abs residual| = 5.32032e-07      |rel residual| = 5.32032e-07
+[37m13:43:53,554[0m [34m[SDC       , INFO ] Sweeper has converged.[0m
+2017-04-15 13:43:53,554 INFO  [SWEEPER] number function evaluations:
+2017-04-15 13:43:53,554 INFO  [SWEEPER]   expl:        16
+2017-04-15 13:43:53,554 INFO  [SWEEPER]   impl:        0
+2017-04-15 13:43:53,554 INFO  [SWEEPER]   impl solves: 12
+[37m13:43:53,554[0m [34m[SDC       , INFO ] Number Iterations: 3[0m
+[37m13:43:53,554[0m [34m[SDC       , INFO ] Absolute Residual: 5.32032e-07[0m
+[37m13:43:53,554[0m [34m[SDC       , INFO ] Absolute Residual: 5.32032e-07[0m
+[37m13:43:53,554[0m [34m[SDC       , INFO ] End time point reached: 0.5[0m
+[37m13:43:53,554[0m [34m[SDC       , INFO ] Run Finished.[0m
+[37m13:45:00,113[0m [34m[default   , INFO ] PFASST++ version mixed together from https://github.com/Parallel-in-Time/PFASST and https://github.com/torbjoernk/PFASST[0m
+[37m13:45:00,118[0m [31m[1m[default   , FATAL] easylogging++.h:5583 CRASH HANDLED; Application has crashed due to [SIGSEGV] signal
+    Invalid access to memory
+    Program is trying to read an invalid (unallocated, deleted or corrupted) or inaccessible memory.
+    ======= Backtrace: =========
+    [1] ./mlsdcFP() [0x78a129]
+    [2] ./mlsdcFP() [0x78a2f4]
+    [3] /lib64/libc.so.6+0x35140 [0x7ff4d21ad140]
+    [4] ./mlsdcFP:pfasst::TwoLevelMLSDC<pfasst::contrib::SpectralTransfer<pfasst::transfer_traits<pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<pfasst::encap::dune_vec_encap_traits<double, double, 1ul>>, void>, pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<pfasst::encap::dune_vec_encap_traits<double, double, 1ul>>, void>, 1>, void>, pfasst::comm::Communicator>::set_options()+0x45 [0x7aabcf]
+    [5] ./mlsdcFP:pfasst::examples::heat_FE::run_mlsdc(unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, pfasst::quadrature::QuadratureType const&, double const&, double const&, double const&, unsigned long)+0x304 [0x78caf3]
+    [6] ./mlsdcFP:main+0x751 [0x78d93f]
+    [7] /lib64/libc.so.6:__libc_start_main+0xf5 [0x7ff4d2199b25]
+    [8] ./mlsdcFP() [0x789859]
+[0m
+[37m13:45:53,617[0m [34m[default   , INFO ] PFASST++ version mixed together from https://github.com/Parallel-in-Time/PFASST and https://github.com/torbjoernk/PFASST[0m
+[37m13:45:53,619[0m [34m[LVL_COARSE, INFO ] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17[0m
+[37m13:45:53,619[0m [34m[LVL_COARSE, INFO ] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17[0m
+[37m13:45:53,619[0m [34m[LVL_COARSE, INFO ] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17[0m
+[37m13:45:53,620[0m [34m[LVL_FINE  , INFO ] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17[0m
+[37m13:45:53,620[0m [34m[LVL_FINE  , INFO ] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17[0m
+[37m13:45:53,620[0m [34m[LVL_FINE  , INFO ] using as quadrature: Gauss-Radau (right) on [0.0, 1.0] with 3 nodes and an expected error of 2.77556e-17[0m
+[37m13:45:53,620[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,620[0m [34m[MLSDC     , INFO ] Time Step 1 of 10[0m
+[37m13:45:53,620[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,620[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,620[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,620[0m [34m[LVL_COARSE, INFO ] Predicting from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,621[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,621[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,621[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,622[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,622[0m [34m[LVL_COARSE, INFO ]   t[3]=0.05      |abs residual| = 0.000898067      |rel residual| = 0.000898067[0m
+[37m13:45:53,622[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,622[0m [34m[LVL_FINE  , INFO ]   t[3]=0.05      |abs residual| = 0.00864335      |rel residual| = 0.00864335[0m
+[37m13:45:53,622[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,622[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,622[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,622[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,622[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,622[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,623[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,623[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,623[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,624[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,624[0m [34m[LVL_COARSE, INFO ]   t[3]=0.05      |abs residual| = 0.000519175      |rel residual| = 0.000519175[0m
+[37m13:45:53,624[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,624[0m [34m[LVL_FINE  , INFO ]   t[3]=0.05      |abs residual| = 0.000269963      |rel residual| = 0.000269963[0m
+[37m13:45:53,624[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,624[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,624[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,624[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,625[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,625[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,625[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,626[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,626[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,626[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,627[0m [34m[LVL_COARSE, INFO ]   t[3]=0.05      |abs residual| = 1.38336e-05      |rel residual| = 1.38336e-05[0m
+[37m13:45:53,627[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,627[0m [34m[LVL_FINE  , INFO ]   t[3]=0.05      |abs residual| = 4.13865e-06      |rel residual| = 4.13865e-06[0m
+[37m13:45:53,627[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,627[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,627[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,627[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,627[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,627[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,627[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,628[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,628[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0 over 3 nodes to t=0.05 (dt=0.05)[0m
+[37m13:45:53,629[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 1.97881e-07 < 1e-06[0m
+[37m13:45:53,629[0m [34m[LVL_COARSE, INFO ]   t[3]=0.05      |abs residual| = 4.75022e-08      |rel residual| = 4.75022e-08[0m
+[37m13:45:53,629[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 4.67796e-08 < 1e-06[0m
+[37m13:45:53,629[0m [34m[LVL_FINE  , INFO ]   t[3]=0.05      |abs residual| = 4.67796e-08      |rel residual| = 4.67796e-08[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Absolute Residual: 4.67796e-08[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Absolute Residual: 4.67796e-08[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Time Step 2 of 10[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,629[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.05 over 3 nodes to t=0.1 (dt=0.05)[0m
+[37m13:45:53,629[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,630[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,630[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)[0m
+[37m13:45:53,631[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,631[0m [34m[LVL_COARSE, INFO ]   t[3]=0.1      |abs residual| = 0.000659784      |rel residual| = 0.000659784[0m
+[37m13:45:53,631[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,631[0m [34m[LVL_FINE  , INFO ]   t[3]=0.1      |abs residual| = 0.0018837      |rel residual| = 0.0018837[0m
+[37m13:45:53,631[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,631[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,631[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,631[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,631[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,631[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)[0m
+[37m13:45:53,631[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,632[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,632[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)[0m
+[37m13:45:53,632[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,633[0m [34m[LVL_COARSE, INFO ]   t[3]=0.1      |abs residual| = 8.15756e-05      |rel residual| = 8.15756e-05[0m
+[37m13:45:53,633[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,633[0m [34m[LVL_FINE  , INFO ]   t[3]=0.1      |abs residual| = 4.09581e-05      |rel residual| = 4.09581e-05[0m
+[37m13:45:53,633[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,633[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,633[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,633[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,633[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,633[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)[0m
+[37m13:45:53,633[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,634[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.05 over 3 nodes to t=0.1 (dt=0.05)[0m
+[37m13:45:53,634[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,634[0m [34m[LVL_COARSE, INFO ]   t[3]=0.1      |abs residual| = 1.8106e-06      |rel residual| = 1.8106e-06[0m
+[37m13:45:53,634[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 8.00603e-07 < 1e-06[0m
+[37m13:45:53,634[0m [34m[LVL_FINE  , INFO ]   t[3]=0.1      |abs residual| = 7.88081e-07      |rel residual| = 7.88081e-07[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] Number Iterations: 2[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] Absolute Residual: 8.00603e-07[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] Absolute Residual: 8.00603e-07[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] Time Step 3 of 10[0m
+[37m13:45:53,634[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,635[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,635[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,635[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,635[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,635[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,635[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,636[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,636[0m [34m[LVL_COARSE, INFO ]   t[3]=0.15      |abs residual| = 0.000259189      |rel residual| = 0.000259189[0m
+[37m13:45:53,636[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,636[0m [34m[LVL_FINE  , INFO ]   t[3]=0.15      |abs residual| = 0.00198703      |rel residual| = 0.00198703[0m
+[37m13:45:53,636[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,636[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,636[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,636[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,636[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,636[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,637[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,637[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,637[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,638[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,638[0m [34m[LVL_COARSE, INFO ]   t[3]=0.15      |abs residual| = 9.40113e-05      |rel residual| = 9.40113e-05[0m
+[37m13:45:53,638[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,638[0m [34m[LVL_FINE  , INFO ]   t[3]=0.15      |abs residual| = 4.17805e-05      |rel residual| = 4.17805e-05[0m
+[37m13:45:53,638[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,638[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,638[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,638[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,638[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,638[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,638[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,639[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,639[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,640[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,640[0m [34m[LVL_COARSE, INFO ]   t[3]=0.15      |abs residual| = 2.30502e-06      |rel residual| = 2.30502e-06[0m
+[37m13:45:53,640[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,640[0m [34m[LVL_FINE  , INFO ]   t[3]=0.15      |abs residual| = 9.96409e-07      |rel residual| = 9.96409e-07[0m
+[37m13:45:53,640[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,640[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,640[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,640[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,640[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,640[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,640[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,641[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.1 over 3 nodes to t=0.15 (dt=0.05)[0m
+[37m13:45:53,641[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 3.90603e-08 < 1e-06[0m
+[37m13:45:53,641[0m [34m[LVL_COARSE, INFO ]   t[3]=0.15      |abs residual| = 1.03326e-08      |rel residual| = 1.03326e-08[0m
+[37m13:45:53,641[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 2.51502e-08 < 1e-06[0m
+[37m13:45:53,641[0m [34m[LVL_FINE  , INFO ]   t[3]=0.15      |abs residual| = 2.51502e-08      |rel residual| = 2.51502e-08[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Absolute Residual: 2.51502e-08[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Absolute Residual: 2.51502e-08[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Time Step 4 of 10[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,641[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,642[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,642[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,642[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,642[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,643[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,643[0m [34m[LVL_COARSE, INFO ]   t[3]=0.2      |abs residual| = 0.000305867      |rel residual| = 0.000305867[0m
+[37m13:45:53,643[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,643[0m [34m[LVL_FINE  , INFO ]   t[3]=0.2      |abs residual| = 0.00200711      |rel residual| = 0.00200711[0m
+[37m13:45:53,643[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,643[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,643[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,643[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,643[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,643[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,644[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,644[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,644[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,645[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,645[0m [34m[LVL_COARSE, INFO ]   t[3]=0.2      |abs residual| = 0.000105777      |rel residual| = 0.000105777[0m
+[37m13:45:53,645[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,645[0m [34m[LVL_FINE  , INFO ]   t[3]=0.2      |abs residual| = 4.07017e-05      |rel residual| = 4.07017e-05[0m
+[37m13:45:53,645[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,645[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,645[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,645[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,645[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,645[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,645[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,646[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,646[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,646[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,647[0m [34m[LVL_COARSE, INFO ]   t[3]=0.2      |abs residual| = 2.81221e-06      |rel residual| = 2.81221e-06[0m
+[37m13:45:53,647[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,647[0m [34m[LVL_FINE  , INFO ]   t[3]=0.2      |abs residual| = 1.18023e-06      |rel residual| = 1.18023e-06[0m
+[37m13:45:53,647[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,647[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,647[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,647[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,647[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,647[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,647[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,648[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.15 over 3 nodes to t=0.2 (dt=0.05)[0m
+[37m13:45:53,648[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 6.65368e-08 < 1e-06[0m
+[37m13:45:53,648[0m [34m[LVL_COARSE, INFO ]   t[3]=0.2      |abs residual| = 3.21455e-08      |rel residual| = 3.21455e-08[0m
+[37m13:45:53,648[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 3.49406e-08 < 1e-06[0m
+[37m13:45:53,648[0m [34m[LVL_FINE  , INFO ]   t[3]=0.2      |abs residual| = 3.49406e-08      |rel residual| = 3.49406e-08[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Absolute Residual: 3.49406e-08[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Absolute Residual: 3.49406e-08[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Time Step 5 of 10[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,648[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,648[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,649[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,649[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,649[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,650[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,650[0m [34m[LVL_COARSE, INFO ]   t[3]=0.25      |abs residual| = 0.000911229      |rel residual| = 0.000911229[0m
+[37m13:45:53,650[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,650[0m [34m[LVL_FINE  , INFO ]   t[3]=0.25      |abs residual| = 0.00192333      |rel residual| = 0.00192333[0m
+[37m13:45:53,650[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,650[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,650[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,650[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,650[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,650[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,651[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,651[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,651[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,652[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,652[0m [34m[LVL_COARSE, INFO ]   t[3]=0.25      |abs residual| = 0.000114291      |rel residual| = 0.000114291[0m
+[37m13:45:53,652[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,652[0m [34m[LVL_FINE  , INFO ]   t[3]=0.25      |abs residual| = 3.76888e-05      |rel residual| = 3.76888e-05[0m
+[37m13:45:53,652[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,652[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,652[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,652[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,652[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,652[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,653[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,653[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,653[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,654[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,654[0m [34m[LVL_COARSE, INFO ]   t[3]=0.25      |abs residual| = 3.21679e-06      |rel residual| = 3.21679e-06[0m
+[37m13:45:53,654[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,654[0m [34m[LVL_FINE  , INFO ]   t[3]=0.25      |abs residual| = 1.26858e-06      |rel residual| = 1.26858e-06[0m
+[37m13:45:53,654[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,654[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,654[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,654[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,654[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,654[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,654[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,655[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,655[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.2 over 3 nodes to t=0.25 (dt=0.05)[0m
+[37m13:45:53,655[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 1.15363e-07 < 1e-06[0m
+[37m13:45:53,655[0m [34m[LVL_COARSE, INFO ]   t[3]=0.25      |abs residual| = 6.82378e-08      |rel residual| = 6.82378e-08[0m
+[37m13:45:53,655[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 4.55529e-08 < 1e-06[0m
+[37m13:45:53,655[0m [34m[LVL_FINE  , INFO ]   t[3]=0.25      |abs residual| = 4.06437e-08      |rel residual| = 4.06437e-08[0m
+[37m13:45:53,655[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Absolute Residual: 4.55529e-08[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Absolute Residual: 4.55529e-08[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Time Step 6 of 10[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,656[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,656[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,656[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,657[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,657[0m [34m[LVL_COARSE, INFO ]   t[3]=0.3      |abs residual| = 0.0014284      |rel residual| = 0.0014284[0m
+[37m13:45:53,657[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,657[0m [34m[LVL_FINE  , INFO ]   t[3]=0.3      |abs residual| = 0.00173799      |rel residual| = 0.00173799[0m
+[37m13:45:53,657[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,657[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,657[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,657[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,657[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,657[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,658[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,658[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,658[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,659[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,659[0m [34m[LVL_COARSE, INFO ]   t[3]=0.3      |abs residual| = 0.000116729      |rel residual| = 0.000116729[0m
+[37m13:45:53,659[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,659[0m [34m[LVL_FINE  , INFO ]   t[3]=0.3      |abs residual| = 3.31338e-05      |rel residual| = 3.31338e-05[0m
+[37m13:45:53,659[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,659[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,659[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,659[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,659[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,659[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,660[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,660[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,660[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,661[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,661[0m [34m[LVL_COARSE, INFO ]   t[3]=0.3      |abs residual| = 3.40173e-06      |rel residual| = 3.40173e-06[0m
+[37m13:45:53,661[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,661[0m [34m[LVL_FINE  , INFO ]   t[3]=0.3      |abs residual| = 1.20631e-06      |rel residual| = 1.20631e-06[0m
+[37m13:45:53,661[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,661[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,661[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,661[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,661[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,661[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,661[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,662[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,662[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.25 over 3 nodes to t=0.3 (dt=0.05)[0m
+[37m13:45:53,662[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 1.77557e-07 < 1e-06[0m
+[37m13:45:53,662[0m [34m[LVL_COARSE, INFO ]   t[3]=0.3      |abs residual| = 1.14345e-07      |rel residual| = 1.14345e-07[0m
+[37m13:45:53,662[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 5.19882e-08 < 1e-06[0m
+[37m13:45:53,662[0m [34m[LVL_FINE  , INFO ]   t[3]=0.3      |abs residual| = 3.90717e-08      |rel residual| = 3.90717e-08[0m
+[37m13:45:53,662[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,662[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Absolute Residual: 5.19882e-08[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Absolute Residual: 5.19882e-08[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Time Step 7 of 10[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,663[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,663[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,663[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,664[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,664[0m [34m[LVL_COARSE, INFO ]   t[3]=0.35      |abs residual| = 0.00173853      |rel residual| = 0.00173853[0m
+[37m13:45:53,664[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,664[0m [34m[LVL_FINE  , INFO ]   t[3]=0.35      |abs residual| = 0.00147958      |rel residual| = 0.00147958[0m
+[37m13:45:53,664[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,664[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,664[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,664[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,664[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,664[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,665[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,665[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,665[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,666[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,666[0m [34m[LVL_COARSE, INFO ]   t[3]=0.35      |abs residual| = 0.000111473      |rel residual| = 0.000111473[0m
+[37m13:45:53,666[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,666[0m [34m[LVL_FINE  , INFO ]   t[3]=0.35      |abs residual| = 2.77126e-05      |rel residual| = 2.77126e-05[0m
+[37m13:45:53,667[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,667[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,667[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,667[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,667[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,667[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,667[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,668[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,668[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,668[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,668[0m [34m[LVL_COARSE, INFO ]   t[3]=0.35      |abs residual| = 3.30932e-06      |rel residual| = 3.30932e-06[0m
+[37m13:45:53,668[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,668[0m [34m[LVL_FINE  , INFO ]   t[3]=0.35      |abs residual| = 9.99887e-07      |rel residual| = 9.99887e-07[0m
+[37m13:45:53,668[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,668[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,668[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,668[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,669[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,669[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,669[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,669[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,669[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.3 over 3 nodes to t=0.35 (dt=0.05)[0m
+[37m13:45:53,670[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 2.37764e-07 < 1e-06[0m
+[37m13:45:53,670[0m [34m[LVL_COARSE, INFO ]   t[3]=0.35      |abs residual| = 1.58093e-07      |rel residual| = 1.58093e-07[0m
+[37m13:45:53,670[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 5.46345e-08 < 1e-06[0m
+[37m13:45:53,670[0m [34m[LVL_FINE  , INFO ]   t[3]=0.35      |abs residual| = 2.99861e-08      |rel residual| = 2.99861e-08[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] Absolute Residual: 5.46345e-08[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] Absolute Residual: 5.46345e-08[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] Time Step 8 of 10[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,670[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,670[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,671[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,671[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,671[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,672[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,672[0m [34m[LVL_COARSE, INFO ]   t[3]=0.4      |abs residual| = 0.00180294      |rel residual| = 0.00180294[0m
+[37m13:45:53,672[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,672[0m [34m[LVL_FINE  , INFO ]   t[3]=0.4      |abs residual| = 0.00119178      |rel residual| = 0.00119178[0m
+[37m13:45:53,672[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,672[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,672[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,672[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,672[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,672[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,673[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,673[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,673[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,674[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,674[0m [34m[LVL_COARSE, INFO ]   t[3]=0.4      |abs residual| = 9.92159e-05      |rel residual| = 9.92159e-05[0m
+[37m13:45:53,674[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,674[0m [34m[LVL_FINE  , INFO ]   t[3]=0.4      |abs residual| = 2.21506e-05      |rel residual| = 2.21506e-05[0m
+[37m13:45:53,674[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,674[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,674[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,674[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,674[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,674[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,674[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,675[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,675[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,675[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,675[0m [34m[LVL_COARSE, INFO ]   t[3]=0.4      |abs residual| = 2.97089e-06      |rel residual| = 2.97089e-06[0m
+[37m13:45:53,676[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,676[0m [34m[LVL_FINE  , INFO ]   t[3]=0.4      |abs residual| = 7.20307e-07      |rel residual| = 7.20307e-07[0m
+[37m13:45:53,676[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,676[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,676[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,676[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,676[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,676[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,676[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,677[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.35 over 3 nodes to t=0.4 (dt=0.05)[0m
+[37m13:45:53,677[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 2.76392e-07 < 1e-06[0m
+[37m13:45:53,677[0m [34m[LVL_COARSE, INFO ]   t[3]=0.4      |abs residual| = 1.85228e-07      |rel residual| = 1.85228e-07[0m
+[37m13:45:53,677[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 6.46525e-08 < 1e-06[0m
+[37m13:45:53,677[0m [34m[LVL_FINE  , INFO ]   t[3]=0.4      |abs residual| = 1.67809e-08      |rel residual| = 1.67809e-08[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] Absolute Residual: 6.46525e-08[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] Absolute Residual: 6.46525e-08[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] Time Step 9 of 10[0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,677[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,678[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,678[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,678[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,678[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,678[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,679[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,679[0m [34m[LVL_COARSE, INFO ]   t[3]=0.45      |abs residual| = 0.00166855      |rel residual| = 0.00166855[0m
+[37m13:45:53,679[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,679[0m [34m[LVL_FINE  , INFO ]   t[3]=0.45      |abs residual| = 0.000915683      |rel residual| = 0.000915683[0m
+[37m13:45:53,679[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,679[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,679[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,679[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,679[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,679[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,680[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,680[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,680[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,681[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,681[0m [34m[LVL_COARSE, INFO ]   t[3]=0.45      |abs residual| = 8.265e-05      |rel residual| = 8.265e-05[0m
+[37m13:45:53,681[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,681[0m [34m[LVL_FINE  , INFO ]   t[3]=0.45      |abs residual| = 1.70294e-05      |rel residual| = 1.70294e-05[0m
+[37m13:45:53,681[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,681[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,681[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,681[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,681[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,681[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,682[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,682[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,682[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,683[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,683[0m [34m[LVL_COARSE, INFO ]   t[3]=0.45      |abs residual| = 2.48229e-06      |rel residual| = 2.48229e-06[0m
+[37m13:45:53,683[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,683[0m [34m[LVL_FINE  , INFO ]   t[3]=0.45      |abs residual| = 4.54172e-07      |rel residual| = 4.54172e-07[0m
+[37m13:45:53,683[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,683[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,683[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,683[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,683[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,683[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,683[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,684[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,684[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.4 over 3 nodes to t=0.45 (dt=0.05)[0m
+[37m13:45:53,685[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 2.82096e-07 < 1e-06[0m
+[37m13:45:53,685[0m [34m[LVL_COARSE, INFO ]   t[3]=0.45      |abs residual| = 1.88653e-07      |rel residual| = 1.88653e-07[0m
+[37m13:45:53,685[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 6.74025e-08 < 1e-06[0m
+[37m13:45:53,685[0m [34m[LVL_FINE  , INFO ]   t[3]=0.45      |abs residual| = 8.79406e-09      |rel residual| = 8.79406e-09[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Absolute Residual: 6.74025e-08[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Absolute Residual: 6.74025e-08[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Time Step 10 of 10[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Iteration 0 (MLSDC Prediction)[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Predicting on COARSE level[0m
+[37m13:45:53,685[0m [34m[LVL_COARSE, INFO ] Predicting from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,685[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,685[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,686[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,686[0m [34m[LVL_COARSE, INFO ]   t[3]=0.5      |abs residual| = 0.00142381      |rel residual| = 0.00142381[0m
+[37m13:45:53,686[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,686[0m [34m[LVL_FINE  , INFO ]   t[3]=0.5      |abs residual| = 0.000677662      |rel residual| = 0.000677662[0m
+[37m13:45:53,686[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,686[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,686[0m [34m[MLSDC     , INFO ] Iteration 1[0m
+[37m13:45:53,686[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,686[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,686[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,687[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,687[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,687[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,688[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,688[0m [34m[LVL_COARSE, INFO ]   t[3]=0.5      |abs residual| = 6.50322e-05      |rel residual| = 6.50322e-05[0m
+[37m13:45:53,688[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,688[0m [34m[LVL_FINE  , INFO ]   t[3]=0.5      |abs residual| = 1.26933e-05      |rel residual| = 1.26933e-05[0m
+[37m13:45:53,688[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,688[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,688[0m [34m[MLSDC     , INFO ] Iteration 2[0m
+[37m13:45:53,688[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,688[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,688[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,689[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,689[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,689[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,690[0m [34m[LVL_COARSE, INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,690[0m [34m[LVL_COARSE, INFO ]   t[3]=0.5      |abs residual| = 1.95186e-06      |rel residual| = 1.95186e-06[0m
+[37m13:45:53,690[0m [34m[LVL_FINE  , INFO ] Sweeper has not yet converged to neither residual tolerance.[0m
+[37m13:45:53,690[0m [34m[LVL_FINE  , INFO ]   t[3]=0.5      |abs residual| = 2.54056e-07      |rel residual| = 2.54056e-07[0m
+[37m13:45:53,690[0m [34m[MLSDC     , INFO ] FINE sweeper has not yet converged and additional iterations to do.[0m
+[37m13:45:53,690[0m [34m[MLSDC     , INFO ] [0m
+[37m13:45:53,690[0m [34m[MLSDC     , INFO ] Iteration 3[0m
+[37m13:45:53,690[0m [34m[MLSDC     , INFO ] Restrict onto coarse level[0m
+[37m13:45:53,690[0m [34m[MLSDC     , INFO ] Sweeping on COARSE level[0m
+[37m13:45:53,690[0m [34m[LVL_COARSE, INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,690[0m [34m[MLSDC     , INFO ] Interpolate onto fine level[0m
+[37m13:45:53,691[0m [34m[MLSDC     , INFO ] Sweeping on FINE level[0m
+[37m13:45:53,691[0m [34m[LVL_FINE  , INFO ] Sweeping from t=0.45 over 3 nodes to t=0.5 (dt=0.05)[0m
+[37m13:45:53,691[0m [34m[LVL_COARSE, INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 2.57711e-07 < 1e-06[0m
+[37m13:45:53,692[0m [34m[LVL_COARSE, INFO ]   t[3]=0.5      |abs residual| = 1.71444e-07      |rel residual| = 1.71444e-07[0m
+[37m13:45:53,692[0m [34m[LVL_FINE  , INFO ] Sweeper has converged w.r.t. absolute residual tolerance: 6.29076e-08 < 1e-06[0m
+[37m13:45:53,692[0m [34m[LVL_FINE  , INFO ]   t[3]=0.5      |abs residual| = 1.56937e-08      |rel residual| = 1.56937e-08[0m
+[37m13:45:53,692[0m [34m[MLSDC     , INFO ] FINE sweeper has converged.[0m
+[37m13:45:53,692[0m [34m[MLSDC     , INFO ] Number Iterations: 3[0m
+[37m13:45:53,692[0m [34m[MLSDC     , INFO ] Absolute Residual: 6.29076e-08[0m
+[37m13:45:53,692[0m [34m[MLSDC     , INFO ] Absolute Residual: 6.29076e-08[0m
+[37m13:45:53,692[0m [34m[MLSDC     , INFO ] End time point reached: 0.5[0m
+[37m13:45:53,692[0m [34m[MLSDC     , INFO ] Run Finished.[0m

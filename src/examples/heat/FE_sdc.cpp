@@ -7,7 +7,8 @@
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
 #include <pfasst/controller/sdc.hpp>
-#include <pfasst/contrib/spectral_transfer.hpp>
+#include "../../finite_element_stuff/fe_manager.hpp"
+#include "../../finite_element_stuff/spectral_transfer_ohneFE.hpp"
 #include <pfasst/config.hpp>
 
 #include "../../datatypes/dune_vec.hpp"
@@ -86,7 +87,27 @@ namespace pfasst
 	
         std::cout << "Error " << sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm() <<  std::endl ;
 
+ofstream f;
+	  stringstream ss;
+	  ss << nelements;
+	  string s = "solution_sdc/" + ss.str() + ".dat";
+	  f.open(s, ios::app | std::ios::out );
+	  f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm()<< endl;
+	  //f << nelements << " " << dt << " "<< x.infinity_norm()<< endl;
 
+	  f.close();
+
+        ofstream ff;
+        stringstream sss;
+        sss << nelements << "_iter";
+        string st = "solution_sdc/" + sss.str() + ".dat";
+        ff.open(st, ios::app | std::ios::out );
+        auto iter = sdc->_it_per_step;
+        for (const auto &line : iter) {
+          ff << dt <<"  " << line << std::endl;
+        }
+
+        ff.close();
 
         return sdc;
       }

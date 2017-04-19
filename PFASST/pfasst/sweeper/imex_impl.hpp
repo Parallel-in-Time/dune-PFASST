@@ -226,10 +226,10 @@ namespace pfasst
   IMEX<SweeperTrait, Enabled>::sweep()
   {
     
-	std::cout <<  "sweep" << std::endl;
+	/*std::cout <<  "sweep" << std::endl;
         for (int i=0; i< this->get_end_state()->data().size(); i++){
           std::cout <<  this->get_states().front()->data()[i] << std::endl;
-        }
+        }*/
 
 
     Sweeper<SweeperTrait, Enabled>::sweep();
@@ -285,10 +285,10 @@ namespace pfasst
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m+1, m+1), rhs);
-      	std::cout <<  "sweeper nach imp solve " << std::endl;
+      	/*std::cout <<  "sweeper nach imp solve " << std::endl;
         for (int i=0; i< this->get_end_state()->data().size(); i++){
           std::cout <<  this->get_states().front()->data()[i] << std::endl;
-        }
+        }*/
         //std::exit(0);
 
 //       ML_CVLOG(5, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));

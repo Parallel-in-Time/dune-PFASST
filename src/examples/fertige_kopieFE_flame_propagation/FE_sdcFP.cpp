@@ -125,7 +125,7 @@ namespace pfasst
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
 	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
 	
-	  /*ofstream f;
+      ofstream f;
 	  stringstream ss;
 	  ss << nelements;
 	  string s = "solution_sdc/" + ss.str() + ".dat";
@@ -145,7 +145,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();*/
+        ff.close();
 	
 	
         return sdc;
@@ -189,7 +189,7 @@ namespace pfasst
     
     std::cout << "nsteps = " << nsteps << std::endl;
     
-    const size_t niter = get_value<size_t>("num_iters", 1000);
+    const size_t niter = get_value<size_t>("num_iters", 20);
 
     pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter);
 

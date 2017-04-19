@@ -263,9 +263,9 @@ namespace pfasst
   {
     this->status()->set_secondary_state(SecondaryState::CONV_CHECK);
 
-    this->get_coarse()->alternative_converged(false);
+    this->get_coarse()->converged(false);
 
-    if (this->get_fine()->alternative_converged(false)) {
+    if (this->get_fine()->converged(false)) {
       ML_CLOG(INFO, this->get_logger_id(), "FINE sweeper has converged.");
       this->status()->set_primary_state(PrimaryState::CONVERGED);
       return false;

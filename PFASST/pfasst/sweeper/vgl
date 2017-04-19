@@ -1,0 +1,69 @@
+
+
+<  
+<       M_dune.mv(this->get_states()[m]->get_data(), rhs->data());
+<  
+<     
+---
+>       rhs->data() = this->get_states()[m]->get_data();
+
+
+
+
+285a264
+>       rhs->data() = this->get_states().front()->get_data();
+287,288d265
+<       M_dune.mv(this->get_states().front()->get_data(), rhs->data());
+<       //rhs->data() = this->get_states().front()->get_data();
+
+
+
+
+<       M_dune.mv(this->get_initial_state()->get_data(), this->end_state()->data());
+---
+>       this->end_state()->data() = this->get_initial_state()->get_data();
+
+
+
+464,474c436,437
+<       
+<       M_dune.mv(this->get_initial_state()->get_data(), this->residuals().back()->data());
+<       
+<       
+<       shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();	
+<       M_dune.mv(this->get_states().back()->get_data(), uM->data());
+<       this->residuals().back()->scaled_add(-1.0, uM);	
+<       
+< 
+<       
+<       
+---
+>       this->residuals().back()->data() = this->get_initial_state()->get_data();
+>       this->residuals().back()->scaled_add(-1.0, this->get_states().back());
+484a448
+> 
+486,494c450
+	
+< 	
+< 	M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
+---
+>         this->residuals()[m]->data() = this->get_initial_state()->get_data();
+496,502c452,455
+< 
+< 	
+
+504,507d456
+< 	M_dune.mv(this->get_states()[m]->get_data(), uM->data());
+< 	
+
+< 
+509,512c458,459
+<       
+< 	
+< 	this->residuals()[m]->scaled_add(-1.0,uM);
+<     
+---
+
+>         this->residuals()[m]->scaled_add(-1.0, this->get_states()[m]);
+516a464
+

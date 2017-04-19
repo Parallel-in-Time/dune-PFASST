@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "sdc!"
+dx=256
+dt=1
+zwei=2
+
+for i in {1..6}
+  do
+  for j in {1..6}
+  do
+    ./FE_sdc num_elements=$dx abs_res_tol=1e-10 num_iters=40 dt=$dt tend=2
+    dt=$(echo "$dt / $zwei" |bc -l)
+  done
+  dt=1
+  dx=$(echo "$dx * $zwei" |bc -l)
+done

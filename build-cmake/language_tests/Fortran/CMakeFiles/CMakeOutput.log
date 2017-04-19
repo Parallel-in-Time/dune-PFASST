@@ -57,17 +57,17 @@ NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 Determining if the Fortran compiler works passed with the following output:
 Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_7d179/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_7d179.dir/build.make CMakeFiles/cmTC_7d179.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_da03a/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_da03a.dir/build.make CMakeFiles/cmTC_da03a.dir/build
 gmake[1]: Entering directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_7d179.dir/testFortranCompiler.f.o
-/usr/local_64/bin/f95    -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_7d179.dir/testFortranCompiler.f.o
+Building Fortran object CMakeFiles/cmTC_da03a.dir/testFortranCompiler.f.o
+/usr/local_64/bin/f95    -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp/testFortranCompiler.f -o CMakeFiles/cmTC_da03a.dir/testFortranCompiler.f.o
 NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 Obsolescent: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp/testFortranCompiler.f, line 2: Fixed source form
 [NAG Fortran Compiler normal termination, 1 warning]
-Linking Fortran executable cmTC_7d179
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7d179.dir/link.txt --verbose=1
-/usr/local_64/bin/f95       CMakeFiles/cmTC_7d179.dir/testFortranCompiler.f.o  -o cmTC_7d179 -Wl,-rdynamic 
+Linking Fortran executable cmTC_da03a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_da03a.dir/link.txt --verbose=1
+/usr/local_64/bin/f95       CMakeFiles/cmTC_da03a.dir/testFortranCompiler.f.o  -o cmTC_da03a -Wl,-rdynamic 
 NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 gmake[1]: Leaving directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp'
 
@@ -75,17 +75,17 @@ gmake[1]: Leaving directory '/home0/ruth/software_engineering/dune/dune-PFASST/b
 Detecting Fortran compiler ABI info compiled with the following output:
 Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_ef45f/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_ef45f.dir/build.make CMakeFiles/cmTC_ef45f.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_8c83a/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_8c83a.dir/build.make CMakeFiles/cmTC_8c83a.dir/build
 gmake[1]: Entering directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o
-/usr/local_64/bin/f95    -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o
+Building Fortran object CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o
+/usr/local_64/bin/f95    -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o
 NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 Obsolescent: /usr/share/cmake/Modules/CMakeFortranCompilerABI.F, line 1: Fixed source form
 [NAG Fortran Compiler normal termination, 1 warning]
-Linking Fortran executable cmTC_ef45f
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ef45f.dir/link.txt --verbose=1
-/usr/local_64/bin/f95    -Wl,-v   CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o  -o cmTC_ef45f -Wl,-rdynamic  
+Linking Fortran executable cmTC_8c83a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8c83a.dir/link.txt --verbose=1
+/usr/local_64/bin/f95    -Wl,-v   CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o  -o cmTC_8c83a -Wl,-rdynamic  
 NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 Using built-in specs.
 COLLECT_GCC=/usr/bin/gcc
@@ -96,8 +96,8 @@ Thread model: posix
 gcc version 4.8.5 (SUSE Linux) 
 COMPILER_PATH=/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/:/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/
 LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/lib/:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-m64' '-o' 'cmTC_ef45f' '-v' '-rdynamic' '-mtune=generic' '-march=x86-64'
- /usr/lib64/gcc/x86_64-suse-linux/4.8/collect2 --build-id --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_ef45f /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-suse-linux/4.8/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/lib64/gcc/x86_64-suse-linux/4.8 -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/lib -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../.. /usr/local_64/NAGWare_f95/6.0/lib/f60init.o /usr/local_64/NAGWare_f95/6.0/lib/quickfit.o CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o -rpath /usr/local_64/NAGWare_f95/6.0/lib /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.so /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.a -lm -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib64/gcc/x86_64-suse-linux/4.8/crtend.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-m64' '-o' 'cmTC_8c83a' '-v' '-rdynamic' '-mtune=generic' '-march=x86-64'
+ /usr/lib64/gcc/x86_64-suse-linux/4.8/collect2 --build-id --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_8c83a /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-suse-linux/4.8/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/lib64/gcc/x86_64-suse-linux/4.8 -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/lib -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../.. /usr/local_64/NAGWare_f95/6.0/lib/f60init.o /usr/local_64/NAGWare_f95/6.0/lib/quickfit.o CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o -rpath /usr/local_64/NAGWare_f95/6.0/lib /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.so /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.a -lm -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib64/gcc/x86_64-suse-linux/4.8/crtend.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crtn.o
 gmake[1]: Leaving directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp'
 
 
@@ -105,17 +105,17 @@ Parsed Fortran implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_ef45f/fast"]
-  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_ef45f.dir/build.make CMakeFiles/cmTC_ef45f.dir/build]
+  ignore line: [Run Build Command:"/usr/bin/gmake" "cmTC_8c83a/fast"]
+  ignore line: [/usr/bin/gmake -f CMakeFiles/cmTC_8c83a.dir/build.make CMakeFiles/cmTC_8c83a.dir/build]
   ignore line: [gmake[1]: Entering directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp']
-  ignore line: [Building Fortran object CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o]
-  ignore line: [/usr/local_64/bin/f95    -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [Building Fortran object CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [/usr/local_64/bin/f95    -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o]
   ignore line: [NAG Fortran Compiler Release 6.0(Hibiya) Build 1017]
   ignore line: [Obsolescent: /usr/share/cmake/Modules/CMakeFortranCompilerABI.F, line 1: Fixed source form]
   ignore line: [[NAG Fortran Compiler normal termination, 1 warning]]
-  ignore line: [Linking Fortran executable cmTC_ef45f]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ef45f.dir/link.txt --verbose=1]
-  ignore line: [/usr/local_64/bin/f95    -Wl,-v   CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o  -o cmTC_ef45f -Wl,-rdynamic  ]
+  ignore line: [Linking Fortran executable cmTC_8c83a]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8c83a.dir/link.txt --verbose=1]
+  ignore line: [/usr/local_64/bin/f95    -Wl,-v   CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o  -o cmTC_8c83a -Wl,-rdynamic  ]
   ignore line: [NAG Fortran Compiler Release 6.0(Hibiya) Build 1017]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/gcc]
@@ -126,8 +126,8 @@ Parsed Fortran implicit link information from above output:
   ignore line: [gcc version 4.8.5 (SUSE Linux) ]
   ignore line: [COMPILER_PATH=/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/:/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/bin/]
   ignore line: [LIBRARY_PATH=/home/zam/ruth/lib64/../lib64/:/home/zam/ruth/lib/../lib64/:/usr/lib64/gcc/x86_64-suse-linux/4.8/:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/home/zam/ruth/lib64/:/home/zam/ruth/lib/:./:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/lib/:/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-m64' '-o' 'cmTC_ef45f' '-v' '-rdynamic' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib64/gcc/x86_64-suse-linux/4.8/collect2 --build-id --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_ef45f /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-suse-linux/4.8/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/lib64/gcc/x86_64-suse-linux/4.8 -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/lib -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../.. /usr/local_64/NAGWare_f95/6.0/lib/f60init.o /usr/local_64/NAGWare_f95/6.0/lib/quickfit.o CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o -rpath /usr/local_64/NAGWare_f95/6.0/lib /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.so /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.a -lm -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib64/gcc/x86_64-suse-linux/4.8/crtend.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-m64' '-o' 'cmTC_8c83a' '-v' '-rdynamic' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib64/gcc/x86_64-suse-linux/4.8/collect2 --build-id --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_8c83a /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crti.o /usr/lib64/gcc/x86_64-suse-linux/4.8/crtbegin.o -L/home/zam/ruth/lib64/../lib64 -L/home/zam/ruth/lib/../lib64 -L/usr/lib64/gcc/x86_64-suse-linux/4.8 -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/home/zam/ruth/lib64 -L/home/zam/ruth/lib -L. -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../x86_64-suse-linux/lib -L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../.. /usr/local_64/NAGWare_f95/6.0/lib/f60init.o /usr/local_64/NAGWare_f95/6.0/lib/quickfit.o CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o -rpath /usr/local_64/NAGWare_f95/6.0/lib /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.so /usr/local_64/NAGWare_f95/6.0/lib/libf60rts.a -lm -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib64/gcc/x86_64-suse-linux/4.8/crtend.o /usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crtn.o]
     arg [/usr/lib64/gcc/x86_64-suse-linux/4.8/collect2] ==> ignore
     arg [--build-id] ==> ignore
     arg [--eh-frame-hdr] ==> ignore
@@ -137,7 +137,7 @@ Parsed Fortran implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_ef45f] ==> ignore
+    arg [cmTC_8c83a] ==> ignore
     arg [/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crt1.o] ==> ignore
     arg [/usr/lib64/gcc/x86_64-suse-linux/4.8/../../../../lib64/crti.o] ==> ignore
     arg [/usr/lib64/gcc/x86_64-suse-linux/4.8/crtbegin.o] ==> ignore
@@ -154,7 +154,7 @@ Parsed Fortran implicit link information from above output:
     arg [-L/usr/lib64/gcc/x86_64-suse-linux/4.8/../../..] ==> dir [/usr/lib64/gcc/x86_64-suse-linux/4.8/../../..]
     arg [/usr/local_64/NAGWare_f95/6.0/lib/f60init.o] ==> obj [/usr/local_64/NAGWare_f95/6.0/lib/f60init.o]
     arg [/usr/local_64/NAGWare_f95/6.0/lib/quickfit.o] ==> obj [/usr/local_64/NAGWare_f95/6.0/lib/quickfit.o]
-    arg [CMakeFiles/cmTC_ef45f.dir/CMakeFortranCompilerABI.F.o] ==> ignore
+    arg [CMakeFiles/cmTC_8c83a.dir/CMakeFortranCompilerABI.F.o] ==> ignore
     arg [-rpath] ==> ignore
     arg [/usr/local_64/NAGWare_f95/6.0/lib] ==> ignore
     arg [/usr/local_64/NAGWare_f95/6.0/lib/libf60rts.so] ==> ignore
@@ -193,16 +193,16 @@ Parsed Fortran implicit link information from above output:
 Determining if the Fortran compiler supports Fortran 90 passed with the following output:
 Change Dir: /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/gmake" "cmTC_22c01/fast"
-/usr/bin/gmake -f CMakeFiles/cmTC_22c01.dir/build.make CMakeFiles/cmTC_22c01.dir/build
+Run Build Command:"/usr/bin/gmake" "cmTC_25e97/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_25e97.dir/build.make CMakeFiles/cmTC_25e97.dir/build
 gmake[1]: Entering directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp'
-Building Fortran object CMakeFiles/cmTC_22c01.dir/testFortranCompilerF90.f90.o
-/usr/local_64/bin/f95    -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTC_22c01.dir/testFortranCompilerF90.f90.o
+Building Fortran object CMakeFiles/cmTC_25e97.dir/testFortranCompilerF90.f90.o
+/usr/local_64/bin/f95    -c /home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTC_25e97.dir/testFortranCompilerF90.f90.o
 NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 [NAG Fortran Compiler normal termination]
-Linking Fortran executable cmTC_22c01
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_22c01.dir/link.txt --verbose=1
-/usr/local_64/bin/f95       CMakeFiles/cmTC_22c01.dir/testFortranCompilerF90.f90.o  -o cmTC_22c01 -Wl,-rdynamic 
+Linking Fortran executable cmTC_25e97
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_25e97.dir/link.txt --verbose=1
+/usr/local_64/bin/f95       CMakeFiles/cmTC_25e97.dir/testFortranCompilerF90.f90.o  -o cmTC_25e97 -Wl,-rdynamic 
 NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
 gmake[1]: Leaving directory '/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/CMakeTmp'
 

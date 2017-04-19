@@ -160,7 +160,7 @@ int main(int argc, char** argv)
 
   //pfasst::init(argc, argv, sweeper_t::init_opts);
 
-  const size_t nelements = get_value<size_t>("num_elements", 20);
+  const size_t nelements = get_value<size_t>("num_elements", 180);
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
   const QuadratureType quad_type = QuadratureType::GaussRadau;

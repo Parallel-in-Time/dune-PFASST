@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "mlsdc!"
+dx=128
+dt=1
+zwei=2
+
+for i in {1..6}
+  do
+  for j in {1..6}
+  do
+    ./FE_sdcFP num_elements=$dx abs_res_tol=1e-6 num_iters=20 dt=$dt tend=2
+    dt=$(echo "$dt / $zwei" |bc -l)
+  done
+  dt=1
+  dx=$(echo "$dx * $zwei" |bc -l)
+done

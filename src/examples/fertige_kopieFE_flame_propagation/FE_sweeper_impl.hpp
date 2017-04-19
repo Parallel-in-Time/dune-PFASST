@@ -463,29 +463,6 @@ namespace pfasst
 	
 	
 	
-	
-	
-	
-	
-	 /*auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
-	 auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
- 
-	//adding Dirichlet conditions - must add delta t * Dirichlet_function
-	
-	
-	std::vector<double> dirichletLeftNodes;
-	
-	
-	interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  //tu valjda interpoliramo kao na nrpdju
-	
-	for(int i=0; i<rhs->data().size(); ++i){
-	
-	  if(dirichletLeftNodes[i])
-	  M_rhs_dune[i] = 1;
-	  
-	}*/
-	
-	
         Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->A_dune);
         M_dtA_dune *= (dt * this->_nu);
         M_dtA_dune += this->M_dune;
