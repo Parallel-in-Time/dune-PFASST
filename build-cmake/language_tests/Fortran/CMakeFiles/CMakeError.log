@@ -1,9 +1,0 @@
-The Fortran compiler identification could not be found in "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/3.3.2/CompilerIdFortran/a.out"
-
-The Fortran compiler identification could not be found in "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/3.3.2/CompilerIdFortran/CMakeFortranCompilerId.o"
-
-The Fortran compiler identification could not be found in "/home0/ruth/software_engineering/dune/dune-PFASST/build-cmake/language_tests/Fortran/CMakeFiles/3.3.2/CompilerIdFortran/a.out"
-
-Checking whether the Fortran compiler is Compaq using "-what" did not match "Compaq Visual Fortran":
-NAG Fortran Compiler Release 6.0(Hibiya) Build 1017
-Option error: Unrecognised option -what

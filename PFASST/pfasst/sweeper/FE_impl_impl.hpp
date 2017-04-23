@@ -123,8 +123,12 @@ namespace pfasst
 
       // compute right hand side for implicit solve (i.e. the explicit part of the propagation)
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
-      //std::cout << "vor mv" << std::endl;
+
       M_dune.mv(this->get_states()[m]->get_data(), rhs->data());
+      /*      std::cout << "vor mv" << std::endl;
+      for (int i=0; i< rhs->data().size(); i++){
+          std::cout <<  this->get_states()[m]->get_data()[i] << std::endl;
+      }*/
       //std::cout << "nach mv" << std::endl;
       //rhs->data() = this->get_states()[m]->get_data();
 //       ML_CVLOG(2, this->get_logger_id(), "  rhs = u["<<m<<"]                    = " << to_string(rhs));
@@ -247,8 +251,8 @@ namespace pfasst
   IMEX<SweeperTrait, Enabled>::sweep()
   {
     
-	/*std::cout <<  "sweep" << std::endl;
-        for (int i=0; i< this->get_end_state()->data().size(); i++){
+	std::cout <<  "hier im FE sweep " << M_dune[0][0]<< " " <<M_dune[0][1] <<  " " <<M_dune[1][0]<< " "<<  M_dune[1][1] << std::endl;
+        /*for (int i=0; i< this->get_end_state()->data().size(); i++){
           std::cout <<  this->get_end_state()->data()[i] << std::endl;
         }*/
 	
@@ -488,7 +492,7 @@ namespace pfasst
 	  //std::cout <<  "A  " << this->A_dune[i][i] << std::endl;
 	  std::cout <<  "M  " << (M_dune)[i][i] << std::endl;
         }
-	std::cout << "**********************************" << std::endl;*/	
+	std::cout << "**********************************" << std::endl;	*/
 	
 	M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
 
@@ -496,16 +500,9 @@ namespace pfasst
 	
 	shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();
 	
-	/*std::cout <<  "u " << std::endl;
-        for (int i=0; i< this->get_end_state()->data().size(); i++){
-          std::cout <<  this->get_states()[m]->get_data()[i] << std::endl;
-        }*/
-	M_dune.mv(this->get_states()[m]->get_data(), uM->data());
-	
-	/*std::cout <<  "uM hier" << std::endl;
 
-        
-        std::exit(0);*/
+	M_dune.mv(this->get_states()[m]->get_data(), uM->data());
+
 	
 	this->residuals()[m]->scaled_add(-1.0,uM);
         //this->residuals()[m]->scaled_add(-1.0, this->get_states()[m]);

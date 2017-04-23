@@ -300,7 +300,7 @@ namespace pfasst
 
 
 
-        auto DirichletValues = [] (auto x) {return (x[0]<1e-8 or x[0]>0.9999) ? 0 : x[0];};
+        auto DirichletValues = [] (auto x) {return (x[0]<1e-9 or x[0]>1-1e-9) ? 0 : x[0];};
 
 
         Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dune);

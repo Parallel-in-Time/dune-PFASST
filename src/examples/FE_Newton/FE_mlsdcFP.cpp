@@ -19,7 +19,7 @@ using std::shared_ptr;
 
 #include "FE_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
+#include "spectral_transfer.hpp"
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
@@ -53,8 +53,10 @@ namespace pfasst
       using pfasst::TwoLevelMLSDC;
       using pfasst::quadrature::QuadratureType;
 
-      using sweeper_t = Heat_FE<pfasst::sweeper_traits<encap_traits_t>>;
-      using transfer_traits_t = pfasst::transfer_traits<sweeper_t, sweeper_t, 1>;
+      using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, 1, DIMENSION>>;
+      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+      //using sweeper_t = Heat_FE<pfasst::sweeper_traits<encap_traits_t>>;
+      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
 
@@ -70,9 +72,9 @@ namespace pfasst
 
         using pfasst::quadrature::quadrature_factory;
 
-        auto coarse = std::make_shared<sweeper_t>(FinEl, 1);
+        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<sweeper_t>(FinEl, 0);
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2(), 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
         auto transfer = std::make_shared<transfer_t>();
@@ -81,6 +83,13 @@ namespace pfasst
         //mlsdc->add_sweeper(coarse, true);
         //mlsdc->add_sweeper(fine, false);
 
+    
+               fine->set_abs_residual_tol(1e-6);
+           coarse->set_abs_residual_tol(1e-6);
+    
+    
+           
+        
         mlsdc->add_sweeper(coarse, true);
 	mlsdc->add_sweeper(fine);
 
@@ -103,6 +112,11 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 
+        std::cout << "Anfangswerte feiner Sweeper: " << fine->get_states().back()->norm0() << std::endl;
+        std::cout << "Anfangswerte feiner Sweeper: " << fine->initial_state()->norm0() << std::endl;
+        std::cout << "Anfangswerte grober Sweeper: " << coarse->get_states().back()->norm0() << std::endl;
+
+        
         /*for (int i=0; i< fine->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte feiner Sweeper: " << " " << fine->initial_state()->data()[i] << std::endl;
         }
@@ -135,6 +149,13 @@ namespace pfasst
         for (int i=0; i< coarse->get_end_state()->data().size(); i++){
           std::cout << coarse->exact(0)->data()[i] << " " << coarse->get_end_state()->data()[i] << "   " << coarse->exact(t_end)->data()[i] << std::endl;
         }*/
+        
+                std::cout <<  "fein" << std::endl;
+        auto naeherung = fine->get_end_state()->data();
+        auto exact     = fine->exact(t_end)->data();
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }
 
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
@@ -178,7 +199,7 @@ namespace pfasst
         f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << endl;
         f.close();
 
-        /*ofstream ff;
+        ofstream ff;
         stringstream sss;
         sss << nelements << "_iter";
         string st = "solution_mlsdc/" + sss.str() + ".dat";
@@ -188,7 +209,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();*/
+        ff.close();
         //std::cout << "test"<<  std::endl ;
 
       }
@@ -206,11 +227,12 @@ int main(int argc, char** argv)
 
   using pfasst::config::get_value;
   using pfasst::quadrature::QuadratureType;
-  using sweeper_t = pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<encap_traits_t>>;
+  //using sweeper_t      = pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<encap_traits_t,1,1>>;
+  using sweeper_t_fine = pfasst::examples::heat_FE::Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
 
-  pfasst::init(argc, argv, sweeper_t::init_opts);
+  pfasst::init(argc, argv, sweeper_t_fine::init_opts);
 
-  const size_t nelements = get_value<size_t>("num_elements", 8192); //Anzahl der Elemente pro Dimension
+  const size_t nelements = get_value<size_t>("num_elements", 180); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
@@ -218,7 +240,7 @@ int main(int argc, char** argv)
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0.0;
   const double dt = get_value<double>("dt", 0.05);
-  double t_end = get_value<double>("tend", 0.5);
+  double t_end = get_value<double>("tend", 0.1);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
@@ -233,7 +255,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 1000);
+  const size_t niter = get_value<size_t>("num_iters", 10);
 
   pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
 }

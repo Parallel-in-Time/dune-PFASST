@@ -32,7 +32,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-const size_t DIM = 1;            //Räumliche Dimension des Rechengebiets ruth_dim
+const size_t DIM = 1;            //R??umliche Dimension des Rechengebiets ruth_dim
 
 const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
@@ -82,7 +82,7 @@ namespace pfasst
         //mlsdc->add_sweeper(fine, false);
 
         mlsdc->add_sweeper(coarse, true);
-	mlsdc->add_sweeper(fine, false);
+    mlsdc->add_sweeper(fine);
 
         mlsdc->add_transfer(transfer);
 
@@ -233,7 +233,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 1000);
+  const size_t niter = get_value<size_t>("num_iters", 10);
 
   pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
 }

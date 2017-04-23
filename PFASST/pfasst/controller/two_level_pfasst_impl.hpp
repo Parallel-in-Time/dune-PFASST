@@ -153,7 +153,7 @@ namespace pfasst
 
     if (TwoLevelMLSDC<TransferT, CommT>::advance_time(num_steps)) {
       ML_CLOG(INFO, this->get_logger_id(), "");
-      this->broadcast();
+      //this->broadcast();
 
       this->_time_block++;
       return true;

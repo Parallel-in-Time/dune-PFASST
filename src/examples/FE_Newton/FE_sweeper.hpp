@@ -11,9 +11,11 @@ using std::vector;
 
 //#include <pfasst/sweeper/FE_imex.hpp>
 #include <pfasst/sweeper/FE_impl.hpp>
-#include <pfasst/contrib/fft.hpp>
-#include "../../finite_element_stuff/fe_manager_fp.hpp"
+//#include <pfasst/sweeper/imex.hpp>
 
+#include <pfasst/contrib/fft.hpp>
+//#include "../../finite_element_stuff/fe_manager_fp.hpp"
+#include "fe_manager_hi.hpp"
 
 
 //using namespace Dune;
@@ -69,7 +71,8 @@ namespace pfasst
           typename traits::time_t                        _t0{0.0};
           double                                     	 _nu{1.0};
           double                                     	 _n{1.0};
-	  double                                      	 _delta{1.0};
+          double                                      	 _delta{1.0};
+          double                                        _abs_newton_tol=1e-10;
 	  
 	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
           vector<vector<spatial_t>>                      _lap;
@@ -86,18 +89,19 @@ namespace pfasst
 	  //________________________________________________________
 	  
 
-	  typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType;
+	  //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType;
           //typedef Dune::YaspGrid<1> GridType; 
 	  //typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
-          //std::shared_ptr<GridType> grid;
+          std::shared_ptr<GridType> grid;
 
 
 
           //typedef GridType::LeafGridView GridView;
 	  typedef GridType::LevelGridView GridView;
 
-          using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
-          std::shared_ptr<BasisFunction> basis;
+          //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
+          std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis; 
+          //std::shared_ptr<BasisFunction> basis;
 
         protected:
           /*virtual shared_ptr<typename SweeperTrait::encap_t>
@@ -136,7 +140,7 @@ namespace pfasst
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);
-	  explicit Heat_FE(std::shared_ptr<fe_manager>, size_t);
+	  explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis, size_t);
 	  
           Heat_FE(const Heat_FE<SweeperTrait, Enabled>& other) = default;
           Heat_FE(Heat_FE<SweeperTrait, Enabled>&& other) = default;

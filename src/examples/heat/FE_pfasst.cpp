@@ -1,4 +1,3 @@
-//#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
 
 #include <memory>
 #include <stdexcept>
@@ -14,11 +13,9 @@ using std::shared_ptr;
 #include <pfasst/comm/mpi_p2p.hpp>
 #include <pfasst/controller/two_level_pfasst.hpp>
 
-
 #include "FE_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
-
+#include "spectral_transfer_ohneFE.hpp"
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 using pfasst::encap::DuneEncapsulation;
@@ -60,7 +57,7 @@ namespace pfasst
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
 
 	
-	auto FinEl = make_shared<fe_manager>(nelements, 2);
+        auto FinEl = make_shared<fe_manager>(nelements, 2);
 
         auto coarse = std::make_shared<SweeperType>(FinEl, 1);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
@@ -70,7 +67,7 @@ namespace pfasst
         auto transfer = std::make_shared<TransferType>();
 
 
-	transfer->create(FinEl);
+        transfer->create(FinEl);
 
 
 
@@ -80,8 +77,8 @@ namespace pfasst
         pfasst.add_transfer(transfer);
 	
 	
-	pfasst.add_sweeper(coarse, true);
-	pfasst.add_sweeper(fine, false);
+        pfasst.add_sweeper(coarse, true);
+        pfasst.add_sweeper(fine);
         
 
         pfasst.set_options();
@@ -106,22 +103,35 @@ namespace pfasst
 
 
         if(my_rank==num_pro-1) {
-        auto anfang    = fine->exact(0)->data();
-        auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
+        
+            
+        fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
+	
+	
+        std::cout << "Error " << fine->states()[fine->get_states().size()-1]->get_data().infinity_norm() <<  std::endl ;
+
+        ofstream f;
+        stringstream ss;
+        ss << nelements;
+        string s = "solution_pfasst/" + ss.str() + ".dat";
+        f.open(s, ios::app | std::ios::out );
+        f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->get_data().infinity_norm()<< endl;
+
+
+        f.close();
+
+        ofstream ff;
+        stringstream sss;
+        sss << nelements << "_iter";
+        string st = "solution_pfasst/" + sss.str() + ".dat";
+        ff.open(st, ios::app | std::ios::out );
+        auto iter = pfasst._it_per_step;
+        for (const auto &line : iter) {
+          ff << dt <<"  " << line << std::endl;
         }
 
-        std::cout << "******************************************* " << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " " << std::endl;
-
-        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
-        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-
-
-        std::cout << "******************************************* " << std::endl;
+        ff.close();
+            
         }
 
       }

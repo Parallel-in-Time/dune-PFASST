@@ -7,11 +7,12 @@
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
 #include <pfasst/controller/sdc.hpp>
-#include <pfasst/contrib/spectral_transfer.hpp>
+
 #include <pfasst/config.hpp>
 
-#include "../../datatypes/dune_vec.hpp"
 #include "FE_sweeper.hpp"
+#include "../../datatypes/dune_vec.hpp"
+#include "spectral_transfer_ohneFE.hpp"
 
 using std::shared_ptr;
 
@@ -40,13 +41,13 @@ namespace pfasst
         using pfasst::quadrature::quadrature_factory;
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
-	auto FinEl   = make_shared<fe_manager>(nelements,1); 
-	auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
+        auto FinEl   = make_shared<fe_manager>(nelements,1); 
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
-	sweeper->set_abs_residual_tol(1e-8);
+        sweeper->set_abs_residual_tol(1e-8);
 	
         sdc->add_sweeper(sweeper);
 
@@ -86,7 +87,27 @@ namespace pfasst
 	
         std::cout << "Error " << sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm() <<  std::endl ;
 
+        ofstream f;
+        stringstream ss;
+        ss << nelements;
+        string s = "solution_sdc/" + ss.str() + ".dat";
+        f.open(s, ios::app | std::ios::out );
+        f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm()<< endl;
 
+
+        f.close();
+
+        ofstream ff;
+        stringstream sss;
+        sss << nelements << "_iter";
+        string st = "solution_sdc/" + sss.str() + ".dat";
+        ff.open(st, ios::app | std::ios::out );
+        auto iter = sdc->_it_per_step;
+        for (const auto &line : iter) {
+          ff << dt <<"  " << line << std::endl;
+        }
+
+        ff.close();
 
         return sdc;
       }

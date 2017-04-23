@@ -445,16 +445,18 @@ namespace pfasst
   bool
   Sweeper<SweeperTrait, Enabled>::converged(const bool pre_check)
   {
-    this->compute_residuals(pre_check);
 
+    this->compute_residuals(pre_check);
     const size_t num_residuals = this->get_residuals().size();
     this->_abs_res_norms.resize(num_residuals);
     this->_rel_res_norms.resize(num_residuals);
 
-    assert(this->get_residuals().back() != nullptr);
-    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();
-    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0();
 
+    assert(this->get_residuals().back() != nullptr);
+
+    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();
+    std::cout <<"hier abs res " << this->get_states().back()->norm0() << std::endl;
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0();
     if (pre_check) {
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");

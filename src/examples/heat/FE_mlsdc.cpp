@@ -14,8 +14,7 @@ using std::shared_ptr;
 #include "FE_sweeper.hpp"
 
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
-
+#include "spectral_transfer_ohneFE.hpp"
 
 
 
@@ -49,8 +48,8 @@ namespace pfasst
 	
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
-	auto FinEl = make_shared<fe_manager>(nelements, 2); 
-        //mlsdc->grid_builder(nelements);
+        auto FinEl = make_shared<fe_manager>(nelements, 2); 
+
 
 
         using pfasst::quadrature::quadrature_factory;
@@ -60,17 +59,14 @@ namespace pfasst
         auto fine = std::make_shared<sweeper_t>(FinEl, 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
-	std::cout << "vor make transfer" << std::endl;
 
         auto transfer = std::make_shared<transfer_t>();
-	transfer->create(FinEl);
-
-	std::cout << "nch make transfer" << std::endl;
+        transfer->create(FinEl);
 
 
 	
         mlsdc->add_sweeper(coarse, true);
-	mlsdc->add_sweeper(fine, false);
+        mlsdc->add_sweeper(fine);
 
         mlsdc->add_transfer(transfer);
 
@@ -109,25 +105,33 @@ namespace pfasst
         mlsdc->post_run();
 
 
-        std::cout <<  "fein" << std::endl;
-        auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+
+        fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
+	
+	
+        std::cout << "Error " << fine->states()[fine->get_states().size()-1]->get_data().infinity_norm() <<  std::endl ;
+
+        ofstream f;
+        stringstream ss;
+        ss << nelements;
+        string s = "solution_mlsdc/" + ss.str() + ".dat";
+        f.open(s, ios::app | std::ios::out );
+        f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->get_data().infinity_norm()<< endl;
+
+
+        f.close();
+
+        ofstream ff;
+        stringstream sss;
+        sss << nelements << "_iter";
+        string st = "solution_mlsdc/" + sss.str() + ".dat";
+        ff.open(st, ios::app | std::ios::out );
+        auto iter = mlsdc->_it_per_step;
+        for (const auto &line : iter) {
+          ff << dt <<"  " << line << std::endl;
         }
 
-
-        std::cout << "******************************************* " <<  std::endl ;
-        std::cout << " " <<  std::endl ;
-        std::cout << " " <<  std::endl ;
-        std::cout << "Fehler: " <<  std::endl ;
-        fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
-        std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
-        std::cout << "******************************************* " <<  std::endl ;
-
-
-
-
+        ff.close();
 
       }
 

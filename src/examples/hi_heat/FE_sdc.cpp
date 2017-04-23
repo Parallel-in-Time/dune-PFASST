@@ -41,7 +41,7 @@ namespace pfasst
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
         auto FinEl   = make_shared<fe_manager>(nelements,1); 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis1(), 0);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2(), 0);
 
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
@@ -65,6 +65,18 @@ namespace pfasst
 
         sdc->post_run();
 
+sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
+	
+      ofstream f;
+	  stringstream ss;
+	  ss << nelements;
+	  string s = "solution_sdc/" + ss.str() + ".dat";
+	  f.open(s, ios::app | std::ios::out );
+      f << nelements << " " << dt << " "<< sweeper->get_end_state()->norm0()<< endl;
+	  //f << nelements << " " << dt << " "<< x.infinity_norm()<< endl;
+
+	  f.close();
 
         /*if(BASIS_ORDER==1) {
           auto grid = (*sweeper).get_grid();

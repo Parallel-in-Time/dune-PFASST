@@ -57,10 +57,11 @@ namespace pfasst
 	
 	auto FinEl   = make_shared<fe_manager>(nelements,1); 
 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis1(), 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
+        sweeper->set_abs_residual_tol(1e-6);
         sdc->add_sweeper(sweeper);
 
         sdc->set_options();
@@ -125,19 +126,19 @@ namespace pfasst
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
 	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
 	
-	  /*ofstream f;
+      ofstream f;
 	  stringstream ss;
 	  ss << nelements;
 	  string s = "solution_sdc/" + ss.str() + ".dat";
 	  f.open(s, ios::app | std::ios::out );
-	  f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->norm0()<< endl;
+      f << nelements << " " << dt << " "<< sweeper->get_end_state()->norm0()<< endl;
 	  //f << nelements << " " << dt << " "<< x.infinity_norm()<< endl;
 
 	  f.close();
 
         ofstream ff;
         stringstream sss;
-        sss << nelements << "_iter";
+        sss << nelements <<  "_iter";
         string st = "solution_sdc/" + sss.str() + ".dat";
         ff.open(st, ios::app | std::ios::out );
         auto iter = sdc->_it_per_step;
@@ -145,7 +146,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();*/
+        ff.close();
 	
 	
         return sdc;
@@ -166,12 +167,12 @@ namespace pfasst
 
     pfasst::init(argc, argv, sweeper_t::init_opts);
 
-    const size_t nelements = get_value<size_t>("num_elements", 8192); //Anzahl der Elemente pro Dimension
+    const size_t nelements = get_value<size_t>("num_elements", 180); //Anzahl der Elemente pro Dimension
     const size_t nnodes = get_value<size_t>("num_nodes", 3);
     const QuadratureType quad_type = QuadratureType::GaussRadau;
     const double t_0 = 0.0;
     const double dt = get_value<double>("dt", 0.05);
-    double t_end = get_value<double>("tend", 0.5);
+    double t_end = get_value<double>("tend", 0.1);
     size_t nsteps = get_value<size_t>("num_steps", 0);
     if (t_end == -1 && nsteps == 0) {
       ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
@@ -189,7 +190,7 @@ namespace pfasst
     
     std::cout << "nsteps = " << nsteps << std::endl;
     
-    const size_t niter = get_value<size_t>("num_iters", 20);
+    const size_t niter = get_value<size_t>("num_iters", 10);
 
     pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter);
 

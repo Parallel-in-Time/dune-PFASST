@@ -13,7 +13,7 @@ using std::vector;
 #include <pfasst/sweeper/imex.hpp>
 #include <pfasst/contrib/fft.hpp>
 
-#include "../../finite_element_stuff/fe_manager.hpp"
+#include "fe_manager.hpp"
 
 #ifndef PI
 #define PI 3.1415926535897932385

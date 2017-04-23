@@ -1,7 +1,7 @@
 #ifndef _PFASST__TRANSFER__SPECTRAL_TRANSFER_HPP_
 #define _PFASST__TRANSFER__SPECTRAL_TRANSFER_HPP_
 
-#include "pfasst/transfer/polynomial.hpp"
+#include "pfasst/transfer/polynomial_ohneFE.hpp"
 
 #include <memory>
 #include <vector>

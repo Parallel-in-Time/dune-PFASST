@@ -49,7 +49,7 @@ namespace pfasst
 
 
         template<class SweeperTrait, typename Enabled>
-      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<fe_manager> FinEl, size_t nlevel)
+      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel)
         :   IMEX<SweeperTrait, Enabled>()
 
       {
@@ -75,9 +75,10 @@ namespace pfasst
         std::cout << "***** Basis erstellt mit " <<  basis->size() << " Elementen " << std::endl;
 
         this->encap_factory()->set_size(basis->size());*/
-	this->FinEl = FinEl;
-	basis = FinEl->get_basis(nlevel);
+	//this->FinEl = FinEl;
+	//basis = FinEl->get_basis(nlevel);
 	    
+	    this->basis = basis;
 	assembleProblem(basis, this->A_dune, this->M_dune);
 
         const auto bs = basis->size();
@@ -151,9 +152,9 @@ namespace pfasst
 
         interpolate(*basis, result->data(), exact_solution);
 
-	for (int i=0; i< result->data().size(); i++){
-	//std::cout << "result = " << result->data()[i] << std::endl;
-	}
+	/*for (int i=0; i< result->data().size(); i++){
+	 std::cout << "result = " << result->data()[i] << std::endl;
+	}*/
         return result;
       }
       
@@ -295,7 +296,7 @@ namespace pfasst
         return this->get_encap_factory().size();
       }
 
-      typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
+      //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
      
      
       
@@ -410,7 +411,7 @@ namespace pfasst
 
 	  std::cout << "f " << result->data()[i] << std::endl;
 
-//         }*/
+         }*/
         
         return result;
       }
@@ -436,9 +437,11 @@ namespace pfasst
 
 	
 
-
-	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs ;
-        newton_rhs.resize(rhs->get_data().size());
+    auto residuum = this->get_encap_factory().create();
+	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
+    newton_rhs.resize(rhs->get_data().size());
+    newton_rhs2.resize(rhs->get_data().size());
+    
 	
 	for (int i=0; i< 20 ;i++){
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
@@ -446,6 +449,7 @@ namespace pfasst
 	  evaluate_df(df, u, dt);
 	  df.mv(u->data(), newton_rhs);
 	  newton_rhs -= f->data();
+      newton_rhs2 = newton_rhs;
 
 	  auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
 	  auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
@@ -490,7 +494,10 @@ namespace pfasst
                               0);    // verbosity of the solver
 	  Dune::InverseOperatorResult statistics ;
 	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
-	  
+	  df.mv(u->data(), residuum->data());
+      residuum->data() -= newton_rhs2;
+      std::cout << "residuums norm " << residuum->norm0() << std::endl;
+      if (residuum->norm0()< _abs_newton_tol){break;}
 	  
         for (size_t i = 0; i < u->get_data().size(); i++) {
 
@@ -501,7 +508,7 @@ namespace pfasst
 
 	
 	
-	
+	//std::exit(0);
 	
         /*for (size_t i = 0; i < u->get_data().size(); i++) {
 

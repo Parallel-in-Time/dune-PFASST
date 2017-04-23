@@ -1,0 +1,109 @@
+\documentclass{scrreprt}%[12pt,titlepage,a4paper]%{scrartcl} 
+\usepackage[fleqn]{amsmath}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{subfigure} 
+\usepackage{url}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern} 
+\usepackage{amsthm}
+\usepackage[onehalfspacing]{setspace}
+\usepackage{pgfplots}
+%\usepackage{shadethm}
+%\newshadetheorem{thms}{Definition}[chapter]
+
+%jochen
+%\usepackage{graphics}
+%\usepackage[colorlinks=true]{hyperref}
+%\usepackage{hyperref}
+
+%\usepackage{placeins}
+%\usepackage[left=1.5cm,right=1.5cm,top=3.5cm,bottom=3cm]{geometry}
+%\usetikzlibrary{shapes,arrows,calc,external,matrix,positioning}
+%jochen
+
+\pgfplotsset{
+   01_temp/.style={
+      legend columns=2,
+      legend style={
+		 at={(0.02,0.98)},anchor=north west,font=\footnotesize,rounded corners=2pt,         
+         %font=\scriptsize,
+         %legend pos=north east,
+         %draw=none,
+         %/tikz/column 2/.style={
+         %   column sep=5pt,
+         %}%,
+         %legend style={ }
+      },
+      xlabel={Zeit $t$ [h]},
+      x tick style={
+        color=black,
+        thin
+      },      
+      ylabel={Knotentemperatur $T$ [$^\circ$C]},
+      y tick style={
+        color=black,
+        thin
+      },
+      height=9cm,
+      width=15cm,
+      grid=major,
+      grid style={
+         solid,
+         ultra thin,
+         gray
+      },
+      /pgf/number format/.cd,
+      use comma,
+      set thousands separator={},
+   }
+}
+
+
+
+	
+\begin{document}
+
+
+
+FE sdc
+
+\begin{figure}[H]
+%\begin{minipage}{0.2\linewidth}
+  \begin{center}
+  	  \begin{tikzpicture}[scale=1]
+		  \begin{loglogaxis}[01_temp, ymax=1e-01,ymin=1e-09,xlabel={$\Delta t$},ylabel={Fehler $e_{\Delta t}$},grid=major]	
+
+			%\addplot table[x index = 1, y index = 2] {128.dat};
+			\addplot table[x index = 1, y index = 2] {256.dat};
+			\addplot table[x index = 1, y index = 2] {512.dat};
+			\addplot table[x index = 1, y index = 2] {1024.dat};
+%			\addplot table[x index = 1, y index = 2] {2048.dat};
+%			\addplot table[x index = 1, y index = 2] {4096.dat};
+			%\addplot[draw=black, ultra thick, dashed] table[x index = 0, y index = 1] {5.dat};			    	  
+            %\addplot[draw = black,  ultra thick, mark = -] table[x index = 0, y index = 1] {2.dat};	 
+		   \legend{256, 512, 1024, 2048, 4096}
+		  \end{loglogaxis}
+	  \end{tikzpicture}
+  \end{center}
+%\end{minipage}
+%\caption{Konvergenzordnung des hyperbolischen Splittings für $\varepsilon=1$}
+%\label{konv}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+\end{document}

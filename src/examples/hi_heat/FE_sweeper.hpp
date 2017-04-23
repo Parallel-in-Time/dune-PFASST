@@ -115,6 +115,10 @@ namespace pfasst
         public:
 
 
+                shared_ptr<MatrixType> get_M_dune(){return make_shared<MatrixType>(M_dune);};
+      shared_ptr<MatrixType> get_A_dune() {return make_shared<MatrixType>(A_dune);};  
+            
+            
           //explicit Heat_FE(std::shared_ptr<DuneFunctionsBasis<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>>> basis, size_t);
           explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis, size_t);
 
