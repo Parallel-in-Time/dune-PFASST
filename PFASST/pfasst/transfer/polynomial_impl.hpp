@@ -121,8 +121,14 @@ namespace pfasst
                                                                 shared_ptr<typename TransferTraits::coarse_sweeper_t> coarse)
   {
     ML_CVLOG(1, "TRANS", "restrict initial value only");
-
+    // M * fine->get_initial_state()
+    shared_ptr<typename TransferTraits::fine_encap_t> M_initial_state= fine->get_encap_factory().create();
+    fine->get_M_dune()->mv( fine->get_initial_state()->get_data(), M_initial_state->data());
+    this->restrict_u(M_initial_state , coarse->_M_initial);    
+    
     this->restrict_data(fine->get_initial_state(), coarse->initial_state());
+
+
   }
 
   template<class TransferTraits, typename Enabled>
@@ -210,19 +216,42 @@ namespace pfasst
     std::generate(fas.begin(), fas.end(), [&coarse_factory]() { return coarse_factory.create(); });
 
 
+    std::cout << "coasre integrate " << num_coarse_nodes<< std::endl;
+    
     const auto coarse_integral = coarse->integrate(dt);  
+
+    /*for (size_t m = 1; m < num_coarse_nodes; ++m) {
+      shared_ptr<typename TransferTraits::coarse_encap_t> coarse_u= coarse->get_encap_factory().create();	
+      this->restrict_data(fine->get_states()[m], coarse_u);  
+      //coarse->_impl_rhs_restrict[m] =  coarse->evaluate_rhs_impl(0, coarse_u);
+      
+      //for(int i=0; i<coarse->_impl_rhs_restrict[m]->data().size(); i++){
+        //std::cout << " r rt " << coarse->_impl_rhs_restrict[m]->data()[i] << " " << coarse->_impl_rhs[m]->data()[i] << std::endl;
+      //}  
+    }*/
     
-    for (size_t m = 1; m < num_coarse_nodes; ++m) {
-      coarse->get_M_dune()->mv(coarse->get_states()[m]->get_data(),  coarse_integral[m]->data());
-      coarse_integral[m]->scaled_add(-1,  coarse->integrate(dt)[m]);
+    for (size_t m = 0; m < num_coarse_nodes + 1; ++m) {
+      
+      shared_ptr<typename TransferTraits::coarse_encap_t> coarse_u= coarse->get_encap_factory().create();	
+      this->restrict_data(fine->get_states()[m], coarse_u);  
+      
+      coarse->get_M_dune()->mv(coarse_u->get_data(),  coarse_integral[m]->data());
+      coarse_integral[m]->data() *= -1;
+      
+      coarse_integral[m]->scaled_add(1,  coarse->integrate(dt)[m]);
     }
-    
+ 
+     std::cout << "fine integrate " << num_fine_nodes << std::endl;
+ 
     const auto fine_integral = fine->integrate(dt);
     
-    for (size_t m = 1; m < num_coarse_nodes; ++m) {
+    for (size_t m = 0; m < num_fine_nodes + 1; ++m) {
       fine->get_M_dune()->mv(fine->get_states()[m]->get_data(),  fine_integral[m]->data());
-      fine_integral[m]->scaled_add(-1,  fine->integrate(dt)[m]);
-    } //einklammern falsch
+      fine_integral[m]->data() *= -1;
+      
+      
+      fine_integral[m]->scaled_add(1,  fine->integrate(dt)[m]);
+    } 
     
 
 
@@ -230,6 +259,11 @@ namespace pfasst
       this->restrict_u(fine_integral[m], fas[m]);
       fas[m]->scaled_add(-1.0, coarse_integral[m]);
       coarse->tau()[m]->data() = fas[m]->get_data();
+      /*for(int i=0; i<coarse->tau()[m]->data().size(); i++){
+      std::cout << coarse->tau()[m]->data() << std::endl;
+      }*/
+      std::cout << "norm tau" << coarse->tau()[m]->norm0() << std::endl;
+      //coarse->tau()[m]->data() *=-1;
     }
   }
 

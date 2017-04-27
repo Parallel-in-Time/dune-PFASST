@@ -79,16 +79,16 @@ FE sdc
   \begin{center}
   	  \begin{tikzpicture}[scale=1]
 		  \begin{loglogaxis}[01_temp, ymax=1e-01,ymin=1e-09,xlabel={$\Delta t$},ylabel={Fehler $e_{\Delta t}$},grid=major]	
-
-			%\addplot table[x index = 1, y index = 2] {128.dat};
-			\addplot table[x index = 1, y index = 2] {256.dat};
-			\addplot table[x index = 1, y index = 2] {512.dat};
-			\addplot table[x index = 1, y index = 2] {1024.dat};
-%			\addplot table[x index = 1, y index = 2] {2048.dat};
-%			\addplot table[x index = 1, y index = 2] {4096.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/128.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/256.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/512.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/1024.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/2048.dat};		
+						\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/4096.dat};	
+%								\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_sdc/8192.dat};		
 			%\addplot[draw=black, ultra thick, dashed] table[x index = 0, y index = 1] {5.dat};			    	  
             %\addplot[draw = black,  ultra thick, mark = -] table[x index = 0, y index = 1] {2.dat};	 
-		   \legend{256, 512, 1024, 2048, 4096}
+		   \legend{256, 512, 1024, 2048, 4096, 8192}
 		  \end{loglogaxis}
 	  \end{tikzpicture}
   \end{center}

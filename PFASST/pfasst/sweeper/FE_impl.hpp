@@ -39,7 +39,7 @@ namespace pfasst
       //! @copydoc Sweeper::traits
       using traits = SweeperTrait;
 
-    protected:
+    //protected:
 
 
       //typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
@@ -52,6 +52,9 @@ namespace pfasst
       //std::shared_ptr<fe_manager> FinEl;
 
       //std::shared_ptr<MatrixType> M_dune;
+      
+      bool is_coarse;
+      
       MatrixType M_dune;
       MatrixType A_dune;
 
@@ -80,6 +83,8 @@ namespace pfasst
       //vector<shared_ptr<typename traits::encap_t>> _expl_rhs;
       //! Cache for the implicit function evaluations @f$ F_I(\vec{u}_n, t_n) @f$.
       vector<shared_ptr<typename traits::encap_t>> _impl_rhs;
+      vector<shared_ptr<typename traits::encap_t>> _impl_rhs_restrict;
+      
 
       //! Counter for total number of @f$ F_E(\vec{u},t) @f$ evaluations.
       //size_t _num_expl_f_evals;
@@ -270,8 +275,9 @@ namespace pfasst
        */
       virtual vector<shared_ptr<typename SweeperTrait::encap_t>> integrate(const typename SweeperTrait::time_t& dt) override;
       //! @}
-      
-      
+            
+      virtual vector<shared_ptr<typename SweeperTrait::encap_t>> integrate_new(const typename SweeperTrait::time_t& dt);
+  
       shared_ptr<MatrixType> get_M_dune(){return make_shared<MatrixType>(M_dune);};
       shared_ptr<MatrixType> get_A_dune() {return make_shared<MatrixType>(A_dune);};
   };

@@ -21,6 +21,7 @@ namespace pfasst
       , _factory(std::make_shared<typename SweeperTrait::encap_t::factory_t>())
       , _states(0)
       , _previous_states(0)
+      , _M_initial(nullptr)
       , _end_state(nullptr)
       , _tau(0)
       , _residuals(0)
@@ -248,6 +249,10 @@ namespace pfasst
     this->previous_states().resize(num_nodes + 1);
     std::generate(this->previous_states().begin(), this->previous_states().end(), [&factory](){ return factory.create(); });
 
+    //this->_M_initial.resize(num_nodes + 1);
+    _M_initial= this->get_encap_factory().create();
+    //std::generate(this->_M_initial.begin(), this->_M_initial.end(), [&factory](){ return factory.create(); });
+    
     this->end_state() = this->get_encap_factory().create();
 
     this->tau().resize(num_nodes + 1);
@@ -455,7 +460,7 @@ namespace pfasst
     assert(this->get_residuals().back() != nullptr);
 
     this->_abs_res_norms.back() = this->get_residuals().back()->norm0();
-    std::cout <<"hier abs res " << this->get_states().back()->norm0() << std::endl;
+    //std::cout <<"hier abs res " << this->get_states().back()->norm0() << std::endl;
     this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0();
     if (pre_check) {
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
@@ -563,7 +568,7 @@ namespace pfasst
 
 
 
-        std::cout << "  abs res norm " << this->status()->abs_res_norm()<< std::endl;
+        //std::cout << "  abs res norm " << this->status()->abs_res_norm()<< std::endl;
         for (size_t m = 0; m < num_residuals - 1 ; ++m) {
 
           //auto new_abs_res = &(this->get_previous_states()[m]);

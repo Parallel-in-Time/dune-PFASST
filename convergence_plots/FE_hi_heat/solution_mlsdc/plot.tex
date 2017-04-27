@@ -78,11 +78,15 @@ mlsdc
 %\begin{minipage}{0.2\linewidth}
   \begin{center}
   	  \begin{tikzpicture}[scale=1]
-		  \begin{loglogaxis}[01_temp, ymax=1e-01,ymin=1e-09,xlabel={$\Delta t$},ylabel={Fehler $e_{\Delta t}$},grid=major]	
-			\addplot table[x index = 1, y index = 2] {16.dat};
-			\addplot table[x index = 1, y index = 2] {32.dat};
+		  \begin{loglogaxis}[01_temp, ymax=1e-1,ymin=1e-12,xlabel={$\Delta t$},ylabel={Fehler $e_{\Delta t}$},grid=major]	
+		  	\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_hi_heat/solution_mlsdc/4.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_hi_heat/solution_mlsdc/8.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_hi_heat/solution_mlsdc/16.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_hi_heat/solution_mlsdc/32.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_hi_heat/solution_mlsdc/64.dat};
+%			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_hi_heat/solution_mlsdc/128.dat};	
 %			\addplot table[x index = 1, y index = 2] {64.dat};
-		   \legend{32, 64}
+		   \legend{4, 8, 16, 32, 64, 128, 256}
 		  \end{loglogaxis}
 	  \end{tikzpicture}
   \end{center}

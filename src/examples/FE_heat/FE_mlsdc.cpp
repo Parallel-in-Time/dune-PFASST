@@ -60,7 +60,8 @@ namespace pfasst
         auto fine = std::make_shared<sweeper_t>(FinEl, 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
-
+        coarse->is_coarse= true;
+        fine->is_coarse=false;
 
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(FinEl);

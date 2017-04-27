@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/TeX Live for SUSE Linux) (format=pdflatex 2017.4.5)  23 APR 2017 14:33
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/TeX Live for SUSE Linux) (format=pdflatex 2017.4.5)  27 APR 2017 18:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -990,9 +990,18 @@ ick labels; missing features). Consider writing \pgfplotsset{compat=1.14} into
 your preamble.
  on input line 71.
 
-PGFPlots: reading {256.dat}
-PGFPlots: reading {512.dat}
-PGFPlots: reading {1024.dat}
+PGFPlots: reading {../../../build-cmake/src/examples/FE_heat/solution_sdc/128.d
+at}
+PGFPlots: reading {../../../build-cmake/src/examples/FE_heat/solution_sdc/256.d
+at}
+PGFPlots: reading {../../../build-cmake/src/examples/FE_heat/solution_sdc/512.d
+at}
+PGFPlots: reading {../../../build-cmake/src/examples/FE_heat/solution_sdc/1024.
+dat}
+PGFPlots: reading {../../../build-cmake/src/examples/FE_heat/solution_sdc/2048.
+dat}
+PGFPlots: reading {../../../build-cmake/src/examples/FE_heat/solution_sdc/4096.
+dat}
 LaTeX Font Info:    Try loading font information for OT1+lmr on input line 92.
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1038,13 +1047,13 @@ Overfull \hbox (7.12703pt too wide) in paragraph at lines 93--94
 
 {/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./plot.aux) ) 
 Here is how much of TeX's memory you used:
- 22091 strings out of 493315
- 500089 string characters out of 6145894
- 713808 words of memory out of 5000000
- 25082 multiletter control sequences out of 15000+600000
+ 22102 strings out of 493315
+ 500591 string characters out of 6145894
+ 715808 words of memory out of 5000000
+ 25086 multiletter control sequences out of 15000+600000
  22952 words of font info for 34 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 65i,19n,98p,700b,2127s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 65i,19n,98p,700b,2151s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/shar
 e/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ma
 thit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts
@@ -1053,7 +1062,7 @@ thit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts
 /public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/sha
 re/texmf/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmsy8.pfb>
-Output written on plot.pdf (1 page, 83051 bytes).
+Output written on plot.pdf (1 page, 84774 bytes).
 PDF statistics:
  41 PDF objects out of 1000 (max. 8388607)
  31 compressed objects within 1 object stream

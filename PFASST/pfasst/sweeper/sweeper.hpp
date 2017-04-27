@@ -63,6 +63,7 @@ namespace pfasst
     static_assert(std::is_destructible<typename traits::encap_t>::value,
                   "Encapsulation type must be destructible");
 
+     shared_ptr<typename traits::encap_t>                _M_initial;
     protected:
       //! Quadrature used by the Sweeper.
       shared_ptr<IQuadrature<typename traits::time_t>>    _quadrature;
@@ -75,6 +76,7 @@ namespace pfasst
       vector<shared_ptr<typename traits::encap_t>>        _previous_states;
       //! Spatial data at the desired end time point.
       shared_ptr<typename traits::encap_t>                _end_state;
+     
 
       //! Values for the coarse level correction at all time nodes.
       vector<shared_ptr<typename traits::encap_t>>        _tau;
@@ -217,6 +219,7 @@ namespace pfasst
        * @note This will get computed and set by integrate_end_state().
        */
       virtual const shared_ptr<typename SweeperTrait::encap_t>          get_end_state() const;
+      
 
       /**
        * Read-only accessor for the residuals at each time point.

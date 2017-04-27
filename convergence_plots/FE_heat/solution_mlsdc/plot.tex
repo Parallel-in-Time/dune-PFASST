@@ -78,11 +78,14 @@ mlsdc
 %\begin{minipage}{0.2\linewidth}
   \begin{center}
   	  \begin{tikzpicture}[scale=1]
-		  \begin{loglogaxis}[01_temp, ymax=1e-02,ymin=1e-09,xlabel={$\Delta t$},ylabel={Fehler $e_{\Delta t}$},grid=major]	
-			\addplot table[x index = 1, y index = 2] {16.dat};
-			\addplot table[x index = 1, y index = 2] {32.dat};
-			\addplot table[x index = 1, y index = 2] {64.dat};
-		   \legend{16, 32, 64}
+		  \begin{loglogaxis}[01_temp, ymax=1,ymin=1e-09,xlabel={$\Delta t$},ylabel={Fehler $e_{\Delta t}$},grid=major]	
+		  			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_mlsdc/64.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_mlsdc/128.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_mlsdc/256.dat};
+			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_mlsdc/512.dat};
+%		\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_mlsdc/1024.dat};
+%			\addplot table[x index = 1, y index = 2] {../../../build-cmake/src/examples/FE_heat/solution_mlsdc/2048.dat};
+%		   \legend{256, 512, 1024, 2048, 4096}
 		  \end{loglogaxis}
 	  \end{tikzpicture}
   \end{center}

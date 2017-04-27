@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/TeX Live for SUSE Linux) (format=pdflatex 2017.4.5)  23 APR 2017 15:28
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/TeX Live for SUSE Linux) (format=pdflatex 2017.4.5)  23 APR 2017 20:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -990,52 +990,54 @@ ick labels; missing features). Consider writing \pgfplotsset{compat=1.14} into
 your preamble.
  on input line 71.
 
-PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_mlsdc/256.da
-t}
-PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_mlsdc/512.da
-t}
-PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_mlsdc/1024.d
-at}
-PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_mlsdc/2048.d
-at}
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 91.
+PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_sdc/128.dat}
+
+PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_sdc/256.dat}
+
+PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_sdc/512.dat}
+
+PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_sdc/1024.dat
+}
+PGFPlots: reading {../../../build-cmake/src/examples/heat/solution_sdc/2048.dat
+}
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 92.
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 91.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 92.
 
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 91.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 92.
 
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 91.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 92.
 
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10.95> on input line 91.
+(Font)              <10.95> on input line 92.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 91.
+(Font)              <8> on input line 92.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 91.
-LaTeX Font Info:    Try loading font information for U+msa on input line 91.
+(Font)              <6> on input line 92.
+LaTeX Font Info:    Try loading font information for U+msa on input line 92.
 
 (/usr/share/texmf/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 91.
+LaTeX Font Info:    Try loading font information for U+msb on input line 92.
 
 (/usr/share/texmf/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (7.12703pt too wide) in paragraph at lines 92--93
+Overfull \hbox (7.12703pt too wide) in paragraph at lines 93--94
  [] 
  []
 
@@ -1043,10 +1045,10 @@ Overfull \hbox (7.12703pt too wide) in paragraph at lines 92--93
 
 {/usr/share/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./plot.aux) ) 
 Here is how much of TeX's memory you used:
- 22094 strings out of 493315
- 500383 string characters out of 6145894
- 713808 words of memory out of 5000000
- 25082 multiletter control sequences out of 15000+600000
+ 22099 strings out of 493315
+ 500486 string characters out of 6145894
+ 715808 words of memory out of 5000000
+ 25085 multiletter control sequences out of 15000+600000
  22952 words of font info for 34 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  65i,19n,98p,700b,2127s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1058,7 +1060,7 @@ thit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts
 /public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/sha
 re/texmf/fonts/type1/public/lm/lmr9.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmsy8.pfb>
-Output written on plot.pdf (1 page, 83619 bytes).
+Output written on plot.pdf (1 page, 83866 bytes).
 PDF statistics:
  41 PDF objects out of 1000 (max. 8388607)
  31 compressed objects within 1 object stream

@@ -123,14 +123,14 @@ namespace pfasst
           //std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
 
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
+	  std::cout << "Fehler " << sweeper->get_end_state()->norm0()<<  std::endl ;
 	
       ofstream f;
 	  stringstream ss;
 	  ss << nelements;
 	  string s = "solution_sdc/" + ss.str() + ".dat";
 	  f.open(s, ios::app | std::ios::out );
-	  f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->norm0()<< endl;
+	  f << nelements << " " << dt << " "<< sweeper->get_end_state()->norm0() << endl;
 	  //f << nelements << " " << dt << " "<< x.infinity_norm()<< endl;
 
 	  f.close();

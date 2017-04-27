@@ -296,9 +296,15 @@ namespace pfasst
 
 
         result->data() *= nu;
+        //std::cout << "f_impl mit evaluate " << std::endl;
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
+          //std::cout << "f u " << result->data()[i] << std::endl;
+        }
 
-
+        
         return result;
+        
 
 
       }
@@ -409,9 +415,8 @@ namespace pfasst
         for (size_t i = 0; i < u->get_data().size(); i++) {
           //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-          //std::cout << "impl u " << rhs->data()[i] << std::endl;
+          //std::cout << "f u " << f->data()[i] << std::endl;
         }
-        //evaluate_rhs_impl(0, u);
 
         this->_num_impl_solves++;
         //if (this->_num_impl_solves==5) std::exit(0);

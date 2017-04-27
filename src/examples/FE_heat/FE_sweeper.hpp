@@ -89,7 +89,8 @@ namespace pfasst
 
 
 
-        protected:
+        //protected:
+      public:  
           /*virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
                             const shared_ptr<typename SweeperTrait::encap_t> u) override;*/
