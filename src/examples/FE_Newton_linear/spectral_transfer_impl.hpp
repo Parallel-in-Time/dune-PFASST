@@ -27,13 +27,13 @@ namespace pfasst
     SpectralTransfer<TransferTraits>::create(std::shared_ptr<fe_manager> FinEl)
     {
 	
-	      /*std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
+	      std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
           std::cout << "tranfer create " << std::endl;
-	      set_matrix(*vecvec->at(0), *vecvec->at(0));*/
+	      set_matrix(*vecvec->at(0), *vecvec->at(0));
           
           
           
-          set_matrix(FinEl->get_interpol(), FinEl->get_interpol());
+          //set_matrix(FinEl->get_transfer(), FinEl->get_transfer());
           
 	    
     }    

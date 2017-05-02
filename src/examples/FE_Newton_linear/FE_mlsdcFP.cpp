@@ -54,9 +54,9 @@ namespace pfasst
       using pfasst::quadrature::QuadratureType;
 
       using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, 1, DIMENSION>>;
-      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+      //using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
       //using sweeper_t = Heat_FE<pfasst::sweeper_traits<encap_traits_t>>;
-      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
+      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_coarse, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
 
@@ -72,14 +72,14 @@ namespace pfasst
 
         using pfasst::quadrature::quadrature_factory;
 
-        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1);
+        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl, 1);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2(), 0);
+        auto fine = std::make_shared<sweeper_t_coarse>(FinEl, 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
+        
         coarse->is_coarse=true;
         fine->is_coarse=false;
-        
         
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(FinEl);
@@ -88,14 +88,14 @@ namespace pfasst
         //mlsdc->add_sweeper(fine, false);
 
     
-        fine->set_abs_residual_tol(1e-12);
-        coarse->set_abs_residual_tol(1e-12);
+               fine->set_abs_residual_tol(1e-12);
+           coarse->set_abs_residual_tol(1e-12);
     
     
            
         
         mlsdc->add_sweeper(coarse, true);
-        mlsdc->add_sweeper(fine);
+	mlsdc->add_sweeper(fine);
 
         mlsdc->add_transfer(transfer);
 

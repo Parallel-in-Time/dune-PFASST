@@ -25,7 +25,7 @@
 
 const size_t DIM = 1;            //Raeumliche Dimension des Rechengebiets ruth_dim
 
-const size_t BASIS_ORDER = 2;    //maximale Ordnung der Lagrange Basisfunktionen
+const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,13 +55,13 @@ namespace pfasst
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
 	
-        auto FinEl   = make_shared<fe_manager>(nelements,1); 
+	auto FinEl   = make_shared<fe_manager>(nelements,1); 
 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2(), 0);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
-        sweeper->set_abs_residual_tol(1e-6);
+        sweeper->set_abs_residual_tol(1e-10);
         sdc->add_sweeper(sweeper);
 
         sdc->set_options();
@@ -74,7 +74,7 @@ namespace pfasst
         sdc->setup();
 
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
-        Dune::BlockVector<Dune::FieldVector<double, 1> > w = sweeper->initial_state()->data();
+	Dune::BlockVector<Dune::FieldVector<double, 1> > w = sweeper->initial_state()->data();
 	
         sdc->run();
 
@@ -108,9 +108,9 @@ namespace pfasst
 	        std::cout <<  "fein" << std::endl;
         auto naeherung = sweeper->get_end_state()->data();
         auto exact     = sweeper->exact(t_end)->data();
-        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+        /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        }*/
 
 	  typedef Dune::BlockVector<Dune::FieldVector<double, 1> > VectorType;
           VectorType x = sweeper->get_end_state()->data();
