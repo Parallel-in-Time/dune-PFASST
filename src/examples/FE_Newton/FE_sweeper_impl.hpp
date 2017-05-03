@@ -15,11 +15,11 @@ using std::vector;
 
 //#include <leathers/push>
 //#include <leathers/all>
-#include <boost/math/constants/constants.hpp>
+//#include <boost/math/constants/constants.hpp>
 //#include <leathers/pop>
-using boost::math::constants::pi;
-using boost::math::constants::two_pi;
-using boost::math::constants::pi_sqr;
+//using boost::math::constants::pi;
+//using boost::math::constants::two_pi;
+//using boost::math::constants::pi_sqr;
 
 #include <pfasst/globals.hpp>
 #include <pfasst/util.hpp>
@@ -27,7 +27,13 @@ using boost::math::constants::pi_sqr;
 #include <pfasst/config.hpp>
 
 #include <iostream>
-#include <c++/4.8/memory>
+//#include <c++/4.8/memory>
+
+
+
+double pi = 3.14159265359;
+double two_pi = 2*pi;
+double pi_sqr= pi*pi;
 
 namespace pfasst
 {
