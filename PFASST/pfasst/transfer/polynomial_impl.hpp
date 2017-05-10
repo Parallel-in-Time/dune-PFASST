@@ -216,7 +216,7 @@ namespace pfasst
     std::generate(fas.begin(), fas.end(), [&coarse_factory]() { return coarse_factory.create(); });
 
 
-    std::cout << "coasre integrate " << num_coarse_nodes<< std::endl;
+    //std::cout << "coasre integrate " << num_coarse_nodes<< std::endl;
     
     const auto coarse_integral = coarse->integrate(dt);  
 
@@ -241,7 +241,7 @@ namespace pfasst
       coarse_integral[m]->scaled_add(1,  coarse->integrate(dt)[m]);
     }
  
-     std::cout << "fine integrate " << num_fine_nodes << std::endl;
+    //std::cout << "fine integrate " << num_fine_nodes << std::endl;
  
     const auto fine_integral = fine->integrate(dt);
     
@@ -262,7 +262,7 @@ namespace pfasst
       /*for(int i=0; i<coarse->tau()[m]->data().size(); i++){
       std::cout << coarse->tau()[m]->data() << std::endl;
       }*/
-      std::cout << "norm tau" << coarse->tau()[m]->norm0() << std::endl;
+      //std::cout << "norm tau" << coarse->tau()[m]->norm0() << std::endl;
       //coarse->tau()[m]->data() *=-1;
     }
   }

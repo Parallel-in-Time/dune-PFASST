@@ -64,7 +64,7 @@ namespace pfasst
                   "Encapsulation type must be destructible");
 
      shared_ptr<typename traits::encap_t>                _M_initial;
-    protected:
+    public:
       //! Quadrature used by the Sweeper.
       shared_ptr<IQuadrature<typename traits::time_t>>    _quadrature;
       //! Factory for instantiating Encapsulation objects for spatial data.
@@ -75,6 +75,10 @@ namespace pfasst
       //! Vector of the spatial data at all nodes of the previous iteration.
       vector<shared_ptr<typename traits::encap_t>>        _previous_states;
       //! Spatial data at the desired end time point.
+      vector<vector<shared_ptr<typename traits::encap_t>>> _all_time_states;
+      
+      vector<vector<shared_ptr<typename traits::encap_t>>> _old_time_states;
+      
       shared_ptr<typename traits::encap_t>                _end_state;
      
 

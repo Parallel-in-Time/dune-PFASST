@@ -241,7 +241,13 @@ namespace pfasst
 
     const auto nodes = this->get_quadrature()->get_nodes();
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
+    //const auto timesteps = this->get
+    
 
+    
+    //this->_all_time_states.resize()
+    
+    
     this->states().resize(num_nodes + 1);
     auto& factory = this->get_encap_factory();
     std::generate(this->states().begin(), this->states().end(), [&factory](){ return factory.create(); });
@@ -412,6 +418,10 @@ namespace pfasst
     assert(this->get_states().size() == this->get_quadrature()->get_num_nodes() + 1);
     assert(this->get_previous_states().size() == this->get_states().size());
 
+       
+    _all_time_states.push_back(this->get_states());
+    
+    
     for (size_t m = 0; m < this->get_states().size(); ++m) {
       this->previous_states()[m]->data() = this->get_states()[m]->get_data();
     }

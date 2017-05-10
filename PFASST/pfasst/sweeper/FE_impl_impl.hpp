@@ -207,7 +207,7 @@ namespace pfasst
         rhs->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
 
           
-    }else{
+      }else{
         M_dune.mv(this->get_states().front()->get_data(), rhs->data());
         
 
