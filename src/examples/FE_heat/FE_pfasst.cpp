@@ -18,7 +18,7 @@ using std::shared_ptr;
 #include "FE_sweeper.hpp"
 
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
+#include "spectral_transfer.hpp"
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
