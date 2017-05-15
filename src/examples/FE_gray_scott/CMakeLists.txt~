@@ -1,5 +1,0 @@
-add_executable("FE_sdcGS10" FE_sdcGS10.cpp)
-target_link_dune_default_libraries("FE_sdcGS10")
-
-add_executable("FE_mlsdcGS10" FE_mlsdcGS10.cpp)
-target_link_dune_default_libraries("FE_mlsdcGS10")
