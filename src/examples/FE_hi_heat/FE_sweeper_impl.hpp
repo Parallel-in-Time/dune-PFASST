@@ -1,6 +1,6 @@
 #include "FE_sweeper.hpp"
 
-#include "../../finite_element_stuff/assemble.hpp"
+#include "assemble.hpp"
 
 #include <algorithm>
 #include <cassert>
