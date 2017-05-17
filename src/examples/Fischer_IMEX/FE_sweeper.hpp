@@ -9,9 +9,9 @@ using std::vector;
 
 #include <vector>
 
+
 //#include <pfasst/sweeper/FE_imex.hpp>
-#include <pfasst/sweeper/FE_impl.hpp>
-//#include <pfasst/sweeper/imex.hpp>
+#include <pfasst/sweeper/FE_imex.hpp>
 
 #include <pfasst/contrib/fft.hpp>
 //#include "../../finite_element_stuff/fe_manager_fp.hpp"
@@ -104,9 +104,9 @@ namespace pfasst
           //std::shared_ptr<BasisFunction> basis;
 
         protected:
-          /*virtual shared_ptr<typename SweeperTrait::encap_t>
+          virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
-                            const shared_ptr<typename SweeperTrait::encap_t> u) override;*/
+                            const shared_ptr<typename SweeperTrait::encap_t> u) override;
 
           virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
@@ -125,7 +125,7 @@ namespace pfasst
           compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
                                  const typename SweeperTrait::time_t& t);
 	  
-	  	  virtual void
+	  /*	  virtual void
 	  evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
 						 const typename SweeperTrait::time_t& dt,
@@ -136,7 +136,7 @@ namespace pfasst
 	  evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
 						 const typename SweeperTrait::time_t& dt
- 						);
+ 						);*/
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);

@@ -160,7 +160,7 @@ namespace pfasst
 
 	/*for (int i=0; i< result->data().size(); i++){
 	 std::cout << "result = " << result->data()[i] << std::endl;
-	}*/
+	}std::exit(0);*/
         return result;
       }
       
@@ -365,7 +365,7 @@ namespace pfasst
         return rel_error;
       }
 
-      /*template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
       Heat_FE<SweeperTrait, Enabled>::evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
@@ -373,17 +373,30 @@ namespace pfasst
         UNUSED(u);
         ML_CVLOG(4, this->get_logger_id(),  "evaluating EXPLICIT part at t=" << t);
 
-        auto result2 = this->get_encap_factory().create();
-	auto Mresult = this->get_encap_factory().create();
-        result2->zero();
+     
+        auto result = this->get_encap_factory().create();
+        auto u2 = this->get_encap_factory().create();
+        double nu =this->_nu;
 
-	
+	u2->zero();
+	for (int i=0; i<u->get_data().size(); ++i)
+	    {
+	    u2->data()[i]= -pow(u->get_data()[i], _n+1);	
+	    }
+	this->M_dune.mv(u2->get_data(), result->data());
+	this->M_dune.umv(u->get_data(), result->data());
+	result->data()*=_nu*_nu;
+	//this->A_dune.umv(u->get_data(), result->data());
+        
+        
+        
+        
 	
         this->_num_expl_f_evals++;
 	
-        return result2;
+        return result;
 
-      }*/
+      }
 
       template<class SweeperTrait, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
@@ -399,27 +412,23 @@ namespace pfasst
         auto u2 = this->get_encap_factory().create();
         double nu =this->_nu;
 
-	u2->zero();
-	for (int i=0; i<u->get_data().size(); ++i)
-	    {
-	    u2->data()[i]= -pow(u->get_data()[i], _n+1);	
-	    }
-	this->M_dune.mv(u2->get_data(), result->data());
-	this->M_dune.umv(u->get_data(), result->data());
-	result->data()*=_nu*_nu;
-	this->A_dune.umv(u->get_data(), result->data());
+                this->A_dune.mmv(u->get_data(), result->data());
 
-	
 
-        //result->data() *= nu;
-	/*std::cout << "evaluate  " << std::endl;
+        result->data() *= nu;
+        
+        /*std::cout << "f_impl mit evaluate " << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
-
-	  std::cout << "f " << result->data()[i] << std::endl;
-
-         }*/
+          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
+          //f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
+          std::cout << "f u " << result->data()[i] << std::endl;
+        }*/
         
         return result;
+        
+        
+        
+        
       }
 
       template<class SweeperTrait, typename Enabled>
@@ -431,201 +440,90 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
 	
+        Dune::BlockVector<Dune::FieldVector<double,1> > M_rhs_dune ;
+        M_rhs_dune.resize(rhs->get_data().size());
+	
+	
+        M_rhs_dune = rhs->get_data(); 
 
+        //this->M_dune.mv(rhs->data(), M_rhs_dune); //multipliziert rhs mit matrix_m_dune
 
+	
 
+	
+	
+        Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->A_dune);
+        M_dtA_dune *= (dt * this->_nu);
+        M_dtA_dune += this->M_dune;
+
+        /*auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.999999);};
+        std::vector<char> dirichletNodes;
+        interpolate(*basis, dirichletNodes, isDirichlet);
+        for (size_t i=0; i<M_dtA_dune.M(); i++){
+            if (dirichletNodes[i]) M_rhs_dune[i]=0;
+        }
         
+        for (size_t i=0; i<M_dtA_dune.N(); i++){
+            if (dirichletNodes[i]){
+                auto cIt = M_dtA_dune[i].begin();
+                auto cEndIt = M_dtA_dune[i].end();
+                for(; cIt!=cEndIt; ++cIt){
+                    *cIt =  (i==cIt.index()) ? 1.0 : 0.0; 
+                }
+            }
+        }*/
+	
+	
+        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
+
+        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
+
+        Dune::CGSolver<VectorType> cg(linearOperator,
+                              preconditioner,
+                              1e-10, // desired residual reduction factor
+                              5000,    // maximum number of iterations
+                              0);    // verbosity of the solver
+
+        Dune::InverseOperatorResult statistics ;
+
+        cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
+
+
+
+	
+	
 	
         ML_CVLOG(4, this->get_logger_id(),
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
-
 	
-
-    auto residuum = this->get_encap_factory().create();
-	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
-    newton_rhs.resize(rhs->get_data().size());
-    newton_rhs2.resize(rhs->get_data().size());
-    
-	
-	for (int i=0; i< 20 ;i++){
-	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
-	  evaluate_f(f, u, dt, rhs);
-	  evaluate_df(df, u, dt);
-	  df.mv(u->data(), newton_rhs);
-	  newton_rhs -= f->data();
-      newton_rhs2 = newton_rhs;
-
-	  auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
-	  auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
- 
-	
-	
-	  std::vector<double> dirichletLeftNodes;
-	  interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  
-
-	  std::vector<double> dirichletRightNodes;
-	  interpolate(*basis, dirichletRightNodes, isRightDirichlet);
-	
-	  /*for(int i=0; i<rhs->data().size(); ++i){
-	
-	    if(dirichletLeftNodes[i])
-	    newton_rhs[i] = exact(t)->get_data()[i]; //1;//-dt;
-
-	    if(dirichletRightNodes[i])
-	    newton_rhs[i] = exact(t)->get_data()[i]; //0;
-
-
-	  
-	  }
-	  for (size_t j=0; j<df.N(); j++){
-	    if (dirichletRightNodes[j] || dirichletLeftNodes[j]){
-	      auto cIt = df[j].begin();
-	      auto cEndIt = df[j].end();
-	      for(; cIt!=cEndIt; ++cIt){
-		  *cIt = (j==cIt.index()) ? 1.0 : 0.0;
-	      }
-	    }
-	  }*/
-	  //std::cout << "5"<<std::endl;
-
-  
-	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
-	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
-	  Dune::CGSolver<VectorType> cg(linearOperator,
-                              preconditioner,
-                              1e-10, // desired residual reduction factor
-                              5000,    // maximum number of iterations
-                              0);    // verbosity of the solver
-	  Dune::InverseOperatorResult statistics ;
-	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
-	  df.mv(u->data(), residuum->data());
-      residuum->data() -= newton_rhs2;
-      std::cout << "residuums norm " << residuum->norm0() << std::endl;
-      if (residuum->norm0()< _abs_newton_tol){break;}
-	  
-        for (size_t i = 0; i < u->get_data().size(); i++) {
-
-	  //std::cout << "u " << u->data()[i] << std::endl;
-
-        }
-	}
-
-	
-	
-	//std::exit(0);
-	
-        /*for (size_t i = 0; i < u->get_data().size(); i++) {
-
-	  std::cout << "u " << u->data()[i] << std::endl;
-
-        }*/
-	
-	
-	
-	
-	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
+        Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
         M_u.resize(u->get_data().size());
-	this->M_dune.mv(u->get_data(), M_u);
+        this->M_dune.mv(u->get_data(), M_u);
+	
 
-//std::cout << "impl solve "  << std::endl;
+        //std::cout << "f_impl mit impl_solve" << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
+          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-	  //std::cout << "f " << f->data()[i] << std::endl;
+          //std::cout << " u " << u->data()[i] << std::endl;
         }
+
         //evaluate_rhs_impl(0, u);
-	//std::exit(0);
         this->_num_impl_solves++;
-        //if (this->_num_impl_solves==5) std::exit(0);
+        //if (this->_num_impl_solves==1) std::exit(0);
+
+
+
+
+        
+
 
 
       }
       
-            template<class SweeperTrait, typename Enabled>
-      void
-      Heat_FE<SweeperTrait, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
-                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
-						 const typename SweeperTrait::time_t& dt,
-						 const shared_ptr<typename SweeperTrait::encap_t> rhs
-						){
-          
-          
-          f->zero();
-	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
-        fneu.resize(u->get_data().size());
-	for (int i=0; i<u->get_data().size(); ++i)
-	{
-	  fneu[i]= pow(u->get_data()[i], _n+1) - u->get_data()[i];	
-	}
-	f->data() *= (_nu*_nu);
-	this->M_dune.mv(fneu, f->data());
-	this->A_dune.mmv(u->get_data(),f->data());
-	f->data() *= dt;
-	this->M_dune.umv(u->get_data(),f->data());
-	f->data() -=rhs->get_data();
-          
-	
-	/*f->zero();
-	
-	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
-        fneu.resize(u->get_data().size());
-	for (int i=0; i<f->data().size(); ++i)
-	{fneu[i]= -8*this->_nu*this->_nu *u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta);
-
-	}
-	
-	this->M_dune.mv(fneu, f->data());
-	
-	this->A_dune.mmv(u->get_data(),f->data());
-	f->data() *= dt;
-	this->M_dune.umv(u->get_data(),f->data());
-	f->data() -=rhs->get_data();*/
-
-      }
-						
-      template<class SweeperTrait, typename Enabled>
-      void
-      Heat_FE<SweeperTrait, Enabled>::evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
-                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
-						 const typename SweeperTrait::time_t& dt
- 						){
-          
-          
-          
-          
-          
-          for (int i=0; i<df.N(); ++i)
-            {
-            for (int j=0; j<df.M(); ++j)
-                {
-                    if (df.exists(i,j)) 
-                        df[i][j]= (_nu*_nu)*(_n+1) *this->M_dune[i][j] * pow(u->get_data()[j], _n);	
-                }
-            }
-            df.axpy((-_nu*_nu), this->M_dune);
-            df-=this->A_dune;
-            df*=dt;
-            df+=this->M_dune;
-          
-          
-          
-	/*for (int i=0; i<df.N(); ++i)
-	{
-	  for (int j=0; j<df.M(); ++j)
-	    {
-	  if (df.exists(i,j)) {
-	    df[i][j]=  -(_nu*_nu)*this->M_dune[i][j]  *(16* ((double) u->get_data()[j]) -24* ((double) u->get_data()[j])*((double) u->get_data()[j]))/(this->_delta*this->_delta);	
-	  }
-	    //std::cout << df[i][j]<<std::endl;
-	  }
-	}
-	df-=this->A_dune;
-	
-	df*=dt;
-	df+=this->M_dune;*/
-
-      }  
+     
       
       
     }  // ::pfasst::examples::heat1
