@@ -28,8 +28,6 @@ to install them type
 
 ./dune-common/bin/dunecontrol all
 
-dune-matrix-vector/dune/matrix-vector/CmakeLists.txt   „transpose.hh“ berichtigen
-
 sudo ./dune-common/bin/dunecontrol make install
 
 to build dune-PFASST just run:
