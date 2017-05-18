@@ -13,13 +13,13 @@
 using std::shared_ptr;
 using std::vector;
 
-//#include <leathers/push>
-//#include <leathers/all>
-//#include <boost/math/constants/constants.hpp>
-//#include <leathers/pop>
-//using boost::math::constants::pi;
-//using boost::math::constants::two_pi;
-//using boost::math::constants::pi_sqr;
+#include <leathers/push>
+#include <leathers/all>
+#include <boost/math/constants/constants.hpp>
+#include <leathers/pop>
+using boost::math::constants::pi;
+using boost::math::constants::two_pi;
+using boost::math::constants::pi_sqr;
 
 #include <pfasst/globals.hpp>
 #include <pfasst/util.hpp>
@@ -27,13 +27,7 @@ using std::vector;
 #include <pfasst/config.hpp>
 
 #include <iostream>
-//#include <c++/4.8/memory>
-
-
-
-double pi = 3.14159265359;
-double two_pi = 2*pi;
-double pi_sqr= pi*pi;
+#include <c++/4.8/memory>
 
 namespace pfasst
 {
@@ -55,12 +49,16 @@ namespace pfasst
 
 
         template<class SweeperTrait, typename Enabled>
-      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel)
+      Heat_FE<SweeperTrait, Enabled>::Heat_FE(const size_t nelements, const size_t basisorder)
         :   IMEX<SweeperTrait, Enabled>()
 
       {
+        //Konstruktor
+        //hier wird das Gitter gebaut und die Basis des FE-Raums gewaehlt
+
+        //Dune::FieldVector<double,SweeperTrait::DIM> h = {1, 1}; //ruth_dim
       
-	/*Dune::FieldVector<double,SweeperTrait::DIM> hR = {20};
+	Dune::FieldVector<double,SweeperTrait::DIM> hR = {20};
 	Dune::FieldVector<double,SweeperTrait::DIM> hL = {-20};
         array<int,SweeperTrait::DIM> n;
 
@@ -80,17 +78,7 @@ namespace pfasst
 
         std::cout << "***** Basis erstellt mit " <<  basis->size() << " Elementen " << std::endl;
 
-        this->encap_factory()->set_size(basis->size());*/
-	//this->FinEl = FinEl;
-	//basis = FinEl->get_basis(nlevel);
-	    
-	    this->basis = basis;
-	assembleProblem(basis, this->A_dune, this->M_dune);
-
-        const auto bs = basis->size();
-        std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
-
-        this->encap_factory()->set_size(bs);
+        this->encap_factory()->set_size(basis->size());
 
       }
 
@@ -100,15 +88,14 @@ namespace pfasst
       {
 
 
-        std::cout << " set_options " <<  std::endl;  
         IMEX<SweeperTrait, Enabled>::set_options();
 
         this->_nu = config::get_value<spatial_t>("nu", this->_nu);
 
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
-        //assembleProblem(basis, A_dune, M_dune);
-        std::cout << " set_options " <<  std::endl; 
+        assembleProblem(basis, A_dune, M_dune);
+
 
       }
 
@@ -118,49 +105,29 @@ namespace pfasst
       {
         auto result = this->get_encap_factory().create();
 
-        
-                const auto dim = 1; //SweeperTrait::DIM;
-	spatial_t n  = this-> _n;
-    spatial_t l0 = this-> _nu;
-	spatial_t l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
-	spatial_t d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
-	//std::cout << "nu = " << this->_nu << std::endl;
-	//std::cout << "delta = " << this->_delta << std::endl;
-        auto exact_solution = [l0, l1, n, d, t](const Dune::FieldVector<double,dim>&x){ 
-	  return pow((1 + (pow(2, n/2.)-1 )* exp(-(n/2.)*d*(x+2*l1*t)) ), -2./n);
-        };
-
-        
-        
-        
-        
-        
-        /*const auto dim = 1; //SweeperTrait::DIM;
+        const auto dim = SweeperTrait::DIM;
         spatial_t nu = this-> _nu; 
 	spatial_t delta = this->_delta;
 	//std::cout << "nu = " << this->_nu << std::endl;
-	//std::cout << "delta = " << this->_delta << std::endl;
-        auto exact_solution = [t, nu, dim, delta](const Dune::FieldVector<double,dim>&x){
+        auto exact_solution = [t, nu, dim, delta](const FieldVector<double,dim>&x){
           double c = 2./delta;  
 	  return 0.5*(1.0-std::tanh((x[0] - c*t*nu)/(delta)));
-        };*/
+        };
 
 
 	
 
-        auto N_x = [t](const Dune::FieldVector<double,dim>&x){
+        auto N_x = [t](const FieldVector<double,dim>&x){
             return x;
 
         };
 
-        Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
+        BlockVector<FieldVector<double,dim>> x_node;
         interpolate(*basis, x_node, N_x);
 
         interpolate(*basis, result->data(), exact_solution);
 
-	/*for (int i=0; i< result->data().size(); i++){
-	 std::cout << "result = " << result->data()[i] << std::endl;
-	}std::exit(0);*/
+
         return result;
       }
       
@@ -171,21 +138,20 @@ namespace pfasst
       
       
       
-      /*template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
       Heat_FE<SweeperTrait, Enabled>::source(const typename SweeperTrait::time_t& t)
       {
         auto result = this->get_encap_factory().create();
 
-        const auto dim = 1;
+        const auto dim = SweeperTrait::DIM;
         spatial_t nu = this-> _nu; // nu je valjda desni rub
 	//std::cout << "nu = " << this->_nu << std::endl;
-        auto exact_solution_source = [t, nu, dim](const Dune::FieldVector<double,dim>&x){
+        auto exact_solution_source = [t, nu, dim](const FieldVector<double,dim>&x){
             double solution=1.0;
             //for(int i=0; i<SweeperTrait::DIM; i++){solution *=x[i];}    //
             
-	    std::cout << "PI = " << PI << std::endl;
-	    std::exit(0);
+	    
 	    return 2*t + PI*PI*(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1])  - 2*PI*(std::cos(PI*x[0]) + std::cos(PI*x[1])) + pow(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1] + t*t, 2) ;
         };
 
@@ -193,19 +159,19 @@ namespace pfasst
 	
 	
 
-        auto N_x = [t](const Dune::FieldVector<double,dim>&x){
+        auto N_x = [t](const FieldVector<double,dim>&x){
             return x;
 
         };
 
-        Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
+        BlockVector<FieldVector<double,dim>> x_node;
         interpolate(*basis, x_node, N_x);
 
         interpolate(*basis, result->data(), exact_solution_source);
 
 
         return result;
-      }*/
+      }
       
       
       
@@ -238,11 +204,11 @@ namespace pfasst
         IMEX<SweeperTrait, Enabled>::post_step();
 
         ML_CLOG(INFO, this->get_logger_id(), "number function evaluations:");
-        //ML_CLOG(INFO, this->get_logger_id(), "  expl:        " << this->_num_expl_f_evals);
+        ML_CLOG(INFO, this->get_logger_id(), "  expl:        " << this->_num_expl_f_evals);
         ML_CLOG(INFO, this->get_logger_id(), "  impl:        " << this->_num_impl_f_evals);
         ML_CLOG(INFO, this->get_logger_id(), "  impl solves: " << this->_num_impl_solves);
 
-        //this->_num_expl_f_evals = 0;
+        this->_num_expl_f_evals = 0;
         this->_num_impl_f_evals = 0;
         this->_num_impl_solves = 0;
       }
@@ -270,17 +236,17 @@ namespace pfasst
                           : std::string("iteration ") + std::to_string(this->get_status()->get_iteration())));
           for (size_t m = 0; m < num_nodes; ++m) {
             ML_CVLOG(1, this->get_logger_id(),
-                     "  t["<<m<<"]=" <<  (t + dt * nodes[m])
-                     << "      |abs residual| = " <<  this->_abs_res_norms[m]
-                     << "      |rel residual| = " <<  this->_rel_res_norms[m]
+                     "  t["<<m<<"]=" << LOG_FIXED << (t + dt * nodes[m])
+                     << "      |abs residual| = " << LOG_FLOAT << this->_abs_res_norms[m]
+                     << "      |rel residual| = " << LOG_FLOAT << this->_rel_res_norms[m]
 //                      << "      |abs error| = " << LOG_FLOAT << encap::norm0(error[m])
 //                      << "      |rel error| = " << LOG_FLOAT << encap::norm0(rel_error[m])
                     );
           }
           ML_CLOG(INFO, this->get_logger_id(),
-                  "  t["<<num_nodes<<"]=" <<  (t + dt * nodes[num_nodes])
-                  << "      |abs residual| = " <<  this->_abs_res_norms[num_nodes]
-                  << "      |rel residual| = " <<  this->_rel_res_norms[num_nodes]
+                  "  t["<<num_nodes<<"]=" << LOG_FIXED << (t + dt * nodes[num_nodes])
+                  << "      |abs residual| = " << LOG_FLOAT << this->_abs_res_norms[num_nodes]
+                  << "      |rel residual| = " << LOG_FLOAT << this->_rel_res_norms[num_nodes]
 //                   << "      |abs error| = " << LOG_FLOAT << encap::norm0(error[num_nodes])
 //                   << "      |rel error| = " << LOG_FLOAT << encap::norm0(rel_error[num_nodes])
                  );
@@ -302,16 +268,16 @@ namespace pfasst
         return this->get_encap_factory().size();
       }
 
-      //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
+      typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
      
      
       
-      /*template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, typename Enabled>
       shared_ptr<GridType>
       Heat_FE<SweeperTrait, Enabled>::get_grid() const
       {
         return grid;
-      }*/
+      }
 
 
       template<class SweeperTrait, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
@@ -371,31 +337,21 @@ namespace pfasst
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
       {
         UNUSED(u);
-        ML_CVLOG(4, this->get_logger_id(),  "evaluating EXPLICIT part at t=" << t);
+        ML_CVLOG(4, this->get_logger_id(), LOG_FIXED << "evaluating EXPLICIT part at t=" << t);
 
-     
         auto result = this->get_encap_factory().create();
-        auto u2 = this->get_encap_factory().create();
-        double nu =this->_nu;
+        result->zero();
 
-	u2->zero();
-	for (int i=0; i<u->get_data().size(); ++i)
-	    {
-	    u2->data()[i]= -pow(u->get_data()[i], _n+1);	
-	    }
-	this->M_dune.mv(u2->get_data(), result->data());
-	this->M_dune.umv(u->get_data(), result->data());
-	result->data()*=_nu*_nu;
-	//this->A_dune.umv(u->get_data(), result->data());
-        
-        
-        
-        
+	for (int i=0; i<result->data().size(); ++i)
+	{result->data()[i]= 8*this->_nu*this->_nu*u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta); /*this->source(t)->data()[i]*/;
+	//std::cout << u->data()[i] << " "<< result->data()[i] <<" "<< this->_delta <<std::endl; 
+	}
+	
+	
 	
         this->_num_expl_f_evals++;
 	
         return result;
-
       }
 
       template<class SweeperTrait, typename Enabled>
@@ -404,31 +360,27 @@ namespace pfasst
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
       {
 	
-         ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << t);
+        ML_CVLOG(4, this->get_logger_id(), LOG_FIXED << "evaluating IMPLICIT part at t=" << t);
+	
+	
+	
+	
+	auto result = this->get_encap_factory().create();
+        A_dune.mv(u->get_data(), result->data());
+
+        Dune::DenseMatrix<Dune::FieldMatrix<double,1,1>> M_inverse;
+        for (size_t i = 0; i < M_dune.N(); i++) {
+          for (size_t j = 0; j < M_dune.M(); j++) {
+            M_inverse[i][j] = M_dune[i][j];
+          }
+        }
+        std::cout << "******************************************************* " << std::endl;
+        M_inverse.invert();
+        M_inverse.mv(result->data(), result->data());
 
 
-
-        auto result = this->get_encap_factory().create();
-        auto u2 = this->get_encap_factory().create();
-        double nu =this->_nu;
-
-        this->A_dune.mmv(u->get_data(), result->data());
-
-
-        //result->data() *= nu;
-        
-        /*std::cout << "f_impl mit evaluate " << std::endl;
-        for (size_t i = 0; i < u->get_data().size(); i++) {
-          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
-          //f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-          std::cout << "f u " << result->data()[i] << std::endl;
-        }*/
-        
-        return result;
-        
-        
-        
-        
+        this->_num_impl_f_evals++;
+        return result; //diese Funktion wird im aktuellen Bsp gar nicht benutzt!
       }
 
       template<class SweeperTrait, typename Enabled>
@@ -439,44 +391,42 @@ namespace pfasst
                                                     const typename SweeperTrait::time_t& dt,
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
-	
         Dune::BlockVector<Dune::FieldVector<double,1> > M_rhs_dune ;
         M_rhs_dune.resize(rhs->get_data().size());
-	
-	
-        M_rhs_dune = rhs->get_data(); 
 
-        //this->M_dune.mv(rhs->data(), M_rhs_dune); //multipliziert rhs mit matrix_m_dune
 
-	
+        M_dune.mv(rhs->data(), M_rhs_dune); //multipliziert rhs mit matrix_m_dune
 
+	 auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
+	 auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
+ 
+	//adding Dirichlet conditions - must add delta t * Dirichlet_function
 	
 	
-        Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->A_dune);
+	std::vector<double> dirichletLeftNodes;
+	interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  //tu valjda interpoliramo kao na nrpdju
+	
+	for(int i=0; i<rhs->data().size(); ++i){
+	
+	  if(dirichletLeftNodes[i])
+	  M_rhs_dune[i] = 1*dt;
+	  
+	}
+	  
+	
+	
+	
+	
+        Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(A_dune);
         M_dtA_dune *= (dt * this->_nu);
-        M_dtA_dune += this->M_dune;
+        M_dtA_dune += M_dune;
 
-        /*auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.999999);};
-        std::vector<char> dirichletNodes;
-        interpolate(*basis, dirichletNodes, isDirichlet);
-        for (size_t i=0; i<M_dtA_dune.M(); i++){
-            if (dirichletNodes[i]) M_rhs_dune[i]=0;
-        }
-        
-        for (size_t i=0; i<M_dtA_dune.N(); i++){
-            if (dirichletNodes[i]){
-                auto cIt = M_dtA_dune[i].begin();
-                auto cEndIt = M_dtA_dune[i].end();
-                for(; cIt!=cEndIt; ++cIt){
-                    *cIt =  (i==cIt.index()) ? 1.0 : 0.0; 
-                }
-            }
-        }*/
 	
 	
-        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
+	
+        MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
 
-        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
+        SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
 
         Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
@@ -484,7 +434,7 @@ namespace pfasst
                               5000,    // maximum number of iterations
                               0);    // verbosity of the solver
 
-        Dune::InverseOperatorResult statistics ;
+        InverseOperatorResult statistics ;
 
         cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
 
@@ -494,38 +444,19 @@ namespace pfasst
 	
 	
         ML_CVLOG(4, this->get_logger_id(),
-                 "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
+                 LOG_FIXED << "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
-	
-        Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
-        M_u.resize(u->get_data().size());
-        this->M_dune.mv(u->get_data(), M_u);
-	
-
-        //std::cout << "f_impl mit impl_solve" << std::endl;
-        for (size_t i = 0; i < u->get_data().size(); i++) {
-          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
-          f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-          //std::cout << " u " << u->data()[i] << std::endl;
+        for (size_t i = 0; i < u->data().size(); i++) {
+          f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
+	 
         }
 
-        //evaluate_rhs_impl(0, u);
-        this->_num_impl_solves++;
-        //if (this->_num_impl_solves==1) std::exit(0);
-
-
-
-
-        
-
+        //std::exit(0);
+        this->_num_impl_solves++; 
 
 
       }
-      
-     
-      
-      
     }  // ::pfasst::examples::heat1
   }  // ::pfasst::examples
 }  // ::pfasst

@@ -1,5 +1,6 @@
 
-
+//#include <leathers/push>
+//#include <leathers/all>
 
 #include <dune/common/function.hh>
 
@@ -21,7 +22,7 @@
 
 #include <vector>
 
-
+//#include <leathers/pop>
 
 
 
@@ -46,7 +47,7 @@ assembleElementA(const LocalView &localView, MatrixType &elementMatrix) {
 
 
 
-  int order = 2 * (dim * localFiniteElement.localBasis().order() -1 );
+  int order = 2 * (dim * localFiniteElement.localBasis().order());
 
 
   const auto &quad = QuadratureRules<double, dim>::rule(element.type(), order);
@@ -73,7 +74,7 @@ assembleElementA(const LocalView &localView, MatrixType &elementMatrix) {
     for (size_t i = 0; i < elementMatrix.N(); i++)
       for (size_t j = 0; j < elementMatrix.M(); j++)
         elementMatrix[localView.tree().localIndex(i)][localView.tree().localIndex(j)]
-                -= (gradients[i] * gradients[j]) * quad[pt].weight() * integrationElement;
+                += (gradients[i] * gradients[j]) * quad[pt].weight() * integrationElement;
 		// += (gradients[i] * gradients[j]) * quad[pt].weight() * integrationElement/(2*PI*PI +1);
   }
 }
@@ -166,7 +167,6 @@ void assembleProblem(const Basis &basis,
   occupationPattern.exportIdx(A);
   occupationPattern.exportIdx(M);
 
-
   A = 0;
   M = 0;
 
@@ -207,7 +207,7 @@ void assembleProblem(const Basis &basis,
 
 
   }
-  //M_invers=M;
+
 
   //auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.9999 or x[1]<1e-8 or x[1]>0.9999);}; //ruth_dim
 
@@ -220,7 +220,7 @@ void assembleProblem(const Basis &basis,
       auto cIt = A[i].begin();
       auto cEndIt = A[i].end();
       for(; cIt!=cEndIt; ++cIt){
-        *cIt = 0.0;// (i==cIt.index()) ? 1.0 : 0.0; // 0.0;
+        *cIt = (i==cIt.index()) ? 1.0 : 0.0;
       }
     }
   }
@@ -230,10 +230,7 @@ void assembleProblem(const Basis &basis,
       auto cIt = M[i].begin();
       auto cEndIt = M[i].end();
       for(; cIt!=cEndIt; ++cIt){
-        *cIt = 0.0;// (i==cIt.index()) ? 1.0 : 0.0;
-
-        //
-
+        *cIt = 0.0;
       }
     }
   }

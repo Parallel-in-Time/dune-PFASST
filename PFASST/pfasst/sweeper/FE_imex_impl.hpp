@@ -160,6 +160,7 @@ namespace pfasst
 
     for (size_t m = 0; m < num_nodes; ++m) {
       for (size_t n = 0; n < m + 1; ++n) {
+        this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_expl(m + 1, n), this->_expl_rhs[n]);
         this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_impl(m + 1, n + 1), this->_impl_rhs[n + 1]);
       }
 
@@ -212,11 +213,11 @@ namespace pfasst
      
       if (is_coarse){
         rhs->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
-
+        std::cout << "coarse " << rhs->data()[0] << std::endl;
           
       }else{
         M_dune.mv(this->get_states().front()->get_data(), rhs->data());
-        
+        std::cout << "fine " << rhs->data()[0]  <<std::endl;
 
         
       }
@@ -490,6 +491,7 @@ namespace pfasst
         //ML_CVLOG(5, this->get_logger_id(), "    |res["<<m<<"]| = " << LOG_FLOAT << this->get_residuals()[m]->norm0());
         ML_CVLOG(5, this->get_logger_id(), "    |res["<<m<<"]| = " << this->get_residuals()[m]->norm0());
   //                                       << "    res["<<m<<"] = " << to_string(this->get_residuals()[m]));
+      
 
       }
       
@@ -633,12 +635,12 @@ namespace pfasst
 
 
 
-           /*for (size_t m = 1; m < num_nodes + 1; ++m) {
+           for (size_t m = 1; m < num_nodes + 1; ++m) {
              for (size_t n = m; n < num_nodes + 1; ++n) {
                this->_q_delta_expl(n, m - 1) = nodes[m] - nodes[m - 1];
                //this->_q_delta_impl(n, m) = nodes[m] - nodes[m - 1];
              }
-           }*/
+           }
 
 
 
@@ -649,7 +651,7 @@ namespace pfasst
         for (size_t m = 1; m < num_nodes + 1; ++m) {
             for (size_t n = m; n < num_nodes + 1; ++n) {
                 this->_q_delta_expl(n, m - 1) = nodes[m] - nodes[m - 1];
-                //this->_q_delta_impl(n, m) = nodes[m] - nodes[m - 1];
+                this->_q_delta_impl(n, m) = nodes[m] - nodes[m - 1];
             }
         }
 
