@@ -17,13 +17,9 @@ include(DuneMacros)
 
 #dune-PFASST needs an installation of PFASST++
 #set installation path with cmake -Dpfasst_include=...
-SET(pfasst_include="/home/zam/ruth/software_engineering/PFASST/include" CACHE STRING "PFASST_DIR")#change default directory to /usr/include before push
+SET(pfasst_include "/home/zam/ruth/software_engineering/PFASST/include" CACHE STRING "PFASST_DIR")#change default directory to /usr/include before push
 include_directories(${pfasst_include})
 MESSAGE( STATUS "include directory of PFASST++ library is set to " ${pfasst_include} )
-
-SET(eigen_include="/home/zam/ruth/software_engineering/eigen-eigen-69d418c06999" CACHE STRING "PFASST_DIR") #change default directory to /usr/include before push
-include_directories(${eigen_include})
-MESSAGE( STATUS "include directory of eigen3 library is set to " ${eigen_include} )
 
 # start a dune project with information from dune.module
 dune_project()

@@ -10,6 +10,6 @@ Name: @PACKAGE_NAME@
 Version: @VERSION@
 Description: dune-PFASST module
 URL: http://dune-project.org/
-Requires: dune-common dune-geometry dune-grid dune-localfunctions dune-istl dune-typetree dune-functions dune-matrix-vector dune-fufem
+Requires: dune-common dune-geometry dune-grid dune-localfunctions dune-istl dune-typetree dune-functions dune-matrix-vector dune-fufem dune-solvers dune-tnnmg dune-hpdg
 Libs: -L${libdir}
 Cflags: -I${includedir}

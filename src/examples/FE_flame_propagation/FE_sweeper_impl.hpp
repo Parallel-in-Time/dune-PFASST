@@ -32,7 +32,32 @@ double pi_sqr= pi*pi;
 #include <pfasst/config.hpp>
 
 #include <iostream>
+
+// dune solvers
+#include <dune/solvers/iterationsteps/blockgssteps.hh>
+#include <dune/solvers/solvers/loopsolver.hh>
+#include <dune/solvers/common/defaultbitvector.hh>
+#include <dune/solvers/common/resize.hh>
+#include <dune/solvers/transferoperators/compressedmultigridtransfer.hh>
+#include <dune/solvers/iterationsteps/multigridstep.hh>
+#include <dune/solvers/solvers/umfpacksolver.hh>
+
+#include <dune/tnnmg/iterationsteps/tnnmgstep.hh>
+#include <dune/tnnmg/iterationsteps/nonlineargsstep.hh>
+#include <dune/tnnmg/functionals/boxconstrainedquadraticfunctional.hh>
+#include <dune/tnnmg/functionals/bcqfconstrainedlinearization.hh>
+#include <dune/tnnmg/projections/obstacledefectprojection.hh>
+#include <dune/tnnmg/localsolvers/scalarobstaclesolver.hh>
+//#include <dune/tnnmg/localsolvers.hh>
+#include <dune/solvers/norms/energynorm.hh>
+
+
 //#include <c++/4.8/memory>
+struct TrivialSolver {
+  template<class Vector, class Functional, class BitVector>
+    constexpr void operator()(Vector& x, const Functional& f, const BitVector& ignore) const
+    { x=1.0;}
+};
 
 namespace pfasst
 {
@@ -454,17 +479,17 @@ namespace pfasst
   	std::vector<double> dirichletRightNodes;
   	interpolate(*basis, dirichletRightNodes, isRightDirichlet);
 	
-	for(int i=0; i<rhs->data().size(); ++i){
-	
-	  if(dirichletLeftNodes[i])
-	  M_rhs_dune[i] = 1;
+  for(int i=0; i<rhs->data().size(); ++i){
+  
+    if(dirichletLeftNodes[i])
+    M_rhs_dune[i] = 1;
 
-    	  if(dirichletRightNodes[i])
+        if(dirichletRightNodes[i])
           M_rhs_dune[i] = 0;
 
 
-	  
-	}
+    
+  }
 	
 	
 	
@@ -485,21 +510,133 @@ namespace pfasst
                 }
             }
         }
+
+        using BitVector = Dune::Solvers::DefaultBitVector_t<VectorType>;
+        BitVector ignore(u->data().size());
+        for(int i=0; i<rhs->data().size(); ++i){
+          if (dirichletNodes[i])
+            ignore[i]=true;
+        }
+
+        //// Transfer setup
+        ////
+        using TransferOperator = CompressedMultigridTransfer<VectorType>;
+        using TransferOperators = std::vector<std::shared_ptr<TransferOperator>>;
+
+        auto gridptr = FinEl->get_grid();
+        TransferOperators transfer(gridptr->maxLevel());
+        for (size_t i = 0; i < transfer.size(); ++i)
+        {
+          // create transfer operator from level i to i+1
+          transfer[i] = std::make_shared<TransferOperator>();
+          transfer[i]->setup(*gridptr, i, i+1);
+        }
+
+        auto& uu = u->data();
+        std::cout << "u0 =" << uu[0] << " u[end]=" << uu[uu.size()-1] << std::endl;
+       
+
+        //// TNNMG without actual constraints
+        VectorType lower(u->data().size());
+        lower = -989999;
+        VectorType upper(u->data().size());
+        upper = 342434;
+        using Functional = Dune::TNNMG::BoxConstrainedQuadraticFunctional<MatrixType&, VectorType&, VectorType&, VectorType&, double>;
+
+        auto J = Functional(M_dtA_dune, M_rhs_dune, lower, upper);
+
+        auto localSolver = gaussSeidelLocalSolver(Dune::TNNMG::ScalarObstacleSolver());
+        //auto localSolver = gaussSeidelLocalSolver(TrivialSolver());
+
+        using NonlinearSmoother = Dune::TNNMG::NonlinearGSStep<Functional, decltype(localSolver), BitVector>;
+        auto nonlinearSmoother = std::make_shared<NonlinearSmoother>(J, u->data(), localSolver);
+
+
+        using Linearization = Dune::TNNMG::BoxConstrainedQuadraticFunctionalConstrainedLinearization<Functional, BitVector>;
+        using DefectProjection = Dune::TNNMG::ObstacleDefectProjection;
+        using LineSearchSolver = TrivialSolver;
+
+        using MultiGrid =Dune::Solvers::MultigridStep<MatrixType, VectorType, BitVector>;
+        auto mgStep = std::make_shared<MultiGrid>();
+        auto gssmoother = Dune::Solvers::BlockGSStepFactory<MatrixType, VectorType, BitVector>::create(Dune::Solvers::BlockGS::LocalSolvers::gs());
+        mgStep->setSmoother(&gssmoother);
+        mgStep->setTransferOperators(transfer);
+        mgStep->setMGType(1,3,3);
+        //BitVector dummy(ignore.size());
+        //mgStep->setIgnore(dummy);
+        //mgStep->setIgnore(ignore);
+
+        auto umfpack = Dune::Solvers::UMFPackSolver<MatrixType, VectorType>{};
+        mgStep->basesolver_=&umfpack;
+
+        //std::cout << ENABLE_SUITESPARSE << std::endl;
+        //std::cout << HAVE_SUITESPARSE_UMFPACK << std::endl;
+        using Step = Dune::TNNMG::TNNMGStep<Functional, BitVector, Linearization, DefectProjection, LineSearchSolver>;
+        using Solver = LoopSolver<VectorType>;
+        using Norm =  EnergyNorm<MatrixType, VectorType>;
+
+        int mu=1;
+        auto projection = DefectProjection();
+        auto step = Step(J, u->data(), nonlinearSmoother, mgStep, mu, projection, LineSearchSolver());
+        step.setIgnore(ignore);
+        //mgStep->setProblem(M_dtA_dune, u->data(), M_rhs_dune);
+        auto norm = Norm(M_dtA_dune);
+        //auto solver = Solver(&(*mgStep), 1e9, 1e-8, &norm, Solver::FULL);
+        auto solver = Solver(&step, 1e9, 0, &norm, Solver::FULL);
+
+
+        solver.addCriterion(
+            [&](){
+            return Dune::formatString("   % 12.5e", J(u->data()));
+            },
+            "   energy      ");
+
+        double initialEnergy = J(u->data());
+        solver.addCriterion(
+            [&](){
+            static double oldEnergy=initialEnergy;
+            double currentEnergy = J(u->data());
+            double decrease = currentEnergy - oldEnergy;
+            oldEnergy = currentEnergy;
+            return Dune::formatString("   % 12.5e", decrease);
+            },
+            "   decrease    ");
+
+        solver.addCriterion(
+            [&](){
+            return Dune::formatString("   % 12.5e", step.lastDampingFactor());
+            },
+            "   damping     ");
+
+
+        solver.addCriterion(
+            [&](){
+            return Dune::formatString("   % 12d", step.linearization().truncated().count());
+            },
+            "   truncated   ");
+
+        std::vector<double> correctionNorms;
+        auto tolerance = 1e-8;
+        solver.addCriterion(Dune::Solvers::correctionNormCriterion(step, norm, tolerance, correctionNorms));
+
+
+        solver.preprocess();
+        solver.solve();
+
 	
-	
-        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
+        //Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
 
-        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
+        //Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
 
-        Dune::CGSolver<VectorType> cg(linearOperator,
-                              preconditioner,
-                              1e-10, // desired residual reduction factor
-                              5000,    // maximum number of iterations
-                              0);    // verbosity of the solver
+        //Dune::CGSolver<VectorType> cg(linearOperator,
+                              //preconditioner,
+                              //1e-10, // desired residual reduction factor
+                              //5000,    // maximum number of iterations
+                              //0);    // verbosity of the solver
 
-        Dune::InverseOperatorResult statistics ;
+        //Dune::InverseOperatorResult statistics ;
 
-        cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
+        //cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
 
 
 

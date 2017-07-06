@@ -15,7 +15,8 @@ using std::vector;
 
 #include <pfasst/contrib/fft.hpp>
 //#include "../../finite_element_stuff/fe_manager_fp.hpp"
-#include "fe_manager_hi.hpp"
+
+#include "fe_manager.hpp"
 
 
 //using namespace Dune;
@@ -64,22 +65,28 @@ namespace pfasst
           using traits = SweeperTrait;
 
           static void init_opts();
-
+	  int                                            _iterations{0};
         private:
+
+                    size_t nlevel;
+
+            MatrixType stiffnessMatrix;
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
-          double                                     	 _nu{1.0};
-          double                                     	 _n{1.0};
+          double                                     	 _nu{1.2};
+          double                                     	 _n{2.0};
           double                                      	 _delta{1.0};
-          double                                        _abs_newton_tol=1e-10;
-	  
+          double                                         _abs_newton_tol=1e-10;
+
+
+
 	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
           vector<vector<spatial_t>>                      _lap;
 
 
 	  std::shared_ptr<fe_manager> FinEl;
-
+          std::shared_ptr<VectorType> w; 
 	  
 	  
 	  //________________________________________________________
@@ -93,6 +100,7 @@ namespace pfasst
           //typedef Dune::YaspGrid<1> GridType; 
 	  //typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
           std::shared_ptr<GridType> grid;
+          std::shared_ptr<GridType> gridnew;
 
 
 
@@ -100,7 +108,7 @@ namespace pfasst
 	  typedef GridType::LevelGridView GridView;
 
           //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
-          std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis; 
+          std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis; 
           //std::shared_ptr<BasisFunction> basis;
 
         protected:
@@ -140,7 +148,7 @@ namespace pfasst
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);
-	  explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis, size_t);
+	  explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t, std::shared_ptr<GridType> grid);
 	  
           Heat_FE(const Heat_FE<SweeperTrait, Enabled>& other) = default;
           Heat_FE(Heat_FE<SweeperTrait, Enabled>&& other) = default;
@@ -161,6 +169,9 @@ namespace pfasst
 
           size_t get_num_dofs() const;
 
+          auto get_A_dune() const {
+            return this->A_dune;
+          }
           //shared_ptr<GridType> get_grid() const;
 	  
 	

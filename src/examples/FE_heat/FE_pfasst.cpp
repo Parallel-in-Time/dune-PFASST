@@ -1,5 +1,8 @@
 //#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
 
+
+//#include <config.h>
+
 #include <memory>
 #include <stdexcept>
 using std::shared_ptr;

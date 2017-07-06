@@ -27,13 +27,13 @@ namespace pfasst
     SpectralTransfer<TransferTraits>::create(std::shared_ptr<fe_manager> FinEl)
     {
 	
-	      /*std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
+	      std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
           std::cout << "tranfer create " << std::endl;
-	      set_matrix(*vecvec->at(0), *vecvec->at(0));*/
+	      set_matrix(*vecvec->at(1), *vecvec->at(1));
           
           
           
-          set_matrix(FinEl->get_interpol(), FinEl->get_interpol());
+          //set_matrix(FinEl->get_transfer(), FinEl->get_transfer());
           
 	    
     }    
@@ -63,7 +63,7 @@ namespace pfasst
 	      }
 	      std::cout<< ""<< std::endl;
         }*/
-        //std::exit(0);
+    
 	    
 	    restrict_matrix   = restrict;
 
@@ -75,6 +75,19 @@ namespace pfasst
 
 	      }
 	    }
+	    
+	           /* for (int i=0; i< interpolate_matrix.N(); i++){
+	      for (int j=0; j< interpolate_matrix.M(); j++){
+            if(interpolate_matrix.exists(i,j)){	
+                std::cout<< restrict_matrix[i][j] << " " ;
+            }else{
+                std::cout<< 0 << " " ;
+            }
+
+	      }
+	      std::cout<< ""<< std::endl;
+        }
+        std::exit(0);*/
     }
 
 
@@ -119,6 +132,8 @@ namespace pfasst
           std::cout <<  fine->data()[i] <<  std::endl;
         }
         std::cout <<  "interpolate ende" <<  std::endl;*/
+        
+
 
         
       }

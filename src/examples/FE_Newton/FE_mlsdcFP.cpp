@@ -1,3 +1,4 @@
+#include <config.h>
 
 #include <fenv.h>
 
@@ -54,9 +55,9 @@ namespace pfasst
       using pfasst::quadrature::QuadratureType;
 
       using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, 1, DIMENSION>>;
-      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+      //using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
       //using sweeper_t = Heat_FE<pfasst::sweeper_traits<encap_traits_t>>;
-      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
+      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_coarse, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
 
@@ -67,19 +68,21 @@ namespace pfasst
                                            const size_t niter) {
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
+
         auto FinEl = make_shared<fe_manager>(nelements, 2);
-        //mlsdc->grid_builder(nelements);
 
         using pfasst::quadrature::quadrature_factory;
 
-        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1);
+        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis(1), 1,  FinEl->get_grid());
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2(), 0);
+
+
+        auto fine = std::make_shared<sweeper_t_coarse>(FinEl->get_basis(0), 0,  FinEl->get_grid());
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
-        
         
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(FinEl);
@@ -95,7 +98,7 @@ namespace pfasst
            
         
         mlsdc->add_sweeper(coarse, true);
-        mlsdc->add_sweeper(fine);
+	mlsdc->add_sweeper(fine);
 
         mlsdc->add_transfer(transfer);
 
@@ -116,12 +119,8 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 
-        std::cout << "Anfangswerte feiner Sweeper: " << fine->get_states().back()->norm0() << std::endl;
-        std::cout << "Anfangswerte feiner Sweeper: " << fine->initial_state()->norm0() << std::endl;
-        std::cout << "Anfangswerte grober Sweeper: " << coarse->get_states().back()->norm0() << std::endl;
 
-        
-        /*for (int i=0; i< fine->initial_state()->data().size(); i++){
+        for (int i=0; i< fine->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte feiner Sweeper: " << " " << fine->initial_state()->data()[i] << std::endl;
         }
 
@@ -129,7 +128,7 @@ namespace pfasst
 
         for (int i=0; i< coarse->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte grober Sweeper: " << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }*/
+        }
 
 
 	std::cout << "********************************************** VOR RUN *******************************************************************" <<  std::endl;
@@ -226,7 +225,8 @@ namespace pfasst
 #ifndef PFASST_UNIT_TESTING
 int main(int argc, char** argv)
 {
-
+   
+      Dune::MPIHelper::instance(argc, argv);  
   feenableexcept(FE_INVALID | FE_OVERFLOW);
 
   using pfasst::config::get_value;

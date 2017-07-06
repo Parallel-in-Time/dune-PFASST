@@ -28,6 +28,43 @@ using std::vector;
 
 #include <iostream>
 //#include <c++/4.8/memory>
+// dune solvers
+#include <dune/solvers/iterationsteps/blockgssteps.hh>
+#include <dune/solvers/solvers/loopsolver.hh>
+#include <dune/solvers/common/defaultbitvector.hh>
+#include <dune/solvers/common/resize.hh>
+#include <dune/solvers/transferoperators/compressedmultigridtransfer.hh>
+#include <dune/solvers/iterationsteps/multigridstep.hh>
+#include <dune/solvers/solvers/umfpacksolver.hh>
+#include <dune/solvers/norms/energynorm.hh>
+#include <dune/solvers/norms/twonorm.hh>
+
+
+#include <dune/tnnmg/iterationsteps/tnnmgstep.hh>
+#include <dune/tnnmg/iterationsteps/nonlineargsstep.hh>
+#include <dune/tnnmg/functionals/boxconstrainedquadraticfunctional.hh>
+#include <dune/tnnmg/functionals/bcqfconstrainedlinearization.hh>
+#include <dune/tnnmg/projections/obstacledefectprojection.hh>
+#include <dune/tnnmg/localsolvers/scalarobstaclesolver.hh>
+
+//#include <dune/tnnmg/localsolvers.hh>
+
+// eigene TNNMG Funktionale
+#include "tnnmgfunctional.hh"
+#include "tnnmgfunctionallinearization.hh"
+#include "scalarbisectionsolver.hh"
+
+struct TrivialSolver {
+  template<class Vector, class Functional, class BitVector>
+    constexpr void operator()(Vector& x, const Functional& f, const BitVector& ignore) const
+    { x=1.0;}
+
+};
+template<class Vector, class Functional, class BitVector>
+struct TrivialLocalSolver {
+    constexpr void operator()(Vector& x, const Functional& f, const BitVector& ignore) const
+    { x=0.0;}
+};
 
 
 
@@ -53,9 +90,8 @@ namespace pfasst
                                                "thermal diffusivity");*/
       }
 
-
         template<class SweeperTrait, typename Enabled>
-      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel)
+      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
         :   IMEX<SweeperTrait, Enabled>()
 
       {
@@ -83,9 +119,27 @@ namespace pfasst
         this->encap_factory()->set_size(basis->size());*/
 	//this->FinEl = FinEl;
 	//basis = FinEl->get_basis(nlevel);
+	this->nlevel = nlevel;    
 	    
-	    this->basis = basis;
-	assembleProblem(basis, this->A_dune, this->M_dune);
+	this->basis = basis;
+
+        this->grid = grid;
+	
+        assembleProblem(basis, this->A_dune, this->M_dune);
+
+        stiffnessMatrix = this->A_dune;
+        stiffnessMatrix *= -1;
+        w = std::make_shared<VectorType>(this->M_dune.M());
+        for(int j=0; j<this->M_dune.M(); j++){
+            (*w)[j]=0;
+        }
+
+        for(int i=0; i<this->M_dune.M(); i++){
+            for(int j=0; j<this->M_dune.M(); j++){
+                if(this->M_dune.exists(i,j))
+                (*w)[i][0]= ((double) (*w)[i][0]) + ((double) this->M_dune[i][j][0][0]);
+            }
+        }
 
         const auto bs = basis->size();
         std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
@@ -119,9 +173,9 @@ namespace pfasst
         auto result = this->get_encap_factory().create();
 
         
-                const auto dim = 1; //SweeperTrait::DIM;
+        const auto dim = 1; //SweeperTrait::DIM;
 	spatial_t n  = this-> _n;
-    spatial_t l0 = this-> _nu;
+        spatial_t l0 = this-> _nu;
 	spatial_t l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
 	spatial_t d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
 	//std::cout << "nu = " << this->_nu << std::endl;
@@ -158,9 +212,9 @@ namespace pfasst
 
         interpolate(*basis, result->data(), exact_solution);
 
-	/*for (int i=0; i< result->data().size(); i++){
-	 std::cout << "result = " << result->data()[i] << std::endl;
-	}*/
+	for (int i=0; i< result->data().size(); i++){
+	 //std::cout << i << " result = " << result->data()[i] << std::endl;
+	}
         return result;
       }
       
@@ -402,9 +456,9 @@ namespace pfasst
 	u2->zero();
 	for (int i=0; i<u->get_data().size(); ++i)
 	    {
-	    u2->data()[i]= -pow(u->get_data()[i], _n+1);	
+	    result->data()[i]= -pow(u->get_data()[i], _n+1) * (*w)[i];	
 	    }
-	this->M_dune.mv(u2->get_data(), result->data());
+	//this->M_dune.mv(u2->get_data(), result->data());
 	this->M_dune.umv(u->get_data(), result->data());
 	result->data()*=_nu*_nu;
 	this->A_dune.umv(u->get_data(), result->data());
@@ -432,14 +486,11 @@ namespace pfasst
       {
 	
 
-
-
-        
-	
-        ML_CVLOG(4, this->get_logger_id(),
+         ML_CVLOG(4, this->get_logger_id(),
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
+        
 
 	
 
@@ -449,13 +500,14 @@ namespace pfasst
     newton_rhs2.resize(rhs->get_data().size());
     
 	
-	for (int i=0; i< 20 ;i++){
+        u->zero();
+	for (int i=0; i< 200 ;i++){
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
 	  evaluate_f(f, u, dt, rhs);
 	  evaluate_df(df, u, dt);
 	  df.mv(u->data(), newton_rhs);
 	  newton_rhs -= f->data();
-      newton_rhs2 = newton_rhs;
+          newton_rhs2 = newton_rhs;
 
 	  auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
 	  auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
@@ -472,15 +524,12 @@ namespace pfasst
 	
 	    if(dirichletLeftNodes[i])
 	    newton_rhs[i] = exact(t)->get_data()[i]; //1;//-dt;
-
 	    if(dirichletRightNodes[i])
 	    newton_rhs[i] = exact(t)->get_data()[i]; //0;
-
-
 	  
 	  }
 	  for (size_t j=0; j<df.N(); j++){
-	    if (dirichletRightNodes[j] || dirichletLeftNodes[j]){
+	    if (dirichletRightNodes[j] || dirichletLeftNodes[j]){ 
 	      auto cIt = df[j].begin();
 	      auto cEndIt = df[j].end();
 	      for(; cIt!=cEndIt; ++cIt){
@@ -490,26 +539,45 @@ namespace pfasst
 	  }*/
 	  //std::cout << "5"<<std::endl;
 
-  
+          std::cout << "vor solver" << std::endl;  
 	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
 	  Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
-                              1e-10, // desired residual reduction factor
+                              1e-16, // desired residual reduction factor
                               5000,    // maximum number of iterations
-                              0);    // verbosity of the solver
+                              1);    // verbosity of the solver
 	  Dune::InverseOperatorResult statistics ;
+          //u->zero();
+          for (size_t i = 0; i < u->get_data().size(); i++) {
+
+            //std::cout << "anfangswert u " << u->data()[i] << std::endl;
+
+          }
 	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
+          for (size_t i = 0; i < u->get_data().size(); i++) {
+
+	    //std::cout << "ergebnis u " << u->data()[i] << std::endl;
+
+          }
+          std::cout << "num_iterations " << statistics.iterations << std::endl;
+          std::cout << "nach solver" << std::endl;  
+
+          evaluate_f(f, u, dt, rhs);
+          
+          std::cout << i << " residuumsnorm von f(u) " << f->norm0() << std::endl;  
+          if(f->norm0()<1e-10){   std::cout << "genauigkeit erreicht " << i << std::endl;      break;} //  std::exit(0); std::cout << "genauigkeit erreicht " << i << std::endl;
+          
 	  df.mv(u->data(), residuum->data());
-      residuum->data() -= newton_rhs2;
-      std::cout << "residuums norm " << residuum->norm0() << std::endl;
-      if (residuum->norm0()< _abs_newton_tol){break;}
+          residuum->data() -= newton_rhs2;
+          std::cout << "residuums norm " << residuum->norm0() << std::endl;
+          //if (residuum->norm0()< _abs_newton_tol){break;}
 	  
-        for (size_t i = 0; i < u->get_data().size(); i++) {
+          for (size_t i = 0; i < u->get_data().size(); i++) {
 
 	  //std::cout << "u " << u->data()[i] << std::endl;
 
-        }
+          }
 	}
 
 	
@@ -517,9 +585,7 @@ namespace pfasst
 	//std::exit(0);
 	
         /*for (size_t i = 0; i < u->get_data().size(); i++) {
-
 	  std::cout << "u " << u->data()[i] << std::endl;
-
         }*/
 	
 	
@@ -537,34 +603,232 @@ namespace pfasst
         //evaluate_rhs_impl(0, u);
 	//std::exit(0);
         this->_num_impl_solves++;
-        //if (this->_num_impl_solves==5) std::exit(0);
+//if (this->_num_impl_solves==5) std::exit(0);
+//         int my_rank;  
+//         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );  
+//         //MPI_Barrier(MPI_COMM_WORLD);
+// 
+//         std::cout << my_rank << " ***ANFANG u: " << u->norm0() << "num_level" << this->is_coarse << std::endl;
+// 	
+//         ML_CVLOG(4, this->get_logger_id(),
+//                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
+// 
+// 
+// 
+// 	
+// 
+//     // solve implicit through TNNMG (actually: Newton)
+//     {
+// 
+// 	  //auto isLeftDirichlet = [] (auto x) {return (x[0] < -200 + 1e-8 ) ;};
+// 	  //auto isRightDirichlet = [] (auto x) {return (x[0] > 200 - 1e-8 ) ;};
+//  
+// 	
+// 	
+// 	  //std::vector<double> dirichletLeftNodes;
+// 	  //interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  
+// 
+// 	  //std::vector<double> dirichletRightNodes;
+// 	  //interpolate(*basis, dirichletRightNodes, isRightDirichlet);
+// 
+// 
+//           auto phiprime =
+//             [&](auto&& uu) {
+//             return dt*_nu*_nu*pow(uu, _n+1);
+//           };
+// 
+//           auto phi2prime = 
+//             [&] (auto&& uu) {
+//             return dt*(_nu*_nu)*(_n+1) * pow(uu, _n);
+//           };
+// 
+// 	
+//           auto matrix_ = this->M_dune;
+//           matrix_ *= (1-dt*_nu*_nu);
+//           matrix_.axpy(-dt, this->A_dune);
+//   
+//           //std::cout << "Anfang TNNMG" << std::endl;
+//           using BitVector = Dune::Solvers::DefaultBitVector_t<VectorType>;
+//           BitVector ignore(u->data().size());
+// 
+//           //// Transfer setup
+//           using TransferOperator = CompressedMultigridTransfer<VectorType>;
+//           using TransferOperators = std::vector<std::shared_ptr<TransferOperator>>;
+// 
+// 
+//         auto& gridptr = this->grid;
+//         int num_level=0;
+//         if(nlevel==0 ){
+//             num_level= gridptr->maxLevel();
+//             
+//         }else{
+//             num_level= gridptr->maxLevel() -1; 
+//         }
+//         TransferOperators transfer(num_level);
+//         for (size_t i = 0; i < transfer.size(); ++i)
+//         {
+//           // create transfer operator from level i to i+1
+//           transfer[i] = std::make_shared<TransferOperator>();
+//           transfer[i]->setup(*gridptr, i, i+1);
+//         }
+//         
+//         //std::cout << "impl solve TNNMG u: " << u->get_data()[u->get_data().size()-1] << "num_level" << this->is_coarse << std::endl;
+// 
+//         auto& uu = u->data();
+//         //std::cout << "u0 =" << uu[0] << " u[end]=" << uu[uu.size()-1] << "numlevel " << num_level << std::endl;
+// 
+// 
+//         //// TNNMG without actual constraints
+//         //using Functional = Dune::TNNMG::EnergyFunctional<MatrixType, VectorType, double,1>;
+//         using Functional = Dune::TNNMG::EnergyFunctional<MatrixType, VectorType, decltype(phiprime), decltype(phiprime), decltype(phi2prime), double>;
+// 
+//         //auto J = Functional(df, newton_rhs, lower, upper);
+//         //auto J = Functional(this->M_dune, this->A_dune, dt, _nu, *(this->w), rhs->data());
+//         auto J = Functional(matrix_, rhs->data(), *(this->w), phiprime, phiprime, phi2prime);
+//         //using LocalFunctional = Dune::TNNMG::EnergyFunctional<MatrixType::block_type, VectorType::block_type, decltype(phiprime), decltype(phiprime), decltype(phi2prime), double>;
+//         //using LocalFunctional = Dune::TNNMG::EnergyDirectionalRestriction<MatrixType::block_type, VectorType::block_type, decltype(phiprime),double>;
+// 
+// 
+//         //auto localSolver = gaussSeidelLocalSolver(Dune::TNNMG::ScalarObstacleSolver());
+//         auto localSolver = gaussSeidelLocalSolver(Dune::TNNMG::ScalarBisectionSolver());
+//         //auto localSolver = Dune::TNNMG::ScalarBisectionSolver();   //
+//  
+//         //auto localSolver = gaussSeidelLocalSolver(TrivialLocalSolver<double,Dune::TNNMG::EnergyFunctional<double,double, DUMMYPHI, decltype(phiprime), decltype(phi2prime), double>, BitVector::value_type>()); // trivial solver does not change anything
+//         //auto localSolver = TrivialLocalSolver<double,LocalFunctional, BitVector::value_type>(); // trivial solver does not change anything
+//         //auto localSolver = gaussSeidelLocalSolver(TrivialLocalSolver<double,LocalFunctional, BitVector::value_type>()); // trivial solver does not change anything
+// 
+//         using NonlinearSmoother = Dune::TNNMG::NonlinearGSStep<Functional, decltype(localSolver), BitVector>;
+//         auto nonlinearSmoother = std::make_shared<NonlinearSmoother>(J, u->data(), localSolver);
+// 
+// 
+//         //using Linearization = Dune::TNNMG::BoxConstrainedQuadraticFunctionalConstrainedLinearization<Functional, BitVector>;
+//         using Linearization = Dune::TNNMG::EnergyFunctionalConstrainedLinearization<Functional, BitVector>; // incorporates what used to be evaluate_f, evaluate_df
+//         //using DefectProjection = Dune::TNNMG::ObstacleDefectProjection;
+//         //using LineSearchSolver = TrivialSolver; // always gives 1 as correction damping
+//         using LineSearchSolver = Dune::TNNMG::ScalarBisectionSolver; // always gives 1 as correction damping
+//         //using LineSearchSolver = Dune::TNNMG::ScalarObstacleSolver;
+// 
+//         /* Setup linear multigrid */
+//         using MultiGrid =Dune::Solvers::MultigridStep<MatrixType, VectorType, BitVector>;
+//         auto mgStep = std::make_shared<MultiGrid>();
+//         auto gssmoother = Dune::Solvers::BlockGSStepFactory<MatrixType, VectorType, BitVector>::create(Dune::Solvers::BlockGS::LocalSolvers::gs());
+//         mgStep->setSmoother(&gssmoother);
+//         mgStep->setTransferOperators(transfer);
+//         mgStep->setMGType(1,3,3);
+// 
+//         // base solver for multigrid
+//         auto umfpack = Dune::Solvers::UMFPackSolver<MatrixType, VectorType>{}; // direct solver
+//         mgStep->basesolver_=&umfpack;
+// 
+// 
+//         auto trivialProjection = [](auto&& f, auto& x, auto& c) {};
+//         //using Step = Dune::TNNMG::TNNMGStep<Functional, BitVector, Linearization, DefectProjection, LineSearchSolver>;
+//         using Step = Dune::TNNMG::TNNMGStep<Functional, BitVector, Linearization, decltype(trivialProjection), LineSearchSolver>;
+//         int mu=1;
+//         //
+//         // J Functional to minimize, mgStep: linear "solver" for linear correction, mu #multigrid steps per iteration, trivialProjection is identity
+//         auto step = Step(J, u->data(), nonlinearSmoother, mgStep, mu, trivialProjection, LineSearchSolver());
+//         //step.setPreSmoothingSteps(0); nach lasse reintun
+//         step.setIgnore(ignore);
+// 
+//         //using Norm =  TwoNorm<VectorType>;
+//         using Norm =  EnergyNorm<MatrixType,VectorType>;
+//         auto norm = Norm(stiffnessMatrix);
+//         // max. 20 iterations or two norm of correction less than 1e-10
+//         using Solver = LoopSolver<VectorType>;
+//         auto solver = Solver(&step, 200, 1e-10, &norm, Solver::FULL); //QUIET);
+// 
+// 
+//         //solver.addCriterion(
+//             //[&](){
+//             //return Dune::formatString("   % 12.5e", J(u->data()));
+//             //},
+//             //"   energy      ");
+// 
+//         //double initialEnergy = J(u->data());
+//         //solver.addCriterion(
+//             //[&](){
+//             //static double oldEnergy=initialEnergy;
+//             //double currentEnergy = J(u->data());
+//             //double decrease = currentEnergy - oldEnergy;
+//             //oldEnergy = currentEnergy;
+//             //return Dune::formatString("   % 12.5e", decrease);
+//             //},
+//             //"   decrease    ");
+// 
+//         solver.addCriterion(
+//             [&](){
+//             return Dune::formatString("   % 12.5e", step.lastDampingFactor());
+//             },
+//             "   damping     ");
+// 
+// 
+//         solver.addCriterion(
+//             [&](){
+//             return Dune::formatString("   % 12d", step.linearization().truncated().count());
+//             },
+//             "   truncated   ");
+// 
+//         //std::vector<double> correctionNorms;
+//         //auto tolerance = 1e-8;
+//         //solver.addCriterion(Dune::Solvers::correctionNormCriterion(step, norm, tolerance, correctionNorms));
+// 
+//         solver.preprocess();
+// 
+//         solver.solve();
+// 
+// 	std::cout << "******************* step ****************" << step.linearization().truncated().count() << std::endl;
+// 	
+//   
+// 	}
+// 
+// 	
+// 	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
+//         M_u.resize(u->get_data().size());
+// 	this->M_dune.mv(u->get_data(), M_u);
+// 
+//     //std::cout << "impl solve "  << std::endl;
+//         for (size_t i = 0; i < u->get_data().size(); i++) {
+//           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
+// 	  //std::cout << "f " << f->data()[i] << std::endl;
+//         }
+//         //evaluate_rhs_impl(0, u);
+// 	//std::exit(0);
+//         this->_num_impl_solves++;
+//         //if (this->_num_impl_solves==5) std::exit(0);
+//         std::cout << my_rank << " ENDE u: " << u->norm0() << " " <<  this->is_coarse<< std::endl;
+//         
+//         //std::exit(0);
 
 
       }
       
-            template<class SweeperTrait, typename Enabled>
-      void
-      Heat_FE<SweeperTrait, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
-                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
-						 const typename SweeperTrait::time_t& dt,
-						 const shared_ptr<typename SweeperTrait::encap_t> rhs
-						){
-          
-          
+      template<class SweeperTrait, typename Enabled>
+        void
+        Heat_FE<SweeperTrait, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
+            const shared_ptr<typename SweeperTrait::encap_t> u,
+            const typename SweeperTrait::time_t& dt,
+            const shared_ptr<typename SweeperTrait::encap_t> rhs
+            ){
+
+
           f->zero();
-	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
-        fneu.resize(u->get_data().size());
-	for (int i=0; i<u->get_data().size(); ++i)
-	{
-	  fneu[i]= pow(u->get_data()[i], _n+1) - u->get_data()[i];	
-	}
-	f->data() *= (_nu*_nu);
-	this->M_dune.mv(fneu, f->data());
-	this->A_dune.mmv(u->get_data(),f->data());
-	f->data() *= dt;
-	this->M_dune.umv(u->get_data(),f->data());
-	f->data() -=rhs->get_data();
-          
+          Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
+          fneu.resize(u->get_data().size());
+          for (int i=0; i<u->get_data().size(); ++i)
+          {
+            f->data()[i]= pow(u->get_data()[i], _n+1) * (*w)[i];	
+          }
+          this->M_dune.mmv(u->get_data(), f->data());
+
+          f->data() *= (_nu*_nu);
+
+
+          this->A_dune.mmv(u->get_data(),f->data());
+          f->data() *= dt;
+          this->M_dune.umv(u->get_data(),f->data());
+          f->data() -=rhs->get_data();
+
 	
 	/*f->zero();
 	
@@ -595,13 +859,9 @@ namespace pfasst
           
           
           
-          for (int i=0; i<df.N(); ++i)
+            for (int i=0; i<df.N(); ++i)
             {
-            for (int j=0; j<df.M(); ++j)
-                {
-                    if (df.exists(i,j)) 
-                        df[i][j]= (_nu*_nu)*(_n+1) *this->M_dune[i][j] * pow(u->get_data()[j], _n);	
-                }
+                df[i][i]= (_nu*_nu)*(_n+1) * pow(u->get_data()[i], _n) * ((double) (*w)[i]);	
             }
             df.axpy((-_nu*_nu), this->M_dune);
             df-=this->A_dune;
@@ -610,20 +870,7 @@ namespace pfasst
           
           
           
-	/*for (int i=0; i<df.N(); ++i)
-	{
-	  for (int j=0; j<df.M(); ++j)
-	    {
-	  if (df.exists(i,j)) {
-	    df[i][j]=  -(_nu*_nu)*this->M_dune[i][j]  *(16* ((double) u->get_data()[j]) -24* ((double) u->get_data()[j])*((double) u->get_data()[j]))/(this->_delta*this->_delta);	
-	  }
-	    //std::cout << df[i][j]<<std::endl;
-	  }
-	}
-	df-=this->A_dune;
-	
-	df*=dt;
-	df+=this->M_dune;*/
+
 
       }  
       

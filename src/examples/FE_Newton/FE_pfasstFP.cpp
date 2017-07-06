@@ -1,4 +1,5 @@
 //#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <config.h>
 
 #include <memory>
 #include <stdexcept>
@@ -18,7 +19,10 @@ using std::shared_ptr;
 
 #include "FE_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
+//#include "../../finite_element_stuff/spectral_transfer.hpp"
+#include "spectral_transfer.hpp"
+
+#include <vector>
 //////////////////////////////////////////////////////////////////////////////////////
 //
 // Compiletimeparameter
@@ -75,23 +79,33 @@ namespace pfasst
         //pfasst.grid_builder(nelements);
 	auto FinEl = make_shared<fe_manager>(nelements, 2);
 
-        auto coarse = std::make_shared<SweeperType>(FinEl, 1);
+        
+
+        auto coarse = std::make_shared<SweeperType>(FinEl->get_basis(1), 1,  FinEl->get_grid());
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<SweeperType>(FinEl, 0);
+        auto fine = std::make_shared<SweeperType>(FinEl->get_basis(0), 0,  FinEl->get_grid());
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+        
+        
+        coarse->is_coarse=true;
+        fine->is_coarse=false;
 
         auto transfer = std::make_shared<TransferType>();
 	transfer->create(FinEl);
+        
+        fine->set_abs_residual_tol(1e-12);
+        coarse->set_abs_residual_tol(1e-12);
 
-        std::cout << "hier im code" <<std::endl;
-        //pfasst.add_sweeper(coarse, true);
-        //pfasst.add_sweeper(fine, false);
-        pfasst.add_transfer(transfer);
+
+
 	pfasst.add_sweeper(coarse, true);
-	pfasst.add_sweeper(fine, false);
+	pfasst.add_sweeper(fine);
+        
+                pfasst.add_transfer(transfer);
+        
         pfasst.set_options();
 
-        std::cout << "hier im code" <<std::endl;
+
 
         pfasst.status()->time() = t_0;
         pfasst.status()->dt() = dt;
@@ -103,33 +117,68 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 
+        /*if(my_rank==0) {
+        std::cout << my_rank << " test " << fine->exact(0)->data()[0] <<  std::endl;    
+        for (int i=0; i< coarse->initial_state()->data().size(); i++){
+          std::cout << i << " " << coarse->initial_state()->data()[i] <<  std::endl;
+        }
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+        if(my_rank==1){
+        std::cout << my_rank << " test  " << fine->exact(0)->data()[0] <<  std::endl; 
+        for (int i=0; i< coarse->initial_state()->data().size(); i++){
+          std::cout << i << " " << coarse->initial_state()->data()[i] <<  std::endl;
+        }   
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+        std::exit(0);*/
+        
         pfasst.run();
         pfasst.post_run();
 
-        if(my_rank==num_pro-1) {
-          auto naeherung = fine->get_end_state()->data();
-          auto exact = fine->exact(t_end)->data();
-          //for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
-            //std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          //}
-          std::cout << "******************************************* " << std::endl;
-          std::cout << " " << std::endl;
-          std::cout << " " << std::endl;
-          std::cout << "Fehler: " << std::endl;
-          //auto norm =  fine->exact(t_end))->data();
-          fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
-        std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
-        ofstream f;
-        stringstream ss;
-        ss << nelements;
-        string s = "solution_pfasst/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out );
-        f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << endl;
-        f.close();
-        std::cout << "******************************************* " << std::endl;
+        
+                MPI_Barrier(MPI_COMM_WORLD);
+
+        
+                if(my_rank==0) {
+        auto anfang    = fine->exact(0)->data();
+        auto naeherung = fine->get_end_state()->data();
+        auto exact     = fine->exact(t_end)->data();
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
         }
 
+        std::cout << "******************************************* " << std::endl;
+        std::cout << " " << std::endl;
+        std::cout << " " << std::endl;
+
+        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
+        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+
+
+std::cout << "******************************************* " << std::endl;
+}
+
         MPI_Barrier(MPI_COMM_WORLD);
+        
+                if(my_rank==1) {
+        auto anfang    = fine->exact(0)->data();
+        auto naeherung = fine->get_end_state()->data();
+        auto exact     = fine->exact(t_end)->data();
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
+        }
+
+        std::cout << "******************************************* " << std::endl;
+        std::cout << " " << std::endl;
+        std::cout << " " << std::endl;
+
+        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
+        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+
+
+std::cout << "******************************************* " << std::endl;
+}
 
         /*for (int i=0; i<num_pro; i++){
           if(my_rank==i){
@@ -165,9 +214,34 @@ int main(int argc, char** argv)
 {
   using pfasst::config::get_value;
   using pfasst::quadrature::QuadratureType;
-
+  //Dune::MPIHelper::instance(argc, argv); 
+    
+//Dune::FakeMPIHelper
   MPI_Init(&argc, &argv);
+        int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
+         Dune::FakeMPIHelper::instance(argc, argv);
+        std::vector<int> vec(100);
+
+  for(int i = 0; i< 100; i++){
+      vec[i]=i*20*3*8/3;
+  }  
+  
+          if(my_rank==0) {
+       for(int i = 0; i< 100; i++){
+      //std::cout << i << " "<< vec[i] <<std::endl;
+  }  
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+        if(my_rank==1){
+       for(int i = 0; i< 100; i++){
+      //std::cout << i << " "<< vec[i] <<std::endl;
+  }          
+        }
+  
+  
   pfasst::init(argc, argv, SweeperType::init_opts);
   pfasst::Status<double>::create_mpi_datatype();
 
@@ -192,7 +266,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 1000);
+  const size_t niter = get_value<size_t>("num_iters", 10);
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 

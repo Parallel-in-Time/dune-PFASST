@@ -166,20 +166,11 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1>>>(*grid);
 	    transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	    for (int i=0; i< n_levels-1; i++){
-	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
+	      transferMatrix->push_back(new MatrixType()); 
 	    }
 	    transfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
 	    
-	    std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
-	    //std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(0)).M() <<  std::endl;
-	    for (int i=0; i< vecvec->at(0)->N(); i++){
-	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
-		if(vecvec->at(0)->exists(i,j)){
-		  //std::cout << ((*vecvec->at(0))[i][j]) << std::endl;
-		}
-	      }
 
-        }
 	  }
 	  
 	  

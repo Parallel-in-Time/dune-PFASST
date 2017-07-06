@@ -1,3 +1,4 @@
+#include <config.h>
 #include <memory>
 #include <iostream>
 
@@ -25,7 +26,8 @@
 
 const size_t DIM = 1;            //Raeumliche Dimension des Rechengebiets ruth_dim
 
-const size_t BASIS_ORDER = 2;    //maximale Ordnung der Lagrange Basisfunktionen
+//const size_t BASIS_ORDER = 2;    //maximale Ordnung der Lagrange Basisfunktionen
+const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,7 +59,8 @@ namespace pfasst
 	
         auto FinEl   = make_shared<fe_manager>(nelements,1); 
 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2(), 0);
+        //auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2(), 0, FinEl->get_grid());
+        auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis(0), 0, FinEl->get_grid());
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
@@ -76,6 +79,8 @@ namespace pfasst
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
         Dune::BlockVector<Dune::FieldVector<double, 1> > w = sweeper->initial_state()->data();
 	
+        std::cout << "vor run " <<std::endl;
+        
         sdc->run();
 
         sdc->post_run();
@@ -108,9 +113,9 @@ namespace pfasst
 	        std::cout <<  "fein" << std::endl;
         auto naeherung = sweeper->get_end_state()->data();
         auto exact     = sweeper->exact(t_end)->data();
-        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
-          std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        //for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+          //std::cout << naeherung[i] << "   " << exact[i] << std::endl;
+        //}
 
 	  typedef Dune::BlockVector<Dune::FieldVector<double, 1> > VectorType;
           VectorType x = sweeper->get_end_state()->data();
@@ -124,7 +129,18 @@ namespace pfasst
           //std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
 
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
+    {
+      auto A = sweeper->get_A_dune();
+      A*=-1.0;
+      std::cout << "A[0][0]: " << A[0][0] << std::endl;
+      std::cout << "A[1][1]: " << A[1][1] << std::endl;
+      auto tmp = sweeper->get_end_state()->data();
+      A.mv(sweeper->get_end_state()->data(), tmp);
+      std::cout << "H1 error: " << tmp*sweeper->get_end_state()->data() << std::endl;
+      
+    }
+    std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
+
 	
       ofstream f;
 	  stringstream ss;
@@ -159,6 +175,7 @@ namespace pfasst
 
 #ifndef PFASST_UNIT_TESTING
   int main(int argc, char** argv) {
+    Dune::MPIHelper::instance(argc, argv);
     using pfasst::config::get_value;
     using pfasst::quadrature::QuadratureType;
     using pfasst::examples::heat_FE::Heat_FE;

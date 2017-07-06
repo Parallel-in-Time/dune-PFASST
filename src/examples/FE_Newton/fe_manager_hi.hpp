@@ -104,6 +104,8 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    
 	    
 	    this->grid = std::make_shared<GridType>(hL, hR, n);
+      grid->globalRefine(8);
+      std::cout << "grid size: " << grid->leafGridView().size(0) << std::endl;
         
 
         GridType::LeafGridView gridView = grid->leafGridView();

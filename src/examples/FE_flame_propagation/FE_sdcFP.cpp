@@ -1,3 +1,4 @@
+#include <config.h>
 #include <memory>
 #include <iostream>
 
@@ -158,6 +159,7 @@ namespace pfasst
 
 #ifndef PFASST_UNIT_TESTING
   int main(int argc, char** argv) {
+    Dune::MPIHelper::instance(argc,argv);
     using pfasst::config::get_value;
     using pfasst::quadrature::QuadratureType;
     using pfasst::examples::heat_FE::Heat_FE;
