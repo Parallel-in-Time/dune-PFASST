@@ -179,6 +179,8 @@ namespace pfasst
 
 #ifndef PFASST_UNIT_TESTING
   int main(int argc, char** argv) {
+      
+          //MPIHelper::instance(argc,argv);  
     Dune::MPIHelper::instance(argc, argv);
     using pfasst::config::get_value;
     using pfasst::quadrature::QuadratureType;

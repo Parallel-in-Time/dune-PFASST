@@ -538,19 +538,52 @@ namespace pfasst
           Dune::RedistributeInformation<Communication> rinfo;
 
 
-          bool hasDofs = Dune::graphRepartition(MatrixGraph(A), comm,
+          bool hasDofs = Dune::graphRepartition(MatrixGraph(df), comm,
                 static_cast<int>(world_comm.size()),
                 comm_redist,
                 rinfo.getInterface (),
                 true); // verbose
 
+          std::cout << "parallel solve " << static_cast<int>(world_comm.size()) << std::endl;
+
           rinfo.setSetup();
-          redistributeMatrix(A, parallel_A , comm, *comm_redist, rinfo);
+          redistributeMatrix(df, parallel_A , comm, *comm_redist, rinfo);
 
           VectorType parallel_b(parallel_A .N());
           VectorType parallel_x(parallel_A .M());
-          rinfo.redistribute(b, parallel_b );
+          rinfo.redistribute(newton_rhs, parallel_b );
           
+          if (hasDofs) // if hasDofs is false we do not compute.
+            {
+            std::cout << "parallel solve" << std::endl;
+            //std::exit(0);
+            // the index set has changed. Rebuild the remote information
+            comm_redist->remoteIndices().rebuild<false>();
+            typedef Dune::SeqSSOR<MatrixType,VectorType,VectorType> Prec;
+            typedef Dune::BlockPreconditioner<VectorType,VectorType, Communication,Prec> ParPrec; // type of parallel preconditioner
+            typedef Dune::OverlappingSchwarzScalarProduct<VectorType,Communication> ScalarProduct; // type of parallel scalar product
+            typedef Dune::OverlappingSchwarzOperator<MatrixType,VectorType, VectorType,Communication> Operator; // type of parallel linear operator
+
+            ScalarProduct sp(*comm_redist);
+
+            Operator op(parallel_A, *comm_redist);
+            Prec prec(parallel_A , 1, 1.0);
+            ParPrec pprec(prec, *comm_redist);
+
+            // Object storing some statistics about the solving process
+            Dune::InverseOperatorResult statistics ;
+            Dune::CGSolver<VectorType> cg(op, // linear operator
+                            sp,// scalar product
+                            pprec,// parallel preconditioner
+                            10e-8,// desired residual reduction factor
+                            80,// maximum number of iterations
+                            world_comm.rank()==0?2:0);// verbosity of the solver
+
+
+            VectorType parallel_x(parallel_A.M());
+            cg.apply( parallel_x , parallel_b , statistics );
+
+            }
           
           //ende neuer kram
 	
