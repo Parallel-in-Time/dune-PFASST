@@ -517,6 +517,9 @@ namespace pfasst
 	
         u->zero();
 	for (int i=0; i< 200 ;i++){
+            
+          std::cout << "schleife " << std::endl;
+  
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
 	  evaluate_f(f, u, dt, rhs);
 	  evaluate_df(df, u, dt);
@@ -525,6 +528,9 @@ namespace pfasst
           newton_rhs2 = newton_rhs;
 
           //hier kommt der neue kam hin
+          
+          std::cout << "vor parallel " << std::endl;
+
           
           typedef std::size_t GlobalId; // The type for the global index
           typedef Dune::OwnerOverlapCopyCommunication<GlobalId> Communication;
@@ -544,7 +550,7 @@ namespace pfasst
                 rinfo.getInterface (),
                 true); // verbose
 
-          std::cout << "parallel solve " << static_cast<int>(world_comm.size()) << std::endl;
+          std::cout << "parallel solve " << static_cast<int>(world_comm.rank()) << std::endl;
 
           rinfo.setSetup();
           redistributeMatrix(df, parallel_A , comm, *comm_redist, rinfo);
@@ -553,8 +559,8 @@ namespace pfasst
           VectorType parallel_x(parallel_A .M());
           rinfo.redistribute(newton_rhs, parallel_b );
           
-          if (hasDofs) // if hasDofs is false we do not compute.
-            {
+          //if (hasDofs) // if hasDofs is false we do not compute.
+            //{
             std::cout << "parallel solve" << std::endl;
             //std::exit(0);
             // the index set has changed. Rebuild the remote information
@@ -572,6 +578,10 @@ namespace pfasst
 
             // Object storing some statistics about the solving process
             Dune::InverseOperatorResult statistics ;
+            
+                      std::cout << "parallel solve vor cg " << static_cast<int>(world_comm.rank()) << std::endl;
+
+            
             Dune::CGSolver<VectorType> cg(op, // linear operator
                             sp,// scalar product
                             pprec,// parallel preconditioner
@@ -580,41 +590,54 @@ namespace pfasst
                             world_comm.rank()==0?2:0);// verbosity of the solver
 
 
-            VectorType parallel_x(parallel_A.M());
+            //VectorType parallel_x(parallel_A.M());
             cg.apply( parallel_x , parallel_b , statistics );
 
-            }
-          
+            //}
+
+            
+            std::cout << "nach cg " << static_cast<int>(world_comm.rank()) << std::endl;
+
+            
+                    for (size_t i = 0; i < parallel_x.size(); i++) {
+            std::cout << world_comm.rank() << "  x " << parallel_x[i] << std::endl;
+          }
+          //for test case allgather the data
+          std::cout << "prozess vor " <<std::endl;
+          MPI_Allgather(&parallel_x[0], parallel_A .M(), MPI_DOUBLE, &u->data()[0], parallel_A .M(), MPI_DOUBLE, world_comm);
+          //Dune::MPIHelper::getCollectiveCommunication::allgather(&parallel_x[0], parallel_A .M(), &u->data()[0]);
+          std::cout << "prozess nach " <<std::endl;
+
           //ende neuer kram
 	
 
           std::cout << "vor solver" << std::endl;
           
-	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
+	  //Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  
-          Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
+          //Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
 	  
-          Dune::CGSolver<VectorType> cg(linearOperator,
-                              preconditioner,
-                              1e-16, // desired residual reduction factor
-                              5000,    // maximum number of iterations
-                              1);    // verbosity of the solver
+          //Dune::CGSolver<VectorType> cg(linearOperator,
+          //                    preconditioner,
+          //                    1e-16, // desired residual reduction factor
+          //                    5000,    // maximum number of iterations
+          //                    1);    // verbosity of the solver
           
           
-	  Dune::InverseOperatorResult statistics ;
+	  //Dune::InverseOperatorResult statistics ;
 
-          for (size_t i = 0; i < u->get_data().size(); i++) {
-            //std::cout << "anfangswert u " << u->data()[i] << std::endl;
+          for (size_t i = 0; i < parallel_x.size(); i++) {
+            std::cout << world_comm.rank() << "  x " << parallel_x[i] << std::endl;
           }
           
-	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
+	  //cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
           
           for (size_t i = 0; i < u->get_data().size(); i++) {
-	    //std::cout << "ergebnis u " << u->data()[i] << std::endl;
+	    std::cout << world_comm.rank() << " ergebnis u " << u->data()[i] << std::endl;
           }
           
-          std::cout << "num_iterations " << statistics.iterations << std::endl;
-          std::cout << "nach solver" << std::endl;  
+          //std::cout << "num_iterations " << statistics.iterations << std::endl;
+          //std::cout << "nach solver" << std::endl;  
 
           evaluate_f(f, u, dt, rhs);
           
@@ -626,11 +649,11 @@ namespace pfasst
           std::cout << "residuums norm " << residuum->norm0() << std::endl;
           //if (residuum->norm0()< _abs_newton_tol){break;}
 	  
-          for (size_t i = 0; i < u->get_data().size(); i++) {
-
-	  //std::cout << "u " << u->data()[i] << std::endl;
-
-          }
+//           for (size_t i = 0; i < u->get_data().size(); i++) {
+// 
+// 	  //std::cout << "u " << u->data()[i] << std::endl;
+// 
+//           }
 	}
 
 	
@@ -656,6 +679,11 @@ namespace pfasst
         //evaluate_rhs_impl(0, u);
 	//std::exit(0);
         this->_num_impl_solves++;
+        
+        std::cout << "ende impl solve " <<std::endl;
+
+        
+        
 //if (this->_num_impl_solves==5) std::exit(0);
 //         int my_rank;  
 //         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );  
