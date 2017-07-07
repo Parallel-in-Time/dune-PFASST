@@ -4,6 +4,10 @@
 
 #include <vector>
 
+
+#include <dune/istl/matrixmarket.hh>
+#include<dune/istl/matrixredistribute.hh>
+
 #include "dune_includes"
 
 #include <pfasst.hpp>

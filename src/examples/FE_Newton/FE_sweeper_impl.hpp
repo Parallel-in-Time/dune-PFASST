@@ -54,6 +54,21 @@ using std::vector;
 #include "tnnmgfunctionallinearization.hh"
 #include "scalarbisectionsolver.hh"
 
+
+#include<iostream>
+#include <dune/common/parallel/mpihelper.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/bvector.hh>
+#include <dune/istl/preconditioners.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/schwarz.hh>
+//#include <dune/istl/matrixmarket.hh>
+#include<dune/istl/paamg/pinfo.hh>
+//#include<dune/istl/matrixredistribute.hh>
+#include<dune/istl/paamg/graph.hh>
+
+using namespace std;
+
 struct TrivialSolver {
   template<class Vector, class Functional, class BitVector>
     constexpr void operator()(Vector& x, const Functional& f, const BitVector& ignore) const
@@ -455,10 +470,12 @@ namespace pfasst
 
 	u2->zero();
 	for (int i=0; i<u->get_data().size(); ++i)
-	    {
+        {
 	    result->data()[i]= -pow(u->get_data()[i], _n+1) * (*w)[i];	
-	    }
-	//this->M_dune.mv(u2->get_data(), result->data());
+	}
+	    
+	    
+
 	this->M_dune.umv(u->get_data(), result->data());
 	result->data()*=_nu*_nu;
 	this->A_dune.umv(u->get_data(), result->data());
@@ -476,6 +493,9 @@ namespace pfasst
         return result;
       }
 
+      
+      
+      
       template<class SweeperTrait, typename Enabled>
       void
       Heat_FE<SweeperTrait, Enabled>::implicit_solve(shared_ptr<typename SweeperTrait::encap_t> f,
@@ -489,15 +509,10 @@ namespace pfasst
          ML_CVLOG(4, this->get_logger_id(),
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
-
-        
-
-	
-
-    auto residuum = this->get_encap_factory().create();
+        auto residuum = this->get_encap_factory().create();
 	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
-    newton_rhs.resize(rhs->get_data().size());
-    newton_rhs2.resize(rhs->get_data().size());
+        newton_rhs.resize(rhs->get_data().size());
+        newton_rhs2.resize(rhs->get_data().size());
     
 	
         u->zero();
@@ -509,57 +524,62 @@ namespace pfasst
 	  newton_rhs -= f->data();
           newton_rhs2 = newton_rhs;
 
-	  auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
-	  auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
- 
-	
-	
-	  std::vector<double> dirichletLeftNodes;
-	  interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  
+          //hier kommt der neue kam hin
+          
+          typedef std::size_t GlobalId; // The type for the global index
+          typedef Dune::OwnerOverlapCopyCommunication<GlobalId> Communication;
 
-	  std::vector<double> dirichletRightNodes;
-	  interpolate(*basis, dirichletRightNodes, isRightDirichlet);
-	
-	  /*for(int i=0; i<rhs->data().size(); ++i){
-	
-	    if(dirichletLeftNodes[i])
-	    newton_rhs[i] = exact(t)->get_data()[i]; //1;//-dt;
-	    if(dirichletRightNodes[i])
-	    newton_rhs[i] = exact(t)->get_data()[i]; //0;
-	  
-	  }
-	  for (size_t j=0; j<df.N(); j++){
-	    if (dirichletRightNodes[j] || dirichletLeftNodes[j]){ 
-	      auto cIt = df[j].begin();
-	      auto cEndIt = df[j].end();
-	      for(; cIt!=cEndIt; ++cIt){
-		  *cIt = (j==cIt.index()) ? 1.0 : 0.0;
-	      }
-	    }
-	  }*/
-	  //std::cout << "5"<<std::endl;
+          auto world_comm = Dune::MPIHelper::getCollectiveCommunication();
+          Communication comm(world_comm);
+   
+          Communication* comm_redist;
+          MatrixType parallel_A;
+          typedef Dune::Amg::MatrixGraph<MatrixType> MatrixGraph;
+          Dune::RedistributeInformation<Communication> rinfo;
 
-          std::cout << "vor solver" << std::endl;  
+
+          bool hasDofs = Dune::graphRepartition(MatrixGraph(A), comm,
+                static_cast<int>(world_comm.size()),
+                comm_redist,
+                rinfo.getInterface (),
+                true); // verbose
+
+          rinfo.setSetup();
+          redistributeMatrix(A, parallel_A , comm, *comm_redist, rinfo);
+
+          VectorType parallel_b(parallel_A .N());
+          VectorType parallel_x(parallel_A .M());
+          rinfo.redistribute(b, parallel_b );
+          
+          
+          //ende neuer kram
+	
+
+          std::cout << "vor solver" << std::endl;
+          
 	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
-	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
-	  Dune::CGSolver<VectorType> cg(linearOperator,
+	  
+          Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
+	  
+          Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
                               1e-16, // desired residual reduction factor
                               5000,    // maximum number of iterations
                               1);    // verbosity of the solver
+          
+          
 	  Dune::InverseOperatorResult statistics ;
-          //u->zero();
-          for (size_t i = 0; i < u->get_data().size(); i++) {
 
+          for (size_t i = 0; i < u->get_data().size(); i++) {
             //std::cout << "anfangswert u " << u->data()[i] << std::endl;
-
           }
+          
 	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
+          
           for (size_t i = 0; i < u->get_data().size(); i++) {
-
 	    //std::cout << "ergebnis u " << u->data()[i] << std::endl;
-
           }
+          
           std::cout << "num_iterations " << statistics.iterations << std::endl;
           std::cout << "nach solver" << std::endl;  
 
