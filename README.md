@@ -4,6 +4,9 @@ a time-parallel solver for partial differential equations using the finite eleme
 
 # installation
 
+we recommend to use the gcc-4.9 compiler or later (it especially needs to support the C++14 standard).
+
+
 for dune-PFASST you need the following dune-modules which you can download via git:
 
 git clone https://gitlab.dune-project.org/core/dune-common.git
