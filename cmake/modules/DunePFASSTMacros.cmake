@@ -1,6 +1,8 @@
 # File for module specific CMake tests.
 
-find_package(Eigen3 REQUIRED)
+#find_package(Eigen3 REQUIRED)
+find_package(Eigen3)
+
 
 if(EIGEN3_FOUND)
   dune_register_package_flags(INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
