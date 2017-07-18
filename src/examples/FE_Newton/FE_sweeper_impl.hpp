@@ -529,70 +529,70 @@ namespace pfasst
 
           //hier kommt der neue kam hin
           
-          std::cout << "vor parallel " << std::endl;
-
-          
-          typedef std::size_t GlobalId; // The type for the global index
-          typedef Dune::OwnerOverlapCopyCommunication<GlobalId> Communication;
-
-          auto world_comm = Dune::MPIHelper::getCollectiveCommunication();
-          Communication comm(world_comm);
-   
-          Communication* comm_redist;
-          MatrixType parallel_A;
-          typedef Dune::Amg::MatrixGraph<MatrixType> MatrixGraph;
-          Dune::RedistributeInformation<Communication> rinfo;
-
-
-          bool hasDofs = Dune::graphRepartition(MatrixGraph(df), comm,
-                static_cast<int>(world_comm.size()),
-                comm_redist,
-                rinfo.getInterface (),
-                true); // verbose
-
-          std::cout << "parallel solve " << static_cast<int>(world_comm.rank()) << std::endl;
-
-          rinfo.setSetup();
-          redistributeMatrix(df, parallel_A , comm, *comm_redist, rinfo);
-
-          VectorType parallel_b(parallel_A .N());
-          VectorType parallel_x(parallel_A .M());
-          rinfo.redistribute(newton_rhs, parallel_b );
-          
-          //if (hasDofs) // if hasDofs is false we do not compute.
-            //{
-            std::cout << "parallel solve" << std::endl;
+//           std::cout << "vor parallel " << std::endl;
+// 
+//           
+//           typedef std::size_t GlobalId; // The type for the global index
+//           typedef Dune::OwnerOverlapCopyCommunication<GlobalId> Communication;
+// 
+//           auto world_comm = Dune::MPIHelper::getCollectiveCommunication();
+//           Communication comm(world_comm);
+//    
+//           Communication* comm_redist;
+//           MatrixType parallel_A;
+//           typedef Dune::Amg::MatrixGraph<MatrixType> MatrixGraph;
+//           Dune::RedistributeInformation<Communication> rinfo;
+// 
+// 
+//           bool hasDofs = Dune::graphRepartition(MatrixGraph(df), comm,
+//                 static_cast<int>(world_comm.size()),
+//                 comm_redist,
+//                 rinfo.getInterface (),
+//                 true); // verbose
+// 
+//           std::cout << "parallel solve " << static_cast<int>(world_comm.rank()) << std::endl;
+// 
+//           rinfo.setSetup();
+//           redistributeMatrix(df, parallel_A , comm, *comm_redist, rinfo);
+// 
+//           VectorType parallel_b(parallel_A .N());
+//           VectorType parallel_x(parallel_A .M());
+//           rinfo.redistribute(newton_rhs, parallel_b );
+//           
+//           //if (hasDofs) // if hasDofs is false we do not compute.
+//             //{
+//             std::cout << "parallel solve" << std::endl;
             //std::exit(0);
             // the index set has changed. Rebuild the remote information
-            comm_redist->remoteIndices().rebuild<false>();
-            typedef Dune::SeqSSOR<MatrixType,VectorType,VectorType> Prec;
-            typedef Dune::BlockPreconditioner<VectorType,VectorType, Communication,Prec> ParPrec; // type of parallel preconditioner
-            typedef Dune::OverlappingSchwarzScalarProduct<VectorType,Communication> ScalarProduct; // type of parallel scalar product
-            typedef Dune::OverlappingSchwarzOperator<MatrixType,VectorType, VectorType,Communication> Operator; // type of parallel linear operator
-
-            ScalarProduct sp(*comm_redist);
-
-            Operator op(parallel_A, *comm_redist);
-            Prec prec(parallel_A , 1, 1.0);
-            ParPrec pprec(prec, *comm_redist);
-
-            // Object storing some statistics about the solving process
-            Dune::InverseOperatorResult statistics ;
-            
-                      std::cout << "parallel solve vor cg " << static_cast<int>(world_comm.rank()) << std::endl;
-
-            
-            Dune::CGSolver<VectorType> cg(op, // linear operator
-                            sp,// scalar product
-                            pprec,// parallel preconditioner
-                            10e-8,// desired residual reduction factor
-                            80,// maximum number of iterations
-                            world_comm.rank()==0?2:0);// verbosity of the solver
-
-
-            //VectorType parallel_x(parallel_A.M());
-            cg.apply( parallel_x , parallel_b , statistics );
-
+//             comm_redist->remoteIndices().rebuild<false>();
+//             typedef Dune::SeqSSOR<MatrixType,VectorType,VectorType> Prec;
+//             typedef Dune::BlockPreconditioner<VectorType,VectorType, Communication,Prec> ParPrec; // type of parallel preconditioner
+//             typedef Dune::OverlappingSchwarzScalarProduct<VectorType,Communication> ScalarProduct; // type of parallel scalar product
+//             typedef Dune::OverlappingSchwarzOperator<MatrixType,VectorType, VectorType,Communication> Operator; // type of parallel linear operator
+// 
+//             ScalarProduct sp(*comm_redist);
+// 
+//             Operator op(parallel_A, *comm_redist);
+//             Prec prec(parallel_A , 1, 1.0);
+//             ParPrec pprec(prec, *comm_redist);
+// 
+//             // Object storing some statistics about the solving process
+//             Dune::InverseOperatorResult statistics ;
+//             
+//                       std::cout << "parallel solve vor cg " << static_cast<int>(world_comm.rank()) << std::endl;
+// 
+//             
+//             Dune::CGSolver<VectorType> cg(op, // linear operator
+//                             sp,// scalar product
+//                             pprec,// parallel preconditioner
+//                             10e-8,// desired residual reduction factor
+//                             80,// maximum number of iterations
+//                             world_comm.rank()==0?2:0);// verbosity of the solver
+// 
+// 
+//             //VectorType parallel_x(parallel_A.M());
+//             cg.apply( parallel_x , parallel_b , statistics );
+/*
             //}
 
             
@@ -608,37 +608,45 @@ namespace pfasst
           //Dune::MPIHelper::getCollectiveCommunication::allgather(&parallel_x[0], parallel_A .M(), &u->data()[0]);
           std::cout << "prozess nach " <<std::endl;
 
-          //ende neuer kram
-	
+          //ende neuer kram*/
+
 
           std::cout << "vor solver" << std::endl;
           
-	  //Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
+	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  
-          //Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
+          Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
 	  
-          //Dune::CGSolver<VectorType> cg(linearOperator,
-          //                    preconditioner,
-          //                    1e-16, // desired residual reduction factor
-          //                    5000,    // maximum number of iterations
-          //                    1);    // verbosity of the solver
+          Dune::CGSolver<VectorType> cg(linearOperator,
+                              preconditioner,
+                              1e-16, // desired residual reduction factor
+                              5000,    // maximum number of iterations
+                              1);    // verbosity of the solver
           
           
-	  //Dune::InverseOperatorResult statistics ;
+	  Dune::InverseOperatorResult statistics ;
 
-          for (size_t i = 0; i < parallel_x.size(); i++) {
-            std::cout << world_comm.rank() << "  x " << parallel_x[i] << std::endl;
-          }
-          
-	  //cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
-          
-          for (size_t i = 0; i < u->get_data().size(); i++) {
-	    std::cout << world_comm.rank() << " ergebnis u " << u->data()[i] << std::endl;
-          }
+//           for (size_t i = 0; i < parallel_x.size(); i++) {
+//             std::cout << world_comm.rank() << "  x " << parallel_x[i] << std::endl;
+//           }
+//           
+// 	  //cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
+//           
+//           for (size_t i = 0; i < u->get_data().size(); i++) {
+// 	    std::cout << world_comm.rank() << " ergebnis u " << u->data()[i] << std::endl;
+//           }
           
           //std::cout << "num_iterations " << statistics.iterations << std::endl;
           //std::cout << "nach solver" << std::endl;  
 
+          
+          
+
+	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
+
+          
+          
+          
           evaluate_f(f, u, dt, rhs);
           
           std::cout << i << " residuumsnorm von f(u) " << f->norm0() << std::endl;  
