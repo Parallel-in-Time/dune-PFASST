@@ -27,13 +27,11 @@ git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git
 
 git clone https://git.imp.fu-berlin.de/agnumpde/dune-matrix-vector.git
 
-to install them type 
+type: 
 
 ./dune-common/bin/dunecontrol all
 
-sudo ./dune-common/bin/dunecontrol make install
-
-to build dune-PFASST just run:
+to build dune-PFASST (just put it in the same directory as the other dune modules) run:
 
 ./dune/dune-common/bin/dunecontrol --opts=dune.opts --only=dune-PFASST all
 
