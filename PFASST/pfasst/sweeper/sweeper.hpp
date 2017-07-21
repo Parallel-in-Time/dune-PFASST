@@ -43,10 +43,11 @@ namespace pfasst
    */
   template<
     class SweeperTrait,
+    class BaseFunction,
     typename Enabled = void
   >
   class Sweeper
-    : public std::enable_shared_from_this<Sweeper<SweeperTrait, Enabled>>
+    : public std::enable_shared_from_this<Sweeper<SweeperTrait, BaseFunction, Enabled>>
   {
     public:
       /**
@@ -159,11 +160,11 @@ namespace pfasst
     public:
       //! @{
       explicit Sweeper();
-      Sweeper(const Sweeper<SweeperTrait, Enabled>& other) = default;
-      Sweeper(Sweeper<SweeperTrait, Enabled>&& other) = default;
+      Sweeper(const Sweeper<SweeperTrait, BaseFunction, Enabled>& other) = default;
+      Sweeper(Sweeper<SweeperTrait, BaseFunction, Enabled>&& other) = default;
       virtual ~Sweeper() = default;
-      Sweeper<SweeperTrait, Enabled>& operator=(const Sweeper<SweeperTrait, Enabled>& other) = default;
-      Sweeper<SweeperTrait, Enabled>& operator=(Sweeper<SweeperTrait, Enabled>&& other) = default;
+      Sweeper<SweeperTrait, BaseFunction, Enabled>& operator=(const Sweeper<SweeperTrait, BaseFunction, Enabled>& other) = default;
+      Sweeper<SweeperTrait, BaseFunction, Enabled>& operator=(Sweeper<SweeperTrait, BaseFunction, Enabled>&& other) = default;
       //! @}
 
       //! @name Accessors

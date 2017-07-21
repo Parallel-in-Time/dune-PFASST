@@ -96,9 +96,9 @@ namespace pfasst
         
         
         
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       void
-      Heat_FE<SweeperTrait, Enabled>::init_opts()
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::init_opts()
       {
         /*config::options::add_option<size_t>("Heat FE", "num_dofs",
                                             "number spatial degrees of freedom per dimension on fine level");
@@ -108,9 +108,9 @@ namespace pfasst
                                                "thermal diffusivity");*/
       }
 
-        template<class SweeperTrait, typename Enabled>
-      Heat_FE<SweeperTrait, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
-        :   IMEX<SweeperTrait, Enabled>()
+        template<class SweeperTrait, class BasisFunction, typename Enabled>
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
+        :   IMEX<SweeperTrait, BasisFunction, Enabled>()
 
       {
       
@@ -166,14 +166,14 @@ namespace pfasst
 
       }
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       void
-      Heat_FE<SweeperTrait, Enabled>::set_options()
+      Heat_FE<SweeperTrait, BasisFunction,  Enabled>::set_options()
       {
 
 
         std::cout << " set_options " <<  std::endl;  
-        IMEX<SweeperTrait, Enabled>::set_options();
+        IMEX<SweeperTrait, BasisFunction, Enabled>::set_options();
 
         this->_nu = config::get_value<spatial_t>("nu", this->_nu);
 
@@ -184,9 +184,9 @@ namespace pfasst
 
       }
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
-      Heat_FE<SweeperTrait, Enabled>::exact(const typename SweeperTrait::time_t& t)
+      Heat_FE<SweeperTrait, BasisFunction,  Enabled>::exact(const typename SweeperTrait::time_t& t)
       {
         auto result = this->get_encap_factory().create();
 
@@ -303,11 +303,11 @@ namespace pfasst
       
       
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       void
-      Heat_FE<SweeperTrait, Enabled>::post_step()
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::post_step()
       {
-        IMEX<SweeperTrait, Enabled>::post_step();
+        IMEX<SweeperTrait,BasisFunction,  Enabled>::post_step();
 
         ML_CLOG(INFO, this->get_logger_id(), "number function evaluations:");
         //ML_CLOG(INFO, this->get_logger_id(), "  expl:        " << this->_num_expl_f_evals);
@@ -319,11 +319,11 @@ namespace pfasst
         this->_num_impl_solves = 0;
       }
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       bool
-      Heat_FE<SweeperTrait, Enabled>::converged(const bool pre_check)
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::converged(const bool pre_check)
       {
-        const bool converged = IMEX<SweeperTrait, Enabled>::converged(pre_check);
+        const bool converged = IMEX<SweeperTrait, BasisFunction, Enabled>::converged(pre_check);
 
         if (!pre_check) {
           assert(this->get_status() != nullptr);
@@ -360,16 +360,16 @@ namespace pfasst
         return converged;
       }
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       bool
-      Heat_FE<SweeperTrait, Enabled>::converged()
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::converged()
       {
         return this->converged(false);
       }
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       size_t
-      Heat_FE<SweeperTrait, Enabled>::get_num_dofs() const
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::get_num_dofs() const
       {
         return this->get_encap_factory().size();
       }
@@ -386,9 +386,9 @@ namespace pfasst
       }*/
 
 
-      template<class SweeperTrait, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
+      template<class SweeperTrait, class BasisFunction, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
       vector<shared_ptr<typename SweeperTrait::encap_t>>
-      Heat_FE<SweeperTrait, Enabled>::compute_error(const typename SweeperTrait::time_t& t)
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::compute_error(const typename SweeperTrait::time_t& t)
       {
         ML_CVLOG(4, this->get_logger_id(), "computing error");
 
@@ -413,9 +413,9 @@ namespace pfasst
         return error;
       }
 
-      template<class SweeperTrait, typename Enabled> //vector encap_ raumdaten an jedem Quadraturpunkt
+      template<class SweeperTrait, class BasisFunction, typename Enabled> //vector encap_ raumdaten an jedem Quadraturpunkt
       vector<shared_ptr<typename SweeperTrait::encap_t>>
-      Heat_FE<SweeperTrait, Enabled>::compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
                                                             const typename SweeperTrait::time_t& t)
       {
         UNUSED(t);
@@ -457,9 +457,9 @@ namespace pfasst
 
       }*/
 
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
-      Heat_FE<SweeperTrait, Enabled>::evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
                                                        const shared_ptr<typename SweeperTrait::encap_t> u)
       {
 	
@@ -499,9 +499,9 @@ namespace pfasst
       
       
       
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       void
-      Heat_FE<SweeperTrait, Enabled>::implicit_solve(shared_ptr<typename SweeperTrait::encap_t> f,
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::implicit_solve(shared_ptr<typename SweeperTrait::encap_t> f,
                                                     shared_ptr<typename SweeperTrait::encap_t> u,
                                                     const typename SweeperTrait::time_t& t,
                                                     const typename SweeperTrait::time_t& dt,
@@ -895,9 +895,9 @@ namespace pfasst
 
       }
       
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
         void
-        Heat_FE<SweeperTrait, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
+        Heat_FE<SweeperTrait, BasisFunction, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
             const shared_ptr<typename SweeperTrait::encap_t> u,
             const typename SweeperTrait::time_t& dt,
             const shared_ptr<typename SweeperTrait::encap_t> rhs
@@ -940,9 +940,9 @@ namespace pfasst
 
       }
 						
-      template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, class BasisFunction, typename Enabled>
       void
-      Heat_FE<SweeperTrait, Enabled>::evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
 						 const typename SweeperTrait::time_t& dt
  						){

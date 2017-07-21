@@ -18,7 +18,7 @@
 
 #include <dune/functions/functionspacebases/pqknodalbasis.hh>
 
-#include "FE_sweeper.hpp"
+#include "fischer_sweeper.hpp"
 
 #include "../../datatypes/dune_vec.hpp"
 
@@ -46,7 +46,7 @@ namespace pfasst
   {
     namespace heat_FE
     {
-      using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>>;
+      using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>,   Dune::Functions::PQkNodalBasis<GridType::LevelGridView,BASE_ORDER> >;
       using pfasst::transfer_traits;
       using pfasst::contrib::SpectralTransfer;
       using pfasst::SDC;

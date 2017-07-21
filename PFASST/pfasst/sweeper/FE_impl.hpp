@@ -30,10 +30,11 @@ namespace pfasst
    */
   template<
     class SweeperTrait,
+    class BaseFunction,
     typename Enabled = void
   >
   class IMEX
-    : public Sweeper<SweeperTrait, Enabled>
+    : public Sweeper<SweeperTrait, BaseFunction, Enabled>
   {
     public:
       //! @copydoc Sweeper::traits
@@ -54,6 +55,8 @@ namespace pfasst
       //std::shared_ptr<MatrixType> M_dune;
       
       bool is_coarse;
+      
+      bool dontmatter= true;
       
       MatrixType M_dune;
       MatrixType A_dune;
@@ -169,11 +172,11 @@ namespace pfasst
     public:
       //! @{
       explicit IMEX();
-      IMEX(const IMEX<SweeperTrait, Enabled>& other) = default;
-      IMEX(IMEX<SweeperTrait, Enabled>&& other) = default;
+      IMEX(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;
+      IMEX(IMEX<SweeperTrait, BaseFunction, Enabled>&& other) = default;
       virtual ~IMEX() = default;
-      IMEX<SweeperTrait, Enabled>& operator=(const IMEX<SweeperTrait, Enabled>& other) = default;
-      IMEX<SweeperTrait, Enabled>& operator=(IMEX<SweeperTrait, Enabled>&& other) = default;
+      IMEX<SweeperTrait, BaseFunction, Enabled>& operator=(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;
+      IMEX<SweeperTrait, BaseFunction, Enabled>& operator=(IMEX<SweeperTrait, BaseFunction, Enabled>&& other) = default;
       //! @}
 
       //! @name Configuration and Setup

@@ -15,8 +15,8 @@ using pfasst::quadrature::IQuadrature;
 
 namespace pfasst
 {
-  template<class SweeperTrait, typename Enabled>
-  Sweeper<SweeperTrait, Enabled>::Sweeper()
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::Sweeper()
     :   _quadrature(nullptr)
       , _factory(std::make_shared<typename SweeperTrait::encap_t::factory_t>())
       , _states(0)
@@ -31,44 +31,44 @@ namespace pfasst
       , _logger_id("SWEEPER")
   {}
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<IQuadrature<typename SweeperTrait::time_t>>&
-  Sweeper<SweeperTrait, Enabled>::quadrature()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::quadrature()
   {
     return this->_quadrature;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const shared_ptr<IQuadrature<typename SweeperTrait::time_t>>
-  Sweeper<SweeperTrait, Enabled>::get_quadrature() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_quadrature() const
   {
     return this->_quadrature;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<Status<typename SweeperTrait::time_t>>&
-  Sweeper<SweeperTrait, Enabled>::status()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::status()
   {
     return this->_status;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const shared_ptr<Status<typename SweeperTrait::time_t>>
-  Sweeper<SweeperTrait, Enabled>::get_status() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_status() const
   {
     return this->_status;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<typename SweeperTrait::encap_t::factory_t>&
-  Sweeper<SweeperTrait, Enabled>::encap_factory()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::encap_factory()
   {
     return this->_factory;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const typename SweeperTrait::encap_t::factory_t&
-  Sweeper<SweeperTrait, Enabled>::get_encap_factory() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_encap_factory() const
   {
     return *(this->_factory);
   }
@@ -76,9 +76,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if `get_states()` has zero length
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<typename SweeperTrait::encap_t>&
-  Sweeper<SweeperTrait, Enabled>::initial_state()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::initial_state()
   {
     if (this->get_states().size() == 0) {
       ML_CLOG(ERROR, this->get_logger_id(), "Sweeper need to be setup first before querying initial state.");
@@ -90,9 +90,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if `get_states()` has zero length
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const shared_ptr<typename SweeperTrait::encap_t>
-  Sweeper<SweeperTrait, Enabled>::get_initial_state() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_initial_state() const
   {
     if (this->get_states().size() == 0) {
       ML_CLOG(ERROR, this->get_logger_id(), "Sweeper need to be setup first before querying initial state.");
@@ -101,86 +101,86 @@ namespace pfasst
     return this->get_states().front();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::states()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::states()
   {
     return this->_states;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::get_states() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_states() const
   {
     return this->_states;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::previous_states()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::previous_states()
   {
     return this->_previous_states;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::get_previous_states() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_previous_states() const
   {
     return this->_previous_states;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<typename SweeperTrait::encap_t>&
-  Sweeper<SweeperTrait, Enabled>::end_state()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::end_state()
   {
     return this->_end_state;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const shared_ptr<typename SweeperTrait::encap_t>
-  Sweeper<SweeperTrait, Enabled>::get_end_state() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_end_state() const
   {
     return this->_end_state;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::tau()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::tau()
   {
     return this->_tau;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::get_tau() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_tau() const
   {
     return this->_tau;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::residuals()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::residuals()
   {
     return this->_residuals;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const vector<shared_ptr<typename SweeperTrait::encap_t>>&
-  Sweeper<SweeperTrait, Enabled>::get_residuals() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_residuals() const
   {
     return this->_residuals;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::set_logger_id(const string& logger_id)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::set_logger_id(const string& logger_id)
   {
     this->_logger_id = logger_id;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   const char*
-  Sweeper<SweeperTrait, Enabled>::get_logger_id() const
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_logger_id() const
   {
     return this->_logger_id.c_str();
   }
@@ -189,9 +189,9 @@ namespace pfasst
    * @note Sets tolerances for absolute and relative residual if given on the command line.
    *   Otherwise the currently set values are unchanged.
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::set_options()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::set_options()
   {
     ML_CVLOG(3, this->get_logger_id(), "setting options from runtime parameters (if available)");
     this->_abs_residual_tol = config::get_value<typename traits::spatial_t>("abs_res_tol", this->_abs_residual_tol);
@@ -200,16 +200,16 @@ namespace pfasst
     ML_CVLOG(3, this->get_logger_id(), "  relative residual tolerance: " << this->_rel_residual_tol);
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::set_abs_residual_tol(const typename SweeperTrait::spatial_t& abs_res_tol)
+  Sweeper<SweeperTrait, BaseFunction,Enabled>::set_abs_residual_tol(const typename SweeperTrait::spatial_t& abs_res_tol)
   {
     this->_abs_residual_tol = abs_res_tol;
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::set_rel_residual_tol(const typename SweeperTrait::spatial_t& rel_res_tol)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::set_rel_residual_tol(const typename SweeperTrait::spatial_t& rel_res_tol)
   {
     this->_rel_residual_tol = rel_res_tol;
   }
@@ -217,9 +217,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if either `get_status()` or `get_quadrature()` are not set, i.e. `nullptr`.
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction,  typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::initialize()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
     if (this->get_status() == nullptr) {
       throw std::runtime_error("Status not yet set.");
@@ -271,9 +271,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if either `get_status()` or `get_quadrature()` are not set, i.e. `nullptr`.
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::setup()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::setup()
   {
     if (this->get_status() == nullptr) {
       throw std::runtime_error("Status not yet set.");
@@ -293,9 +293,9 @@ namespace pfasst
     this->initialize();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::reset()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::reset()
   {
     ML_CLOG(WARNING, this->get_logger_id(),
             "Resetting to emulate recovering from faulty process.");
@@ -304,23 +304,23 @@ namespace pfasst
     this->initialize();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::pre_predict()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::pre_predict()
   {
     ML_CVLOG(4, this->get_logger_id(), "pre-predicting");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::predict()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::predict()
   {
     ML_CVLOG(4, this->get_logger_id(), "predicting");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::post_predict()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::post_predict()
   {
     ML_CVLOG(4, this->get_logger_id(), "post-predicting");
 
@@ -335,23 +335,23 @@ namespace pfasst
 //     ML_CVLOG(1, this->get_logger_id(), "solution at t_end: " << to_string(this->get_end_state()));
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::pre_sweep()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::pre_sweep()
   {
     ML_CVLOG(4, this->get_logger_id(), "pre-sweeping");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::sweep()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::sweep()
   {
     ML_CVLOG(4, this->get_logger_id(), "sweeping");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::post_sweep()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::post_sweep()
   {
     ML_CVLOG(4, this->get_logger_id(), "post-sweeping");
 
@@ -366,9 +366,9 @@ namespace pfasst
 //     ML_CVLOG(1, this->get_logger_id(), "solution at t_end:" << to_string(this->get_end_state()));
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::post_step()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::post_step()
   {
     ML_CVLOG(4, this->get_logger_id(), "post step");
 
@@ -380,23 +380,23 @@ namespace pfasst
 //     ML_CVLOG(1, this->get_logger_id(), "solution at t_end: " << to_string(this->get_end_state()));
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::advance(const size_t& num_steps)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::advance(const size_t& num_steps)
   {
     ML_CVLOG(1, this->get_logger_id(), "advancing " << num_steps << " time steps");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::advance()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::advance()
   {
     this->advance(1);
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::spread()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::spread()
   {
     ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
 
@@ -408,9 +408,9 @@ namespace pfasst
     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::save()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::save()
   {
     ML_CVLOG(4, this->get_logger_id(), "saving states to previous states");
 
@@ -430,17 +430,17 @@ namespace pfasst
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::reevaluate(const bool initial_only)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::reevaluate(const bool initial_only)
   {
     UNUSED(initial_only);
     throw std::runtime_error("reevaluation of right-hand-side");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::reevaluate()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::reevaluate()
   {
     this->reevaluate(false);
   }
@@ -448,17 +448,17 @@ namespace pfasst
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>
-  Sweeper<SweeperTrait, Enabled>::integrate(const typename SweeperTrait::time_t& dt)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::integrate(const typename SweeperTrait::time_t& dt)
   {
     UNUSED(dt);
     throw std::runtime_error("integration over dt");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   bool
-  Sweeper<SweeperTrait, Enabled>::converged(const bool pre_check)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::converged(const bool pre_check)
   {
 
     this->compute_residuals(pre_check);
@@ -526,9 +526,9 @@ namespace pfasst
   }
 
 
-    template<class SweeperTrait, typename Enabled>
+    template<class SweeperTrait, class BaseFunction, typename Enabled>
     bool
-    Sweeper<SweeperTrait, Enabled>::alternative_converged(const bool pre_check) //u^{k+1} - u^k, wird mit false aufgerufen
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::alternative_converged(const bool pre_check) //u^{k+1} - u^k, wird mit false aufgerufen
     {
       this->compute_residuals(pre_check);
 
@@ -627,9 +627,9 @@ namespace pfasst
 
 
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   bool
-  Sweeper<SweeperTrait, Enabled>::converged()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::converged()
   {
     return this->converged(false);
   }
@@ -637,9 +637,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error in case the right node (i.e. the time end point) is not a quadrature node
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction,  typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::integrate_end_state(const typename SweeperTrait::time_t& dt)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::integrate_end_state(const typename SweeperTrait::time_t& dt)
   {
     UNUSED(dt);
     assert(this->get_quadrature() != nullptr);
@@ -659,17 +659,17 @@ namespace pfasst
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::compute_residuals(const bool& only_last)
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::compute_residuals(const bool& only_last)
   {
     UNUSED(only_last);
     throw std::runtime_error("computation of residuals");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  Sweeper<SweeperTrait, Enabled>::compute_residuals()
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::compute_residuals()
   {
     this->compute_residuals(false);
   }

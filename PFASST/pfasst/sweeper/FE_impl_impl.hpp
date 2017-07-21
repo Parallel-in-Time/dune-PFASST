@@ -16,9 +16,9 @@ using std::vector;
 
 namespace pfasst
 {
-  template<class SweeperTrait, typename Enabled>
-  IMEX<SweeperTrait, Enabled>::IMEX()
-    :   Sweeper<SweeperTrait, Enabled>()
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  IMEX<SweeperTrait, BaseFunction, Enabled>::IMEX()
+    :   Sweeper<SweeperTrait, BaseFunction, Enabled>()
       , _q_integrals(0)
       , _impl_rhs(0)
       , _impl_rhs_restrict(0)
@@ -26,11 +26,11 @@ namespace pfasst
       , _num_impl_solves(0)
   {}
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::initialize()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
-    pfasst::Sweeper<SweeperTrait, Enabled>::initialize();
+    pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize();
 
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
     assert(this->get_states().size() == num_nodes + 1);
@@ -51,11 +51,11 @@ namespace pfasst
     this->compute_delta_matrices();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::setup()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::setup()
   {
-    pfasst::Sweeper<SweeperTrait, Enabled>::setup();
+    pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::setup();
 
     ML_CLOG_IF(this->get_quadrature()->left_is_node(), WARNING, this->get_logger_id(),
       "IMEX Sweeper for quadrature nodes containing t_0 not implemented and tested.");
@@ -63,21 +63,21 @@ namespace pfasst
     this->initialize();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::pre_predict()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::pre_predict()
   {
-    Sweeper<SweeperTrait, Enabled>::pre_predict();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::pre_predict();
 
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::predict()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::predict()
   {
     
 
-    Sweeper<SweeperTrait, Enabled>::predict();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::predict();
 
     assert(this->get_quadrature() != nullptr);
     assert(this->get_status() != nullptr);
@@ -110,22 +110,22 @@ namespace pfasst
 
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::post_predict()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::post_predict()
   {
-    Sweeper<SweeperTrait, Enabled>::post_predict();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::post_predict();
   }
 
   
   
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::pre_sweep()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::pre_sweep()
   {
     
     
-    Sweeper<SweeperTrait, Enabled>::pre_sweep();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::pre_sweep();
 
     assert(this->get_quadrature() != nullptr);
     assert(this->get_status() != nullptr);
@@ -166,14 +166,14 @@ namespace pfasst
 //     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::sweep()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::sweep()
   {
     
 
     
-    Sweeper<SweeperTrait, Enabled>::sweep();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::sweep();
 
     assert(this->get_quadrature() != nullptr);
     assert(this->get_status() != nullptr);
@@ -259,23 +259,23 @@ namespace pfasst
     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::post_sweep()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::post_sweep()
   {
-    Sweeper<SweeperTrait, Enabled>::post_sweep();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::post_sweep();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::post_step()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::post_step()
   {
-    Sweeper<SweeperTrait, Enabled>::post_step();
+    Sweeper<SweeperTrait, BaseFunction, Enabled>::post_step();
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::advance(const size_t& num_steps)
+  IMEX<SweeperTrait, BaseFunction, Enabled>::advance(const size_t& num_steps)
   {
     UNUSED(num_steps);
 
@@ -297,16 +297,16 @@ namespace pfasst
     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::advance()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::advance()
   {
     this->advance(1);
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::reevaluate(const bool initial_only)
+  IMEX<SweeperTrait, BaseFunction, Enabled>::reevaluate(const bool initial_only)
   {
     assert(this->get_status() != nullptr);
     assert(this->get_quadrature() != nullptr);
@@ -334,16 +334,16 @@ namespace pfasst
     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::reevaluate()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::reevaluate()
   {
     this->reevaluate(false);
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>
-  IMEX<SweeperTrait, Enabled>::integrate(const typename SweeperTrait::time_t& dt)
+  IMEX<SweeperTrait, BaseFunction, Enabled>::integrate(const typename SweeperTrait::time_t& dt)
   {
     auto const q_mat = this->get_quadrature()->get_q_mat();
 
@@ -356,9 +356,9 @@ namespace pfasst
     return result;
   }
   
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   vector<shared_ptr<typename SweeperTrait::encap_t>>
-  IMEX<SweeperTrait, Enabled>::integrate_new(const typename SweeperTrait::time_t& dt)
+  IMEX<SweeperTrait, BaseFunction, Enabled>::integrate_new(const typename SweeperTrait::time_t& dt)
   {
     auto const q_mat = this->get_quadrature()->get_q_mat();
 
@@ -374,12 +374,12 @@ namespace pfasst
   
 
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::integrate_end_state(const typename SweeperTrait::time_t& dt)
+  IMEX<SweeperTrait, BaseFunction, Enabled>::integrate_end_state(const typename SweeperTrait::time_t& dt)
   {
     try {
-      Sweeper<SweeperTrait, Enabled>::integrate_end_state(dt);
+      Sweeper<SweeperTrait, BaseFunction, Enabled>::integrate_end_state(dt);
     } catch (std::runtime_error err) {
       assert(this->get_quadrature() != nullptr);
       assert(this->get_initial_state() != nullptr);
@@ -392,9 +392,9 @@ namespace pfasst
     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::compute_residuals(const bool& only_last)
+  IMEX<SweeperTrait, BaseFunction,  Enabled>::compute_residuals(const bool& only_last)
   {
     ML_CVLOG(4, this->get_logger_id(), "computing residuals");
 
@@ -502,9 +502,9 @@ namespace pfasst
   }*/
   
   
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::compute_residuals()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::compute_residuals()
   {
     this->compute_residuals(false);
   }
@@ -524,9 +524,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<typename SweeperTrait::encap_t>
-  IMEX<SweeperTrait, Enabled>::evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
+  IMEX<SweeperTrait, BaseFunction, Enabled>::evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u)
   {
     UNUSED(t); UNUSED(u);
@@ -536,9 +536,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation
    */
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::implicit_solve(shared_ptr<typename SweeperTrait::encap_t> f,
+  IMEX<SweeperTrait, BaseFunction, Enabled>::implicit_solve(shared_ptr<typename SweeperTrait::encap_t> f,
                                               shared_ptr<typename SweeperTrait::encap_t> u,
                                               const typename SweeperTrait::time_t& t,
                                               const typename SweeperTrait::time_t& dt,
@@ -548,9 +548,9 @@ namespace pfasst
     throw std::runtime_error("spatial solver");
   }
 
-  template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
-  IMEX<SweeperTrait, Enabled>::compute_delta_matrices()
+  IMEX<SweeperTrait, BaseFunction, Enabled>::compute_delta_matrices()
   {
     assert(this->get_quadrature() != nullptr);
     const size_t num_nodes = this->get_quadrature()->get_num_nodes();

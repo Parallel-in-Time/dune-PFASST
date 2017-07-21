@@ -50,10 +50,11 @@ namespace pfasst
 
       template<
         class SweeperTrait,
+        class BaseFunction,
         typename Enabled = void
       >
       class Heat_FE
-        : public IMEX<SweeperTrait, Enabled>
+        : public IMEX<SweeperTrait, BaseFunction, Enabled>
       {
         static_assert(std::is_same<
                         typename SweeperTrait::encap_t::traits::dim_t,
@@ -63,6 +64,7 @@ namespace pfasst
 
         public:
           using traits = SweeperTrait;
+          //using function = BaseFunction;
 
           static void init_opts();
 	  int                                            _iterations{0};
@@ -150,11 +152,11 @@ namespace pfasst
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);
 	  explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t, std::shared_ptr<GridType> grid);
 	  
-          Heat_FE(const Heat_FE<SweeperTrait, Enabled>& other) = default;
-          Heat_FE(Heat_FE<SweeperTrait, Enabled>&& other) = default;
+          Heat_FE(const Heat_FE<SweeperTrait, BaseFunction, Enabled>& other) = default;
+          Heat_FE(Heat_FE<SweeperTrait, BaseFunction, Enabled>&& other) = default;
           virtual ~Heat_FE() = default;
-          Heat_FE<SweeperTrait, Enabled>& operator=(const Heat_FE<SweeperTrait, Enabled>& other) = default;
-          Heat_FE<SweeperTrait, Enabled>& operator=(Heat_FE<SweeperTrait, Enabled>&& other) = default;
+          Heat_FE<SweeperTrait, BaseFunction, Enabled>& operator=(const Heat_FE<SweeperTrait, BaseFunction, Enabled>& other) = default;
+          Heat_FE<SweeperTrait, BaseFunction, Enabled>& operator=(Heat_FE<SweeperTrait, BaseFunction, Enabled>&& other) = default;
 
           virtual void set_options() override;
 
@@ -189,38 +191,6 @@ namespace pfasst
 #include "FE_sweeper_impl.hpp"
 
 
-namespace pfasst
-{
-  namespace examples
-  {
-    namespace heat_FE
-    {
-      template<
-        class SweeperTrait,
-        typename Enabled = void
-      >
-      class test
-        : public Heat_FE<SweeperTrait, Enabled>{
-            
-            
-        public:
-            explicit test<SweeperTrait, Enabled>(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
-        :   Heat_FE<SweeperTrait, Enabled>(basis, nlevel, grid){}
-            
-        
-          test(const test<SweeperTrait, Enabled>& other) = default;
-          
-          test(test<SweeperTrait, Enabled>&& other) = default;
-          
-          virtual ~test() = default;
-            
-            
-            
-            
-        };   
-    }
-  }
-}
 
 
 
