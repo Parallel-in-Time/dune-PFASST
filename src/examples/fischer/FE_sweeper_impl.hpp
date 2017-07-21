@@ -109,7 +109,7 @@ namespace pfasst
       }
 
         template<class SweeperTrait, class BasisFunction, typename Enabled>
-      Heat_FE<SweeperTrait, BasisFunction, Enabled>::Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
+      Heat_FE<SweeperTrait, BasisFunction, Enabled>::Heat_FE(std::shared_ptr<BasisFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
         :   IMEX<SweeperTrait, BasisFunction, Enabled>()
 
       {
@@ -235,68 +235,6 @@ namespace pfasst
 	}
         return result;
       }
-      
-      
-      
-      
-      //______________________________
-      
-      
-      
-      /*template<class SweeperTrait, typename Enabled>
-      shared_ptr<typename SweeperTrait::encap_t>
-      Heat_FE<SweeperTrait, Enabled>::source(const typename SweeperTrait::time_t& t)
-      {
-        auto result = this->get_encap_factory().create();
-
-        const auto dim = 1;
-        spatial_t nu = this-> _nu; // nu je valjda desni rub
-	//std::cout << "nu = " << this->_nu << std::endl;
-        auto exact_solution_source = [t, nu, dim](const Dune::FieldVector<double,dim>&x){
-            double solution=1.0;
-            //for(int i=0; i<SweeperTrait::DIM; i++){solution *=x[i];}    //
-            
-	    std::cout << "PI = " << PI << std::endl;
-	    std::exit(0);
-	    return 2*t + PI*PI*(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1])  - 2*PI*(std::cos(PI*x[0]) + std::cos(PI*x[1])) + pow(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1] + t*t, 2) ;
-        };
-
-
-	
-	
-
-        auto N_x = [t](const Dune::FieldVector<double,dim>&x){
-            return x;
-
-        };
-
-        Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
-        interpolate(*basis, x_node, N_x);
-
-        interpolate(*basis, result->data(), exact_solution_source);
-
-
-        return result;
-      }*/
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      //_______________________________
-      
-      
-      
-      
-      
-      
-      
-      
-      
       
       
       

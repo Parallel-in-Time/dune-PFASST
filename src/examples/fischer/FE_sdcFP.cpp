@@ -35,18 +35,15 @@ const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+using namespace pfasst::examples::heat_FE;
 
 using std::shared_ptr;
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>; 
 
-namespace pfasst
-{
-  namespace examples
-  {
-    namespace heat_FE
-    {
-      using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>,   Dune::Functions::PQkNodalBasis<GridType::LevelGridView,BASE_ORDER> >;
+
+      using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+      using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>,   FE_function >;
       using pfasst::transfer_traits;
       using pfasst::contrib::SpectralTransfer;
       using pfasst::SDC;
@@ -90,31 +87,8 @@ namespace pfasst
         sdc->post_run();
 
 
-        /*if(BASIS_ORDER==1) {
-          auto grid = (*sweeper).get_grid();
-          typedef GridType::LeafGridView GridView;
-          GridType::LeafGridView gridView = grid->leafGridView();
-          VTKWriter<GridView> vtkWriter(gridView);
-          typedef Dune::BlockVector<Dune::FieldVector<double, 1> > VectorType;
-          VectorType x = sweeper->get_end_state()->data();
-	  VectorType y = sweeper->exact(t_end)->data();
-	  VectorType z = sweeper->initial_state()->data();
-	 
-	  
-	    
-          vtkWriter.addVertexData(x, "fe_solution");
-          vtkWriter.addVertexData(y, "exact_solution");
-          vtkWriter.addVertexData(w, "initial_data");
 
-          vtkWriter.write("flame_result");
-        }*/
-	
-	
-	
-	/*for(int i=0; i< sweeper->get_end_state()->data().size(); i++){
-	std::cout << "ergebnis " << sweeper->get_end_state()->data()[i] << " " << sweeper->exact(t_end)->data()[i] <<  std::endl ;
-	}*/
-	        std::cout <<  "fein" << std::endl;
+	std::cout <<  "fein" << std::endl;
         auto naeherung = sweeper->get_end_state()->data();
         auto exact     = sweeper->exact(t_end)->data();
         //for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
@@ -171,13 +145,8 @@ namespace pfasst
 	
         return sdc;
       }
-    }
-  }
-}
 
 
-
-#ifndef PFASST_UNIT_TESTING
   int main(int argc, char** argv) {
       
           //MPIHelper::instance(argc,argv);  
@@ -186,7 +155,7 @@ namespace pfasst
     using pfasst::quadrature::QuadratureType;
     using pfasst::examples::heat_FE::test;
 
-    using sweeper_t = test<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>>;
+    using sweeper_t = test<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>, FE_function>;
 
     pfasst::init(argc, argv, sweeper_t::init_opts);
 
@@ -215,8 +184,8 @@ namespace pfasst
     
     const size_t niter = get_value<size_t>("num_iters", 10);
 
-    pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter);
+    run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter);
 
   }
 
-#endif
+

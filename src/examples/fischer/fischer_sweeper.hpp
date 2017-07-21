@@ -9,21 +9,21 @@ namespace pfasst
     {
       template<
         class SweeperTrait,
-        //class BaseFunction,
+        class BaseFunction,
         typename Enabled = void
       >
       class test
-        : public Heat_FE<SweeperTrait, Enabled>{
+        : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
             
         public:
-            explicit test<SweeperTrait, Enabled>(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
-        :   Heat_FE<SweeperTrait, Enabled>(basis, nlevel, grid){}
+            explicit test<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t nlevel, std::shared_ptr<GridType> grid)
+        :   Heat_FE<SweeperTrait, BaseFunction, Enabled>(basis, nlevel, grid){}
             
         
-          test(const test<SweeperTrait, Enabled>& other) = default;
+          test(const test<SweeperTrait, BaseFunction, Enabled>& other) = default;
           
-          test(test<SweeperTrait, Enabled>&& other) = default;
+          test(test<SweeperTrait, BaseFunction, Enabled>&& other) = default;
           
           virtual ~test() = default;
             

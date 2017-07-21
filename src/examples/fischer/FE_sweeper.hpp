@@ -110,7 +110,7 @@ namespace pfasst
 	  typedef GridType::LevelGridView GridView;
 
           //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
-          std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis; 
+          std::shared_ptr<BaseFunction> basis; 
           //std::shared_ptr<BasisFunction> basis;
 
         protected:
@@ -150,8 +150,11 @@ namespace pfasst
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);
-	  explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t, std::shared_ptr<GridType> grid);
+	  //explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t, std::shared_ptr<GridType> grid);
+	  explicit Heat_FE(std::shared_ptr<BaseFunction> basis, size_t, std::shared_ptr<GridType> grid);
 	  
+          
+          
           Heat_FE(const Heat_FE<SweeperTrait, BaseFunction, Enabled>& other) = default;
           Heat_FE(Heat_FE<SweeperTrait, BaseFunction, Enabled>&& other) = default;
           virtual ~Heat_FE() = default;
