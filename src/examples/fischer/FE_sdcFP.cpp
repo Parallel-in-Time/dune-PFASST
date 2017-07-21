@@ -1,26 +1,14 @@
 #include <config.h>
-#include <memory>
-#include <iostream>
-
-#include <vector>
-
-
-#include <dune/istl/matrixmarket.hh>
-#include<dune/istl/matrixredistribute.hh>
-
 #include "dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
-//#include <pfasst/encap/dune_vec.hpp>
 #include <pfasst/controller/sdc.hpp>
 #include <pfasst/contrib/spectral_transfer.hpp>
 
-#include <dune/functions/functionspacebases/pqknodalbasis.hh>
-
+#include "../../datatypes/dune_vec.hpp"
 #include "fischer_sweeper.hpp"
 
-#include "../../datatypes/dune_vec.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////////
 //
@@ -28,10 +16,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-const size_t DIM = 1;            //Raeumliche Dimension des Rechengebiets ruth_dim
+//const size_t DIM = 1;            //Raeumliche Dimension des Rechengebiets ruth_dim
 
-//const size_t BASIS_ORDER = 2;    //maximale Ordnung der Lagrange Basisfunktionen
-const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
+//const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
 //////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,7 +30,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 
 
       using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-      using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>,   FE_function >;
+      using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
       using pfasst::transfer_traits;
       using pfasst::contrib::SpectralTransfer;
       using pfasst::SDC;
@@ -155,7 +142,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
     using pfasst::quadrature::QuadratureType;
     using pfasst::examples::heat_FE::test;
 
-    using sweeper_t = test<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>, FE_function>;
+    using sweeper_t = test<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>, FE_function>;
 
     pfasst::init(argc, argv, sweeper_t::init_opts);
 
@@ -184,7 +171,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
     
     const size_t niter = get_value<size_t>("num_iters", 10);
 
-    run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter);
+    run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 
   }
 

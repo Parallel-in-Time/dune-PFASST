@@ -13,13 +13,7 @@
 using std::shared_ptr;
 using std::vector;
 
-//#include <leathers/push>
-//#include <leathers/all>
-//#include <boost/math/constants/constants.hpp>
-//#include <leathers/pop>
-//using boost::math::constants::pi;
-//using boost::math::constants::two_pi;
-//using boost::math::constants::pi_sqr;
+
 
 #include <pfasst/globals.hpp>
 #include <pfasst/util.hpp>
