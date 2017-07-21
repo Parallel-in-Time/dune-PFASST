@@ -1,5 +1,5 @@
 #add_subdirectory(FE_heat)
-add_subdirectory(FE_Newton)
+add_subdirectory(new)
 #add_subdirectory(FE_CGNewton)
 
 #add_subdirectory(FE_vgl)

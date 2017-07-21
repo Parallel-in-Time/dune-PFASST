@@ -17,12 +17,15 @@ namespace pfasst
    */
   template<
     class EncapsulationTraits,
+    //class FiniteElementFunction,
     class... Ts
   >
   struct sweeper_traits
   {
     //! type of the Encapsulation traits
     using encap_traits = EncapsulationTraits;
+    //! type of the Finite Element Functions
+    //using function_t = FiniteElementFunction;
     //! type of the user data encapsulation
     using encap_t = encap::Encapsulation<EncapsulationTraits>;
     //! type of the temporal domain
