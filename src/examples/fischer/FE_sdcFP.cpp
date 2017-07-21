@@ -91,7 +91,8 @@ int main(int argc, char** argv) {
     if (output){
         //write in a file the error
         ofstream f;
-        stringstream ss << nelements;
+        stringstream ss;
+        ss << nelements;
         string s = "solution_sdc/" + ss.str() + ".dat";
         f.open(s, ios::app | std::ios::out );
         f << nelements << " " << dt << " "<< sweeper->get_end_state()->norm0()<< endl;

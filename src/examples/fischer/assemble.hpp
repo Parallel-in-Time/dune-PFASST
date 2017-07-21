@@ -1,6 +1,3 @@
-
-
-
 #include <dune/common/function.hh>
 
 #include <dune/geometry/quadraturerules.hh>
@@ -13,7 +10,6 @@
 #include <dune/istl/matrixindexset.hh>
 #include <dune/istl/preconditioners.hh>
 #include <dune/istl/solvers.hh>
-//#include <dune/istl/matrixmarket.hh>
 
 #include <dune/functions/functionspacebases/pqknodalbasis.hh>
 #include <dune/functions/functionspacebases/lagrangedgbasis.hh>
