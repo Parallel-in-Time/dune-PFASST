@@ -25,8 +25,9 @@ namespace pfasst
 {
   namespace examples
   {
-    namespace heat_FE
+    namespace FE_sweeper
     {
+        //dune_sweeper_traits must be somewhere else!
         template<
                 class EncapsulationTraits,
                 size_t base_order,
@@ -64,59 +65,41 @@ namespace pfasst
 
         public:
           using traits = SweeperTrait;
-          //using function = BaseFunction;
 
           static void init_opts();
-	  int                                            _iterations{0};
-        private:
+	  int _iterations{0};
+          
 
-                    size_t nlevel;
 
-            MatrixType stiffnessMatrix;
+        protected:
+            
+          size_t nlevel;
+
+          MatrixType stiffnessMatrix;
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
           double                                     	 _nu{1.2};
           double                                     	 _n{2.0};
           double                                      	 _delta{1.0};
-          double                                         _abs_newton_tol=1e-10;
-
-
-
-	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
-          vector<vector<spatial_t>>                      _lap;
+          double                                         _abs_newton_tol=1e-10;  
+            
+          //pfasst::contrib::FFT<typename traits::encap_t> _fft;
+          //vector<vector<spatial_t>>                      _lap;
 
 
 	  std::shared_ptr<fe_manager> FinEl;
           std::shared_ptr<VectorType> w; 
 	  
 	  
-	  //________________________________________________________
-	  
-	  
-    
-	  //________________________________________________________
-	  
 
-	  //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType;
-          //typedef Dune::YaspGrid<1> GridType; 
-	  //typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
           std::shared_ptr<GridType> grid;
           std::shared_ptr<GridType> gridnew;
 
 
-
-          //typedef GridType::LeafGridView GridView;
 	  typedef GridType::LevelGridView GridView;
 
-          //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
-          std::shared_ptr<BaseFunction> basis; 
-          //std::shared_ptr<BasisFunction> basis;
-
-        protected:
-          /*virtual shared_ptr<typename SweeperTrait::encap_t>
-          evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
-                            const shared_ptr<typename SweeperTrait::encap_t> u) override;*/
+          std::shared_ptr<BaseFunction> basis;   
 
           virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
@@ -135,18 +118,18 @@ namespace pfasst
           compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
                                  const typename SweeperTrait::time_t& t);
 	  
-	  	  virtual void
-	  evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
-                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
-						 const typename SweeperTrait::time_t& dt,
-						 const shared_ptr<typename SweeperTrait::encap_t> rhs
-						);
-						
-	  virtual void					
-	  evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
-                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
-						 const typename SweeperTrait::time_t& dt
- 						);
+// 	  	  virtual void
+// 	  evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
+//                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
+// 						 const typename SweeperTrait::time_t& dt,
+// 						 const shared_ptr<typename SweeperTrait::encap_t> rhs
+// 						);
+// 						
+// 	  virtual void					
+// 	  evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
+//                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
+// 						 const typename SweeperTrait::time_t& dt
+//  						);
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);

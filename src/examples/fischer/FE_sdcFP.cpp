@@ -11,7 +11,7 @@
 
 
 
-using namespace pfasst::examples::heat_FE;
+using namespace pfasst::examples::fischer_example;
 
 using std::shared_ptr;
 
@@ -19,7 +19,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 
 
 using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-using sweeper_t = test<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+using sweeper_t = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
 
 using pfasst::transfer_traits;
 using pfasst::contrib::SpectralTransfer;
@@ -31,7 +31,7 @@ using pfasst::config::get_value;
 using pfasst::quadrature::QuadratureType;
 using pfasst::quadrature::quadrature_factory;
 
-using pfasst::examples::heat_FE::test;
+using pfasst::examples::fischer_example::fischer_sweeper;
 
 
 
