@@ -1,5 +1,19 @@
 #include "FE_sweeper.hpp"
 
+
+//this is a specified sweeper for the generalized Fisher equation
+//it inherits from the implicit Finite Element sweeper
+
+//you just need to add a few things
+
+//the konstructer: mass- and stiffnessmatrix are already assembeld in the base class, but here we make a another discretisation vector w, because we use lumping for the nonlinearity
+
+//exact: gives the exact solution of Fischers equation, we use it in the main to construct the initial value and to calculate the error after the simulation
+
+//evaluate_rhs_impl: it gives back the right hand side of the discrtised ODE
+
+//implicit_solve: it solves the resulting algebraic system which results from using sdc 
+
 using namespace pfasst::examples::FE_sweeper;
 
 
@@ -17,24 +31,17 @@ namespace pfasst
       class fischer_sweeper
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
-        std::shared_ptr<VectorType> w; 
-
+        std::shared_ptr<VectorType>                     w; 
+        double                                     	_nu{1.2};
+        double                                     	_n{2.0};
+        double                                      	_delta{1.0};
+        double                                          _abs_newton_tol=1e-10; 
             
         public:
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
                                     : Heat_FE<SweeperTrait, BaseFunction, Enabled>(basis, nlevel, grid){
         
-                this->nlevel = nlevel;    
-	    
-                this->basis = basis;
-
-                this->grid = grid;
-	
-                assembleProblem(basis, this->A_dune, this->M_dune);
-
-                this->stiffnessMatrix = this->A_dune;
-                this->stiffnessMatrix *= -1;
-        
+                
                 w = std::make_shared<VectorType>(this->M_dune.M());
         
                 for(int j=0; j<this->M_dune.M(); j++){(*w)[j]=0;}
@@ -46,10 +53,6 @@ namespace pfasst
                     }
                 }
 
-                const auto bs = basis->size();
-                std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
-
-                this->encap_factory()->set_size(bs);
 
           }
             

@@ -24,17 +24,12 @@ namespace pfasst
     
     template<class TransferTraits>
     void
-    SpectralTransfer<TransferTraits>::create(std::shared_ptr<fe_manager> FinEl)
+    SpectralTransfer<TransferTraits>::create(std::shared_ptr<std::vector<MatrixType*>> transfer)
     {
 	
-	      std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
+	  std::shared_ptr<std::vector<MatrixType*>> vecvec(transfer);
           std::cout << "tranfer create " << std::endl;
-	      set_matrix(*vecvec->at(1), *vecvec->at(1));
-          
-          
-          
-          //set_matrix(FinEl->get_transfer(), FinEl->get_transfer());
-          
+	  set_matrix(*vecvec->at(0), *vecvec->at(0));
 	    
     }    
     

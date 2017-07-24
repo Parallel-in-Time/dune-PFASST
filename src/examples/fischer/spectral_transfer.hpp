@@ -58,7 +58,7 @@ namespace pfasst
     
         virtual void set_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> interpolate, Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> restrict);
 
-        virtual void create(std::shared_ptr<fe_manager> FinEl);
+        virtual void create(std::shared_ptr<std::vector<MatrixType*>> transfer);
 	
         virtual void interpolate_data(const shared_ptr<typename TransferTraits::coarse_encap_t> coarse,
                                       shared_ptr<typename TransferTraits::fine_encap_t> fine);

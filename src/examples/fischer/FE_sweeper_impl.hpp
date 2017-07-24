@@ -47,22 +47,7 @@ namespace pfasst
         this->grid = grid;
 	
         assembleProblem(basis, this->A_dune, this->M_dune);
-
-        stiffnessMatrix = this->A_dune;
-        stiffnessMatrix *= -1;
-        w = std::make_shared<VectorType>(this->M_dune.M());
         
-        for(int j=0; j<this->M_dune.M(); j++){
-            (*w)[j]=0;
-        }
-
-        for(int i=0; i<this->M_dune.M(); i++){
-            for(int j=0; j<this->M_dune.M(); j++){
-                if(this->M_dune.exists(i,j))
-                (*w)[i][0]= ((double) (*w)[i][0]) + ((double) this->M_dune[i][j][0][0]);
-            }
-        }
-
         const auto bs = basis->size();
         std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
 
@@ -160,7 +145,7 @@ namespace pfasst
         return this->get_encap_factory().size();
       }
 
-      template<class SweeperTrait, class BasisFunction, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
+      template<class SweeperTrait, class BasisFunction, typename Enabled> // calculates the error on every quadrature point
       vector<shared_ptr<typename SweeperTrait::encap_t>>
       Heat_FE<SweeperTrait, BasisFunction, Enabled>::compute_error(const typename SweeperTrait::time_t& t)
       {
@@ -187,7 +172,7 @@ namespace pfasst
         return error;
       }
 
-      template<class SweeperTrait, class BasisFunction, typename Enabled> //vector encap_ raumdaten an jedem Quadraturpunkt
+      template<class SweeperTrait, class BasisFunction, typename Enabled> 
       vector<shared_ptr<typename SweeperTrait::encap_t>>
       Heat_FE<SweeperTrait, BasisFunction, Enabled>::compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
                                                             const typename SweeperTrait::time_t& t)

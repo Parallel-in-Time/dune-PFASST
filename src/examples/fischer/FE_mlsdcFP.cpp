@@ -18,45 +18,27 @@ using std::shared_ptr;
 #include <vector>
 
 
-#include "FE_sweeper.hpp"
+//#include "FE_sweeper.hpp"
+#include "fischer_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
 #include "spectral_transfer.hpp"
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-//
-// Compiletimeparameter
-//
-//////////////////////////////////////////////////////////////////////////////////////
-
-const size_t DIM = 1;            //R??umliche Dimension des Rechengebiets ruth_dim
-
-const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
-
-//////////////////////////////////////////////////////////////////////////////////////
-const size_t nelements = 100;
+using namespace pfasst::examples::fischer_example;
 
 
 
 
-namespace pfasst
-{
-  namespace examples
-  {
-    namespace heat_FE
-    {
       using pfasst::transfer_traits;
       using pfasst::contrib::SpectralTransfer;
       using pfasst::TwoLevelMLSDC;
       using pfasst::quadrature::QuadratureType;
 
-      using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, 1, DIMENSION>>;
-      //using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
-      //using sweeper_t = Heat_FE<pfasst::sweeper_traits<encap_traits_t>>;
+      
+      using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+      using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
       using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_coarse, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
@@ -69,32 +51,81 @@ namespace pfasst
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
 
-        auto FinEl = make_shared<fe_manager>(nelements, 2);
+//         auto FinEl = make_shared<fe_manager>(nelements, 2);
 
+        
+                
+        typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+        typedef GridType::LevelGridView GridView;
+        using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+    
+        std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
+
+        std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
+
+        std::shared_ptr<GridType> grid;
+
+        int n_levels=2;
+
+        std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
+        //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
+
+    
+        Dune::FieldVector<double,DIMENSION> hR = {200};
+        Dune::FieldVector<double,DIMENSION> hL = {-200};
+        array<int,DIMENSION> n;
+        std::fill(n.begin(), n.end(), nelements); 	    
+#if HAVE_MPI
+        grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
+#else
+        grid = std::make_shared<GridType>(hL, hR, n);
+#endif
+        for (int i=0; i<n_levels; i++){	      
+	      grid->globalRefine((bool) i);
+	      auto view = grid->levelGridView(i);
+              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
+        } 
+        
+        
+        
         using pfasst::quadrature::quadrature_factory;
 
-        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis(1), 1,  FinEl->get_grid());
+        auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
-        auto fine = std::make_shared<sweeper_t_coarse>(FinEl->get_basis(0), 0,  FinEl->get_grid());
+        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
         
-        auto transfer = std::make_shared<transfer_t>();
-        transfer->create(FinEl);
-	
-        //mlsdc->add_sweeper(coarse, true);
-        //mlsdc->add_sweeper(fine, false);
+        
+        
 
-    
-        fine->set_abs_residual_tol(1e-12);
-        coarse->set_abs_residual_tol(1e-12);
-    
-    
+        
+        
+        dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
+	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
+	for (int i=0; i< n_levels-1; i++){
+	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
+	}
+	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
+	    
+	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
+	    //std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(0)).M() <<  std::endl;
+	for (int i=0; i< vecvec->at(0)->N(); i++){
+	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
+		if(vecvec->at(0)->exists(i,j)){
+		  //std::cout << ((*vecvec->at(0))[i][j]) << std::endl;
+		}
+	      }
+        }
+        
+        auto transfer = std::make_shared<transfer_t>();
+        transfer->create(vecvec);
            
         
         mlsdc->add_sweeper(coarse, true);
@@ -119,26 +150,9 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 
-
-        for (int i=0; i< fine->initial_state()->data().size(); i++){
-          std::cout << "Anfangswerte feiner Sweeper: " << " " << fine->initial_state()->data()[i] << std::endl;
-        }
-
-        std::cout  <<  std::endl;
-
-        for (int i=0; i< coarse->initial_state()->data().size(); i++){
-          std::cout << "Anfangswerte grober Sweeper: " << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }
-
-
-	std::cout << "********************************************** VOR RUN *******************************************************************" <<  std::endl;
-
-
-
-        //std::cout << "*********************************vor run"<<  std::endl ;
+	
         mlsdc->run();
-        //std::cout << "*********************************nach run"<<  std::endl ;
-	std::cout << "********************************************** NACH RUN *******************************************************************" << std::endl;
+        
         mlsdc->post_run();
 
         //return mlsdc;
@@ -151,20 +165,19 @@ namespace pfasst
         std::cout <<  "grob" << std::endl;
         for (int i=0; i< coarse->get_end_state()->data().size(); i++){
           std::cout << coarse->exact(0)->data()[i] << " " << coarse->get_end_state()->data()[i] << "   " << coarse->exact(t_end)->data()[i] << std::endl;
-        }*/
+        }
         
-                std::cout <<  "fein" << std::endl;
+        std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        }*/
 
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << "Fehler: " <<  std::endl ;
-        //auto norm =  fine->exact(t_end))->data();
         fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
         std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
         std::cout << "number states " << fine->get_states().size() << std::endl ;
@@ -213,13 +226,10 @@ namespace pfasst
         }
 
         ff.close();
-        //std::cout << "test"<<  std::endl ;
 
       }
 
-    }  // ::pfasst::examples::heat_FE
-  } // ::pfasst::examples
-}  // ::pfasst
+
 
 
 #ifndef PFASST_UNIT_TESTING
@@ -232,8 +242,10 @@ int main(int argc, char** argv)
   using pfasst::config::get_value;
   using pfasst::quadrature::QuadratureType;
   //using sweeper_t      = pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<encap_traits_t,1,1>>;
-  using sweeper_t_fine = pfasst::examples::heat_FE::Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
-
+  //using sweeper_t_fine = pfasst::examples::heat_FE::Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+  using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+  using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+  
   pfasst::init(argc, argv, sweeper_t_fine::init_opts);
 
   const size_t nelements = get_value<size_t>("num_elements", 180); //Anzahl der Elemente pro Dimension
@@ -261,6 +273,6 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
 
-  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
+  run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
 }
 #endif 

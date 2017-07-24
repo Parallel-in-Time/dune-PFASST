@@ -16,24 +16,16 @@ using std::shared_ptr;
 #include <pfasst/comm/mpi_p2p.hpp>
 #include <pfasst/controller/two_level_pfasst.hpp>
 
-
-#include "FE_sweeper.hpp"
+#include "fischer_sweeper.hpp"
+//#include "FE_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
 //#include "../../finite_element_stuff/spectral_transfer.hpp"
 #include "spectral_transfer.hpp"
 
 #include <vector>
-//////////////////////////////////////////////////////////////////////////////////////
-//
-// Compiletimeparameter
-//
-//////////////////////////////////////////////////////////////////////////////////////
 
-//const size_t DIM = 1;            //Räumliche Dimension des Rechengebiets ruth_dim
 
-//const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
-
-//////////////////////////////////////////////////////////////////////////////////////
+using namespace pfasst::examples::fischer_example;
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
@@ -46,26 +38,21 @@ using pfasst::contrib::SpectralTransfer;
 using pfasst::TwoLevelPfasst;
 typedef pfasst::comm::MpiP2P CommunicatorType;
 
-using pfasst::examples::heat_FE::Heat_FE;
+//using pfasst::examples::heat_FE::Heat_FE;
 
 typedef DuneEncapsulation<double, double, 1>                     EncapType;
-//typedef VectorEncapsulation<double, double, 1>                     EncapType;
 
 
-//typedef Heat_FE<pfasst::sweeper_traits<typename EncapType::traits>> SweeperType;
-typedef Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>> SweeperType;
+//typedef Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>> SweeperType;
+using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+using SweeperType = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
 
 
 typedef pfasst::transfer_traits<SweeperType, SweeperType, 1>       TransferTraits;
 typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
-namespace pfasst
-{
-  namespace examples
-  {
-    namespace heat_FE
-    {
+
       void run_pfasst(const size_t nelements, const size_t basisorder, const size_t dim, const size_t& nnodes, const pfasst::quadrature::QuadratureType& quad_type,
                       const double& t_0, const double& dt, const double& t_end, const size_t& niter)
       {
@@ -76,23 +63,79 @@ namespace pfasst
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
         TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
-        //pfasst.grid_builder(nelements);
-	auto FinEl = make_shared<fe_manager>(nelements, 2);
+// 	auto FinEl = make_shared<fe_manager>(nelements, 2);
 
+                 
+        typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+        typedef GridType::LevelGridView GridView;
+        using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+    
+        std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
+
+        std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
+
+        std::shared_ptr<GridType> grid;
+
+        int n_levels=2;
+
+        std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
+        //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
+
+    
+        Dune::FieldVector<double,DIMENSION> hR = {200};
+        Dune::FieldVector<double,DIMENSION> hL = {-200};
+        array<int,DIMENSION> n;
+        std::fill(n.begin(), n.end(), nelements); 	    
+#if HAVE_MPI
+        grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
+#else
+        grid = std::make_shared<GridType>(hL, hR, n);
+#endif
+        for (int i=0; i<n_levels; i++){	      
+	      grid->globalRefine((bool) i);
+	      auto view = grid->levelGridView(i);
+              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
+        } 
         
 
-        auto coarse = std::make_shared<SweeperType>(FinEl->get_basis(1), 1,  FinEl->get_grid());
+        auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<SweeperType>(FinEl->get_basis(0), 0,  FinEl->get_grid());
+        auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         
         
         coarse->is_coarse=true;
         fine->is_coarse=false;
 
-        auto transfer = std::make_shared<TransferType>();
-	transfer->create(FinEl);
         
+        
+                
+        dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
+	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
+	for (int i=0; i< n_levels-1; i++){
+	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
+	}
+	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
+	    
+	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
+	    //std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(0)).M() <<  std::endl;
+	for (int i=0; i< vecvec->at(0)->N(); i++){
+	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
+		if(vecvec->at(0)->exists(i,j)){
+		  //std::cout << ((*vecvec->at(0))[i][j]) << std::endl;
+		}
+	      }
+        }
+        
+       
+        std::cout << "vor create"<< std::endl;
+
+        auto transfer = std::make_shared<TransferType>();
+	transfer->create(vecvec);
+        //transfer->set_matrix(vecvec->at(0), vecvec->at(0));
+        std::cout << "nach create"<< std::endl;
+
         fine->set_abs_residual_tol(1e-12);
         coarse->set_abs_residual_tol(1e-12);
 
@@ -101,8 +144,9 @@ namespace pfasst
 	pfasst.add_sweeper(coarse, true);
 	pfasst.add_sweeper(fine);
         
-                pfasst.add_transfer(transfer);
-        
+        pfasst.add_transfer(transfer);
+        std::cout << "nach add ransfer"<< std::endl;
+
         pfasst.set_options();
 
 
@@ -132,7 +176,7 @@ namespace pfasst
         }
         MPI_Barrier(MPI_COMM_WORLD);
         std::exit(0);*/
-        
+        std::cout << "vor run"<< std::endl;
         pfasst.run();
         pfasst.post_run();
 
@@ -205,9 +249,7 @@ std::cout << "******************************************* " << std::endl;
 
 
       }
-    }  // ::pfasst::examples::heat_FE
-  } // ::pfasst::examples
-}  // ::pfasst
+
 
 
 int main(int argc, char** argv)
@@ -268,7 +310,7 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
 
-  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
+  run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 
   pfasst::Status<double>::free_mpi_datatype();
 

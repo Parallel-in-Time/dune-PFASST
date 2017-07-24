@@ -9,17 +9,12 @@ using std::vector;
 
 #include <vector>
 
-//#include <pfasst/sweeper/FE_imex.hpp>
-#include <pfasst/sweeper/FE_impl.hpp>
-//#include <pfasst/sweeper/imex.hpp>
-
+#include <pfasst/sweeper/FE_impl.hpp> //implicit finite element sweeper
 #include <pfasst/contrib/fft.hpp>
-//#include "../../finite_element_stuff/fe_manager_fp.hpp"
 
-#include "fe_manager.hpp"
+//#include "fe_manager.hpp"
 
 
-//using namespace Dune;
 
 namespace pfasst
 {
@@ -73,34 +68,18 @@ namespace pfasst
 
         protected:
             
-          size_t nlevel;
 
-          MatrixType stiffnessMatrix;
           using spatial_t = typename traits::spatial_t;
 
-          typename traits::time_t                        _t0{0.0};
-          double                                     	 _nu{1.2};
-          double                                     	 _n{2.0};
-          double                                      	 _delta{1.0};
-          double                                         _abs_newton_tol=1e-10;  
-            
-          //pfasst::contrib::FFT<typename traits::encap_t> _fft;
-          //vector<vector<spatial_t>>                      _lap;
+ 
 
-
-	  std::shared_ptr<fe_manager> FinEl;
-          std::shared_ptr<VectorType> w; 
-	  
-	  
-
+          size_t nlevel;
+	  //std::shared_ptr<fe_manager> FinEl;
           std::shared_ptr<GridType> grid;
-          std::shared_ptr<GridType> gridnew;
-
-
 	  typedef GridType::LevelGridView GridView;
-
           std::shared_ptr<BaseFunction> basis;   
 
+          
           virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
                             const shared_ptr<typename SweeperTrait::encap_t> u) override;
@@ -118,18 +97,6 @@ namespace pfasst
           compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
                                  const typename SweeperTrait::time_t& t);
 	  
-// 	  	  virtual void
-// 	  evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
-//                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
-// 						 const typename SweeperTrait::time_t& dt,
-// 						 const shared_ptr<typename SweeperTrait::encap_t> rhs
-// 						);
-// 						
-// 	  virtual void					
-// 	  evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
-//                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
-// 						 const typename SweeperTrait::time_t& dt
-//  						);
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);
@@ -147,7 +114,6 @@ namespace pfasst
           virtual void set_options() override;
 
           virtual shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t);
-	  //virtual shared_ptr<typename SweeperTrait::encap_t> source(const typename SweeperTrait::time_t& t);
 	  
 	  
           virtual void post_step() override;
@@ -160,7 +126,6 @@ namespace pfasst
           auto get_A_dune() const {
             return this->A_dune;
           }
-          //shared_ptr<GridType> get_grid() const;
 	  
 	
       };

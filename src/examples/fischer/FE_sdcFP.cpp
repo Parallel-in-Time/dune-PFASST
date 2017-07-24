@@ -53,12 +53,47 @@ int main(int argc, char** argv) {
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
     const size_t niter = get_value<size_t>("num_iters", 10);            // maximal number of sdc iterations
 
+    
+    
+    typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+    typedef GridType::LevelGridView GridView;
+    using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+    
+    std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
 
+    std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
+
+    std::shared_ptr<GridType> grid;
+
+    int n_levels=2;
+
+    std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
+    //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
+
+    
+    Dune::FieldVector<double,DIMENSION> hR = {200};
+    Dune::FieldVector<double,DIMENSION> hL = {-200};
+    array<int,DIMENSION> n;
+    std::fill(n.begin(), n.end(), nelements); 	    
+#if HAVE_MPI
+    grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
+#else
+    grid = std::make_shared<GridType>(hL, hR, n);
+#endif
+    for (int i=0; i<n_levels; i++){	      
+	      grid->globalRefine((bool) i);
+	      auto view = grid->levelGridView(i);
+              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
+    } 
+    
+    
+    
     auto sdc = std::make_shared<heat_FE_sdc_t>();
 	
-    auto FinEl   = make_shared<fe_manager>(nelements,1); 
+    //auto FinEl   = make_shared<fe_manager>(nelements,1); 
 
-    auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis(0), 0, FinEl->get_grid());
+    auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid);
     sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
     
     sdc->add_sweeper(sweeper);
