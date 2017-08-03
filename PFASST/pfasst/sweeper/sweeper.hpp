@@ -66,6 +66,10 @@ namespace pfasst
 
      shared_ptr<typename traits::encap_t>                _M_initial;
     public:
+              bool                                            _write = true;
+
+      void write_results(shared_ptr<typename SweeperTrait::encap_t> x, const std::string filename){}
+      
       //! Quadrature used by the Sweeper.
       shared_ptr<IQuadrature<typename traits::time_t>>    _quadrature;
       //! Factory for instantiating Encapsulation objects for spatial data.

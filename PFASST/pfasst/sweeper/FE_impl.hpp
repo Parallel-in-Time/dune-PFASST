@@ -58,9 +58,12 @@ namespace pfasst
       
       bool dontmatter= true;
       
+      //std::shared_ptr<MatrixType> M_dune;
+      //std::shared_ptr<MatrixType> A_dune;
+
       MatrixType M_dune;
       MatrixType A_dune;
-
+      
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
       /**
@@ -170,6 +173,8 @@ namespace pfasst
       //! @}
 
     public:
+      bool                                            _write = false;
+  
       //! @{
       explicit IMEX();
       IMEX(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;

@@ -9,6 +9,15 @@
 #include "../../datatypes/dune_vec.hpp"
 #include "fischer_sweeper.hpp"
 
+//#include "assemble.hpp"
+
+#include <dune/fufem/functionspacebases/p1nodalbasis.hh>
+#include <dune/fufem/assemblers/operatorassembler.hh>
+#include <dune/fufem/assemblers/functionalassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/massassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/l2functionalassembler.hh>
+#include <dune/fufem/functiontools/basisinterpolator.hh>
 
 
 using namespace pfasst::examples::fischer_example;
@@ -32,6 +41,8 @@ using pfasst::quadrature::QuadratureType;
 using pfasst::quadrature::quadrature_factory;
 
 using pfasst::examples::fischer_example::fischer_sweeper;
+
+
 
 
 
@@ -64,11 +75,11 @@ int main(int argc, char** argv) {
     std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 
     std::shared_ptr<GridType> grid;
+    
 
     int n_levels=2;
 
     std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
-    //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
 
     
     Dune::FieldVector<double,DIMENSION> hR = {200};
@@ -84,16 +95,54 @@ int main(int argc, char** argv) {
 	      grid->globalRefine((bool) i);
 	      auto view = grid->levelGridView(i);
               fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
-	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
     } 
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//      typedef P1NodalBasis<GridView,double> FEBasis;
+//      FEBasis feBasis(grid->levelGridView(1));
+// 
+//      // Build stiffness matrix
+//      LaplaceAssembler<GridType, FEBasis::LocalFiniteElement, FEBasis::LocalFiniteElement> laplaceStiffness;
+//      MatrixType stiffnessMatrix;
+//      stiffnessMatrix*=-1;
+//      
+//      OperatorAssembler<FEBasis,FEBasis> operatorAssembler(feBasis, feBasis);
+//      operatorAssembler.assemble(laplaceStiffness, stiffnessMatrix);
+// 
+//      MassAssembler<GridType, FEBasis::LocalFiniteElement, FEBasis::LocalFiniteElement> localMass;
+//      MatrixType massMatrix;
+//      operatorAssembler.assemble(localMass, massMatrix);
+    
+    
+    
+    
+    
     
     
     
     auto sdc = std::make_shared<heat_FE_sdc_t>();
 	
-    //auto FinEl   = make_shared<fe_manager>(nelements,1); 
 
-    auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid);
+    
+    MatrixType mass;
+    MatrixType stiffness;
+
+    //std::shared_ptr<BasisFunction> basis;   
+    //basis =fe_basis2;
+    //assembleProblem(basis, stiffness, mass);
+    //std::cout << "vor " <<std::endl;
+    
+    auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); // mass and stiff are just dummies
     sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
     
     sdc->add_sweeper(sweeper);
@@ -107,19 +156,25 @@ int main(int argc, char** argv) {
     // initial value is given by the exact solution on time step 0
     sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
+    for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << sweeper->initial_state()->data()[i] << std::endl;
+    //std::exit(0);
     sdc->run();
+    
+    
     //do not need a post run for GaussRadau nodes not sure about that should ask robert
     //sdc->post_run();
 
-    //auto naeherung = sweeper->get_end_state()->data();
-    //auto exact     = sweeper->exact(t_end)->data();
+    auto naeherung = sweeper->get_end_state()->data();
+    auto exact     = sweeper->exact(t_end)->data();
+    auto initial   = sweeper->exact(0)->data();
+    for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << initial[i] << " " << naeherung[i] << " " << exact[i] << std::endl;
 
     // calculate the error of the simulation
-    auto A = sweeper->get_A_dune(); A*=-1.0; //get the stiffnessmatrix, which is defined negative (need to change that!) 
-    auto tmp = sweeper->get_end_state()->data();
+    //auto A = sweeper->get_A_dune(); A*=-1.0; //get the stiffnessmatrix, which is defined negative (need to change that!) 
+    //auto tmp = sweeper->get_end_state()->data();
     sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-    A.mv(sweeper->get_end_state()->data(), tmp);
-    std::cout << "error in H1 norm: " << tmp*sweeper->get_end_state()->data() << std::endl;
+    //A.mv(sweeper->get_end_state()->data(), tmp);
+    //std::cout << "error in H1 norm: " << tmp*sweeper->get_end_state()->data() << std::endl;
     std::cout << "error in infinity norm: " << sweeper->get_end_state()->norm0()<<  std::endl ;
 
     bool output=false;

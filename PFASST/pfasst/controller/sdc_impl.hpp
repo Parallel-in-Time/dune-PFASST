@@ -147,6 +147,13 @@ namespace pfasst
           this->get_sweeper()->post_sweep();
         }
       } while(this->advance_iteration());
+      
+//       stringstream toss;
+//       toss << this->get_status()->get_step();
+//       string name = toss.str();
+//       //if(this->get_sweeper()._write) 
+//           this->get_sweeper()->write_results(this->get_sweeper()->get_end_state(), name); 
+      
     } while(this->advance_time());
   }
 

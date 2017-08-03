@@ -477,13 +477,13 @@ namespace pfasst
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");
 
         if (this->_abs_res_norms.back() < this->_abs_residual_tol) {
-          ML_CVLOG(1, this->get_logger_id(), "Sweeper has converged w.r.t. absolute residual tolerance: "
+          ML_CVLOG(1, this->get_logger_id(), "Sweeper has converged w.r.t. absolute residual tolerance: 1 "
                                           << this->_abs_res_norms.back() << " < " << this->_abs_residual_tol);
         } else if (this->_rel_res_norms.back() < this->_rel_residual_tol) {
-          ML_CVLOG(1, this->get_logger_id(), "Sweeper has converged w.r.t. relative residual tolerance: "
+          ML_CVLOG(1, this->get_logger_id(), "Sweeper has converged w.r.t. relative residual tolerance: 2 "
                                           << this->_rel_res_norms.back() << " < " << this->_rel_residual_tol);
         } else {
-          ML_CVLOG(1, this->get_logger_id(), "Sweeper has not yet converged to neither residual tolerance.");
+          ML_CVLOG(1, this->get_logger_id(), "Sweeper has not yet converged to neither residual tolerance. 3 ");
         }
 
         return (   this->_abs_res_norms.back() < this->_abs_residual_tol
@@ -507,10 +507,10 @@ namespace pfasst
         ML_CVLOG(4, this->get_logger_id(), "convergence check");
 
         if (this->status()->abs_res_norm() < this->_abs_residual_tol) {
-          ML_CLOG(INFO, this->get_logger_id(), "Sweeper has converged w.r.t. absolute residual tolerance: "
+          ML_CLOG(INFO, this->get_logger_id(), "Sweeper has converged w.r.t. absolute residual tolerance: 4 "
                                           << this->status()->abs_res_norm() << " < " << this->_abs_residual_tol);
         } else if (this->status()->rel_res_norm() < this->_rel_residual_tol) {
-          ML_CLOG(INFO, this->get_logger_id(), "Sweeper has converged w.r.t. relative residual tolerance: "
+          ML_CLOG(INFO, this->get_logger_id(), "Sweeper has converged w.r.t. relative residual tolerance: 5 "
                                           << this->status()->rel_res_norm() << " < " << this->_rel_residual_tol);
         } else {
           ML_CLOG(INFO, this->get_logger_id(), "Sweeper has not yet converged to neither residual tolerance.");

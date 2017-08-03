@@ -171,7 +171,6 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::sweep()
   {
     
-
     
     Sweeper<SweeperTrait, BaseFunction, Enabled>::sweep();
 
