@@ -1,0 +1,9 @@
+
+add_executable("FE_sdcFP" FE_sdcNFP.cpp)
+target_link_dune_default_libraries("FE_sdcNFP")
+
+add_executable("FE_mlsdcFP" FE_mlsdcNFP.cpp)
+target_link_dune_default_libraries("FE_mlsdcNFP")
+
+#add_executable("FE_pfasstFP" FE_pfasstNFP.cpp)
+#target_link_dune_default_libraries("FE_pfasstNFP")
