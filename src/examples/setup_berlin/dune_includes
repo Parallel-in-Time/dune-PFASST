@@ -37,7 +37,7 @@
 
 
 const int BASE_ORDER=1;
-const int DIMENSION=1;
+const int DIMENSION=2;
 const int NR_COMP=1;
 
 typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,NR_COMP,NR_COMP> > MatrixType;
@@ -51,7 +51,7 @@ typedef                   Dune::FieldVector<double,NR_COMP>   InVectorType;
 
 
 //const int dim=1;
-typedef Dune::YaspGrid<2> GridType; 
-//typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+//typedef Dune::YaspGrid<2> GridType;
+typedef Dune::YaspGrid<DIMENSION,Dune::EquidistantOffsetCoordinates<double, DIMENSION> > GridType;
 using Basis = Dune::Functions::PQ1NodalBasis<GridType::LeafGridView>;
 

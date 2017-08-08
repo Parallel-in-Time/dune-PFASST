@@ -66,7 +66,6 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 // 	auto FinEl = make_shared<fe_manager>(nelements, 2);
 
                  
-        typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
         typedef GridType::LevelGridView GridView;
         using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
