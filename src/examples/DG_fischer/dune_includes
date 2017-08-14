@@ -1,0 +1,69 @@
+#include <dune/common/densematrix.hh>
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/bvector.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+#include <dune/istl/matrixmarket.hh>
+#include <dune/istl/matrixredistribute.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+#include <dune/grid/io/file/vtk/vtkwriter.hh>
+#include <dune/grid/yaspgrid.hh>
+
+#include <dune/typetree/utility.hh>
+
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#include <dune/functions/functionspacebases/pq1nodalbasis.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/functionspacebases/interpolate.hh>
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh> 
+
+#include <dune/fufem/assemblers/transferoperatorassembler.hh>
+#include <dune/fufem/assemblers/dunefunctionsoperatorassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/massassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh>
+#include <dune/fufem/assemblers/istlbackend.hh>
+#include <dune/fufem/assemblers/dunefunctionsoperatorassembler.hh>
+
+#include <dune/hpdg/functionspacebases/dgqkglbasis.hh> // bases
+#include <dune/hpdg/assemblers/dgtodggridtransferassembler.hh> // geometric MG transfer operators
+#include <dune/fufem/assemblers/localassemblers/interiorpenaltydgassembler.hh> // IPDG local assembler
+
+const int BASE_ORDER=1;
+//const int DIMENSION=1;
+const int NR_COMP=1;
+
+
+constexpr int k = 1; // linear ansatz functions
+constexpr int DIMENSION = 2;
+constexpr int blockSize = Dune::StaticPower<k+1, DIMENSION>::power; // (k+1)^dim
+//constexpr int blockSize = 1;
+
+double penalty = 2.*k*k;
+
+using GridType = Dune::YaspGrid<DIMENSION>;
+
+
+
+typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,blockSize,blockSize> > MatrixType;
+typedef Dune::BlockVector<Dune::FieldVector<double,blockSize> > VectorType;
+typedef                   Dune::FieldVector<double,blockSize>   InVectorType;
+//typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+
+
+
+
