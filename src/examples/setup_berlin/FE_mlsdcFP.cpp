@@ -55,7 +55,6 @@ using namespace pfasst::examples::fischer_example;
 
         
                 
-        typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
         typedef GridType::LevelGridView GridView;
         using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
