@@ -9,7 +9,7 @@ using namespace std;
 #include "pfasst/logging.hpp"
 #include "pfasst/quadrature.hpp"
 
-
+#include <dune/istl/matrixmatrix.hh>
 
 namespace pfasst
 {
@@ -215,6 +215,22 @@ namespace pfasst
 
       }
     }
+
+    template<class TransferTraits>
+    void
+    SpectralTransfer<
+      TransferTraits>::restrict_dune_matrix(Dune::BCRSMatrix<Dune::FieldMatrix<double, 1, 1>> f, Dune::BCRSMatrix<Dune::FieldMatrix<double, 1, 1>> c){
+
+	Dune::BCRSMatrix<Dune::FieldMatrix<double, 1, 1>> neu;
+	//std::cout << interpolate_matrix.M() << interpolate_matrix.N() << " " << f.M() << f.N() << std::endl;
+	Dune::matMultMat(neu, f, interpolate_matrix); 
+	//std::cout << interpolate_matrix.M() << interpolate_matrix.N() << " " << f.M() << f.N() << std::endl;
+	Dune::transposeMatMultMat(c, interpolate_matrix, neu);
+
+
+
+
+   }   
     
     
     

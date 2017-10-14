@@ -151,7 +151,7 @@ int main(int argc, char** argv) {
 
 
 	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); // mass and stiff are just dummies
-		sweeper->is_coarse = false;
+	sweeper->is_coarse = false;
     	sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
     	auto sdc = std::make_shared<heat_FE_sdc_t>();    
     	sdc->add_sweeper(sweeper);
@@ -172,45 +172,30 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	/*int _nu=1, _n=1;
-       	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > res_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(sweeper->M_dune);
-	Dune::BlockVector<Dune::FieldVector<double,1> > res; res.resize((*_new_newton_state[0][0]).size());
- 	for (int i=0; i<res_dune.N(); ++i)
-        {
-        	for (int j=0; j<res_dune.M(); ++j)
-               	{
-               		if (res_dune.exists(i,j)) 
-                       	res_dune[i][j]= - (_nu*_nu)*(_n+1) * sweeper->M_dune[i][j] * pow((*_new_newton_state[0][0])[j], _n);	
-               	}
-        }
-	res_dune.mv(*_new_newton_state[0][0], res);
-	Dune::BlockVector<Dune::FieldVector<double,1> > gneu; gneu.resize((*_new_newton_state[0][0]).size());
-	for (int i=0; i<(*_new_newton_state[0][0]).size(); ++i)
-	{ 
-		gneu[i]=  (_nu*_nu)* pow((*_new_newton_state[0][0])[i], _n+1);	
-	}		
-	sweeper->M_dune.umv(gneu, res);*/
-
 
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
-	//sweeper->initial_state()->data() *= -1;
-	
-
-
-
 
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 			for(int k=0; k< _new_newton_state[i][j]->size(); k++){
     			sweeper->last_newton_state()[i][j]->data()[k] = (*_new_newton_state[i][j])[k]  ;
-			//sweeper->initial_state()->data()[k] += res[k]; 
 			}
     		}
 	}
 
 
+	    for(int m=0; m< num_nodes +1; m++){
+	    	sweeper->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(sweeper->M_dune); 
+            	sweeper->evaluate_df2(*sweeper->df_dune[0][m], sweeper->last_newton_state()[0][m]);
+		auto result = sweeper->get_encap_factory().create();
+            	result->zero();
+                sweeper->evaluate_f2(result, sweeper->last_newton_state()[0][m]);
+		sweeper->df_dune[0][m]->mmv(sweeper->last_newton_state()[0][m]->data(), result->data());
 
-	//std::cout << "#############################################################################   copyresult " << sweeper->last_newton_state()[num_time_steps-1][num_nodes]->data()[5] << std::endl;
+	    	sweeper->coarse_rhs()[0][m]->data() =result->data();
+
+	    }
+
 
     	sdc->run();   
 	sdc->post_run();

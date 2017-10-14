@@ -109,6 +109,10 @@ namespace pfasst
          newton_rhs.resize(rhs->get_data().size());
          newton_rhs2.resize(rhs->get_data().size());
     
+			for(int k=0; k< u->data().size(); k++){
+		//std::cout << u->data()[k] << exact(0)->data()[k] << std::endl;
+    		}
+
          u->zero();
 	 for (int i=0; i< 200 ;i++){
             Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
@@ -126,7 +130,7 @@ namespace pfasst
                               preconditioner,
                               1e-16, // desired residual reduction factor
                               5000,    // maximum number of iterations
-                              1);    // verbosity of the solver
+                              0);    // verbosity of the solver
           
           
             Dune::InverseOperatorResult statistics ;
@@ -134,12 +138,12 @@ namespace pfasst
 
             evaluate_f(f, u, dt, rhs);
           
-            std::cout << i << " residuumsnorm von f(u) " << f->norm0() << std::endl;  
+            //std::cout << i << " residuumsnorm von f(u) " << f->norm0() << std::endl;  
             if(f->norm0()<1e-10){   std::cout << "genauigkeit erreicht " << i << std::endl;      break;} //  std::exit(0); std::cout << "genauigkeit erreicht " << i << std::endl;
           
             df.mv(u->data(), residuum->data());
             residuum->data() -= newton_rhs2;
-            std::cout << "residuums norm " << residuum->norm0() << std::endl;
+            //std::cout << "residuums norm " << residuum->norm0() << std::endl;
 
 	}
 

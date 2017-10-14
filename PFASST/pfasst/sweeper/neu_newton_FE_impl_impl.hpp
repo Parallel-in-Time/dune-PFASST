@@ -38,13 +38,19 @@ namespace pfasst
 		
     this->last_newton_state().resize(num_time_steps);
     this->new_newton_state().resize(num_time_steps);
+    this->coarse_rhs().resize(num_time_steps);
+    this->df_dune.resize(num_time_steps);
+
 
     for(int i=0; i< num_time_steps; i++){	
 	this->last_newton_state()[i].resize(num_nodes + 1);
 	this->new_newton_state()[i].resize(num_nodes+1);
-    	auto& factory = this->get_encap_factory();  auto& factory2 = this->get_encap_factory();
+	this->coarse_rhs()[i].resize(num_nodes+1);
+	this->df_dune[i].resize(num_nodes+1);
+    	auto& factory = this->get_encap_factory();  auto& factory2 = this->get_encap_factory(); auto& factory3 = this->get_encap_factory();
     	std::generate(this->last_newton_state()[i].begin(), this->last_newton_state()[i].end(), [&factory](){ return factory.create(); });
 	std::generate(this->new_newton_state()[i].begin(), this->new_newton_state()[i].end(), [&factory2](){ return factory2.create(); });
+	std::generate(this->coarse_rhs()[i].begin(), this->coarse_rhs()[i].end(), [&factory2](){ return factory2.create(); });
     }
 
     this->_q_integrals.resize(num_nodes + 1);
@@ -93,6 +99,22 @@ namespace pfasst
   {
     return this->_new_newton_state;
   }
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  IMEX<SweeperTrait, BaseFunction, Enabled>::coarse_rhs()
+  {
+    return this->_coarse_rhs;
+  }
+  
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  IMEX<SweeperTrait, BaseFunction, Enabled>::get_coarse_rhs() const
+  {
+    return this->_coarse_rhs;
+  }
+
 
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>

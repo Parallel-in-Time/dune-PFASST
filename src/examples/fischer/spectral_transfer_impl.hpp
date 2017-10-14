@@ -46,21 +46,12 @@ namespace pfasst
         std::cout << "set matrix " << std::endl;
 	    interpolate_matrix = interpolate;
         
-        
-        /*for (int i=0; i< interpolate_matrix.N(); i++){
-	      for (int j=0; j< interpolate_matrix.M(); j++){
-            if(interpolate_matrix.exists(i,j)){	
-                std::cout<< interpolate_matrix[i][j] << " " ;
-            }else{
-                std::cout<< 0 << " " ;
-            }
 
-	      }
-	      std::cout<< ""<< std::endl;
-        }*/
     
 	    
+
 	    restrict_matrix   = restrict;
+        std::cout << "restrict " << std::endl;
 
 	    for (int i=0; i< restrict_matrix.N(); i++){
 	      for (int j=0; j< restrict_matrix.M(); j++){
@@ -71,18 +62,8 @@ namespace pfasst
 	      }
 	    }
 	    
-	           /* for (int i=0; i< interpolate_matrix.N(); i++){
-	      for (int j=0; j< interpolate_matrix.M(); j++){
-            if(interpolate_matrix.exists(i,j)){	
-                std::cout<< restrict_matrix[i][j] << " " ;
-            }else{
-                std::cout<< 0 << " " ;
-            }
+	    
 
-	      }
-	      std::cout<< ""<< std::endl;
-        }
-        std::exit(0);*/
     }
 
 

@@ -69,7 +69,7 @@ namespace pfasst
         virtual void restrict_u(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
                                    shared_ptr<typename TransferTraits::coarse_encap_t> coarse);
     
-    
+	virtual void restrict_dune_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> f, Dune::BCRSMatrix<Dune::FieldMatrix<double, 1, 1>> c);    
     
     };
   }  // ::pfasst::contrib

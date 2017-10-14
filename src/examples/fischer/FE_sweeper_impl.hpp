@@ -50,6 +50,21 @@ namespace pfasst
 	
         
         assembleProblem(basis, (this->A_dune), (this->M_dune));
+	      std::cout<< "M"<< std::endl;
+        
+         for (int i=0; i< this->M_dune.N(); i++){
+	      for (int j=0; j< this->M_dune.M(); j++){
+            if(this->M_dune.exists(i,j)){	
+                std::cout<< this->M_dune[i][j] << " " ;
+            }else{
+                std::cout<< 0 << " " ;
+            }
+
+	      }
+	      std::cout<< ""<< std::endl;
+        }
+	      std::cout<< ""<< std::endl;
+        
         
         //for(int i =0; i< this->A_dune.N(); i++)
         //for(int j =0; j< this->A_dune.N(); j++)            

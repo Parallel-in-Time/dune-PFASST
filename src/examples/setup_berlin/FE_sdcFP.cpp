@@ -126,10 +126,19 @@ int main(int argc, char** argv) {
     for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << sweeper->initial_state()->data()[i] << std::endl;
     //std::exit(0);
     sdc->run();
-    
-    
     //do not need a post run for GaussRadau nodes not sure about that should ask robert
-    sdc->post_run();
+    sdc->post_run();    
+        
+    auto xBE2 = Dune::Fufem::istlVectorBackend(sweeper->get_end_state()->data());
+    auto xFunction2 = Dune::Functions::makeDiscreteGlobalBasisFunction<double>(basis, Dune::TypeTree::hybridTreePath(), xBE2);
+    Dune::VTKWriter<typename GridType::LeafGridView> vtkWriter2(gridptr->leafGridView());
+
+    vtkWriter2.addVertexData(xFunction2, Dune::VTK::FieldInfo("x", Dune::VTK::FieldInfo::Type::scalar, 1));
+    const std::string filename2="end";
+    vtkWriter2.write(filename2);
+ 
+
+    std::cout << "error in infinity norm: " << sweeper->get_end_state()->get_data().infinity_norm() <<  std::endl ;
 
     
     

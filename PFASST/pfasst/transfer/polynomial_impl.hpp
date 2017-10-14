@@ -245,6 +245,10 @@ namespace pfasst
  
     const auto fine_integral = fine->integrate(dt);
     
+    
+    
+    //this->restrict_u(fine->get_M_dune(), ); //raus
+    
     for (size_t m = 0; m < num_fine_nodes + 1; ++m) {
       fine->get_M_dune()->mv(fine->get_states()[m]->get_data(),  fine_integral[m]->data());
       fine_integral[m]->data() *= -1;

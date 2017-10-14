@@ -48,6 +48,12 @@ namespace pfasst
       virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& new_newton_state();
       virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_new_newton_state() const; 
 
+      vector<vector<shared_ptr<typename traits::encap_t>>>    _coarse_rhs;
+      virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& coarse_rhs();
+      virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_coarse_rhs() const;
+ 
+      vector<vector<shared_ptr<MatrixType>>> df_dune;
+
     //protected:
 
 

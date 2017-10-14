@@ -314,15 +314,16 @@ namespace pfasst
 
     if (initial_only) {
       assert( this->_impl_rhs.front() != nullptr);
-
       //this->_expl_rhs.front() = this->evaluate_rhs_expl(t0, this->get_initial_state());
+	//std::cout << this->get_initial_state()[0] << std::endl;
+	//std::exit(0);
       this->_impl_rhs.front() = this->evaluate_rhs_impl(t0, this->get_initial_state());
 
     } else {
       const typename traits::time_t dt = this->get_status()->get_dt();
       auto nodes = this->get_quadrature()->get_nodes();
       nodes.insert(nodes.begin(), 0.0);
-
+	//std::exit(0);
       for (size_t m = 0; m < this->get_quadrature()->get_num_nodes() + 1; ++m) {
         const typename traits::time_t t = t0 + dt * nodes[m];
         assert( this->_impl_rhs[m] != nullptr);
