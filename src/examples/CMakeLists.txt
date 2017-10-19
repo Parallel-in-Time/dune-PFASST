@@ -1,5 +1,5 @@
 #add_subdirectory(FE_heat)
-#add_subdirectory(fischer)
+add_subdirectory(fischer)
 add_subdirectory(Newton)
 
 #add_subdirectory(FE_vgl)

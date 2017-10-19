@@ -62,7 +62,20 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
         TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
-        pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
+
+
+
+	MPI_Comm comm_x, comm_t; 
+	int myid, xcolor, tcolor;
+
+   	xcolor = (my_rank / 2);
+   	tcolor = my_rank % 2;
+
+   	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
+   	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
+
+        //pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
+        pfasst.communicator() = std::make_shared<CommunicatorType>(comm_t);
 // 	auto FinEl = make_shared<fe_manager>(nelements, 2);
 
                  
@@ -155,11 +168,16 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         pfasst.status()->dt() = dt;
         pfasst.status()->t_end() = t_end;
         pfasst.status()->max_iterations() = niter;
-
+        std::cout << "vor setup"<< std::endl;
+        MPI_Barrier(MPI_COMM_WORLD);
         pfasst.setup();
-
+        std::cout << "vor initial state"<< std::endl;
+        MPI_Barrier(MPI_COMM_WORLD);
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
+	coarse->set_comm(comm_x);
+	fine->set_comm(comm_x);
+
 
         /*if(my_rank==0) {
         std::cout << my_rank << " test " << fine->exact(0)->data()[0] <<  std::endl;    
@@ -177,6 +195,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         MPI_Barrier(MPI_COMM_WORLD);
         std::exit(0);*/
         std::cout << "vor run"<< std::endl;
+        MPI_Barrier(MPI_COMM_WORLD);
         pfasst.run();
         pfasst.post_run();
 
@@ -206,6 +225,46 @@ std::cout << "******************************************* " << std::endl;
         MPI_Barrier(MPI_COMM_WORLD);
         
                 if(my_rank==1) {
+        auto anfang    = fine->exact(0)->data();
+        auto naeherung = fine->get_end_state()->data();
+        auto exact     = fine->exact(t_end)->data();
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
+        }
+
+        std::cout << "******************************************* " << std::endl;
+        std::cout << " " << std::endl;
+        std::cout << " " << std::endl;
+
+        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
+        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+
+
+std::cout << "******************************************* " << std::endl;
+}
+        MPI_Barrier(MPI_COMM_WORLD);
+        
+                if(my_rank==2) {
+        auto anfang    = fine->exact(0)->data();
+        auto naeherung = fine->get_end_state()->data();
+        auto exact     = fine->exact(t_end)->data();
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
+        }
+
+        std::cout << "******************************************* " << std::endl;
+        std::cout << " " << std::endl;
+        std::cout << " " << std::endl;
+
+        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
+        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+
+
+std::cout << "******************************************* " << std::endl;
+}
+        MPI_Barrier(MPI_COMM_WORLD);
+        
+                if(my_rank==3) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();

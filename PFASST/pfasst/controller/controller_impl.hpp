@@ -171,6 +171,7 @@ namespace pfasst
   void
   Controller<TransferT, CommT>::setup()
   {
+
     ML_CLOG_IF(this->is_ready(), WARNING, this->get_logger_id(),
       "Controller has already been setup.");
 

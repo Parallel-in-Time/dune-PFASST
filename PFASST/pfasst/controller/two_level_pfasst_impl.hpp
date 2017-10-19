@@ -42,6 +42,7 @@ namespace pfasst
   void
   TwoLevelPfasst<TransferT, CommT>::setup()
   {
+
     assert(this->get_communicator() != nullptr);
 
     TwoLevelMLSDC<TransferT, CommT>::setup();

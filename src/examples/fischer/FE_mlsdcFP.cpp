@@ -181,7 +181,7 @@ using namespace pfasst::examples::fischer_example;
         fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
         std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
         std::cout << "number states " << fine->get_states().size() << std::endl ;
-        std::cout << "******************************************* " <<  std::endl ;
+        std::cout << "******************************************* " <<  std::endl;
 
         //std::cout << "Fehler: " <<  std::endl ;
         //coarse->states()[coarse->get_states().size()-1]->scaled_add(-1.0 , coarse->exact(t_end));

@@ -142,7 +142,7 @@ namespace pfasst
         }
         std::cout <<  "restriction " <<  std::endl;*/
 	restrict_matrix.mtv(fine->data(), coarse->data());
-    //interpolate_matrix.mtv(fine->data(), coarse->data());
+    	//interpolate_matrix.mtv(fine->data(), coarse->data());
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
 	/*std::cout <<  "restriction grob" <<  std::endl;

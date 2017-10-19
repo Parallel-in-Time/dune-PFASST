@@ -1,4 +1,3 @@
-//#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
 #include <config.h>
 
 #include <memory>
@@ -17,9 +16,7 @@ using std::shared_ptr;
 #include <pfasst/controller/two_level_pfasst.hpp>
 
 #include "fischer_sweeper.hpp"
-//#include "FE_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
-//#include "../../finite_element_stuff/spectral_transfer.hpp"
 #include "spectral_transfer.hpp"
 
 #include <vector>
@@ -30,7 +27,6 @@ using namespace pfasst::examples::fischer_example;
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 using pfasst::encap::DuneEncapsulation;
-//using pfasst::encap::VectorEncapsulation;
 
 using pfasst::quadrature::quadrature_factory;
 using pfasst::quadrature::QuadratureType;
@@ -38,12 +34,10 @@ using pfasst::contrib::SpectralTransfer;
 using pfasst::TwoLevelPfasst;
 typedef pfasst::comm::MpiP2P CommunicatorType;
 
-//using pfasst::examples::heat_FE::Heat_FE;
 
 typedef DuneEncapsulation<double, double, 1>                     EncapType;
 
 
-//typedef Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>> SweeperType;
 using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
 using SweeperType = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
 
@@ -61,9 +55,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         int my_rank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-        TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
-        pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
-// 	auto FinEl = make_shared<fe_manager>(nelements, 2);
+        
 
                  
         typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
@@ -79,7 +71,6 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         int n_levels=2;
 
         std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
-        //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
 
     
         Dune::FieldVector<double,DIMENSION> hR = {200};
@@ -95,8 +86,41 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	      grid->globalRefine((bool) i);
 	      auto view = grid->levelGridView(i);
               fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
-	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
+
         } 
+
+
+	auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
+
+        auto fine = std::make_shared<SweeperType>(fe_basis[0] , 0, grid);	const auto num_nodes = nnodes;	
+    	const auto num_time_steps = t_end/dt;
+
+	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_coarse;
+	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_fine;	
+	//vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state_coarse;
+	//vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state_fine;
+    	_new_newton_state_coarse.resize(num_time_steps);
+    	_new_newton_state_fine.resize(num_time_steps);
+
+    	for(int i=0; i< num_time_steps; i++){	
+		_new_newton_state_fine[i].resize(num_nodes + 1);
+		_new_newton_state_coarse[i].resize(num_nodes + 1);
+		for(int j=0; j<num_nodes +1 ; j++){
+			_new_newton_state_fine[i][j] =  fine->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
+			_new_newton_state_coarse[i][j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
+		}
+    	}
+
+
+
+
+    for(int ne=0; ne<4; ne++){
+
+
+
+	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
+        pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
+
         
 
         auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
@@ -107,10 +131,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         
         coarse->is_coarse=true;
         fine->is_coarse=false;
-
-        
-        
-                
+                        
         dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
 	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	for (int i=0; i< n_levels-1; i++){
@@ -119,22 +140,18 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
 	    
 	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
-	    //std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(0)).M() <<  std::endl;
+
 	for (int i=0; i< vecvec->at(0)->N(); i++){
 	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
 		if(vecvec->at(0)->exists(i,j)){
-		  //std::cout << ((*vecvec->at(0))[i][j]) << std::endl;
 		}
 	      }
         }
         
        
-        std::cout << "vor create"<< std::endl;
-
         auto transfer = std::make_shared<TransferType>();
 	transfer->create(vecvec);
-        //transfer->set_matrix(vecvec->at(0), vecvec->at(0));
-        std::cout << "nach create"<< std::endl;
+
 
         fine->set_abs_residual_tol(1e-12);
         coarse->set_abs_residual_tol(1e-12);
@@ -161,30 +178,64 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 
-        /*if(my_rank==0) {
-        std::cout << my_rank << " test " << fine->exact(0)->data()[0] <<  std::endl;    
-        for (int i=0; i< coarse->initial_state()->data().size(); i++){
-          std::cout << i << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }
-        }
-        MPI_Barrier(MPI_COMM_WORLD);
-        if(my_rank==1){
-        std::cout << my_rank << " test  " << fine->exact(0)->data()[0] <<  std::endl; 
-        for (int i=0; i< coarse->initial_state()->data().size(); i++){
-          std::cout << i << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }   
-        }
-        MPI_Barrier(MPI_COMM_WORLD);
-        std::exit(0);*/
+
+	if(ne==0) 	
+	for(int i=0; i< num_time_steps; i++){	
+		for(int j=0; j<num_nodes +1; j++){
+		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    		 (*_new_newton_state_coarse[i][j]).data()[k]= 0; 
+    		}
+		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
+    		 (*_new_newton_state_fine[i][j]).data()[k]= 0; 
+    		}
+		}
+	}
+
+
+
+	for(int i=0; i< num_time_steps; i++){	
+		for(int j=0; j<num_nodes +1; j++){
+			//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    			//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
+			//}
+    			transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
+			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
+    			fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
+			}
+    		}
+	}
+
+	    for(int m=0; m< num_nodes +1; m++){
+	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
+            	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[0][m]);
+	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
+	    	transfer->restrict_dune_matrix(*fine->df_dune[0][m], *coarse->df_dune[0][m]);
+		auto result = fine->get_encap_factory().create();
+            	result->zero();
+                fine->evaluate_f2(result, fine->last_newton_state()[0][m]);
+		fine->df_dune[0][m]->mmv(fine->last_newton_state()[0][m]->data(), result->data());
+
+	    	fine->coarse_rhs()[0][m]->data() =result->data();
+		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
+                
+	    	//Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > vgl_M = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(coarse->M_dune); ///////M
+		//transfer->restrict_dune_matrix(*fine->df_dune[0][m], vgl_M);
+
+
+	    }
+
+
+
+
         std::cout << "vor run"<< std::endl;
         pfasst.run();
         pfasst.post_run();
 
         
-                MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(MPI_COMM_WORLD);
 
         
-                if(my_rank==0) {
+        if(my_rank==0) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
@@ -200,8 +251,8 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
 
 
-std::cout << "******************************************* " << std::endl;
-}
+	std::cout << "******************************************* " << std::endl;
+	}
 
         MPI_Barrier(MPI_COMM_WORLD);
         
@@ -221,30 +272,22 @@ std::cout << "******************************************* " << std::endl;
         std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
 
 
-std::cout << "******************************************* " << std::endl;
+	std::cout << "******************************************* " << std::endl;
+	}
+
+    	for(int i=0; i< num_time_steps; i++){	
+		for(int j=0; j<num_nodes +1 ; j++){
+			for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++)
+    				(*_new_newton_state_coarse[i][j]).data()[k] = coarse->new_newton_state()[i][j]->data()[k];
+    		
+			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++)
+    				(*_new_newton_state_fine[i][j]).data()[k] = fine->new_newton_state()[i][j]->data()[k];
+    		}
+	}
+	
+
+        MPI_Barrier(MPI_COMM_WORLD);
 }
-
-        /*for (int i=0; i<num_pro; i++){
-          if(my_rank==i){
-            ofstream ff;
-            stringstream sss;
-            sss << nelements << "_iter";
-            string st = "solution_pfasst/" + sss.str() + ".dat";
-            ff.open(st, ios::app | std::ios::out );
-            auto iter = pfasst._it_per_step;
-            for (const auto &line : iter) {
-              ff << my_rank << " " << dt <<"     " << line << std::endl;
-            }
-
-            ff.close();
-
-          }
-          MPI_Barrier(MPI_COMM_WORLD);
-
-        }*/
-
-
-
 
 
 
@@ -256,32 +299,13 @@ int main(int argc, char** argv)
 {
   using pfasst::config::get_value;
   using pfasst::quadrature::QuadratureType;
-  //Dune::MPIHelper::instance(argc, argv); 
-    
-//Dune::FakeMPIHelper
+
   MPI_Init(&argc, &argv);
         int my_rank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
-         Dune::FakeMPIHelper::instance(argc, argv);
-        std::vector<int> vec(100);
-
-  for(int i = 0; i< 100; i++){
-      vec[i]=i*20*3*8/3;
-  }  
-  
-          if(my_rank==0) {
-       for(int i = 0; i< 100; i++){
-      //std::cout << i << " "<< vec[i] <<std::endl;
-  }  
-        }
-        MPI_Barrier(MPI_COMM_WORLD);
-        if(my_rank==1){
-       for(int i = 0; i< 100; i++){
-      //std::cout << i << " "<< vec[i] <<std::endl;
-  }          
-        }
+        
   
   
   pfasst::init(argc, argv, SweeperType::init_opts);
@@ -293,7 +317,7 @@ int main(int argc, char** argv)
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0.0;
   const double dt = get_value<double>("dt", 0.1);
-  double t_end = get_value<double>("tend", 0.2);
+  double t_end = get_value<double>("tend", 0.4);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
