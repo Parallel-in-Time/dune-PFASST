@@ -31,7 +31,7 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
     pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize();
-
+	std::cout << "im initialize "<< std::endl;
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
     assert(this->get_states().size() == num_nodes + 1);
 

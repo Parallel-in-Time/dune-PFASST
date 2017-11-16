@@ -1,6 +1,6 @@
 
-add_executable("par" parallelCG.cpp)
-target_link_dune_default_libraries("par")
+#add_executable("par" parallelCG.cpp)
+#target_link_dune_default_libraries("par")
 
 add_executable("sdc" FE_sdcFP.cpp)
 target_link_dune_default_libraries("sdc")

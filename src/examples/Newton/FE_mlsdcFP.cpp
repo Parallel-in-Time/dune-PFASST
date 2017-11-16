@@ -98,7 +98,7 @@ using namespace pfasst::examples::fischer_example;
 
 
 	const auto num_nodes = nnodes;	
-    	const auto num_time_steps = t_end/dt;
+    	const auto num_time_steps = 1; //t_end/dt;
 
 	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_coarse;
 	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_fine;	
@@ -117,7 +117,7 @@ using namespace pfasst::examples::fischer_example;
     	}
 
 
-
+for(int time=0; time<(t_end-t_0)/dt; time++){	
 
     for(int ne=0; ne<4; ne++){
 
@@ -169,9 +169,10 @@ using namespace pfasst::examples::fischer_example;
         mlsdc->set_options();
 
 
-        mlsdc->status()->time() = t_0;
+
+        mlsdc->status()->time() = t_0 + time*dt;//t_0;
         mlsdc->status()->dt() = dt;
-        mlsdc->status()->t_end() = t_end;
+        mlsdc->status()->t_end() = t_0 + (time+1)*dt; //t_end;
         mlsdc->status()->max_iterations() = niter;
 
 
@@ -186,7 +187,7 @@ using namespace pfasst::examples::fischer_example;
 
 	
 
-	if(ne==0) 	
+	if(time==0 && ne==0) 	
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
@@ -278,9 +279,9 @@ using namespace pfasst::examples::fischer_example;
         std::cout << " " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << "Fehler: " <<  std::endl ;
-        fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
+        fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_0 + (time+1)*dt));
         std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
-        std::cout << "number states " << fine->get_states().size() << std::endl ;
+        std::cout << "time step " << time << std::endl ;
         std::cout << "******************************************* " <<  std::endl ;
 
 
@@ -290,9 +291,10 @@ using namespace pfasst::examples::fischer_example;
     		(*_new_newton_state_coarse[i][j]).data()[k] = coarse->new_newton_state()[i][j]->data()[k];
     		
 		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++)
-    		(*_new_newton_state_fine[i][j]).data()[k] = fine->new_newton_state()[i][j]->data()[k];
+    			(*_new_newton_state_fine[i][j]).data()[k] = fine->new_newton_state()[i][j]->data()[k];
     		}
-		}
+	}
+	
 	}
 
 
@@ -301,7 +303,7 @@ using namespace pfasst::examples::fischer_example;
 
       }
 
-
+}
 
 
 #ifndef PFASST_UNIT_TESTING

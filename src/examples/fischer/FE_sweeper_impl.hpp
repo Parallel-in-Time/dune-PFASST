@@ -83,7 +83,7 @@ namespace pfasst
         const auto bs = basis->size();
         std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
 
-        this->encap_factory()->set_size(bs);
+        this->encap_factory()->set_size((bs));
 
       }
 

@@ -30,11 +30,11 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
     pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize();
-
+	std::cout << "im initialize "<< std::endl;
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
     assert(this->get_states().size() == num_nodes + 1);
 
-    const auto num_time_steps = this->get_status()->get_t_end()/this->get_status()->get_dt();
+    const auto num_time_steps = 1;//this->get_status()->get_t_end()/this->get_status()->get_dt();
 		
     this->last_newton_state().resize(num_time_steps);
     this->new_newton_state().resize(num_time_steps);

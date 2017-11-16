@@ -93,7 +93,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
 
         auto fine = std::make_shared<SweeperType>(fe_basis[0] , 0, grid);	const auto num_nodes = nnodes;	
-    	const auto num_time_steps = t_end/dt;
+    	const auto num_time_steps = 1;//t_end/dt;
 
 	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_coarse;
 	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_fine;	
@@ -113,7 +113,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
 
-
+for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
     for(int ne=0; ne<4; ne++){
 
 
@@ -168,18 +168,18 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
 
-        pfasst.status()->time() = t_0;
+        pfasst.status()->time() =  t_0 + time*dt*num_pro;
         pfasst.status()->dt() = dt;
-        pfasst.status()->t_end() = t_end;
+        pfasst.status()->t_end() = t_0 + (time+1)*dt*num_pro;
         pfasst.status()->max_iterations() = niter;
-
+        std::cout << "******************************** pfasst t0 " << pfasst.status()->time() << "tend " << pfasst.status()->t_end() << std::endl;
         pfasst.setup();
 
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 
 
-	if(ne==0) 	
+	if(time=0 && ne==0) 	
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
@@ -249,14 +249,14 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
         fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
         std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-
+        std::cout << "Time: "  << time << " " << "Newton: " << ne << std::endl;
 
 	std::cout << "******************************************* " << std::endl;
 	}
 
         MPI_Barrier(MPI_COMM_WORLD);
         
-                if(my_rank==1) {
+                /*if(my_rank==1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
@@ -273,7 +273,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
 	std::cout << "******************************************* " << std::endl;
-	}
+	}*/
 
     	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
@@ -288,7 +288,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
         MPI_Barrier(MPI_COMM_WORLD);
 }
-
+}
 
 
       }

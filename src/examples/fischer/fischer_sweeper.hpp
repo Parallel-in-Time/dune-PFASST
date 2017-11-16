@@ -158,7 +158,7 @@ namespace pfasst
 	    auto u_seq = this->get_encap_factory().create();	
 
 	    //if (sequential){	          
-            	Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
+            	/*Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  
             	Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
 	  
@@ -170,7 +170,7 @@ namespace pfasst
           
           
             	Dune::InverseOperatorResult statisticss ;
-            	cg.apply(u_seq->data(), newton_rhs_seq , statisticss ); //rhs ist nicht constant!!!!!!!!!
+            	cg.apply(u_seq->data(), newton_rhs_seq , statisticss ); */ //rhs ist nicht constant!!!!!!!!!
 	    //}else{
 
 
@@ -265,7 +265,7 @@ namespace pfasst
 			for(int i=0; i< u->data().size(); i++)
 				std::cout << " unterschied " << u->data()[i] << " " << u_seq->data()[i] << std::endl;
   
-		std::cout << rank << std::endl;
+		//std::cout << rank << std::endl;
 		MPI_Bcast(&(u->data()[0][0]), u->data().size(), MPI_DOUBLE, 0, comm_x);
 
 
@@ -273,10 +273,10 @@ namespace pfasst
 	    //}	
 
 
-	    //u->data() -=u_seq->data();
-	    //double n = u->norm0();		
+	    //u_seq->data()  -= u->data();
+	    //double n = u_seq->norm0();		
 		
-
+	    //u->data() = u_seq->data();	
             evaluate_f(f, u, dt, rhs);
           
             //std::cout << rank << " unterschied sequentiell  " << n << std::endl;  

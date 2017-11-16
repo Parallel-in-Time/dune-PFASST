@@ -85,7 +85,7 @@ namespace pfasst
           shared_ptr<typename SweeperTrait::encap_t> evaluate_rhs_impl(const typename SweeperTrait::time_t& m,const shared_ptr<typename SweeperTrait::encap_t> u) {
 	
             ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << m);
-                    std::cout << "evaluate start" << std::endl;
+                    //std::cout << "evaluate start" << std::endl;
 
             	auto result = this->get_encap_factory().create();
 		auto newton_rhs = this->get_encap_factory().create();
@@ -116,10 +116,10 @@ namespace pfasst
 		neu->data() *=-1;
 
 
-		for (int i=0; i<u->get_data().size(); ++i)
+		/*for (int i=0; i<u->get_data().size(); ++i)
           	{
      	     		std::cout << "vorher " << neu->data()[i] <<std::endl;	 
-          	}
+          	}*/
 
           	/*for (int i=0; i<u->get_data().size(); ++i)
           	{
@@ -166,7 +166,7 @@ namespace pfasst
         		result->scaled_add(dt * this->_q_delta_impl(m + 1, n), this->_impl_rhs[n]);
       		}*/
 
-                std::cout << "evaluate ende" << std::endl;     
+                //std::cout << "evaluate ende" << std::endl;     
 
 
             	return neu; //result
@@ -181,7 +181,7 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs){
 	
          ML_CVLOG(4, this->get_logger_id(), "IMPLICIT spatial SOLVE at node number" << m << " with dt=" << dt);
-        std::cout << "implcit solve start" << std::endl;
+        //std::cout << "implcit solve start" << std::endl;
 
          auto residuum = this->get_encap_factory().create();
 	 Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
@@ -259,7 +259,7 @@ namespace pfasst
         //evaluate_rhs_impl(0, u);
 	//std::exit(0);
         this->_num_impl_solves++;
-                std::cout << "implcit solve end" << std::endl;
+                //std::cout << "implcit solve end" << std::endl;
 
       }
       

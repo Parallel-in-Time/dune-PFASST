@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
 
 
 	const auto num_nodes = nnodes;	
-    	const auto num_time_steps = t_end/dt;
+    	const auto num_time_steps = 1; //t_end/dt;
 	
 	vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state;
     	_new_newton_state.resize(num_time_steps);
@@ -145,25 +145,29 @@ int main(int argc, char** argv) {
     	}
 
 
-
-
+for(int time=0; time<(t_end-t_0)/dt; time++){	
+//int time=0;
     for(int ne=0; ne<4; ne++){	
 
 
 	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); // mass and stiff are just dummies
 	sweeper->is_coarse = false;
+	std::cout << "test1 "<< std::endl;
     	sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+	std::cout << "test2 "<< std::endl;
     	auto sdc = std::make_shared<heat_FE_sdc_t>();    
     	sdc->add_sweeper(sweeper);
     	sdc->set_options();
-    	sdc->status()->time() = t_0;
+    	sdc->status()->time() = t_0 + time*dt;
     	sdc->status()->dt() = dt;
-    	sdc->status()->t_end() = t_end;
+    	sdc->status()->t_end() = t_0 + (time+1)*dt;
+	std::cout << t_0 << " "<< t_0 + time*dt <<" "<< t_0 + (time+1)*dt<< " " << t_end<< std::endl;
     	sdc->status()->max_iterations() = niter;
+	std::cout << "vor setup "<< std::endl;
     	sdc->setup();
 
-
-	if(ne==0) 	
+	std::cout << "test3 "<< std::endl;
+	if(time==0 && ne==0) 	//im ersten Newton Lauf Anfangswerte setzen
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 		for(int k=0; k< _new_newton_state[i][j]->size(); k++){
@@ -171,7 +175,7 @@ int main(int argc, char** argv) {
     		}
 		}
 	}
-
+	std::cout << "test4 "<< std::endl;
 
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
@@ -182,7 +186,7 @@ int main(int argc, char** argv) {
 			}
     		}
 	}
-
+	std::cout << "test5 "<< std::endl;
 
 	    for(int m=0; m< num_nodes +1; m++){
 	    	sweeper->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(sweeper->M_dune); 
@@ -204,11 +208,11 @@ int main(int argc, char** argv) {
 
 
     	auto naeherung = sweeper->get_end_state()->data();
-    	auto exact     = sweeper->exact(t_end)->data();
-    	auto initial   = sweeper->exact(0)->data();
+    	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
+    	auto initial   = sweeper->exact(t_0 + time*dt)->data();
     	for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << initial[i] << " result " << naeherung[i] << " " << exact[i] << std::endl;
-	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-        std::cout << "***************************************    error in infinity norm: " << sweeper->get_end_state()->norm0()<<  std::endl ;
+	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
+        std::cout << "***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  std::endl ;
 
     	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
@@ -222,7 +226,8 @@ int main(int argc, char** argv) {
     	
 
    }
-
+//std::exit(0);
+}
     
 
  
