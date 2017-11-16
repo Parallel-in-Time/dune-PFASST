@@ -18,7 +18,7 @@ git clone https://gitlab.dune-project.org/core/dune-istl.git
 
 git clone https://gitlab.dune-project.org/staging/dune-functions.git
 
-git clone https://gitlab.dune-project.org/staging/dune-typetree
+git clone https://gitlab.dune-project.org/staging/dune-typetree.git
 
 git clone https://git.imp.fu-berlin.de/agnumpde/dune-fufem.git
 
