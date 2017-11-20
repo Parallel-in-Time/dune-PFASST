@@ -345,6 +345,10 @@ int main(int argc, char** argv)
 
         MPI_Barrier(MPI_COMM_WORLD);
 	std::cout << "vor finalize " << my_rank<< std::endl;
+
+  std::cout << "my rank " << my_rank<< " of "<< num_pro << std::endl;
+
+
   MPI_Finalize();
 
   return 0;
