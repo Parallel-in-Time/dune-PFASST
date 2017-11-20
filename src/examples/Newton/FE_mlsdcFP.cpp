@@ -322,7 +322,7 @@ int main(int argc, char** argv)
   
   pfasst::init(argc, argv, sweeper_t_fine::init_opts);
 
-  const size_t nelements = get_value<size_t>("num_elements", 180); //Anzahl der Elemente pro Dimension
+  const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
@@ -330,7 +330,7 @@ int main(int argc, char** argv)
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0.0;
   const double dt = get_value<double>("dt", 0.05);
-  double t_end = get_value<double>("tend", 0.05);
+  double t_end = get_value<double>("tend", 0.2);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");

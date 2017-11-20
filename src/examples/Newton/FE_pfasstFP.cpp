@@ -112,9 +112,9 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
     	}
 
 
-
+std::cout << "############################################################################################################################################num_pro  " << num_pro  <<std::endl;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
-    for(int ne=0; ne<4; ne++){
+    for(int ne=0; ne<3; ne++){
 
 
 
@@ -235,7 +235,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         MPI_Barrier(MPI_COMM_WORLD);
 
         
-        if(my_rank==0) {
+        if(my_rank==num_pro-1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
@@ -255,6 +255,8 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	}
 
         MPI_Barrier(MPI_COMM_WORLD);
+
+	std::cout << "rank " << my_rank<< std::endl;
         
                 /*if(my_rank==1) {
         auto anfang    = fine->exact(0)->data();
@@ -287,6 +289,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	
 
         MPI_Barrier(MPI_COMM_WORLD);
+	std::cout << "after last barrier rank " << my_rank<< std::endl;
 }
 }
 
@@ -312,11 +315,11 @@ int main(int argc, char** argv)
   pfasst::Status<double>::create_mpi_datatype();
 
 
-  const size_t nelements = get_value<size_t>("num_elements", 4); //Anzahl der Elemente pro Dimension
+  const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0.0;
-  const double dt = get_value<double>("dt", 0.1);
+  const double dt = get_value<double>("dt", 0.05);
   double t_end = get_value<double>("tend", 0.4);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
@@ -336,8 +339,12 @@ int main(int argc, char** argv)
 
   run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 
+	std::cout << "in main " << my_rank<< std::endl;
+
   pfasst::Status<double>::free_mpi_datatype();
 
+        MPI_Barrier(MPI_COMM_WORLD);
+	std::cout << "vor finalize " << my_rank<< std::endl;
   MPI_Finalize();
 
   return 0;
