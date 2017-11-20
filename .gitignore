@@ -1,2 +1,13 @@
 build-cmake
 .idea
+cmake/modules/DunePFASSTMacros.cmake
+nano.save
+nano.save.1
+src/dune-pfasst-tnnmg-dg.cc
+src/examples/Newton/anisotropic.hh
+src/examples/Newton/fischer_sweeper_.hpp
+src/examples/fischer/parallel_solve.cpp
+src/examples/old_Newton/
+src/functions.hh
+src/nonsmooth-ac.cc
+
