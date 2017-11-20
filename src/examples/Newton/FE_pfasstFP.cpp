@@ -338,6 +338,8 @@ int main(int argc, char** argv)
 
   pfasst::Status<double>::free_mpi_datatype();
 
+  std::cout << "my rank " << my_rank<< " of "<< num_pro << std::endl;
+
   MPI_Finalize();
 
   return 0;
