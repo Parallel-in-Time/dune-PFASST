@@ -181,7 +181,7 @@ namespace pfasst
 
 		MPI_Comm dune_comm = comm_x; //MPI_COMM_WORLD;
 		
-		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>;
+		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>; 
 		DuneCommunication DuneComm(dune_comm);
 		DuneCommunication *comm_redist;
 		

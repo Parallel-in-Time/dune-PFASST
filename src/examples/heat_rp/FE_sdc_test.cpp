@@ -1,6 +1,6 @@
 #include <config.h>
-#include "dune_includes"
-
+//#include "dune_includes"
+//
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
 #include <pfasst/controller/sdc.hpp>
@@ -13,21 +13,21 @@
 #include <dune/istl/owneroverlapcopy.hh>// OwnerOverlapCopyCommunication
 
 
-#include "../../datatypes/dune_vec.hpp"
-#include "fischer_sweeper.hpp"
+//#include "../../datatypes/dune_vec.hpp"
+//#include "fischer_sweeper.hpp"
 
 //#include "assemble.hpp"
 
-#include <dune/fufem/functionspacebases/p1nodalbasis.hh>
+/*#include <dune/fufem/functionspacebases/p1nodalbasis.hh>
 #include <dune/fufem/assemblers/operatorassembler.hh>
 #include <dune/fufem/assemblers/functionalassembler.hh>
 #include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh>
 #include <dune/fufem/assemblers/localassemblers/massassembler.hh>
 #include <dune/fufem/assemblers/localassemblers/l2functionalassembler.hh>
-#include <dune/fufem/functiontools/basisinterpolator.hh>
+#include <dune/fufem/functiontools/basisinterpolator.hh>*/
 
 
-using namespace pfasst::examples::fischer_example;
+/*using namespace pfasst::examples::fischer_example;
 
 using std::shared_ptr;
 
@@ -47,7 +47,7 @@ using pfasst::config::get_value;
 using pfasst::quadrature::QuadratureType;
 using pfasst::quadrature::quadrature_factory;
 
-using pfasst::examples::fischer_example::fischer_sweeper;
+using pfasst::examples::fischer_example::fischer_sweeper;*/
 
 
 
@@ -55,7 +55,7 @@ using pfasst::examples::fischer_example::fischer_sweeper;
 
 int main(int argc, char** argv) {
       
-    Dune::MPIHelper::instance(argc, argv);
+    /*Dune::MPIHelper::instance(argc, argv);
     
     
     // read in the parameter from terminal and make initial setup
@@ -158,12 +158,12 @@ int main(int argc, char** argv) {
     sdc->status()->dt() = dt;
     sdc->status()->t_end() = t_end;
     sdc->status()->max_iterations() = niter;
-    sdc->setup();
+    sdc->setup();*/
 
 
 		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>; 
     // initial value is given by the exact solution on time step 0
-    sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+    /*sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
     for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << sweeper->initial_state()->data()[i] << std::endl;
     //std::exit(0);
@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
             ff << dt <<"  " << line << std::endl;
         }
         ff.close();
-    }	
+    }	*/
 
 
  

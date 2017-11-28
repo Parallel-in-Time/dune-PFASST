@@ -68,8 +68,9 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	MPI_Comm comm_x, comm_t; 
 	int myid, xcolor, tcolor;
 
-   	xcolor = (my_rank / 2);
-   	tcolor = my_rank % 2;
+	int space_num=2;
+   	xcolor = (my_rank / space_num);
+   	tcolor = my_rank % space_num;
 
    	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
    	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
