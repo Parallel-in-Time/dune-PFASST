@@ -1,5 +1,7 @@
 #include "FE_sweeper.hpp"
 
+
+
 #include "assemble.hpp"
 
 #include <algorithm>
@@ -10,9 +12,6 @@
 #include <memory>
 #include <utility>
 #include <vector>
-using std::shared_ptr;
-using std::vector;
-
 
 #include <pfasst/globals.hpp>
 #include <pfasst/util.hpp>
@@ -20,6 +19,44 @@ using std::vector;
 #include <pfasst/config.hpp>
 
 #include <iostream>
+
+
+#include <dune/istl/bvector.hh> // BlockVector
+#include <dune/istl/bcrsmatrix.hh> // BCRSMatrix
+
+#include <dune/grid/yaspgrid.hh> // YaspGrid
+#include <dune/functions/functionspacebases/pq1nodalbasis.hh> // PQ1NodalBasis
+#include <dune/fufem/assemblers/dunefunctionsoperatorassembler.hh> // DuneFunctionsOperatorAssembler
+#include <dune/fufem/assemblers/istlbackend.hh> // istlMatrixBackend
+#include <dune/fufem/assemblers/localassemblers/massassembler.hh> //MassAssembler
+#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh> //LaplaceAssembler
+#include <dune/istl/paamg/graph.hh> // Dune::Amg::MatrixGraph
+#include <dune/istl/matrixredistribute.hh> // Dune::RedistributeInformation
+#include <dune/istl/preconditioners.hh> // Dune::BlockPreconditioner, Dune::SeqSSOR
+#include <dune/istl/solvers.hh> // Dune::CGSolver, Dune::RestartedGMResSolver
+#include <dune/istl/schwarz.hh> // Dune::OverlappingSchwarzScalarProduct, Dune::OverlappingSchwarzOperator
+
+
+#include <dune/common/parallel/mpihelper.hh> // An initializer of MPI
+#include <dune/istl/owneroverlapcopy.hh>// OwnerOverlapCopyCommunication
+#include <dune/common/parallel/mpihelper.hh> // An initializer of MPI
+#include <dune/istl/owneroverlapcopy.hh>// OwnerOverlapCopyCommunication
+
+
+#include "mpi.h"
+
+
+
+
+using std::shared_ptr;
+using std::vector;
+
+
+
+
+
+
+
 
 namespace pfasst
 {
@@ -53,6 +90,8 @@ namespace pfasst
 
         const auto bs = basis->size();
         std::cout << "Finite Element basis consists of " <<  basis->size() << " elements " << std::endl;
+        std::cout << "A.N() " <<  this->A_dune.N() << " A.M() " << this->A_dune.M()<< std::endl;
+	//std::exit(0);
 
         this->encap_factory()->set_size(bs);
 
@@ -127,10 +166,16 @@ namespace pfasst
         interpolate(*basis, x_node, N_x);
 
         interpolate(*basis, result->data(), exact_solution);
-       for (size_t i = 0; i < result->get_data().size(); i++) {
-          std::cout << "result exact" << result->data()[i] << std::endl;
-        }
-	//std::exit(0);
+
+	/*int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+MPI_Barrier(MPI_COMM_WORLD);  	
+	if(rank==0) for (size_t i = 0; i < result->get_data().size(); i++) {
+          std::cout << "result " << result->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+	if(rank==1) for (size_t i = 0; i < result->get_data().size(); i++) {
+          std::cout << "result " << result->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD); */      
 
         return result;
       }
@@ -322,83 +367,162 @@ namespace pfasst
       {
 
           std::cout << "das ist jetzt das rhs " <<  std::endl;
-       for (size_t i = 0; i < rhs->get_data().size(); i++) {
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+	MPI_Barrier(MPI_COMM_WORLD);  	
+	if(rank==0) for (size_t i = 0; i < rhs->get_data().size(); i++) {
           std::cout << "result " << rhs->data()[i] << std::endl;
-        }
+        }MPI_Barrier(MPI_COMM_WORLD);
+	if(rank==1) for (size_t i = 0; i < rhs->get_data().size(); i++) {
+          std::cout << "result " << rhs->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD); 
 	//std::exit(0);
 
-        /*VectorType M_rhs_dune ;
-        M_rhs_dune.resize(rhs->get_data().size());
-        this->M_dune.mv(rhs->data(), M_rhs_dune);
-        MatrixType M_dtA_dune = MatrixType(this->A_dune);
-        M_dtA_dune *= (dt * this->_nu);
-        M_dtA_dune += this->M_dune;
-        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
-        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
-        Dune::CGSolver<VectorType> cg(linearOperator,
-                                preconditioner,
-                                1e-10, // desired residual reduction factor
-                                500,    // maximum number of iterations
-                                0);    // verbosity of the solver
-        Dune::InverseOperatorResult statistics ;
-        cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
-        ML_CVLOG(4, this->get_logger_id(),
-                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
-        for (size_t i = 0; i < u->data().size(); i++) {
-          f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
-        }
-        this->_num_impl_solves++;*/
-        
-        /*for (size_t i = 0; i < u->get_data().size(); i++) {
-          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
-          //f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-          std::cout << "impl u " << rhs->data()[i] << std::endl;
-        }*/
-        
         Dune::BlockVector<Dune::FieldVector<double,1> > M_rhs_dune ;
+        Dune::BlockVector<Dune::FieldVector<double,1> > u_seq;
         M_rhs_dune.resize(rhs->get_data().size());
 	
 	
         M_rhs_dune = rhs->get_data(); 
 
-        //this->M_dune.mv(rhs->data(), M_rhs_dune); //multipliziert rhs mit matrix_m_dune
 
-	
-
-	
+       
 	
         Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->A_dune);
         M_dtA_dune *= (dt * this->_nu);
         M_dtA_dune += this->M_dune;
 
+        std::cout << "das ist jetzt die matrix " <<  std::endl;	
+	if(rank==0) for (size_t i = 0; i < M_dtA_dune.M(); i++) {
+			for (size_t j = 0; j < M_dtA_dune.N(); j++){
+          			if (M_dtA_dune.exists(i,j)) {std::cout <<  M_dtA_dune[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+	if(rank==1)for (size_t i = 0; i < M_dtA_dune.M(); i++) {
+			for (size_t j = 0; j < M_dtA_dune.N(); j++){
+          			if (M_dtA_dune.exists(i,j)) {std::cout <<  M_dtA_dune[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
+        } 
+	MPI_Barrier(MPI_COMM_WORLD); 
+	if(rank==2)for (size_t i = 0; i < M_dtA_dune.M(); i++) {
+			for (size_t j = 0; j < M_dtA_dune.N(); j++){
+          			if (M_dtA_dune.exists(i,j)) {std::cout <<  M_dtA_dune[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
+        } 
+	MPI_Barrier(MPI_COMM_WORLD); 
+	//std::exit(0);
+
+
+	MPI_Comm comm_x=MPI_COMM_WORLD; 
+ 	int num;
+	MPI_Comm_rank(comm_x, &rank );
+	MPI_Comm_size(comm_x, &num );
+	MPI_Barrier(comm_x);
+	std::cout << "test "<< rank << " von " << num << std::endl; //<< u_seq[i] << std::endl;
+
+
+
+	//start parallel
+
+		MPI_Comm dune_comm = comm_x;//MPI_COMM_WORLD;
+		
+		using DuneVectorType = Dune::BlockVector<Dune::FieldVector<double, 1>>;
+		using DuneMatrixType = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>;
+		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>;
+		DuneCommunication DuneComm(dune_comm);
+		DuneCommunication *comm_redist;
+		//DuneCommunication *comm_redist= MPI_COMM_WORLD;		
+
+
+		DuneMatrixType parallel_A;
+		using DuneMatrixGraph = Dune::Amg::MatrixGraph<DuneMatrixType>;
+		Dune::RedistributeInformation<DuneCommunication> dune_rinfo;
+
+		bool hasDofs = Dune::graphRepartition(DuneMatrixGraph(M_dtA_dune), 
+										  DuneComm,
+										  static_cast<int>(num),
+										  comm_redist,
+										  dune_rinfo.getInterface(),
+										  true);
+
+		dune_rinfo.setSetup();
+		//redistributeMatrix(M_dtA_dune, parallel_A, DuneComm, *comm_redist, dune_rinfo);
+
+		int size = u->data().size();
+
+
+
+		comm_redist->remoteIndices().rebuild<false>();
+		using Seq_Preconditioner = Dune::SeqSSOR<DuneMatrixType, DuneVectorType, DuneVectorType>;
+				
+		using Par_Preconditioner = Dune::BlockPreconditioner<DuneVectorType, DuneVectorType, DuneCommunication, Seq_Preconditioner>;
+		using Par_ScalarProduct = Dune::OverlappingSchwarzScalarProduct<DuneVectorType, DuneCommunication>;
+		using Par_LinearOperator = Dune::OverlappingSchwarzOperator<DuneMatrixType, DuneVectorType, DuneVectorType, DuneCommunication>;
+	
+		Par_ScalarProduct parallel_sp(*comm_redist);
+
+		std::cout << "bevor ich paralleles a in loeser stecke "<< num << std::endl; //<< u_seq[i] << std::endl;		
+		//Par_LinearOperator parallel_linearoperator(parallel_A, *comm_redist);
+		Par_LinearOperator parallel_linearoperator(M_dtA_dune, *comm_redist);
+		//Seq_Preconditioner seq_precon(parallel_A, 1, 1.0); 
+		Seq_Preconditioner seq_precon(M_dtA_dune, 1, 1.0); 
+		Par_Preconditioner parallel_precon(seq_precon, *comm_redist);
+
+		Dune::InverseOperatorResult statistics;
+
+		std::cout << "test 1 "<< std::endl; //<< u_seq[i] << std::endl;
+		const double residual_tol = 1e-16;
+		const int num_restart = 10;		
+		const int max_iter = 200;
+		
+		const int verbosity = rank ==0? 0:0;
+
+		Dune::RestartedGMResSolver<DuneVectorType> GMRES(parallel_linearoperator, parallel_sp,
+														 parallel_precon,
+														 residual_tol,
+														 num_restart,
+														 max_iter,
+														 verbosity);
+		
+		/*DuneVectorType parallel_b(parallel_A.N());
+		DuneVectorType parallel_x(parallel_A.M());
+		dune_rinfo.redistribute(M_rhs_dune, parallel_b);*/
+
+		//GMRES.apply(parallel_x, parallel_b, statistics);
+
+		GMRES.apply(u->data(), M_rhs_dune, statistics);
+
+		//dune_rinfo.redistributeBackward(u->data(), parallel_x);
+	MPI_Barrier(MPI_COMM_WORLD);  	
+	if(rank==0) for (size_t i = 0; i < u->get_data().size(); i++) {
+          std::cout << "nach lgs " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+	if(rank==1) for (size_t i = 0; i < u->get_data().size(); i++) {
+          std::cout << "nach lgs " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD); 
+	if(rank==2) for (size_t i = 0; i < u->get_data().size(); i++) {
+          std::cout << "nach lgs " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+	std::exit(0);
+
+
+	
+		/*if(rank==0) 
+			for(int i=0; i< u->data().size(); i++)
+				std::cout << " unterschied " << u->data()[i] << " "<< std::endl; //<< u_seq[i] << std::endl;
+  
+
+		MPI_Bcast(&(u->data()[0][0]), u->data().size(), MPI_DOUBLE, 0, comm_x);*/
+
+
+
+
+
+
+
+
+
 
 	
 
-        std::cout << "das ist jetzt die matrix " <<  std::endl;	
-	for (size_t i = 0; i < M_dtA_dune.M(); i++) {
-			for (size_t j = 0; j < M_dtA_dune.N(); j++){
-          			if (M_dtA_dune.exists(i,j)) {std::cout <<  M_dtA_dune[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
-        }
-	//std::exit(0);
-        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
 
-        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
-
-        Dune::CGSolver<VectorType> cg(linearOperator,
-                              preconditioner,
-                              1e-10, // desired residual reduction factor
-                              5000,    // maximum number of iterations
-                              0);    // verbosity of the solver
-
-        Dune::InverseOperatorResult statistics ;
-
-        cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
-
-
-       for (size_t i = 0; i < u->get_data().size(); i++) {
-          std::cout << "nach lgs  " << u->data()[i] << std::endl;
-        }
-	std::exit(0);
 	
 	
 	
