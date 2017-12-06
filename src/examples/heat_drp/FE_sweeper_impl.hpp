@@ -21,7 +21,7 @@
 #include <iostream>
 
 
-#include <dune/istl/bvector.hh> // BlockVector
+/*#include <dune/istl/bvector.hh> // BlockVector
 #include <dune/istl/bcrsmatrix.hh> // BCRSMatrix
 
 #include <dune/grid/yaspgrid.hh> // YaspGrid
@@ -34,13 +34,32 @@
 #include <dune/istl/matrixredistribute.hh> // Dune::RedistributeInformation
 #include <dune/istl/preconditioners.hh> // Dune::BlockPreconditioner, Dune::SeqSSOR
 #include <dune/istl/solvers.hh> // Dune::CGSolver, Dune::RestartedGMResSolver
-#include <dune/istl/schwarz.hh> // Dune::OverlappingSchwarzScalarProduct, Dune::OverlappingSchwarzOperator
+#include <dune/istl/schwarz.hh> // Dune::OverlappingSchwarzScalarProduct, Dune::OverlappingSchwarzOperator*/
 
 
 #include <dune/common/parallel/mpihelper.hh> // An initializer of MPI
 #include <dune/istl/owneroverlapcopy.hh>// OwnerOverlapCopyCommunication
 #include <dune/common/parallel/mpihelper.hh> // An initializer of MPI
 #include <dune/istl/owneroverlapcopy.hh>// OwnerOverlapCopyCommunication
+
+//#include <dune/istl/ownernoverlapcopy.hh>// OwnerOverlapCopyCommunication
+#include <dune/istl/novlpschwarz.hh>
+
+#include <dune/pdelab/backend/istl/novlpistlsolverbackend.hh>
+//#include <dune/pdelab/backend/istl/novlpistlsolverbackend.hh>
+
+
+#include <dune/pdelab/backend/istl.hh>
+#include <dune/pdelab/common/quadraturerules.hh>
+#include <dune/pdelab/constraints/common/constraints.hh>
+#include <dune/pdelab/constraints/conforming.hh>
+#include <dune/pdelab/function/callableadapter.hh>
+#include <dune/pdelab/gridfunctionspace/dunefunctionsgridfunctionspace.hh>
+#include <dune/pdelab/gridfunctionspace/interpolate.hh>
+#include <dune/pdelab/gridoperator/gridoperator.hh>
+#include <dune/pdelab/localoperator/convectiondiffusionfem.hh>
+#include <dune/pdelab/localoperator/variablefactories.hh>
+#include <dune/pdelab/stationary/linearproblem.hh>
 
 
 #include "mpi.h"
@@ -392,6 +411,29 @@ MPI_Barrier(MPI_COMM_WORLD);
         M_dtA_dune *= (dt * this->_nu);
         M_dtA_dune += this->M_dune;
 
+
+	/*using Basis = Dune::Functions::PQkNodalBasis<GridView,1>;
+	typedef Dune::PDELab::ConformingDirichletConstraints CON; // constraints class
+	typedef Dune::PDELab::ISTL::VectorBackend<> VectorBackend;
+	typedef Dune::PDELab::Experimental::GridFunctionSpace<Basis,
+							VectorBackend,
+							CON> GridFunctionSpace;
+	using GFS= GridFunctionSpace;
+
+	GridFunctionSpace gfs(this->basis);
+
+	Dune::PDELab::ISTLBackend_NOVLP_CG_NOPREC<GFS> solver2 = Dune::PDELab::ISTLBackend_NOVLP_CG_NOPREC< GFS >::ISTLBackend_NOVLP_CG_NOPREC(gfs);*/
+
+	//Dune::PDELab::ISTLBackend_NOVLP_CG_NOPREC<GFS> solver2(gfs);
+
+	//typedef Dune::PDELab::ISTLBackend_NOVLP_CG_NOPREC<GFS> LS;
+	//LS ls(gfs);
+	
+	//typedef Dune::PDELab::StationaryLinearProblemSolver<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >, Dune::PDELab::ISTLBackend_NOVLP_CG_NOPREC<GFS> ,Dune::BlockVector<Dune::FieldVector<double,1> > > SLP;
+      	//SLP slp(M_dtA_dune,solver2,M_rhs_dune,1e-10);
+	//slp.apply();
+
+
         std::cout << "das ist jetzt die matrix " <<  std::endl;	
 	if(rank==0) for (size_t i = 0; i < M_dtA_dune.M(); i++) {
 			for (size_t j = 0; j < M_dtA_dune.N(); j++){
@@ -407,7 +449,7 @@ MPI_Barrier(MPI_COMM_WORLD);
           			if (M_dtA_dune.exists(i,j)) {std::cout <<  M_dtA_dune[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
         } 
 	MPI_Barrier(MPI_COMM_WORLD); 
-	//std::exit(0);
+	std::exit(0);
 
 
 	MPI_Comm comm_x=MPI_COMM_WORLD; 
@@ -426,6 +468,8 @@ MPI_Barrier(MPI_COMM_WORLD);
 		using DuneVectorType = Dune::BlockVector<Dune::FieldVector<double, 1>>;
 		using DuneMatrixType = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>;
 		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>;
+ 		//using DuneCommunication = Dune::OwnerOverlapCommunication<std::size_t>;
+		//using DuneCommunication = Dune::OwnerNonoverlapCopyCommunication<std::size_t>;
 		DuneCommunication DuneComm(dune_comm);
 		DuneCommunication *comm_redist;
 		//DuneCommunication *comm_redist= MPI_COMM_WORLD;		
@@ -454,8 +498,9 @@ MPI_Barrier(MPI_COMM_WORLD);
 				
 		using Par_Preconditioner = Dune::BlockPreconditioner<DuneVectorType, DuneVectorType, DuneCommunication, Seq_Preconditioner>;
 		using Par_ScalarProduct = Dune::OverlappingSchwarzScalarProduct<DuneVectorType, DuneCommunication>;
+		//using Par_ScalarProduct = Dune::NonoverlappingSchwarzScalarProduct<DuneVectorType, DuneCommunication>;
 		using Par_LinearOperator = Dune::OverlappingSchwarzOperator<DuneMatrixType, DuneVectorType, DuneVectorType, DuneCommunication>;
-	
+	        //using Par_LinearOperator = Dune::NonoverlappingSchwarzOperator<DuneMatrixType, DuneVectorType, DuneVectorType, DuneCommunication>;
 		Par_ScalarProduct parallel_sp(*comm_redist);
 
 		std::cout << "bevor ich paralleles a in loeser stecke "<< num << std::endl; //<< u_seq[i] << std::endl;		
@@ -489,6 +534,10 @@ MPI_Barrier(MPI_COMM_WORLD);
 
 		GMRES.apply(u->data(), M_rhs_dune, statistics);
 
+		//double reduction = 0.1;
+		//solver2.apply(M_dtA_dune, u->data(), M_rhs_dune, reduction);
+
+		//solver2.apply(M_dtA_dune, u->data(), M_rhs_dune, 0.1); 
 		//dune_rinfo.redistributeBackward(u->data(), parallel_x);
 	MPI_Barrier(MPI_COMM_WORLD);  	
 	if(rank==0) for (size_t i = 0; i < u->get_data().size(); i++) {
@@ -500,7 +549,7 @@ MPI_Barrier(MPI_COMM_WORLD);
 	if(rank==2) for (size_t i = 0; i < u->get_data().size(); i++) {
           std::cout << "nach lgs " << u->data()[i] << std::endl;
         }MPI_Barrier(MPI_COMM_WORLD);
-	std::exit(0);
+	//std::exit(0);
 
 
 	

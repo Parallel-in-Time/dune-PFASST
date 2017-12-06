@@ -1,9 +1,13 @@
 #add_subdirectory(FE_heat)
-add_subdirectory(fischer)
+#add_subdirectory(fischer)
 add_subdirectory(Newton)
-add_subdirectory(heat)
-add_subdirectory(heat_drp)
-#add_subdirectory(heat_rp)
+
+add_executable("parallel_solver" parallel_solver.cpp)
+target_link_dune_default_libraries("parallel_solver")
+
+#add_subdirectory(heat)
+#add_subdirectory(heat_drp)
+add_subdirectory(heat_rp)
 #add_subdirectory(setup_berlin)
 #add_subdirectory(FE_vgl2)
 

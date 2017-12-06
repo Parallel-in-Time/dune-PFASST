@@ -162,8 +162,13 @@ namespace pfasst
 
 //		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>;
 		std::cout << "soviele "<< my_rank << " von " << num_pro << std::endl; //<< u_seq[i] << std::endl;
-    pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 
+
+double starttime, endtime;
+       starttime = MPI_Wtime();
+    pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
+endtime   = MPI_Wtime();
+       printf("That took %f seconds\n",endtime-starttime);
 
 MPI_Finalize();
   }

@@ -101,8 +101,8 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 
 
 #if HAVE_MPI
-    //this->grid = std::make_shared<GridType>(h, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_WORLD); //SELF); //mit overlapping
-    this->grid = std::make_shared<GridType>(h, n, std::bitset<DIMENSION>{0ULL}, 0, MPI_COMM_WORLD); //SELF); //kein overlapping
+    this->grid = std::make_shared<GridType>(h, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_WORLD); //SELF); //mit overlapping
+    //this->grid = std::make_shared<GridType>(h, n, std::bitset<DIMENSION>{0ULL}, 0, MPI_COMM_WORLD); //SELF); //kein overlapping
 #else
     this->grid = std::make_shared<GridType>(h, n);
 #endif

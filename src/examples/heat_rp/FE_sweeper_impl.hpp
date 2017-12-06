@@ -24,12 +24,12 @@
 #include <dune/istl/bvector.hh> // BlockVector
 #include <dune/istl/bcrsmatrix.hh> // BCRSMatrix
 
-#include <dune/grid/yaspgrid.hh> // YaspGrid
+/*#include <dune/grid/yaspgrid.hh> // YaspGrid
 #include <dune/functions/functionspacebases/pq1nodalbasis.hh> // PQ1NodalBasis
 #include <dune/fufem/assemblers/dunefunctionsoperatorassembler.hh> // DuneFunctionsOperatorAssembler
 #include <dune/fufem/assemblers/istlbackend.hh> // istlMatrixBackend
 #include <dune/fufem/assemblers/localassemblers/massassembler.hh> //MassAssembler
-#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh> //LaplaceAssembler
+#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh> //LaplaceAssembler*/
 #include <dune/istl/paamg/graph.hh> // Dune::Amg::MatrixGraph
 #include <dune/istl/matrixredistribute.hh> // Dune::RedistributeInformation
 #include <dune/istl/preconditioners.hh> // Dune::BlockPreconditioner, Dune::SeqSSOR
@@ -85,8 +85,10 @@ namespace pfasst
 
 	this->FinEl = FinEl;
 	basis = FinEl->get_basis(nlevel);
-	    
-	assembleProblem(basis, this->A_dune, this->M_dune);
+	
+		int rank, num;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank );    
+	if (rank==0) assembleProblem(basis, this->A_dune, this->M_dune);
 
         const auto bs = basis->size();
         std::cout << "Finite Element basis consists of " <<  basis->size() << " elements " << std::endl;
@@ -355,12 +357,16 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
 
+
+
+
 	MPI_Comm comm_x=MPI_COMM_WORLD; 
- 	int rank, num;
+ 	//int rank, num;
+	int rank, num;
 	MPI_Comm_rank(comm_x, &rank );
 	MPI_Comm_size(comm_x, &num );
 	MPI_Barrier(comm_x);
-		std::cout << "test "<< rank << " von " << num << std::endl; //<< u_seq[i] << std::endl;
+	//std::cout << "test "<< rank << " von " << num << std::endl; //<< u_seq[i] << std::endl;
         Dune::BlockVector<Dune::FieldVector<double,1> > M_rhs_dune ;
         Dune::BlockVector<Dune::FieldVector<double,1> > u_seq;
         M_rhs_dune.resize(rhs->get_data().size());
@@ -390,15 +396,33 @@ namespace pfasst
 
         cg.apply(u_seq, M_rhs_dune , statisticss ); }*/ //rhs ist nicht constant!!!!!!!!!
 
+    auto dune_comm = Dune::MPIHelper::getCollectiveCommunication();
+		//MPI_Comm dune_comm = comm_x;//MPI_COMM_WORLD;
+		int size = u->data().size();
+/*if(rank==0)
+for(int i=0; i<size; ++i)	
+		{
+			for(int j=0; j<size; ++j)
+      		{
+          		if(M_dtA_dune.exists(i,j))
+          		{
+	        		std::cout<<M_dtA_dune[i][j] << " ";
+          		}
+				else
+				{
+					std::cout<< 0 << " ";
+				}
+			}
+			std::cout<<std::endl;
+		}
 
+		
 
-
-
-
+	MPI_Barrier(dune_comm);*/
 
 	//start parallel
 
-		MPI_Comm dune_comm = comm_x;//MPI_COMM_WORLD;
+
 		
 		using DuneVectorType = Dune::BlockVector<Dune::FieldVector<double, 1>>;
 		using DuneMatrixType = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>;
@@ -415,22 +439,29 @@ namespace pfasst
 										  static_cast<int>(num),
 										  comm_redist,
 										  dune_rinfo.getInterface(),
-										  true);
+										  false);
+
+ 
+
 
 		dune_rinfo.setSetup();
 		redistributeMatrix(M_dtA_dune, parallel_A, DuneComm, *comm_redist, dune_rinfo);
 
-		int size = u->data().size();
+
+
+
+
+		comm_redist->remoteIndices().rebuild<false>();
 
 	/* displayinng the distributed part of matrix on each process*/
 	/*for(int K=0; K<4; ++K){
 	if(rank == K)
 	{
 		std::cout<<"Now Displaying the matrix part from process "<< rank <<std::endl;
-		const int size = parallel_A.M();
-		for(int i=0; i<size; ++i)	
+		const int si = parallel_A.N();
+		for(int i=0; i<si; ++i)	
 		{
-			for(int j=0; j<size; ++j)
+			for(int j=0; j<si; ++j)
       		{
           		if(parallel_A.exists(i,j))
           		{
@@ -445,9 +476,9 @@ namespace pfasst
 		}
 	}	
 	MPI_Barrier(dune_comm);
-	}*/
+	}*/ //std::exit(0);
 
-		comm_redist->remoteIndices().rebuild<false>();
+
 		using Seq_Preconditioner = Dune::SeqSSOR<DuneMatrixType, DuneVectorType, DuneVectorType>;
 				
 		using Par_Preconditioner = Dune::BlockPreconditioner<DuneVectorType, DuneVectorType, DuneCommunication, Seq_Preconditioner>;
@@ -461,12 +492,12 @@ namespace pfasst
 
 		Dune::InverseOperatorResult statistics;
 
-		std::cout << "test 1 "<< std::endl; //<< u_seq[i] << std::endl;
-		const double residual_tol = 1e-16;
-		const int num_restart = 10;		
+		//std::cout << "test 1 "<< std::endl; //<< u_seq[i] << std::endl;
+		const double residual_tol = 1e-10;
+		const int num_restart = 200;		
 		const int max_iter = 200;
 		
-		const int verbosity = rank ==0? 0:0;
+		const int verbosity = 0;//rank ==0? 0:0;
 
 		Dune::RestartedGMResSolver<DuneVectorType> GMRES(parallel_linearoperator, parallel_sp,
 														 parallel_precon,
@@ -475,17 +506,64 @@ namespace pfasst
 														 max_iter,
 														 verbosity);
 		
+
+		/*Dune::CGSolver<VectorType> GMRES(parallel_linearoperator, parallel_sp,
+														 parallel_precon,
+														 residual_tol,
+														 max_iter, verbosity);*/
+
+
+
 		DuneVectorType parallel_b(parallel_A.N());
 		DuneVectorType parallel_x(parallel_A.M());
 		dune_rinfo.redistribute(M_rhs_dune, parallel_b);
 
+          //std::cout << "groesse "<< M_dtA_dune.N() << " " << parallel_A.N() << " " << parallel_A.M() <<" " << M_dtA_dune.M()<<  std::endl;
+          //std::cout << "das ist jetzt das rhs " <<  std::endl;
+	
+	/*MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+	MPI_Barrier(MPI_COMM_WORLD);  	
+	if(rank==0) for (size_t i = 0; i < parallel_b.size(); i++) {
+          std::cout << "result " << parallel_b[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+	if(rank==1) for (size_t i = 0; i < parallel_b.size(); i++) {
+          std::cout << "result " << parallel_b[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD); */
+
+
+        /*std::cout << "das ist jetzt die matrix " <<  std::endl;	
+	if(rank==0) for (size_t i = 0; i < parallel_A.M(); i++) {
+			for (size_t j = 0; j < parallel_A.N(); j++){
+          			if (parallel_A.exists(i,j)) {std::cout <<  parallel_A[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);	if(rank==1)for (size_t i = 0; i < parallel_A.M(); i++) {
+			for (size_t j = 0; j < M_dtA_dune.N(); j++){
+          			if (parallel_A.exists(i,j)) {std::cout << parallel_A[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
+        } 
+	MPI_Barrier(MPI_COMM_WORLD); 
+	if(rank==2)for (size_t i = 0; i < parallel_A.M(); i++) {
+			for (size_t j = 0; j < parallel_A.N(); j++){
+          			if (parallel_A.exists(i,j)) {std::cout <<  parallel_A[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
+        } 
+	MPI_Barrier(MPI_COMM_WORLD); */
+	//std::exit(0);
+
+	//std::exit(0);
+
+
+//double starttime, endtime;
+//       starttime = MPI_Wtime();
+
 		GMRES.apply(parallel_x, parallel_b, statistics);
+
+//endtime   = MPI_Wtime();
+//       printf("That took %f seconds\n",endtime-starttime);
+//std::exit(0);
 
 		dune_rinfo.redistributeBackward(u->data(), parallel_x);
 	
-		if(rank==0) 
+		/*if(rank==0) 
 			for(int i=0; i< u->data().size(); i++)
-				std::cout << " unterschied " << u->data()[i] << " "<< std::endl; //<< u_seq[i] << std::endl;
+				std::cout << " unterschied " << u->data()[i] << " "<< std::endl; //<< u_seq[i] << std::endl;*/
   
 		//std::cout << rank << std::endl;
 		MPI_Bcast(&(u->data()[0][0]), u->data().size(), MPI_DOUBLE, 0, comm_x);
