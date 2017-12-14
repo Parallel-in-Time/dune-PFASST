@@ -12,6 +12,8 @@
 
 #include "../../datatypes/dune_vec.hpp"
 
+#include <dune/grid/common/mcmgmapper.hh> // mapper class
+//#include <dune/grid/utility/gridtype.hh>
 #include "FE_sweeper.hpp"
 
 #include "spectral_transfer.hpp"
@@ -82,6 +84,8 @@ namespace pfasst
           vtkWriter.addVertexData(z, "initial_data");
           vtkWriter.write("heat_result");
         }*/
+
+  	//typedef Dune::GridSelector::GridType HGridType;
 
         sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
 	

@@ -359,7 +359,17 @@ namespace pfasst
         M_rhs_dune.resize(rhs->get_data().size());
 	
 	
-        M_rhs_dune = rhs->get_data(); 
+	
+
+	auto exact_solution = [] (const InVectorType &x){
+            double solution=1.0;
+            for(int i=0; i<1; i++){solution *= std::sin(PI * x[i]);}
+            return solution * std::exp(0 );
+        };
+
+        interpolate(*basis, M_rhs_dune, exact_solution);
+        
+	//M_rhs_dune = rhs->get_data(); 
 
         //this->M_dune.mv(rhs->data(), M_rhs_dune); //multipliziert rhs mit matrix_m_dune
 
@@ -368,7 +378,9 @@ namespace pfasst
 	
 	
         Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dtA_dune = 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->A_dune);
-        M_dtA_dune *= (dt * this->_nu);
+	//dt=1;
+	std::cout <<  dt * this->_nu << " dt ";
+        M_dtA_dune *= 0.02; // fehler ruth (dt * this->_nu);
         M_dtA_dune += this->M_dune;
 
 
@@ -379,7 +391,7 @@ namespace pfasst
 			for (size_t j = 0; j < M_dtA_dune.N(); j++){
           			if (M_dtA_dune.exists(i,j)) {std::cout <<  M_dtA_dune[i][j] << " ";}else{std::cout  << 0 << " ";} }std::cout << std::endl;
         }
-	//std::exit(0);
+
         Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
 
         Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
@@ -398,7 +410,7 @@ namespace pfasst
        for (size_t i = 0; i < u->get_data().size(); i++) {
           std::cout << "nach lgs  " << u->data()[i] << std::endl;
         }
-	std::exit(0);
+	//std::exit(0);
 	
 	
 	
@@ -410,7 +422,11 @@ namespace pfasst
         Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
         M_u.resize(u->get_data().size());
         this->M_dune.mv(u->get_data(), M_u);
-	
+
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+          //f->data()[i] = (u->data()[i] - rhs->data()[i]) / (dt);
+          std::cout << "M u " << M_u[i] << std::endl;
+        }std::exit(0);	
 
         //std::cout << "f_impl mit impl_solve" << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {

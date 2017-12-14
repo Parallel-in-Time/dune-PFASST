@@ -85,7 +85,7 @@ namespace pfasst
         std::cout << "Error " << sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm() <<  std::endl ;
 
 
-	  ofstream f;
+	  /*ofstream f;
 	  stringstream ss;
 	  ss << nelements;
 	  string s = "solution_sdc/" + ss.str() + ".dat";
@@ -105,7 +105,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
 
 
 
@@ -158,7 +158,7 @@ namespace pfasst
     } else if (nsteps != 0) {
       t_end = t_0 + dt * nsteps;
     }
-    const size_t niter = get_value<size_t>("num_iters", 10);
+    const size_t niter = get_value<size_t>("num_iters", 8);
 
 //		using DuneCommunication = Dune::OwnerOverlapCopyCommunication<std::size_t>;
 		std::cout << "soviele "<< my_rank << " von " << num_pro << std::endl; //<< u_seq[i] << std::endl;

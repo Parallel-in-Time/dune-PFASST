@@ -493,9 +493,9 @@ for(int i=0; i<size; ++i)
 		Dune::InverseOperatorResult statistics;
 
 		//std::cout << "test 1 "<< std::endl; //<< u_seq[i] << std::endl;
-		const double residual_tol = 1e-10;
-		const int num_restart = 200;		
-		const int max_iter = 200;
+		const double residual_tol = 1e-12;
+		const int num_restart = 1000;		
+		const int max_iter = 1000;
 		
 		const int verbosity = 0;//rank ==0? 0:0;
 
@@ -550,14 +550,14 @@ for(int i=0; i<size; ++i)
 	//std::exit(0);
 
 
-//double starttime, endtime;
-//       starttime = MPI_Wtime();
+double starttime, endtime;
+       starttime = MPI_Wtime();
 
 		GMRES.apply(parallel_x, parallel_b, statistics);
 
-//endtime   = MPI_Wtime();
-//       printf("That took %f seconds\n",endtime-starttime);
-//std::exit(0);
+endtime   = MPI_Wtime();
+       printf("That took %f seconds\n",endtime-starttime);
+std::exit(0);
 
 		dune_rinfo.redistributeBackward(u->data(), parallel_x);
 	
