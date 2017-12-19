@@ -40,7 +40,7 @@ namespace pfasst
           //complex<typename encap_t::traits::spatial_t>* z;
         };
 
-        map<array<int, Encapsulation::traits::DIM>, shared_ptr<workspace>> workspaces;
+        //map<array<int, Encapsulation::traits::DIM>, shared_ptr<workspace>> workspaces;
 
       public:
         FFT() = default;
@@ -53,7 +53,7 @@ namespace pfasst
         complex<typename Encapsulation::traits::spatial_t>* forward(const shared_ptr<Encapsulation> x);
         void backward(shared_ptr<Encapsulation> x);
 
-        shared_ptr<workspace> get_workspace(const array<int, Encapsulation::traits::DIM>& ndofs);
+        //shared_ptr<workspace> get_workspace(const array<int, Encapsulation::traits::DIM>& ndofs);
     };
   }  // ::pfasst::contrib
 }  // ::pfasst

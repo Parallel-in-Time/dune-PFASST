@@ -1,6 +1,6 @@
  
-#ifndef _PFASST__ENCAP__DUNE_VEC_HPP_
-#define _PFASST__ENCAP__DUNE_VEC_HPP_
+#ifndef _PFASST__ENCAP__DUNE_MAT_HPP_
+#define _PFASST__ENCAP__DUNE_MAT_HPP_
 
 #include <memory>
 #include <type_traits>
@@ -8,12 +8,12 @@
 using std::shared_ptr;
 using std::vector;
 
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+//#include <dune/istl/bvector.hh>
+//#include <dune/common/fvector.hh>
 
-#include <dune/istl/bvector.hh>
-#include <dune/common/fvector.hh>
 
-using Dune::BlockVector;
-using Dune::FieldVector;
 #include "pfasst/globals.hpp"
 #include "pfasst/logging.hpp"
 #include "pfasst/encap/encapsulation.hpp"
@@ -41,20 +41,17 @@ namespace pfasst
   template<
           class TimePrecision,
           class SpatialPrecision,
-          class GFS, //size_t Dim
-	  class M
+          size_t Dim
   >
-  struct dune_vec_encap_traits
-          //: public encap_traits<TimePrecision, SpatialPrecision, GFS, BlockVector<FieldVector<SpatialPrecision,1>>>; //Dim, BlockVector<FieldVector<SpatialPrecision,1>>>
+  struct dune_mat_encap_traits
+          : public encap_traits<TimePrecision, SpatialPrecision, Dim, BlockVector<FieldVector<SpatialPrecision,1>>>
   {
       using time_t = TimePrecision;
       using spatial_t = SpatialPrecision;
       using data_t = BlockVector<FieldVector<spatial_t,1>> ;
       using tag_t = dune_encap_tag;
-      using gfs_t = GFS;	
-      using mass_t = M;	
-      //using dim_t = std::integral_constant<size_t, Dim>;
-      //static constexpr size_t  DIM = Dim;
+      using dim_t = std::integral_constant<size_t, Dim>;
+      static constexpr size_t  DIM = Dim;
 };
 
 
@@ -80,7 +77,6 @@ namespace pfasst
       public:
         using traits = EncapsulationTrait;
         using factory_t = EncapsulationFactory<traits>;
-	//using my_type = decltype(this); Encapsulation<EncapsulationTrait>;
 
       protected:
         typename traits::data_t _data;
@@ -95,13 +91,11 @@ namespace pfasst
         virtual const typename EncapsulationTrait::data_t& get_data() const;
         virtual size_t get_total_num_dofs() const;
         // assuming square-shaped space
-        //virtual std::array<int, EncapsulationTrait::DIM> get_dimwise_num_dofs() const;
+        virtual std::array<int, EncapsulationTrait::DIM> get_dimwise_num_dofs() const;
 
         virtual void zero();
         virtual void scaled_add(const typename EncapsulationTrait::time_t& a,
                                const shared_ptr<Encapsulation<EncapsulationTrait>> y);
-
-	virtual void apply_Mass(typename traits::mass_t mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol);//, EncapsulationTrait &sol); 
 
         virtual typename EncapsulationTrait::spatial_t norm0() const;
 
@@ -123,10 +117,9 @@ namespace pfasst
     template<
       typename time_precision,
       typename spatial_precision,
-      typename GFS, //size_t Dim
-      typename M	
+      size_t Dim
     >
-    using DuneEncapsulation = Encapsulation<dune_vec_encap_traits<time_precision, spatial_precision, GFS, M>>; //Dim>>;
+    using DuneEncapsulation = Encapsulation<dune_vec_encap_traits<time_precision, spatial_precision, Dim>>;
 
 
     template<
@@ -140,12 +133,9 @@ namespace pfasst
     {
       protected:
         size_t _size;
-	typename std::shared_ptr<typename EncapsulationTrait::gfs_t> _gfs;
-	//typename EncapsulationTrait::gfs_t *_gfs;
 
       public:
         explicit EncapsulationFactory(const size_t size = 0);
-	//explicit EncapsulationFactory(typename EncapsulationTrait::gfs_t gfs);
         EncapsulationFactory(const EncapsulationFactory<EncapsulationTrait>& other);
         EncapsulationFactory(EncapsulationFactory<EncapsulationTrait>&& other);
         virtual ~EncapsulationFactory() = default;
@@ -155,11 +145,10 @@ namespace pfasst
         virtual shared_ptr<Encapsulation<EncapsulationTrait>> create() const;
 
         virtual void set_size(const size_t& size);
-        virtual void set_gfs(typename EncapsulationTrait::gfs_t& gfs);
         virtual size_t size() const;
     };
   }  // ::pfasst::encap
-    /*template<typename T>
+    template<typename T>
     static string join(const BlockVector<T>& vec, const string& sep)
     {
 #ifndef PFASST_NO_LOGGING
@@ -175,10 +164,10 @@ namespace pfasst
       UNUSED(vec); UNUSED(sep);
     return "";
 #endif
-    }*/
+    }
 }  // ::pfasst
 
 
-#include "dune_vec_impl.hpp"
+#include "dune_mat_impl.hpp"
 
 #endif // _PFASST__ENCAP__DUNE_VEC_HPP_

@@ -6,9 +6,12 @@
 using std::shared_ptr;
 using std::vector;
 
-#include "pfasst/sweeper/sweeper.hpp"
+#include "pfasst/sweeper/sweeper2.hpp"
 
 //#include "../../../src/finite_element_stuff/fe_manager_fp.hpp"
+
+
+
 
 namespace pfasst
 {
@@ -30,11 +33,11 @@ namespace pfasst
    */
   template<
     class SweeperTrait,
-    class BaseFunction,
+    class MatrixType,
     typename Enabled = void
   >
   class IMEX
-    : public Sweeper<SweeperTrait, BaseFunction, Enabled>
+    : public Sweeper<SweeperTrait, MatrixType, Enabled>
   {
     public:
       //! @copydoc Sweeper::traits
@@ -58,12 +61,11 @@ namespace pfasst
       
       bool dontmatter= true;
       
-      //typename SweeperTrait::encap_traits::mass_t M_Type;	
       //std::shared_ptr<MatrixType> M_dune;
       //std::shared_ptr<MatrixType> A_dune;
 
-      typename SweeperTrait::encap_traits::mass_t M_dune;
-      MatrixType A_dune;
+      std::shared_ptr<MatrixType> M_dune;
+      std::shared_ptr<MatrixType> A_dune;
       
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
@@ -178,11 +180,11 @@ namespace pfasst
   
       //! @{
       explicit IMEX();
-      IMEX(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;
-      IMEX(IMEX<SweeperTrait, BaseFunction, Enabled>&& other) = default;
+      IMEX(const IMEX<SweeperTrait, MatrixType, Enabled>& other) = default;
+      IMEX(IMEX<SweeperTrait, MatrixType, Enabled>&& other) = default;
       virtual ~IMEX() = default;
-      IMEX<SweeperTrait, BaseFunction, Enabled>& operator=(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;
-      IMEX<SweeperTrait, BaseFunction, Enabled>& operator=(IMEX<SweeperTrait, BaseFunction, Enabled>&& other) = default;
+      IMEX<SweeperTrait, MatrixType, Enabled>& operator=(const IMEX<SweeperTrait, MatrixType, Enabled>& other) = default;
+      IMEX<SweeperTrait, MatrixType, Enabled>& operator=(IMEX<SweeperTrait, MatrixType, Enabled>&& other) = default;
       //! @}
 
       //! @name Configuration and Setup
@@ -292,6 +294,6 @@ namespace pfasst
   };
 }  // ::pfasst
 
-#include "pfasst/sweeper/FE_impl_impl.hpp"
+#include "pfasst/sweeper/FE_impl_impl2.hpp"
 
 #endif  // _PFASST__SWEEPER__IMEX_HPP_

@@ -28,13 +28,13 @@ namespace pfasst
 
     }
 
-    template<class Encapsulation>
+    /*template<class Encapsulation>
     shared_ptr<typename FFT<Encapsulation>::workspace>
     FFT<Encapsulation>::get_workspace(const array<int, Encapsulation::traits::DIM>& ndofs)
     {
 
 
       return workspaces[ndofs];
-    }
+    }*/
   }  // ::pfast::contrib
 }  // ::pfasst

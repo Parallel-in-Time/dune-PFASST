@@ -22,8 +22,8 @@ namespace pfasst
       EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::Encapsulation(const size_t size)
-      : _data(size) , size(size)
+               >::type>::Encapsulation(const typename traits::GFS_& gfs)
+      : _data(gfs) //, gfs(gfs)
     {
       this->zero();
     }
@@ -34,7 +34,7 @@ namespace pfasst
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::Encapsulation(const typename EncapsulationTrait::data_t& data)
-      : Encapsulation<EncapsulationTrait>(data.size())
+      : Encapsulation<EncapsulationTrait>(data.N())
     {
       this->data() = data;
     }
@@ -81,10 +81,10 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::get_total_num_dofs() const
     {
-      return this->get_data().size();
+      return this->get_data().N();
     }
 
-    /*template<class EncapsulationTrait>
+    template<class EncapsulationTrait>
     std::array<int, EncapsulationTrait::DIM>
     Encapsulation<
       EncapsulationTrait,
@@ -109,7 +109,7 @@ namespace pfasst
       }
 
       return dimwise_ndofs;
-    }*/
+    }
 
     template<class EncapsulationTrait>
     void
@@ -132,7 +132,7 @@ namespace pfasst
                                    const shared_ptr<Encapsulation<EncapsulationTrait>> y)
     {
 
-      assert(this->get_data().size() == y->data().size());
+      assert(this->get_data().N() == y->data().N());
 
       std::transform(this->get_data().begin(), this->get_data().end(), y->data().begin(),
                 this->data().begin(),
@@ -154,18 +154,6 @@ namespace pfasst
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
     }
-
-    template<class EncapsulationTrait>
-    void
-    Encapsulation<
-      EncapsulationTrait,
-      typename std::enable_if<
-                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::apply_Mass(typename traits::mass_t mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol)//, EncapsulationTrait &sol)
-    {
-    	//typename EncapsulationTrait::data_t copy= this->get_data();
-	mass.mv(this->data(), sol->data());//sol->data());  
-    } 
 
     template<class EncapsulationTrait>
     template<class CommT>
@@ -240,7 +228,7 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::log(el::base::type::ostream_t& os) const
     {
-      os << "not implemented";// "FieldVector" << pfasst::join(this->get_data(), ", ");
+      os << "pdeVector ";// << pfasst::join(this->get_data(), ", ");
     }
 
 
@@ -253,35 +241,15 @@ namespace pfasst
       : _size(size)
     {}
 
-    /*template<class EncapsulationTrait>
-    EncapsulationFactory<
-      EncapsulationTrait,
-      typename std::enable_if<
-                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::EncapsulationFactory(typename EncapsulationTrait::gfs_t gfs)
-      : _gfs(gfs)
-    {}*/
-
     template<class EncapsulationTrait>
     shared_ptr<Encapsulation<EncapsulationTrait>>
     EncapsulationFactory<
       EncapsulationTrait,
-      typename std::enable_if<
+      typename std::enable_if< 
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::create() const
+               >::type>::create(EncapsulationTrait::GFS::Traits::gridView gv, EncapsulationTrait::GFS::Traits::FiniteElementMap fem) const
     {
-      return std::make_shared<Encapsulation<EncapsulationTrait>>(this->size());
-    }
-
-    template<class EncapsulationTrait>
-    void
-    EncapsulationFactory<
-      EncapsulationTrait,
-      typename std::enable_if<
-                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::set_gfs(typename EncapsulationTrait::gfs_t& gfs)
-    {
-      this->_gfs = std::make_shared<typename EncapsulationTrait::gfs_t>(gfs);
+      return std::make_shared<Encapsulation<EncapsulationTrait>>(gv, fem);
     }
 
     template<class EncapsulationTrait>
@@ -294,6 +262,20 @@ namespace pfasst
     {
       this->_size = size;
     }
+
+
+    template<class EncapsulationTrait>
+    void
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::set_gfs(typename EncapsulationTrait::GFS_& gfs_)
+    {
+      this->gfs =  std::make_shared<typename EncapsulationTrait::GFS_>(gfs_);
+    }
+
+
 
     template<class EncapsulationTrait>
     size_t

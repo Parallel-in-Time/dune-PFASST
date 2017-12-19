@@ -10,16 +10,14 @@ using std::vector;
 
 #include <vector>
 
-#include <pfasst/sweeper/FE_impl2.hpp>
+#include <pfasst/sweeper/FE_impl.hpp>
 #include <pfasst/contrib/fft.hpp>
 
-//#include "fe_manager.hpp"
+#include "fe_manager.hpp"
 
-
-//const double PI =3.1415926535897932385;
-
-        const int dim=1;
-	const int degree =1;
+//#ifndef PI
+//#define PI 3.1415926535897932385
+//#endif
 
 
 namespace pfasst
@@ -28,7 +26,7 @@ namespace pfasst
   {
     namespace heat_FE
     {
-        template<
+        /*template<
                 class EncapsulationTraits,
                 size_t base_order,
                 size_t dim,
@@ -44,34 +42,21 @@ namespace pfasst
 
             //static constexpr size_t BASE_ORDER = base_order;
             //static constexpr size_t DIM = dim;
-        };
+        };*/
 
       template<
         class SweeperTrait,
-	class MassType,
+	class Mass,
         typename Enabled = void
       >
       class Heat_FE
-        : public IMEX<SweeperTrait, MassType, Enabled>
+        : public IMEX<SweeperTrait, Mass, Enabled>
       {
-        static_assert(std::is_same<
+        /*static_assert(std::is_same<
                         typename SweeperTrait::encap_t::traits::dim_t,
                         std::integral_constant<size_t, 1>
                       >::value,
-                      "Heat_FE Sweeper requires 2D data structures");
-
-
-typedef Dune::YaspGrid<1> GridType;
-typedef GridType::ctype DF;
-typedef GridType::LeafGridView GV;
-typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
-typedef Dune::PDELab::OverlappingConformingDirichletConstraints CON;
-typedef Dune::PDELab::istl::VectorBackend<> VBE;
-typedef Dune::PDELab::GridFunctionSpace<GV,FEM,CON,VBE> GFS;
-typedef double RF; 
-
-
-	std::shared_ptr<GFS> gfs;
+                      "Heat_FE Sweeper requires 2D data structures");*/
 
         public:
           using traits = SweeperTrait;
@@ -89,7 +74,7 @@ typedef double RF;
           vector<vector<spatial_t>>                      _lap;
 
 
-          //std::shared_ptr<fe_manager> FinEl;
+          std::shared_ptr<fe_manager> FinEl;
 	  
 
 
@@ -97,11 +82,11 @@ typedef double RF;
           //MatrixType A_dune;
 
 
-          //std::shared_ptr<GridType> grid;
+          std::shared_ptr<GridType> grid;
 
 
 
-          //std::shared_ptr<BasisFunction> basis;
+          std::shared_ptr<BasisFunction> basis;
 
 
 
@@ -131,21 +116,21 @@ typedef double RF;
         public:
 
 
-          explicit Heat_FE(size_t);
+          explicit Heat_FE(std::shared_ptr<fe_manager>, size_t);
 
 
-          Heat_FE(const Heat_FE<SweeperTrait, MassType, Enabled>& other)= default;
-          Heat_FE(Heat_FE<SweeperTrait, MassType, Enabled>&& other)= default;
+          Heat_FE(const Heat_FE<SweeperTrait, Mass, Enabled>& other)= default;
+          Heat_FE(Heat_FE<SweeperTrait, Mass, Enabled>&& other)= default;
           virtual ~Heat_FE() = default;
-          Heat_FE<SweeperTrait, MassType, Enabled>& operator=(const Heat_FE<SweeperTrait, MassType, Enabled>& other) = default;
-          Heat_FE<SweeperTrait, MassType, Enabled>& operator=(Heat_FE<SweeperTrait, MassType, Enabled>&& other) = default;
+          Heat_FE<SweeperTrait, Mass, Enabled>& operator=(const Heat_FE<SweeperTrait, Mass, Enabled>& other) = default;
+          Heat_FE<SweeperTrait, Mass, Enabled>& operator=(Heat_FE<SweeperTrait, Mass, Enabled>&& other) = default;
 
           virtual void set_options() override;
 
-          /*template<typename Basis>
+          template<typename Basis>
           void assemble(Basis &basis);
 
-          void assemble();*/
+          void assemble();
 
           virtual shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t);
 
@@ -156,7 +141,7 @@ typedef double RF;
 
           size_t get_num_dofs() const;
 
-          //shared_ptr<GridType> get_grid() const;
+          shared_ptr<GridType> get_grid() const;
       };
     }  // ::pfasst::examples::heat_FE
   }  // ::pfasst::examples

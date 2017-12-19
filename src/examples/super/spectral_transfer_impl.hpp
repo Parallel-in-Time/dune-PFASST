@@ -22,23 +22,24 @@ namespace pfasst
     
     
     
-    /*template<class TransferTraits>
+    template<class TransferTraits>
     void
     SpectralTransfer<
-            TransferTraits,
-            typename enable_if<
+            TransferTraits>//,
+            /*typename enable_if<
                     is_same<
                             typename TransferTraits::fine_encap_traits::dim_t,
                             integral_constant<size_t, dim>
                     >::value
-            >::type>::create(std::shared_ptr<fe_manager> FinEl)
+            >::type>*/
+	::create(std::shared_ptr<fe_manager> FinEl)
     {
 	
 	      std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
 
 	      set_matrix(*vecvec->at(0), *vecvec->at(0));
 	    
-    }*/    
+    }    
     
     
     
@@ -47,13 +48,13 @@ namespace pfasst
     template<class TransferTraits>
     void
     SpectralTransfer<
-            TransferTraits,
+            TransferTraits/*,
             typename enable_if<
                     is_same<
                             typename TransferTraits::fine_encap_traits::dim_t,
                             integral_constant<size_t, dim>
                     >::value
-            >::type>::set_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> interpolate, Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> restrict)
+            >::type*/>::set_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> interpolate, Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> restrict)
     {
 	    interpolate_matrix = interpolate;
 	    
@@ -79,13 +80,13 @@ namespace pfasst
     template<class TransferTraits>
     void
     SpectralTransfer<
-      TransferTraits,
+      TransferTraits/*,
       typename enable_if<
                  is_same<
                    typename TransferTraits::fine_encap_traits::dim_t,
                    integral_constant<size_t, dim>
                  >::value
-               >::type>::interpolate_data(const shared_ptr<typename TransferTraits::coarse_encap_t> coarse,
+               >::type*/>::interpolate_data(const shared_ptr<typename TransferTraits::coarse_encap_t> coarse,
                                           shared_ptr<typename TransferTraits::fine_encap_t> fine)
     {
       ML_CVLOG(1, "TRANS", "interpolate data");
@@ -125,13 +126,13 @@ namespace pfasst
     template<class TransferTraits>
     void
     SpectralTransfer<
-      TransferTraits,
+      TransferTraits/*,
       typename enable_if<
                  is_same<
                    typename TransferTraits::fine_encap_traits::dim_t,
                    integral_constant<size_t, dim>
                  >::value
-               >::type>::restrict_data(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
+               >::type*/>::restrict_data(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
                                        shared_ptr<typename TransferTraits::coarse_encap_t> coarse)
     {
       ML_CVLOG(1, "TRANS", "restrict data");
@@ -170,13 +171,13 @@ namespace pfasst
     template<class TransferTraits>
     void
     SpectralTransfer<
-      TransferTraits,
+      TransferTraits/*,
       typename enable_if<
                  is_same<
                    typename TransferTraits::fine_encap_traits::dim_t,
                    integral_constant<size_t, dim>
                  >::value
-               >::type>::restrict_u(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
+               >::type*/>::restrict_u(const shared_ptr<typename TransferTraits::fine_encap_t> fine,
                                        shared_ptr<typename TransferTraits::coarse_encap_t> coarse)
     {
       ML_CVLOG(1, "TRANS", "restrict data");

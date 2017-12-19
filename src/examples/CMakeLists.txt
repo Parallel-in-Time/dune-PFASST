@@ -7,8 +7,9 @@
 
 #add_executable("pamg" pamg.cpp)
 #target_link_dune_default_libraries("pamg")
-add_subdirectory(pdelab)
-add_subdirectory(heat)
+#add_subdirectory(pdelab)
+#add_subdirectory(heat)
+add_subdirectory(super)
 #add_subdirectory(heat_drp)
 #add_subdirectory(heat_rp)
 #add_subdirectory(setup_berlin)

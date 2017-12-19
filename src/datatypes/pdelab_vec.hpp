@@ -1,4 +1,3 @@
- 
 #ifndef _PFASST__ENCAP__DUNE_VEC_HPP_
 #define _PFASST__ENCAP__DUNE_VEC_HPP_
 
@@ -9,8 +8,10 @@ using std::shared_ptr;
 using std::vector;
 
 
+//#include<dune/pdelab/backend/istl.hh>
 #include <dune/istl/bvector.hh>
 #include <dune/common/fvector.hh>
+
 
 using Dune::BlockVector;
 using Dune::FieldVector;
@@ -39,22 +40,21 @@ namespace pfasst
       */
 
   template<
+	  class GFS,
           class TimePrecision,
           class SpatialPrecision,
-          class GFS, //size_t Dim
-	  class M
+          size_t Dim
   >
   struct dune_vec_encap_traits
-          //: public encap_traits<TimePrecision, SpatialPrecision, GFS, BlockVector<FieldVector<SpatialPrecision,1>>>; //Dim, BlockVector<FieldVector<SpatialPrecision,1>>>
+          : public encap_traits<TimePrecision, SpatialPrecision, Dim,  Dune::PDELab::Backend::Vector<GFS,SpatialPrecision>   >
   {
+      using GFS_ = GFS;
       using time_t = TimePrecision;
       using spatial_t = SpatialPrecision;
-      using data_t = BlockVector<FieldVector<spatial_t,1>> ;
+      using data_t = Dune::PDELab::Backend::Vector<GFS,SpatialPrecision>  ;
       using tag_t = dune_encap_tag;
-      using gfs_t = GFS;	
-      using mass_t = M;	
-      //using dim_t = std::integral_constant<size_t, Dim>;
-      //static constexpr size_t  DIM = Dim;
+      using dim_t = std::integral_constant<size_t, Dim>;
+      static constexpr size_t  DIM = Dim;
 };
 
 
@@ -80,14 +80,16 @@ namespace pfasst
       public:
         using traits = EncapsulationTrait;
         using factory_t = EncapsulationFactory<traits>;
-	//using my_type = decltype(this); Encapsulation<EncapsulationTrait>;
 
       protected:
         typename traits::data_t _data;
+	typename traits::GFS_ GFS;
+
         const size_t size;
+	std::shared_ptr<typename traits::GFS_> gfs;
 
       public:
-        explicit Encapsulation(const size_t size = 0);
+        explicit Encapsulation(const typename traits::GFS_& gfs);
         Encapsulation(const typename EncapsulationTrait::data_t& data);
         Encapsulation<EncapsulationTrait>& operator=(const typename EncapsulationTrait::data_t& data);
 
@@ -95,13 +97,11 @@ namespace pfasst
         virtual const typename EncapsulationTrait::data_t& get_data() const;
         virtual size_t get_total_num_dofs() const;
         // assuming square-shaped space
-        //virtual std::array<int, EncapsulationTrait::DIM> get_dimwise_num_dofs() const;
+        virtual std::array<int, EncapsulationTrait::DIM> get_dimwise_num_dofs() const;
 
         virtual void zero();
         virtual void scaled_add(const typename EncapsulationTrait::time_t& a,
                                const shared_ptr<Encapsulation<EncapsulationTrait>> y);
-
-	virtual void apply_Mass(typename traits::mass_t mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol);//, EncapsulationTrait &sol); 
 
         virtual typename EncapsulationTrait::spatial_t norm0() const;
 
@@ -121,12 +121,12 @@ namespace pfasst
      * Shortcut for encapsulation of `std::vector` data types.
      */
     template<
+      typename gfs,
       typename time_precision,
       typename spatial_precision,
-      typename GFS, //size_t Dim
-      typename M	
+      size_t Dim
     >
-    using DuneEncapsulation = Encapsulation<dune_vec_encap_traits<time_precision, spatial_precision, GFS, M>>; //Dim>>;
+    using DuneEncapsulation = Encapsulation<dune_vec_encap_traits<gfs, time_precision, spatial_precision, Dim>>;
 
 
     template<
@@ -140,22 +140,20 @@ namespace pfasst
     {
       protected:
         size_t _size;
-	typename std::shared_ptr<typename EncapsulationTrait::gfs_t> _gfs;
-	//typename EncapsulationTrait::gfs_t *_gfs;
 
       public:
         explicit EncapsulationFactory(const size_t size = 0);
-	//explicit EncapsulationFactory(typename EncapsulationTrait::gfs_t gfs);
         EncapsulationFactory(const EncapsulationFactory<EncapsulationTrait>& other);
         EncapsulationFactory(EncapsulationFactory<EncapsulationTrait>&& other);
         virtual ~EncapsulationFactory() = default;
         EncapsulationFactory<EncapsulationTrait>& operator=(const EncapsulationFactory<EncapsulationTrait>& other);
         EncapsulationFactory<EncapsulationTrait>& operator=(EncapsulationFactory<EncapsulationTrait>&& other);
 
-        virtual shared_ptr<Encapsulation<EncapsulationTrait>> create() const;
-
+        virtual shared_ptr<Encapsulation<EncapsulationTrait>> create(EncapsulationTrait::GFS::Traits::gridView gv, EncapsulationTrait::GFS::Traits::FiniteElementMap fem) const;
+	//const typename EncapsulationTrait::GFS_ gfs;
+	std::shared_ptr<typename EncapsulationTrait::GFS_> gfs;
         virtual void set_size(const size_t& size);
-        virtual void set_gfs(typename EncapsulationTrait::gfs_t& gfs);
+	virtual void set_gfs(typename EncapsulationTrait::GFS_& gfs_);
         virtual size_t size() const;
     };
   }  // ::pfasst::encap
@@ -179,6 +177,6 @@ namespace pfasst
 }  // ::pfasst
 
 
-#include "dune_vec_impl.hpp"
+#include "pdelab_vec_impl.hpp"
 
 #endif // _PFASST__ENCAP__DUNE_VEC_HPP_

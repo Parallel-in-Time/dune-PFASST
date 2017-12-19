@@ -11,13 +11,13 @@ using namespace std;
 #include "pfasst/contrib/fft.hpp"
 
 
-#include "../../datatypes/pdelab_vec.hpp"
+#include "../../datatypes/dune_vec.hpp"
 
 //#include <dune/istl/bcrsmatrix.hh>
 
 
 
-//const int dim=1;
+const int dim=1;
 
 
 namespace pfasst
@@ -30,12 +30,7 @@ namespace pfasst
     template<
       class TransferTraits
     >
-    class SpectralTransfer<TransferTraits, typename enable_if<
-                 is_same<
-                   typename TransferTraits::fine_encap_traits::dim_t,
-                   integral_constant<size_t, dim>
-                 >::value
-               >::type>
+    class SpectralTransfer<TransferTraits> //, typename enable_if<is_same< typename TransferTraits::fine_encap_traits::dim_t, integral_constant<size_t, dim> >::value >::type>
       : public PolynomialTransfer<TransferTraits>
     {
       
@@ -61,7 +56,7 @@ namespace pfasst
 	
         virtual void set_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> interpolate, Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> restrict);
 
-	//virtual void create(std::shared_ptr<fe_manager> FinEl);
+	virtual void create(std::shared_ptr<fe_manager> FinEl);
 	
         virtual void interpolate_data(const shared_ptr<typename TransferTraits::coarse_encap_t> coarse,
                                       shared_ptr<typename TransferTraits::fine_encap_t> fine);

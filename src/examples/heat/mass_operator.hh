@@ -20,19 +20,18 @@
  * \f}
  *
  */
-template<typename Param, typename FEM>
-class NonlinearPoissonFEM :
+template<typename FEM>
+class massFEM :
   public Dune::PDELab::
-    NumericalJacobianVolume<NonlinearPoissonFEM<Param,FEM> >,
+    NumericalJacobianVolume<massFEM<FEM> >,
   public Dune::PDELab::
-    NumericalJacobianApplyVolume<NonlinearPoissonFEM<Param,FEM> >,
+    NumericalJacobianApplyVolume<massFEM<FEM> >,
   public Dune::PDELab::FullVolumePattern,
   public Dune::PDELab::LocalOperatorDefaultFlags
 {
   typedef typename FEM::Traits::FiniteElementType::
      Traits::LocalBasisType LocalBasis;
   Dune::PDELab::LocalBasisCache<LocalBasis> cache;
-  Param& param; // parameter functions
   int incrementorder; // increase of integration order
 
 public:
@@ -45,8 +44,8 @@ public:
   enum { doAlphaVolume = true };
 
   //! constructor stores a copy of the parameter object
-  NonlinearPoissonFEM (Param& param_, int incrementorder_=0)
-    : param(param_), incrementorder(incrementorder_)
+  massFEM (int incrementorder_=0)
+    : incrementorder(incrementorder_)
   {}
 
   //! right hand side integral
@@ -164,8 +163,7 @@ public:
           geo.integrationElement(ip.position());
         auto q = u; //param.q(u);
         for (size_t i=0; i<lfsu.size(); i++){
-          r.accumulate(lfsu,i,(0.002*gradu*gradphi[i][0]+
-                               q*phihat[i])*factor);}
+          r.accumulate(lfsu,i,q*phihat[i]*factor);}
       }
   }
 

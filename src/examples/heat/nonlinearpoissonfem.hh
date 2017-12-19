@@ -20,19 +20,19 @@
  * \f}
  *
  */
-template<typename Param, typename FEM>
+template<typename FEM>
 class NonlinearPoissonFEM :
   public Dune::PDELab::
-    NumericalJacobianVolume<NonlinearPoissonFEM<Param,FEM> >,
+    NumericalJacobianVolume<NonlinearPoissonFEM<FEM> >,
   public Dune::PDELab::
-    NumericalJacobianApplyVolume<NonlinearPoissonFEM<Param,FEM> >,
+    NumericalJacobianApplyVolume<NonlinearPoissonFEM<FEM> >,
   public Dune::PDELab::FullVolumePattern,
   public Dune::PDELab::LocalOperatorDefaultFlags
 {
   typedef typename FEM::Traits::FiniteElementType::
      Traits::LocalBasisType LocalBasis;
   Dune::PDELab::LocalBasisCache<LocalBasis> cache;
-  Param& param; // parameter functions
+
   int incrementorder; // increase of integration order
 
 public:
@@ -45,8 +45,8 @@ public:
   enum { doAlphaVolume = true };
 
   //! constructor stores a copy of the parameter object
-  NonlinearPoissonFEM (Param& param_, int incrementorder_=0)
-    : param(param_), incrementorder(incrementorder_)
+  NonlinearPoissonFEM (int incrementorder_=0)
+    : incrementorder(incrementorder_)
   {}
 
   //! right hand side integral
