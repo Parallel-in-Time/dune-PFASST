@@ -101,7 +101,7 @@ namespace pfasst
         virtual void scaled_add(const typename EncapsulationTrait::time_t& a,
                                const shared_ptr<Encapsulation<EncapsulationTrait>> y);
 
-	virtual void apply_Mass(typename traits::mass_t mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol);//, EncapsulationTrait &sol); 
+	virtual void apply_Mass(shared_ptr<typename traits::mass_t> mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol);//, EncapsulationTrait &sol); 
 
         virtual typename EncapsulationTrait::spatial_t norm0() const;
 

@@ -47,12 +47,14 @@ namespace pfasst
 
       const size_t cols = mat.cols();
       const size_t rows = mat.rows();
-
+      //std::cout << "eigen mat  " << Dune::PDELab::Backend::native(y[0]->data())[2][0] <<std::endl;
       for (size_t n = 0; n < rows; ++n) {
         for (size_t m = 0; m < cols; ++m) {
           x[n]->scaled_add(a * mat(n, m), y[m]);
+	  //std::cout << "eigen mat  " << Dune::PDELab::Backend::native(y[n]->data())[2][0] <<std::endl;
         }
       }
+      //std::exit(0);	
     }
 
     template<class EncapsulationTrait>

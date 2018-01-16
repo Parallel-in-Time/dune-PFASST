@@ -33,6 +33,8 @@ namespace pfasst
     pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize();
 	std::cout << "im initialize "<< std::endl;
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
+    std::cout << this->get_states().size() << std::endl;
+    std::cout << num_nodes+1 << std::endl;
     assert(this->get_states().size() == num_nodes + 1);
 
     this->_q_integrals.resize(num_nodes + 1);
@@ -95,18 +97,20 @@ namespace pfasst
 
     this->_impl_rhs.front() = this->evaluate_rhs_impl(t, this->get_states().front());
 
+
     ML_CLOG(INFO, this->get_logger_id(),  "Predicting from t=" << t << " over " << num_nodes << " nodes"
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
 
     for (size_t m = 0; m < num_nodes; ++m) {
       this->states()[m + 1]->data() = this->states()[m]->data();
+      std::cout << "vor zuweisung " << std::endl;	
       this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(tm, this->get_states()[m + 1]);
+      //std::cout << "nach zuweisung " << std::endl; std::exit(0);	
       tm += dt *  (nodes[m+1] - nodes[m]);
-
       ML_CVLOG(1, this->get_logger_id(), "");
 
-    }
+    }       //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "predict rhs_impl " << *r <<std::endl;} std::cout << "num_nodes " << num_nodes <<std::endl; //std::exit(0);	
 
   }
 
@@ -114,7 +118,9 @@ namespace pfasst
   void
   IMEX<SweeperTrait, BaseFunction, Enabled>::post_predict()
   {
+    //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "postpredict rhs_impl " << *r <<std::endl;} //std::exit(0);	
     Sweeper<SweeperTrait, BaseFunction, Enabled>::post_predict();
+    //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "postpredict2 rhs_impl " << *r <<std::endl;} //std::exit(0);	
   }
 
   
@@ -124,7 +130,7 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::pre_sweep()
   {
     
-    
+    //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "presweep rhs_impl " << *r <<std::endl;} std::exit(0);	
     Sweeper<SweeperTrait, BaseFunction, Enabled>::pre_sweep();
 
     assert(this->get_quadrature() != nullptr);
@@ -146,6 +152,9 @@ namespace pfasst
     ML_CVLOG(6, this->get_logger_id(), "  q_int     = dt * Q * f_ex");
     //this->_q_integrals = encap::mat_mul_vec(dt, q_mat, this->_expl_rhs);
     ML_CVLOG(6, this->get_logger_id(), "           += dt * Q * f_im");
+
+    //for(auto r =this->states()[2]->data().begin(); r !=this->states()[2]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;} std::exit(0);
+    //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "pre_sweep rhs_impl " << *r <<std::endl;} //std::exit(0);
     encap::mat_apply(this->_q_integrals, dt, q_mat, this->_impl_rhs, true); //false
 
     ML_CVLOG(4, this->get_logger_id(), "  subtracting function evaluations of previous iteration and adding FAS correction");
@@ -153,6 +162,7 @@ namespace pfasst
 
     for (size_t m = 0; m < num_nodes; ++m) {
       for (size_t n = 0; n < m + 1; ++n) {
+	//for(auto r =this->_impl_rhs[n + 1]->data().begin(); r !=this->_impl_rhs[n + 1]->data().end(); ++r){std::cout << "M result " << *r <<std::endl;} std::exit(0);
         this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_impl(m + 1, n + 1), this->_impl_rhs[n + 1]);
       }
 
@@ -199,16 +209,31 @@ namespace pfasst
 //       ML_CVLOG(5, this->get_logger_id(), LOG_FLOAT << "  u["<<m<<"] = " << to_string(this->get_states()[m]));
 
       // compute right hand side for implicit solve (i.e. the explicit part of the propagation)
+      std::cout << "vorm create rhs" << std::endl;	
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
+      std::cout << "nach create rhs " << std::endl;
       // rhs = u_0
      
       if (is_coarse){
-        rhs->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
+        rhs->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();	
+	
+	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "sweeper " << *r <<std::endl;}
+	//std::cout << "rhs debugging " << std::endl;
+	//std::exit(0);	
 
           
       }else{
         //M_dune.mv(this->get_states().front()->get_data(), rhs->data()); //hier ersetze ich jetzt duch allgemeines apply_Mass ruth
-	this->get_states().front()->apply_Mass(M_dune, rhs);
+	//for(auto r =this->get_states().front()->data().begin(); r != this->get_states().front()->data().end(); ++r){std::cout << "rhs vorm mult " << *r <<std::endl;}
+	//std::cout << "rhs debugging " << std::endl;
+	//M_dune->jacobian_apply((this->get_states().front()->data()), (rhs->data()));
+	//std::cout << "rhs glueck " << std::endl;
+	this->get_states().front()->apply_Mass(M_dune, rhs); 	std::cout << "bevor ich den quatsch hier lese" << std::endl;
+	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}
+	//std::cout << "rhs debugging " << std::endl;
+	//std::exit(0);
+
+
 	//this->get_states().front()->apply_Mass(M_dune);
         
 
@@ -221,43 +246,25 @@ namespace pfasst
       // rhs += dt * \sum_{i=0}^m (QI_{m+1,i} fI(u_i^{k+1}) + QE_{m+1,i-1} fE(u_{i-1}^{k+1}) ) + QE_{m+1,m} fE(u_{m}^{k+1})
       for (size_t n = 0; n <= m; ++n) {
         rhs->scaled_add(dt * this->_q_delta_impl(m + 1, n), this->_impl_rhs[n]);
-//         ML_CVLOG(6, this->get_logger_id(), "     += dt * QI_{"<<(m+1)<<","<<(n+1)<<"} * f_im["<<(n+1)<<"] = "
-//                             << LOG_FIXED << dt << " * " << this->_q_delta_impl(m + 1, n + 1) << " * "
-//                             << LOG_FLOAT << to_string(this->_impl_rhs[n]));
+	//std::cout << dt * this->_q_delta_impl(m + 1, n) << std::endl;
+      }//std::exit(0);
 
-        //rhs->scaled_add(dt * this->_q_delta_expl(m + 1, n), this->_expl_rhs[n]);
-//         ML_CVLOG(6, this->get_logger_id(), "     += dt * QE_{"<<(m+1)<<","<<n<<"} * f_ex["<<n<<"] = "
-//                             << LOG_FIXED << dt << " * " << this->_q_delta_expl(m + 1, n) << " * "
-//                             << LOG_FLOAT << to_string(this->_expl_rhs[n]));
-      }
-
-      //shared_ptr<typename traits::encap_t> M_q_integrals = this->get_encap_factory().create();
-      //M_dune.mv(this->_q_integrals[m + 1]->data(), M_q_integrals->data());
-      
+      //for(auto r =this->_q_integrals[m + 1]->data().begin(); r !=this->_q_integrals[m + 1]->data().end(); ++r){std::cout << "q_integrals " << *r <<std::endl;}
+      //for(auto r =this->_q_integrals[m + 1]->data().begin(); r != this->_q_integrals[m + 1]->data().end(); ++r){std::cout << "q_integrals " << *r <<std::endl;}
       rhs->scaled_add(1.0, this->_q_integrals[m + 1]);
-//       ML_CVLOG(6, this->get_logger_id(), "     += 1.0 * q_int["<<(m+1)<<"]          = " << to_string(this->_q_integrals[m + 1]));
-//       ML_CVLOG(6, this->get_logger_id(), "      = " << to_string(rhs));
-
+      //std::exit(0);
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m+1, m+1), rhs);
-//       ML_CVLOG(5, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));
-
-      	/*std::cout <<  "sweeper nach imp solve " << std::endl;
-        for (int i=0; i< this->get_end_state()->data().size(); i++){
-          std::cout <<  this->get_states().front()->data()[i] << std::endl;
-        }*/
-        //std::exit(0);
+    std::cout << "ende aufruuf impl solve " << std::endl;
       // reevaluate the explicit part with the new solution value
       tm += dt * this->_q_delta_impl(m+1, m+1);
-      //this->_expl_rhs[m + 1] = this->evaluate_rhs_expl(tm, this->get_states()[m + 1]);
-
-//       ML_CVLOG(4, this->get_logger_id(), LOG_FIXED << "  ==> values at t["<<(m+1)<<"]=" << (t + (dt * nodes[m+1])));
-//       ML_CVLOG(5, this->get_logger_id(), LOG_FLOAT << "         u["<<m+1<<"]: " << to_string(this->get_states()[m + 1]));
-//       ML_CVLOG(6, this->get_logger_id(), LOG_FLOAT << "      f_ex["<<m+1<<"]: " << to_string(this->_expl_rhs[m + 1]));
-//       ML_CVLOG(6, this->get_logger_id(), LOG_FLOAT << "      f_im["<<m+1<<"]: " << to_string(this->_impl_rhs[m + 1]));
+      
       ML_CVLOG(4, this->get_logger_id(), "");
+    std::cout << "schleife " << num_nodes << " " << m << std::endl;
+
     }
+    std::cout << "ende sweep " << std::endl;
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -319,7 +326,7 @@ namespace pfasst
       //this->_expl_rhs.front() = this->evaluate_rhs_expl(t0, this->get_initial_state());
 	//std::cout << this->get_initial_state()[0] << std::endl;
 	//std::exit(0);
-      this->_impl_rhs.front() = this->evaluate_rhs_impl(t0, this->get_initial_state());
+        this->_impl_rhs.front() = this->evaluate_rhs_impl(t0, this->get_initial_state());
 
     } else {
       const typename traits::time_t dt = this->get_status()->get_dt();
@@ -433,12 +440,13 @@ namespace pfasst
       //this->residuals()[m]->scaled_add(-1.0,uM);
 
       
-      
+      for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals1 rhs_impl " << *r <<std::endl;} //std::exit(0);
       this->residuals().back()->scaled_add(1.0, this->get_tau().back());
       for (size_t n = 0; n < cols; ++n) {
         //this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_expl_rhs[n]);
         this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_impl_rhs[n]);
       }
+      for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals2 rhs_impl " << *r <<std::endl;} //std::exit(0);	
     } else {
       for (size_t m = 0; m < num_nodes; ++m) {
         assert(this->get_states()[m] != nullptr);
@@ -446,12 +454,7 @@ namespace pfasst
 
   //       ML_CVLOG(5, this->get_logger_id(), "  res["<<m<<"] = u[0]   = " << to_string(this->get_initial_state()));
         //this->residuals()[m]->data() = this->get_initial_state()->get_data();
-	/*std::cout << "************* im fe_imex pointer *********************" << std::endl;	
-	for (int i=0; i< 2; i++){
-	  //std::cout <<  "A  " << this->A_dune[i][i] << std::endl;
-	  std::cout <<  "M  " << (M_dune)[i][i] << std::endl;
-        }
-	std::cout << "**********************************" << std::endl;	*/
+
 	
     
     if (is_coarse){
@@ -485,7 +488,10 @@ namespace pfasst
       //encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_expl_rhs, false);
 
       ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_im");
+      //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals3 rhs_impl " << *r <<std::endl;} //std::exit(0);
+      //for(auto r =this->residuals()[2]->data().begin(); r !=this->residuals()[2]->data().end(); ++r){std::cout << "residuals--------------------------- rhs_impl " << *r <<std::endl;} //std::exit(0);
       encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false);
+      //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals4 rhs_impl " << *r <<std::endl;} //std::exit(0);
 
       ML_CVLOG(5, this->get_logger_id(), "  ==>");
       for (size_t m = 0; m < num_nodes; ++m) {
@@ -534,6 +540,9 @@ namespace pfasst
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation
    */
+
+  
+
   template<class SweeperTrait, class BaseFunction, typename Enabled>
   shared_ptr<typename SweeperTrait::encap_t>
   IMEX<SweeperTrait, BaseFunction, Enabled>::evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
@@ -542,6 +551,16 @@ namespace pfasst
     UNUSED(t); UNUSED(u);
     throw std::runtime_error("evaluation of implicit part of right-hand-side");
   }
+
+
+  /*template<class SweeperTrait, class BaseFunction, typename Enabled>
+  shared_ptr<typename SweeperTrait::encap_t>
+  IMEX<SweeperTrait, BaseFunction, Enabled>::evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
+                                                 const shared_ptr<typename SweeperTrait::encap_t> u)
+  {
+    UNUSED(t); UNUSED(u);
+    throw std::runtime_error("evaluation of implicit part of right-hand-side");
+  }*/
 
   /**
    * @throws std::runtime_error if not overwritten in specialized implementation

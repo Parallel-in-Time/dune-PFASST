@@ -59,10 +59,10 @@ namespace pfasst
 
     static_assert(std::is_arithmetic<typename traits::time_t>::value,
                   "precision type must be arithmetic");
-    static_assert(std::is_constructible<typename traits::encap_t>::value,
+    /*static_assert(std::is_constructible<typename traits::encap_t>::value,
                   "Encapsulation type must be constructible");
     static_assert(std::is_destructible<typename traits::encap_t>::value,
-                  "Encapsulation type must be destructible");
+                  "Encapsulation type must be destructible");*/
 
      shared_ptr<typename traits::encap_t>                _M_initial;
     public:
@@ -414,7 +414,7 @@ namespace pfasst
       virtual bool converged();
       //! @}
 
-      virtual bool alternative_converged(const bool pre_check);
+      //virtual bool alternative_converged(const bool pre_check);
   };
 }
 

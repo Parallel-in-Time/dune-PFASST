@@ -222,7 +222,7 @@ namespace pfasst
   Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
     if (this->get_status() == nullptr) {
-      throw std::runtime_error("Status not yet set.");
+      //throw std::runtime_error("Status not yet set.");
     }
     ML_CVLOG(1, this->get_logger_id(), "setting up with t0=" << this->get_status()->get_time()
               << ", dt=" << this->get_status()->get_dt()
@@ -236,28 +236,23 @@ namespace pfasst
                                       //<< " and an expected error of " << LOG_FLOAT << this->get_quadrature()->expected_error());
                                         << " and an expected error of " << this->get_quadrature()->expected_error());
 
-    // TODO: remove
-    /* assert(this->get_encap_factory() != nullptr); */
+
 
     const auto nodes = this->get_quadrature()->get_nodes();
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
-    //const auto timesteps = this->get
-    
 
-    
-    //this->_all_time_states.resize()
     
     
     this->states().resize(num_nodes + 1);
     auto& factory = this->get_encap_factory();
+    //factory.create();
     std::generate(this->states().begin(), this->states().end(), [&factory](){ return factory.create(); });
 
     this->previous_states().resize(num_nodes + 1);
     std::generate(this->previous_states().begin(), this->previous_states().end(), [&factory](){ return factory.create(); });
 
-    //this->_M_initial.resize(num_nodes + 1);
+
     _M_initial= this->get_encap_factory().create();
-    //std::generate(this->_M_initial.begin(), this->_M_initial.end(), [&factory](){ return factory.create(); });
     
     this->end_state() = this->get_encap_factory().create();
 
@@ -276,7 +271,7 @@ namespace pfasst
   Sweeper<SweeperTrait, BaseFunction, Enabled>::setup()
   {
     if (this->get_status() == nullptr) {
-      throw std::runtime_error("Status not yet set.");
+      //throw std::runtime_error("Status not yet set.");
     }
     ML_CVLOG(1, this->get_logger_id(), "setting up with t0=" << this->get_status()->get_time()
               << ", dt=" << this->get_status()->get_dt()
@@ -290,7 +285,7 @@ namespace pfasst
                                       //<< " and an expected error of " << LOG_FLOAT << this->get_quadrature()->expected_error());
                                       << " and an expected error of " << this->get_quadrature()->expected_error());
 
-    this->initialize();
+    //this->initialize();
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -526,7 +521,7 @@ namespace pfasst
   }
 
 
-    template<class SweeperTrait, class BaseFunction, typename Enabled>
+    /*template<class SweeperTrait, class BaseFunction, typename Enabled>
     bool
     Sweeper<SweeperTrait, BaseFunction, Enabled>::alternative_converged(const bool pre_check) //u^{k+1} - u^k, wird mit false aufgerufen
     {
@@ -623,7 +618,7 @@ namespace pfasst
 
         //////////////////////
       }
-    }
+    }*/
 
 
 

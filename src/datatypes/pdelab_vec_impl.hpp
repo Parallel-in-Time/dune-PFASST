@@ -1,4 +1,4 @@
-#include "dune_vec.hpp"
+#include "pdelab_vec.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -22,10 +22,47 @@ namespace pfasst
       EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::Encapsulation(const typename traits::GFS_& gfs)
-      : _data(gfs) //, gfs(gfs)
+               >::type>::Encapsulation(const size_t size)
+      : size(size)
     {
-      this->zero();
+        typedef Dune::YaspGrid<1> Grid;
+        typedef Grid::ctype DF;
+        Dune::FieldVector<double,1> h = {1};	      
+	std::array<int,1> n;
+	std::fill(n.begin(), n.end(), size);
+        std::shared_ptr<Grid> gridp = std::shared_ptr<Grid>(new Grid(h,n));
+
+        gridp->refineOptions(false); // keep overlap in cells
+        //gridp->globalRefine(1);
+        typedef Grid::LeafGridView GV;
+        GV gv=gridp->leafGridView();
+	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+        FEM fem(gv);
+
+  	// Make grid function space
+  	typedef Dune::PDELab::OverlappingConformingDirichletConstraints CON;
+  	typedef Dune::PDELab::istl::VectorBackend<> VBE;
+  	typedef Dune::PDELab::GridFunctionSpace<GV,FEM,CON,VBE> GFS;
+  	GFS gfs(gv,fem);
+ 	//_data(gfs);
+	std::cout << "*************************************   erstelle pdevec mit gfs " << std::endl;
+	this->_data = std::make_shared<typename EncapsulationTrait::data_t>(gfs);
+		
+        //this->zero();
+    }
+
+
+    template<class EncapsulationTrait>
+    Encapsulation<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::Encapsulation(typename EncapsulationTrait::gfs_t gfs)
+       : size(100)
+    {
+	std::cout << "im konstruktor gfs" << std::endl;
+      this->_data = std::make_shared<typename EncapsulationTrait::data_t>(gfs);
+      //this->zero();
     }
 
     template<class EncapsulationTrait>
@@ -34,9 +71,9 @@ namespace pfasst
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::Encapsulation(const typename EncapsulationTrait::data_t& data)
-      : Encapsulation<EncapsulationTrait>(data.N())
+   : Encapsulation<EncapsulationTrait>(data.N())
     {
-      this->data() = data;
+      (this->data()) = data;
     }
 
     template<class EncapsulationTrait>
@@ -47,6 +84,7 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::operator=(const typename EncapsulationTrait::data_t& data)
     {
+      std::cout << "hier im gleich " << std::endl;	
       this->data() = data;
       return *this;
     }
@@ -59,7 +97,9 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::data()
     {
-      return this->_data;
+	//std::cout << "im data " << std::endl;
+	//std::cout << "im data " << _data->N() << std::endl;
+      return (*_data);
     }
 
     template<class EncapsulationTrait>
@@ -70,7 +110,7 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::get_data() const
     {
-      return this->_data;
+      return *_data;
     }
 
     template<class EncapsulationTrait>
@@ -84,7 +124,7 @@ namespace pfasst
       return this->get_data().N();
     }
 
-    template<class EncapsulationTrait>
+    /*template<class EncapsulationTrait>
     std::array<int, EncapsulationTrait::DIM>
     Encapsulation<
       EncapsulationTrait,
@@ -109,7 +149,7 @@ namespace pfasst
       }
 
       return dimwise_ndofs;
-    }
+    }*/
 
     template<class EncapsulationTrait>
     void
@@ -138,7 +178,12 @@ namespace pfasst
                 this->data().begin(),
                 [a](const typename EncapsulationTrait::spatial_t& xi,
                     const typename EncapsulationTrait::spatial_t& yi) { return xi + a * yi; });
-
+	
+	
+	/*auto z(*y);  //hier wird nicht wirklich kopiert
+	z.data() *= a;
+	this->data() += z.data();*/
+	
     }
 
     template<class EncapsulationTrait>
@@ -154,6 +199,21 @@ namespace pfasst
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
     }
+
+    template<class EncapsulationTrait>
+    void
+    Encapsulation<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::apply_Mass(shared_ptr<typename traits::mass_t> mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol)//, EncapsulationTrait &sol)
+    {
+	//std::cout << "matrix vector mult " <<std::endl;
+	//std::cout << "matrix vector mult " << Dune::PDELab::Backend::native(this->data())[10][10] <<std::endl;
+	//std::cout << "matrix vector mult " << Dune::PDELab::Backend::native((*mass))[1][1][1][1] <<std::endl;
+	mass->jacobian_apply((this->data()), (sol->data()));
+	//mass.mv(this->data(), sol->data());//sol->data());  
+    } 
 
     template<class EncapsulationTrait>
     template<class CommT>
@@ -228,7 +288,7 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::log(el::base::type::ostream_t& os) const
     {
-      os << "pdeVector ";// << pfasst::join(this->get_data(), ", ");
+      os << "not implemented";// "FieldVector" << pfasst::join(this->get_data(), ", ");
     }
 
 
@@ -242,14 +302,90 @@ namespace pfasst
     {}
 
     template<class EncapsulationTrait>
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::EncapsulationFactory(typename EncapsulationTrait::gfs_t gfs)
+      : _gfs(gfs)
+    {}
+
+
+    /*template<class EncapsulationTrait>
+    EncapsulationFactory<typename EncapsulationTrait>&  EncapsulationFactory<EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::operator=(const EncapsulationFactory<typename EncapsulationTrait>&& other)
+    {	std::cout << "im =" << std::endl;}*/
+
+
+    /*template<class EncapsulationTrait>
     shared_ptr<Encapsulation<EncapsulationTrait>>
     EncapsulationFactory<
       EncapsulationTrait,
-      typename std::enable_if< 
+      typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::create(EncapsulationTrait::GFS::Traits::gridView gv, EncapsulationTrait::GFS::Traits::FiniteElementMap fem) const
+               >::type>::create() const
     {
-      return std::make_shared<Encapsulation<EncapsulationTrait>>(gv, fem);
+	std::cout << "im create" << std::endl;
+        typedef Dune::YaspGrid<1> Grid;
+        typedef Grid::ctype DF;
+        Dune::FieldVector<double,1> h = {1};	      
+	std::array<int,1> n;
+	std::cout << "anzahl elemente " << _size << std::endl;
+	std::fill(n.begin(), n.end(), _size);
+	std::cout << "a " << _size << std::endl;
+        std::shared_ptr<Grid> gridp = std::shared_ptr<Grid>(new Grid(h,n));
+	std::cout << "gp erstellt " << _size << std::endl;
+        //gridp->refineOptions(false); // keep overlap in cells
+        //gridp->globalRefine(1);
+        typedef Grid::LeafGridView GV;
+	std::cout << "vor gv " << _size << std::endl;
+        GV gv=gridp->leafGridView();
+	std::cout << "nach gv " << _size << std::endl;
+	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+        FEM fem(gv);
+
+  	// Make grid function space
+  	typedef Dune::PDELab::OverlappingConformingDirichletConstraints CON;
+  	typedef Dune::PDELab::istl::VectorBackend<> VBE;
+  	typedef Dune::PDELab::GridFunctionSpace<GV,FEM,CON,VBE> GFS;
+  	GFS gfs(gv,fem);
+
+	//typedef double RF; 
+  	//using Z = Dune::PDELab::Backend::Vector<GFS,RF>;
+  	//_data(gfs);
+		std::cout << "im create vor return " << std::endl;
+      return std::make_shared<Encapsulation<EncapsulationTrait>>(gfs);
+      //return std::make_shared<EncapsulationTrait>(gfs);	
+    }*/
+
+
+    template<class EncapsulationTrait>
+    shared_ptr<Encapsulation<EncapsulationTrait>>
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::create() const
+    {
+	std::cout << "im create" << std::endl;
+        
+	std::cout << "im create vor return " << std::endl;
+      	return std::make_shared<Encapsulation<EncapsulationTrait>>(*(this->_gfs));
+      	//return std::make_shared<EncapsulationTrait>(gfs);	
+    }
+
+    template<class EncapsulationTrait>
+    void
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::set_gfs(typename EncapsulationTrait::gfs_t& gfs)
+    {
+      this->_size = 100;
+      this->_gfs = std::make_shared<typename EncapsulationTrait::gfs_t>(gfs);
     }
 
     template<class EncapsulationTrait>
@@ -262,20 +398,6 @@ namespace pfasst
     {
       this->_size = size;
     }
-
-
-    template<class EncapsulationTrait>
-    void
-    EncapsulationFactory<
-      EncapsulationTrait,
-      typename std::enable_if<
-                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::set_gfs(typename EncapsulationTrait::GFS_& gfs_)
-    {
-      this->gfs =  std::make_shared<typename EncapsulationTrait::GFS_>(gfs_);
-    }
-
-
 
     template<class EncapsulationTrait>
     size_t

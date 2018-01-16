@@ -62,8 +62,11 @@ namespace pfasst
       //std::shared_ptr<MatrixType> M_dune;
       //std::shared_ptr<MatrixType> A_dune;
 
-      typename SweeperTrait::encap_traits::mass_t M_dune;
-      MatrixType A_dune;
+      //typename SweeperTrait::encap_traits::mass_t M_dune;
+      //typename SweeperTrait::encap_traits::mass_t A_dune;
+      //MatrixType A_dune;
+      shared_ptr<typename SweeperTrait::encap_traits::mass_t> M_dune;
+      //shared_ptr<typename SweeperTrait::encap_traits::mass_t> A_dune;	
       
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
@@ -140,8 +143,14 @@ namespace pfasst
        * @param[in] u  spatial data to be passed to @f$ F_I(\vec{u},t) @f$
        * @returns spatial values of function evaluation
        */
+      /*virtual shared_ptr<typename SweeperTrait::encap_t> evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
+                                                                           const shared_ptr<typename SweeperTrait::encap_t> u);*/
+
+
       virtual shared_ptr<typename SweeperTrait::encap_t> evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
                                                                            const shared_ptr<typename SweeperTrait::encap_t> u);
+
+
       /**
        * Implicitly solving the implicit SDC equation.
        *
@@ -287,8 +296,8 @@ namespace pfasst
             
       virtual vector<shared_ptr<typename SweeperTrait::encap_t>> integrate_new(const typename SweeperTrait::time_t& dt);
   
-      shared_ptr<MatrixType> get_M_dune(){return make_shared<MatrixType>(M_dune);};
-      shared_ptr<MatrixType> get_A_dune() {return make_shared<MatrixType>(A_dune);};
+      //shared_ptr<MatrixType> get_M_dune(){return make_shared<MatrixType>(M_dune);};
+      //shared_ptr<MatrixType> get_A_dune() {return make_shared<MatrixType>(A_dune);};
   };
 }  // ::pfasst
 
