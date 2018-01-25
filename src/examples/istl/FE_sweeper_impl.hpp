@@ -353,11 +353,15 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
 
-       /*std::cout << "das ist jetzt das rhs " <<  std::endl;
+       std::cout << "das ist jetzt das rhs " <<  std::endl;
        for (size_t i = 0; i < rhs->get_data().size(); i++) {
-          std::cout << "M result " << rhs->data()[i] << std::endl;
+          std::cout << "evaluate " << rhs->data()[i] << std::endl;
         }
-	std::exit(0);*/
+	//std::exit(0);
+
+	//if (my_rank == 0) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << my_rank << " " << rhs->data().N() << " evaluate " << *r <<std::endl;} 
+        //MPI_Barrier(MPI_COMM_WORLD);
+	//if (my_rank == 1) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << my_rank << " " << rhs->data().N() << " evaluate " << *r <<std::endl;} std::exit(0);
 
 	std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                 start impl solve" <<  std::endl;
         
@@ -401,9 +405,9 @@ namespace pfasst
         cg.apply(u->data(), M_rhs_dune , statistics ); //rhs ist nicht constant!!!!!!!!!
 
           std::cout << "im impl solve  "  << std::endl;
-       for (size_t i = 0; i < u->get_data().size(); i++) {
+       /*for (size_t i = 0; i < u->get_data().size(); i++) {
           std::cout << "Gleichungssystem geloest " << u->data()[i] << std::endl;
-        }
+        }*/
 	
 	
 	

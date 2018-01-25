@@ -197,27 +197,20 @@ namespace pfasst
         std::cout << "******************************************* " <<  std::endl ;
 
 
-        ofstream f;
-	  stringstream ss;
-	  ss << nelements;
-	  string s = "solution_mlsdc/" + ss.str() + ".dat";
-	  f.open(s, ios::app | std::ios::out );
-	  f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0()<< endl;
-	  //f << nelements << " " << dt << " "<< x.infinity_norm()<< endl;
-
-	  f.close();
-
-        ofstream ff;
-        stringstream sss;
-        sss << nelements << "_iter";
-        string st = "solution_mlsdc/" + sss.str() + ".dat";
-        ff.open(st, ios::app | std::ios::out );
-        auto iter = mlsdc->_it_per_step;
-        for (const auto &line : iter) {
-          ff << dt <<"  " << line << std::endl;
+        std::cout <<  "grob" << std::endl;
+        auto cnaeherung = coarse->get_end_state()->data();
+        auto cexact     = coarse->exact(t_end)->data();
+        for (int i=0; i< coarse->get_end_state()->data().size(); i++){
+          std::cout << coarse->exact(0)->data()[i] << " " << cnaeherung[i] << "   " << cexact[i] << std::endl;
         }
 
-        ff.close();
+ 	std::cout << "******************************************* " <<  std::endl ;
+        std::cout << " " <<  std::endl ;
+        std::cout << " " <<  std::endl ;
+        std::cout << "Fehler: " <<  std::endl ;
+        coarse->states()[coarse->get_states().size()-1]->scaled_add(-1.0 , coarse->exact(t_end));
+        std::cout << coarse->states()[coarse->get_states().size()-1]->norm0()<<  std::endl ;
+        std::cout << "******************************************* " <<  std::endl ;
 
 
 
@@ -241,7 +234,7 @@ int main(int argc, char** argv)
   Dune::MPIHelper::instance(argc, argv);
   pfasst::init(argc, argv, sweeper_t::init_opts);
 
-  const size_t nelements = get_value<size_t>("num_elements", 2);
+  const size_t nelements = get_value<size_t>("num_elements", 20);
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
@@ -262,7 +255,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 500);
+  const size_t niter = get_value<size_t>("num_iters", 10);
 
   pfasst::examples::heat_FE::run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
 }

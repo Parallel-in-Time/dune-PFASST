@@ -77,7 +77,7 @@ namespace pfasst
           std::shared_ptr<fe_manager> FinEl;
 	  
 
-
+	  //int nlevel;
           //MatrixType M_dune;
           //MatrixType A_dune;
 

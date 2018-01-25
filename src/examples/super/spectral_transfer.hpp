@@ -28,6 +28,10 @@ namespace pfasst
       public:
         using traits = TransferTraits;
 
+
+
+
+
       protected:
         pfasst::contrib::FFT<typename traits::fine_encap_t> fft;
 

@@ -53,8 +53,9 @@ namespace pfasst
 
       typedef Dune::YaspGrid<1> Grid;
       typedef Grid::ctype DF;
-      typedef Grid::LeafGridView GV;
-      typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+      typedef Grid::LevelGridView GV;
+      //typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+      typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double,  1> FEM;  
 
       // Make grid function space
       typedef Dune::PDELab::OverlappingConformingDirichletConstraints CON;
@@ -182,6 +183,7 @@ namespace pfasst
     {
       protected:
         size_t _size;
+	size_t _level;
 	typename std::shared_ptr<typename EncapsulationTrait::gfs_t> _gfs;
 	//typename EncapsulationTrait::gfs_t *_gfs;
 

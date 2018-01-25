@@ -101,10 +101,13 @@ namespace pfasst
     ML_CLOG(INFO, this->get_logger_id(),  "Predicting from t=" << t << " over " << num_nodes << " nodes"
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
-
+    	int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
     for (size_t m = 0; m < num_nodes; ++m) {
       this->states()[m + 1]->data() = this->states()[m]->data();
-      std::cout << "vor zuweisung " << std::endl;	
+    if(my_rank==0) for(auto r =this->states()[m]->data().begin(); r !=this->states()[m]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;} //std::exit(0);
+      std::cout << "vor zuweisung " << std::endl; //std::exit(0);	
       this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(tm, this->get_states()[m + 1]);
       //std::cout << "nach zuweisung " << std::endl; std::exit(0);	
       tm += dt *  (nodes[m+1] - nodes[m]);
@@ -153,8 +156,12 @@ namespace pfasst
     //this->_q_integrals = encap::mat_mul_vec(dt, q_mat, this->_expl_rhs);
     ML_CVLOG(6, this->get_logger_id(), "           += dt * Q * f_im");
 
-    //for(auto r =this->states()[2]->data().begin(); r !=this->states()[2]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;} std::exit(0);
+    	int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
+    if(my_rank==0) for(auto r =this->states()[2]->data().begin(); r !=this->states()[2]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;}// std::exit(0);
     //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "pre_sweep rhs_impl " << *r <<std::endl;} //std::exit(0);
+
     encap::mat_apply(this->_q_integrals, dt, q_mat, this->_impl_rhs, true); //false
 
     ML_CVLOG(4, this->get_logger_id(), "  subtracting function evaluations of previous iteration and adding FAS correction");
@@ -229,8 +236,8 @@ namespace pfasst
 	//M_dune->jacobian_apply((this->get_states().front()->data()), (rhs->data()));
 	//std::cout << "rhs glueck " << std::endl;
 	this->get_states().front()->apply_Mass(M_dune, rhs); 	std::cout << "bevor ich den quatsch hier lese" << std::endl;
-	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}
-	//std::cout << "rhs debugging " << std::endl;
+	for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}
+	std::cout << "rhs debugging " << std::endl;
 	//std::exit(0);
 
 
@@ -239,19 +246,24 @@ namespace pfasst
 
         
       }
-//    
+
       
       //ML_CVLOG(6, this->get_logger_id(), "  rhs = u[0]                    = " << to_string(rhs));
 
       // rhs += dt * \sum_{i=0}^m (QI_{m+1,i} fI(u_i^{k+1}) + QE_{m+1,i-1} fE(u_{i-1}^{k+1}) ) + QE_{m+1,m} fE(u_{m}^{k+1})
       for (size_t n = 0; n <= m; ++n) {
         rhs->scaled_add(dt * this->_q_delta_impl(m + 1, n), this->_impl_rhs[n]);
-	//std::cout << dt * this->_q_delta_impl(m + 1, n) << std::endl;
-      }//std::exit(0);
+	std::cout << dt * this->_q_delta_impl(m + 1, n) << std::endl;
+      }        MPI_Barrier(MPI_COMM_WORLD);// std::exit(0);
 
       //for(auto r =this->_q_integrals[m + 1]->data().begin(); r !=this->_q_integrals[m + 1]->data().end(); ++r){std::cout << "q_integrals " << *r <<std::endl;}
       //for(auto r =this->_q_integrals[m + 1]->data().begin(); r != this->_q_integrals[m + 1]->data().end(); ++r){std::cout << "q_integrals " << *r <<std::endl;}
       rhs->scaled_add(1.0, this->_q_integrals[m + 1]);
+    	int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
+	if (my_rank==0) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}     MPI_Barrier(MPI_COMM_WORLD); 
+	if (my_rank==1) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}     MPI_Barrier(MPI_COMM_WORLD); std::exit(0);
       //std::exit(0);
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");

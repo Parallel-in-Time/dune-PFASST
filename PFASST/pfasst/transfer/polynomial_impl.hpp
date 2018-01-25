@@ -123,7 +123,7 @@ namespace pfasst
     ML_CVLOG(1, "TRANS", "restrict initial value only");
     // M * fine->get_initial_state()
     shared_ptr<typename TransferTraits::fine_encap_t> M_initial_state= fine->get_encap_factory().create();
-    fine->get_M_dune()->mv( fine->get_initial_state()->get_data(), M_initial_state->data());
+    fine->get_initial_state()->apply_Mass(fine->get_M_dune() , M_initial_state);
     this->restrict_u(M_initial_state , coarse->_M_initial);    
     
     this->restrict_data(fine->get_initial_state(), coarse->initial_state());
@@ -234,8 +234,10 @@ namespace pfasst
       
       shared_ptr<typename TransferTraits::coarse_encap_t> coarse_u= coarse->get_encap_factory().create();	
       this->restrict_data(fine->get_states()[m], coarse_u);  
-      
-      coarse->get_M_dune()->mv(coarse_u->get_data(),  coarse_integral[m]->data());
+
+      //coarse->get_M_dune()->mv(coarse_u->get_data(),  coarse_integral[m]->data());
+      coarse_u->apply_Mass(coarse->get_M_dune(), coarse_integral[m]);
+
       coarse_integral[m]->data() *= -1;
       
       coarse_integral[m]->scaled_add(1,  coarse->integrate(dt)[m]);
@@ -250,7 +252,8 @@ namespace pfasst
     //this->restrict_u(fine->get_M_dune(), ); //raus
     
     for (size_t m = 0; m < num_fine_nodes + 1; ++m) {
-      fine->get_M_dune()->mv(fine->get_states()[m]->get_data(),  fine_integral[m]->data());
+      //fine->get_M_dune()->mv(fine->get_states()[m]->get_data(),  fine_integral[m]->data());
+      fine->get_states()[m]->apply_Mass(fine->get_M_dune(),  fine_integral[m]);
       fine_integral[m]->data() *= -1;
       
       

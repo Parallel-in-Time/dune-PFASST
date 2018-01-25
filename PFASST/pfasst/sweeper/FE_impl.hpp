@@ -296,7 +296,7 @@ namespace pfasst
             
       virtual vector<shared_ptr<typename SweeperTrait::encap_t>> integrate_new(const typename SweeperTrait::time_t& dt);
   
-      //shared_ptr<MatrixType> get_M_dune(){return make_shared<MatrixType>(M_dune);};
+      shared_ptr<typename SweeperTrait::encap_traits::mass_t> get_M_dune(){return this->M_dune;};
       //shared_ptr<MatrixType> get_A_dune() {return make_shared<MatrixType>(A_dune);};
   };
 }  // ::pfasst

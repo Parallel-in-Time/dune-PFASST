@@ -33,22 +33,7 @@ namespace pfasst
     {
 
 
-/*template<typename Number>
-class Problem
-{
-public:
-  typedef Number value_type;
-  Problem () {}
-  template<typename X>
-  Number g (const X& x) const
-  {
-	const int dim=1;
-	const double t=0;	
-	double solution=1.0;
-        for(int i=0; i<dim; i++){solution *= std::sin(PI * x[i]);}
-        return solution * std::exp(-t * dim * PI*PI);
-  }
-};*/
+
 
 
 
@@ -58,12 +43,7 @@ public:
       void
       Heat_FE<SweeperTrait, Mass, Enabled>::init_opts()
       {
-        /*config::options::add_option<size_t>("Heat FE", "num_dofs",
-                                            "number spatial degrees of freedom per dimension on fine level");
-        config::options::add_option<size_t>("Heat FE", "coarse_factor",
-                                            "coarsening factor");
-        config::options::add_option<spatial_t>("Heat FE", "nu",
-                                               "thermal diffusivity");*/
+
       }
 
 
@@ -76,6 +56,7 @@ public:
 
 	this->nelements =FinEl->get_nelem();
         //this->encap_factory()->set_size(nelements);
+	this->nlevel=nlevel;
 	
         Dune::FieldVector<double,dim> h = {1};	      
 	std::array<int,dim> n;
@@ -84,129 +65,104 @@ public:
 
         gridp->refineOptions(false); 
 
+        gridp->globalRefine(nlevel);
 
-        fem = std::make_shared<FEM>(gridp->leafGridView());
+        fem = std::make_shared<FEM>(gridp->levelGridView(nlevel)); //leaf
 
   	// Make grid function space
-  	gfs  = std::make_shared<GFS>(gridp->leafGridView(),*fem);
+  	gfs  = std::make_shared<GFS>(gridp->levelGridView(nlevel),*fem); //leaf
 
 
         this->encap_factory()->set_gfs(*gfs);
-  	
-	/*using Z = Dune::PDELab::Backend::Vector<GFS,RF>;
-	Z z(*gfs);
-  	typedef Dune::PDELab::DiscreteGridFunction<GFS,Z> ZDGF;
-  	ZDGF zdgf(*gfs,z);
-  	Dune::PDELab::istl::ParallelHelper<GFS> grid_helper(*gfs);
-  	grid_helper.maskForeignDOFs(z);
-  	Dune::PDELab::AddDataHandle<GFS,Z> adddh(*gfs,z);
-  	if (gfs->gridView().comm().size()>1){
-    		gfs->gridView().communicate(adddh,Dune::InteriorBorder_All_Interface,Dune::ForwardCommunication);
-	}*/
 
 
+	std::cout << "vor problem" << std::endl;
 	typedef double RF; 
   	problem = std::make_shared<Problem<RF>>(1.0); //this->get_status()->get_dt() 0.00984077
   	mass_problem = std::make_shared<Problem<RF>>(0.0);
   	laplace_problem = std::make_shared<LProblem<RF>>(this->_nu);
-  	// Assemble constraints
-  	//typedef typename GFS::template
-    	//ConstraintsContainer<RF>::Type CC;
-  	//CC cc;
-  	
-	// Make a local operator
-  	//typedef NonlinearPoissonFEM<Problem<RF>,FEM> LOP;
 
+	std::cout << "vor lop" << std::endl;
   	lop = std::make_shared<LOP>(*problem);
   	mass_lop = std::make_shared<LOP>(*mass_problem);
   	laplace_lop = std::make_shared<LLOP>(*laplace_problem);
 
-  	// Make a global operator
-  	/*typedef Dune::PDELab::istl::BCRSMatrixBackend<> MBE;
-  	MBE mbe((int)pow(1+2*degree,dim));*/
-	mbe = std::make_shared<MBE>((int)pow(1+2*degree,dim));
-  	/*typedef Dune::PDELab::GridOperator<
-    		GFS,GFS,  // ansatz and test space 
-    		LOP,      // local operator 
-    		MBE,      // matrix backend 
-    		RF,RF,RF, // domain, range, jacobian field type
-    		CC,CC     // constraints for ansatz and test space 
-    		> GO;*/
 
+	mbe = std::make_shared<MBE>((int)pow(1+2*degree,dim));
+
+
+	std::cout << "vor matrix" << std::endl;
 	this->M_dune = std::make_shared<GO>(*gfs,cc1,*gfs,cc1,*mass_lop,*mbe);
 	this->M_dtA_dune = std::make_shared<GO>(*gfs,cc2,*gfs,cc2,*lop,*mbe);
 	this->A_dune = std::make_shared<LGO>(*gfs,cc3,*gfs,cc3,*laplace_lop,*mbe);
 
-	/*M m2(*(this->M_dune));
-	X x2(*gfs, 0.0);
-   	this->M_dune->jacobian(x2,m2);
 
 
-	for(int i=0; i<Dune::PDELab::Backend::native(m2).M(); i++){
-		for(int j=0; j<Dune::PDELab::Backend::native(m2).N(); j++){ 
-			if (Dune::PDELab::Backend::native(m2).exists(i,j)) {
-				std::cout << Dune::PDELab::Backend::native(m2)[i][j][0][0]<< " ";
-			}else { 
-				std::cout << 0 << " ";
-			} 
-		}
-		std::cout << std::endl;
-	}std::exit(0);*/
 
 
-	/*auto t1 = this->get_encap_factory().create();
-	auto t2 = this->get_encap_factory().create();
-	this->M_dune->jacobian_apply(t1->data(), t2->data());
-
-	std::cout << "*******************************   multipliziert *********************** " <<  std::endl;*/
-	//this->M_dtA_dune = std::make_shared<GO>(*gfs,cc,*gfs,cc,lopm,mbe);
-
-  	/*LOP lopm(mass_problem);
-
-	this->M_dtA_dune = std::make_shared<GO>(*gfs,cc,*gfs,cc,lopm,mbe);
-	this->test_dune = std::make_shared<GO>(*gfs,cc,*gfs,cc,lop,mbe);
-  	//GO gom(gfs,cc,gfs,cc,lopm,mbe);
-
-
-  	using X = Dune::PDELab::Backend::Vector<GFS,double>;*/
   	this->x = std::make_shared<X>(*gfs,0.0);
 
-  	//represent operator as a matrix
+
   	m = std::make_shared<M>(*(this->M_dtA_dune));
-	//mm = std::make_shared<M>(*(this->M_dune));
+
 
   	*m = 0.0;
   	this->M_dtA_dune->jacobian(*x,*m);
 
-	Dune::PDELab::Backend::native(*m)[0][0][0][0] = 1;
+	std::cout << "vor index" << std::endl;
+	int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+
+	if(my_rank==0) Dune::PDELab::Backend::native(*m)[0][0][0][0] = 1;
 	
-	Dune::PDELab::Backend::native(*m)[0][1][0][0] = 0;
+	if(my_rank==0) Dune::PDELab::Backend::native(*m)[0][1][0][0] = 0;
 
 
-	Dune::PDELab::Backend::native(*m)[Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1] = 1;
-	Dune::PDELab::Backend::native(*m)[Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-2][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1] = 0;
+	if(my_rank==num_pro-1) Dune::PDELab::Backend::native(*m)[Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1] = 1;
+	if(my_rank==num_pro-1) Dune::PDELab::Backend::native(*m)[Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-2][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1] = 0;
+
+
+  	this->y = std::make_shared<X>(*gfs,0.0);
+
+  	//represent operator as a matrix
+  	mM = std::make_shared<M>(*(this->M_dune));
+	//mm = std::make_shared<M>(*(this->M_dune));
+
+  	*mM = 0.0;
+  	this->M_dune->jacobian(*y,*mM);
+	std::cout << "vor index" << std::endl;
+	if(my_rank==0)  Dune::PDELab::Backend::native(*mM)[0][0][0][0] = 0;
+	
+	if(my_rank==0)  Dune::PDELab::Backend::native(*mM)[0][1][0][0] = 0;
+
+
+	if(my_rank==num_pro-1)  Dune::PDELab::Backend::native(*mM)[Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1] = 0;
+	if(my_rank==num_pro-1)  Dune::PDELab::Backend::native(*mM)[Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-2][Dune::PDELab::Backend::native(*m).M()-1][Dune::PDELab::Backend::native(*m).M()-1] = 0;
 
 
 
-	for(int i=0; i<Dune::PDELab::Backend::native(*m).M(); i++){
-		for(int j=0; j<Dune::PDELab::Backend::native(*m).N(); j++){ 
-			if (Dune::PDELab::Backend::native(*m).exists(i,j)) {
-				std::cout << Dune::PDELab::Backend::native(*m)[i][j][0][0]<< " ";
+	std::cout << "nach index" << std::endl;
+
+	if(my_rank==0) for(int i=0; i<Dune::PDELab::Backend::native(*mM).M(); i++){
+		for(int j=0; j<Dune::PDELab::Backend::native(*mM).N(); j++){ 
+			if (Dune::PDELab::Backend::native(*mM).exists(i,j)) {
+				std::cout << Dune::PDELab::Backend::native(*mM)[i][j][0][0]<< " ";
 			}else { 
 				std::cout << 0 << " ";
 			} 
 		}
 		std::cout << std::endl;
-	}//std::exit(0);
+	} MPI_Barrier(MPI_COMM_WORLD); // std::exit(0);
 	//std::cout << "****************************************************** " << Dune::PDELab::Backend::native(*m)[1][1][1][1] << std::endl;
 
-  	// Select a linear solver backend NEW IN PARALLEL
-  	//typedef Dune::PDELab::ISTLBackend_CG_AMG_SSOR<GO> LS;
+	std::cout << "vor schleife" << std::endl;
+  	
   	int verbose=0;
   	if (gfs->gridView().comm().rank()==0) verbose=1;
   	this->ls = std::make_shared<LS>(*gfs,nelements,verbose);
 
-
+		std::cout << "ende" << std::endl;
 
 
       }
@@ -282,10 +238,11 @@ public:
         std::shared_ptr<Grid> gridp = std::shared_ptr<Grid>(new Grid(h,n));
 
         gridp->refineOptions(false); // keep overlap in cells
-        //gridp->globalRefine(1);
-        typedef Grid::LeafGridView GV;
-        GV gv=gridp->leafGridView();
-	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+        gridp->globalRefine(1);
+        typedef Grid::LevelGridView GV; //leaf
+        GV gv=gridp->levelGridView(nlevel);  //leaf
+	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+	typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double,  1> FEM;  
         FEM fem(gv);
 
   	// Make grid function space
@@ -526,26 +483,26 @@ public:
       {
 
 
-	std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                 start solve" << std::endl;
+	std::cout << "++++++++++++++++++" << this->nlevel << "+++++++++++++++++++++++++++++++++++++++++++++++++" <<         this->_num_impl_solves++ << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                 start impl solve" <<  std::endl;
 	int my_rank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
-	if (my_rank == 0) for(auto r =u->data().begin(); r !=u->data().end(); ++r){std::cout << my_rank << " " << u->data().N() << " evaluate " << *r <<std::endl;} 
+	if (my_rank == 0) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << my_rank << " " << rhs->data().N() << " evaluate " << *r <<std::endl;} 
         MPI_Barrier(MPI_COMM_WORLD);
-	if (my_rank == 1) for(auto r =u->data().begin(); r !=u->data().end(); ++r){std::cout << my_rank << " " << u->data().N() << " evaluate " << *r <<std::endl;} //std::exit(0);
+	if (my_rank == 1) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << my_rank << " " << rhs->data().N() << " evaluate " << *r <<std::endl;} //std::exit(0);
 
 
 
 	auto M_rhs_dune = this->get_encap_factory().create();
-	std::cout << "im implicit solve " << std::endl;  
+	//std::cout << "im implicit solve " << std::endl;  
 
 
 	if (my_rank==num_pro-1) Dune::PDELab::Backend::native(rhs->data())[rhs->data().N()-1][0] = 0;
 	if(my_rank==0) Dune::PDELab::Backend::native(rhs->data())[0][0] = 0;
 
 	M_rhs_dune->data() = rhs->get_data();
-	std::cout << "vorm loesen  " << std::endl;  
+	//std::cout << "vorm loesen  " << std::endl;  
 
 	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "M result " << *r <<std::endl;} std::exit(0);
 
@@ -568,8 +525,8 @@ public:
   	m = 0.0;
   	mdta_go.jacobian(x,m);
 
- 	MPI_Barrier(MPI_COMM_WORLD);
-	std::cout << "bevor ich die randwerte setze  " << std::endl;  
+ 	//MPI_Barrier(MPI_COMM_WORLD);
+	//std::cout << "bevor ich die randwerte setze  " << std::endl;  
 	if(my_rank==0 ) Dune::PDELab::Backend::native(m)[0][0][0][0] = 1;
 	
 	if(my_rank==0 ) Dune::PDELab::Backend::native(m)[0][1][0][0] = 0;
@@ -577,13 +534,13 @@ public:
 
 	if(my_rank==num_pro-1 ) Dune::PDELab::Backend::native(m)[Dune::PDELab::Backend::native(m).M()-1][Dune::PDELab::Backend::native(m).M()-1][Dune::PDELab::Backend::native(m).M()-1][Dune::PDELab::Backend::native(m).M()-1] = 1;
 	if(my_rank==num_pro-1 ) Dune::PDELab::Backend::native(m)[Dune::PDELab::Backend::native(m).M()-1][Dune::PDELab::Backend::native(m).M()-2][Dune::PDELab::Backend::native(m).M()-1][Dune::PDELab::Backend::native(m).M()-1] = 0;
-	std::cout << "nachdem ich die randwerte setze  " << std::endl;  
+	//std::cout << "nachdem ich die randwerte setze  " << std::endl;  
 
 
- 	MPI_Barrier(MPI_COMM_WORLD);
+ 	//MPI_Barrier(MPI_COMM_WORLD);
 
 
-	std::cout << "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo  " <<my_rank << std::endl;  
+	/*std::cout << "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo  " <<my_rank << std::endl;  
 	if(my_rank==0 )for(int i=0; i<Dune::PDELab::Backend::native(m).M(); i++){
 		for(int j=0; j<Dune::PDELab::Backend::native(m).N(); j++){ 
 			if (Dune::PDELab::Backend::native(m).exists(i,j)) {
@@ -604,12 +561,12 @@ public:
 			} 
 		}
 		std::cout << std::endl;
-	}
+	}*/
 
 
 	//std::cout << "bevor ich den quatsch hier lese" << std::endl;
 	this->ls->apply(m, u->data(), M_rhs_dune->data(), 0);
-	std::cout << "im impl solve " << std::endl;
+	//std::cout << "im impl solve " << std::endl;
 	//for(auto r =u->data().begin(); r !=u->data().end(); ++r){std::cout << "Gleichungssystem geloest " << *r <<std::endl;}
 	//std::exit(0);
         /*ML_CVLOG(4, this->get_logger_id(),
@@ -621,7 +578,7 @@ public:
         M_u.resize(u->get_data().N());*/
 
 
-	std::cout << "bevor ich den quatsch hier lese" << std::endl; 
+	//std::cout << "bevor ich den quatsch hier lese" << std::endl; 
 
 	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "f data " << *r <<std::endl;}std::exit(0);
 
@@ -638,13 +595,14 @@ public:
 
 	f->data() = M_u->data();
 
-
+	if (my_rank==num_pro-1) Dune::PDELab::Backend::native(u->data())[f->data().N()-1][0] = 0;
+	if (my_rank==0) Dune::PDELab::Backend::native(u->data())[0][0] = 0;
 
 	if (my_rank==num_pro-1) Dune::PDELab::Backend::native(f->data())[f->data().N()-1][0] = 0;
 	if (my_rank==0) Dune::PDELab::Backend::native(f->data())[0][0] = 0;
 
 
-	//for(auto r =f->data().begin(); r !=f->data().end(); ++r){std::cout << "f data " << *r <<std::endl;}std::exit(0);
+	//for(auto r =f->data().begin(); r !=f->data().end(); ++r){std::cout << "f data " << *r <<std::endl;}//std::exit(0);
         this->_num_impl_solves++;
 
 	std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                 ende solve" <<  std::endl;

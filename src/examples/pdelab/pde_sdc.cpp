@@ -6,11 +6,13 @@
 #include<dune/common/parallel/mpihelper.hh>
 #include<dune/common/parametertreeparser.hh>
 #include<dune/common/timer.hh>
+
+
 // dune-geometry includes
-#include<dune/geometry/referenceelements.hh>
+//#include<dune/geometry/referenceelements.hh>
 #include<dune/geometry/quadraturerules.hh>
 // dune-grid includes
-#include<dune/grid/onedgrid.hh>
+//#include<dune/grid/onedgrid.hh>
 #include<dune/grid/yaspgrid.hh>
 #include<dune/grid/utility/structuredgridfactory.hh>
 #include<dune/grid/io/file/vtk/vtkwriter.hh>
@@ -58,6 +60,57 @@ const int DIM=1;
 const int nelements=1000;
 
 
+
+
+#include <dune/common/power.hh>
+#include <dune/common/parametertree.hh>
+
+#include <dune/istl/matrixmatrix.hh>
+
+#include <dune/grid/common/datahandleif.hh>
+
+#include <dune/pdelab/backend/istl/vector.hh>
+#include <dune/pdelab/backend/istl/bcrsmatrix.hh>
+#include <dune/pdelab/backend/istl/bcrsmatrixbackend.hh>
+#include <dune/pdelab/backend/istl/ovlpistlsolverbackend.hh>
+#include <dune/pdelab/gridoperator/gridoperator.hh>
+
+//#include <dune/pdelab/finiteelementmap/pkqkfem.hh>
+#include <dune/pdelab/finiteelementmap/p0fem.hh>
+
+#include <dune/fufem/assemblers/transferoperatorassembler.hh>
+
+
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+
+
+#include <dune/functions/functionspacebases/interpolate.hh>
+
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh>
+
+
+#include "geometric_multigrid_components.hh"
+
+      //using namespace Dune::PDELab::ISTL;
+
 template<typename Number>
 class Problem
 {
@@ -103,41 +156,76 @@ int main(int argc, char** argv)
 
 	double t1, t2; 
 	t1 = MPI_Wtime();
-
+	typedef double RF; 
 	//setup the grid
         const int dim=DIM;
 	const int degree =1;
-        typedef Dune::YaspGrid<dim> Grid;
+        typedef Dune::YaspGrid<1> Grid;
         typedef Grid::ctype DF;
         Dune::FieldVector<double,dim> h = {1};	      
 	std::array<int,dim> n;
-	std::fill(n.begin(), n.end(), nelements);
+	std::fill(n.begin(), n.end(), nelements+1);
         std::shared_ptr<Grid> gridp = std::shared_ptr<Grid>(new Grid(h,n));
 
         gridp->refineOptions(false); // keep overlap in cells
-        //gridp->globalRefine(1);
+        gridp->globalRefine(1);
         typedef Grid::LeafGridView GV;
+	typedef Grid::LevelGridView GVl;
         GV gv=gridp->leafGridView();
-	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+        GVl gv_1=gridp->levelGridView(1);
+        GVl gv_0=gridp->levelGridView(0);
+	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+              //Dune::PDELab::QkLocalFiniteElementMap<GV, D, R, k >
+	//typedef	Dune::PDELab::PkQkLocalFiniteElementMap<GV, DF, double> FEM;  
+	typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double,  1> FEM;  
         FEM fem(gv);
+
+  	//auto gt = Dune::GeometryTypes::quadrilateral;
+  	//typedef Dune::PDELab::P0LocalFiniteElementMap<float,double,GVl::dimension> FEM;
+  	//FEM fem(gt);
+
+
+	std::cout << "hier" << std::endl;
+
+	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,2> FEM2;
+        //FEM2 fem2(gv);
+
 
   	// Make grid function space
   	typedef Dune::PDELab::OverlappingConformingDirichletConstraints CON;
   	typedef Dune::PDELab::istl::VectorBackend<> VBE;
   	typedef Dune::PDELab::GridFunctionSpace<GV,FEM,CON,VBE> GFS;
-  	GFS gfs(gv,fem);
+  	//typedef Dune::PDELab::GridFunctionSpace<GV,FEM2,CON,VBE> GFS2;
+  	typedef Dune::PDELab::GridFunctionSpace<GVl,FEM,CON,VBE> GFSl;
 
-	typedef double RF; 
+  	GFS gfs(gv,fem);
+  	//GFS2 gfs2(gv,fem2);
+
+
+	std::cout << "hier 2" << std::endl;
+
+
+	GFSl gfs_1(gv_1, fem);
+	GFSl gfs_0(gv_0, fem);
+  	using Zl = Dune::PDELab::Backend::Vector<GFSl,RF>;
+	Zl v1(gfs_1);
+	Zl v0(gfs_0);
+	Zl coarse(gfs_1);
+
+
   	using Z = Dune::PDELab::Backend::Vector<GFS,RF>;
   	Z z(gfs); // mass times initial value
 	Z initial(gfs); // initial value
 	Z vgl(gfs); // analytic solution at the end point
 	Z sol(gfs); // numeric solution
+	Z neu(gfs);
+	std::cout << "hier 3" << std::endl;
 
   	// Make a grid function out of it
   	typedef Dune::PDELab::DiscreteGridFunction<GFS,Z> ZDGF;
   	ZDGF zdgf(gfs,z);
 
+	std::cout << "hier 33" << std::endl;
   	Problem<RF> problem;
   	auto glambda = [&](const auto& x){return problem.g(x);};
   	auto g = Dune::PDELab::makeGridFunctionFromCallable(gv,glambda);
@@ -146,6 +234,7 @@ int main(int argc, char** argv)
   	auto glambda2 = [&](const auto& x){return problem2.g(x);};
   	auto g2 = Dune::PDELab::makeGridFunctionFromCallable(gv,glambda2); 
 
+	std::cout << "hier333" << std::endl;
   	// Fill the coefficient vector
   	Dune::PDELab::interpolate(g,gfs,initial);//z
   	Dune::PDELab::interpolate(g2,gfs,vgl); // vgl = analytic solution at the end point 
@@ -154,7 +243,7 @@ int main(int argc, char** argv)
 
 	//for(auto r =z.begin(); r !=z.end(); ++r){std::cout << "vector" << *r <<std::endl;}
  
-	
+		std::cout << "hier 4" << std::endl;
 
   	// make vector consistent NEW IN PARALLEL
   	Dune::PDELab::istl::ParallelHelper<GFS> grid_helper(gfs);
@@ -186,10 +275,85 @@ int main(int argc, char** argv)
     		> GO;
   	GO go(gfs,cc,gfs,cc,lop,mbe);
 
+	int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+
+	typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType2;
+	/*typedef MBE MatrixType2;
+ 	std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<1>>> transfer;
+	std::shared_ptr<std::vector<MatrixType2*>> transferMatrix;
+	transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1>>>(*gridp);
+	transferMatrix = std::make_shared<std::vector<MatrixType2*>>();
+	for (int i=0; i< 1; i++){
+		transferMatrix->push_back(new MatrixType2()); 
+	}
+	transfer->assembleMatrixHierarchy<MatrixType2>(*transferMatrix);
+	typedef Dune::PDELab::NonoverlappingOperator<GFS, MatrixType2, Z, Z> NOO;
+	NOO novlpOperator(gfs, (*transferMatrix)[0][0]);
+
+	novlpOperator.apply(initial, neu);
+	if(my_rank==1)for(auto r =initial.begin(); r !=initial.end(); ++r){std::cout << " initial " << *r <<std::endl;} 
+	if(my_rank==1)for(auto r =neu.begin(); r !=neu.end(); ++r){std::cout << " neu     " << *r <<std::endl;} 
+
+	Dune::PDELab::DiscreteGridFunction<GFSl, Zl> dgf(gfs_1, v1);
+	Dune::PDELab::interpolate(dgf,gfs_0,v0);*/
+
+	//typedef MBE MatrixType2;
+	Dune::PDELab::interpolate(g,gfs_0,v0);
+	Dune::PDELab::interpolate(g,gfs_1,coarse);
+ 	std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<1>>> transfer;
+	std::shared_ptr<std::vector<MatrixType2*>> transferMatrix;
+	transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1>>>(*gridp);
+	transferMatrix = std::make_shared<std::vector<MatrixType2*>>();
+	for (int i=0; i< 1; i++){
+		transferMatrix->push_back(new MatrixType2()); 
+	}
+	transfer->assembleMatrixHierarchy<MatrixType2>(*transferMatrix);
+
+	/*for(int i=0; i<((*transferMatrix)[0][0]).M(); i++){
+		for(int j=0; j<((*transferMatrix)[0][0]).N(); j++){ 
+			if ((*transferMatrix)[0][0].exists(i,j)) {
+				std::cout << (*transferMatrix)[0][0][i][j][0][0]<< " ";
+			}else { 
+				std::cout << 0 << " ";
+			} 
+		}
+		std::cout << std::endl;
+	}*/
+
+	typedef Dune::PDELab::NonoverlappingOperator<GFSl, MatrixType2, Zl, Zl> NOO;
+	NOO novlpOperator(gfs_0, (*transferMatrix)[0][0]);
+
+	(*transferMatrix)[0][0].mv(Dune::PDELab::Backend::native(v0), Dune::PDELab::Backend::native(v1));
+
+	//novlpOperator.apply(v0, v1);
+	for(auto r =v0.begin(); r !=v0.end(); ++r){std::cout << " initial " << *r <<std::endl;} 
+	for(auto r =v1.begin(); r !=v1.end(); ++r){std::cout << " neu     " << *r <<std::endl;} 
+	for(auto r =coarse.begin(); r !=coarse.end(); ++r){std::cout << " coarse     " << *r <<std::endl;} 
+
+
+	//Dune::PDELab::DiscreteGridFunction<GFSl, Zl> dgf(gfs_1, v1);
+	//Dune::PDELab::interpolate(dgf,gfs_0,v0);
+
+
+	//MBE kk((*transferMatrix)[0]);
+  	/*typedef Dune::PDELab::GridOperator<
+    		GFS,GFS,  // ansatz and test space 
+    		LOP,      // local operator 
+    		MatrixType2,      // matrix backend 
+    		RF,RF,RF, // domain, range, jacobian field type
+    		CC,CC     // constraints for ansatz and test space 
+    		> GO2;
+  	GO2 go2(gfs,cc,gfs,cc,lop,(*transferMatrix)[0]);*/
+
+	//ProlongationOperator<GFSl> pgo(gfs_0, gfs_1);
+	//ProlongationOperator<GFS> prolong(gfs, gfs);
+	//std::cout << "prolong erstellt" << std::endl;
 
 
 
-  	typedef massFEM<Problem<RF>,FEM> LOPm;
+  	typedef massFEM<Problem<RF>,FEM> LOPm;//////////////////////////////////
   	LOPm lopm(problem);
 
   	// Make a global operator
@@ -203,6 +367,8 @@ int main(int argc, char** argv)
   	GOm gom(gfs,cc,gfs,cc,lopm,mbe);
 
 	gom.jacobian_apply(initial, z);
+
+
 
 
 	//auto a = gom.getmat();
@@ -235,7 +401,7 @@ int main(int argc, char** argv)
 	//m += m;
 
 
-	/*using 	Jacobian = Dune::PDELab::Backend::Matrix< MBE, X,X,double >;
+	/*using 	Jacobian = Dune::PDELab::Backend::Matrix< MBE, X,X,double >;////////////////
 	Jacobian j;
 	go.jacobian(x, j);*/
 
@@ -262,7 +428,7 @@ int main(int argc, char** argv)
 
 
   	// Select a linear solver backend NEW IN PARALLEL
-  	typedef Dune::PDELab::ISTLBackend_CG_AMG_SSOR<GO> LS;
+  	typedef Dune::PDELab::ISTLBackend_CG_AMG_SSOR<GO> LS; ///////
   	int verbose=0;
   	if (gfs.gridView().comm().rank()==0) verbose=1;
   	LS ls(gfs,100,verbose);
@@ -278,19 +444,32 @@ int main(int argc, char** argv)
 		//std::exit(0);
 	}
 
+
+           /*// restrict defect to CG subspace
+        CGY cgd(p.M());
+        p.mtv(d,cgd);
+
+
+        // prolongate correction
+        p.mv(cgv,v);
+        dgmatrix.mmv(v,d);*/
+
+
+
+
 	// M um+1 = M um + dt A um+1
 	// (M + dt A) um+1 = M um 
 
 
-	/*vgl -= sol; 
+	vgl -= sol; 
 	for(auto r =vgl.begin(); r !=vgl.end(); ++r){std::cout << "vector " << *r <<std::endl;}
 	//gom.applyscaleadd(-1, sol, vgl);
-	std::cout << "norm" << Dune::PDELab::Backend::native(vgl).infinity_norm() << std::endl;*/
+	std::cout << "norm" << Dune::PDELab::Backend::native(vgl).infinity_norm() << std::endl;
 
 	for(int i=0; i<Dune::PDELab::Backend::native(m).N(); i++)
 				std::cout << "initial " << Dune::PDELab::Backend::native(initial)[i][0] << " num " << Dune::PDELab::Backend::native(sol)[i][0] << " alg " << Dune::PDELab::Backend::native(vgl)[i][0] << std::endl;
 
-	t2 = MPI_Wtime(); 
+	t2 = MPI_Wtime(); ///////////////
 	printf( "Elapsed time is %f\n", t2 - t1 ); 
 
 

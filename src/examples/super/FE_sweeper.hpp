@@ -129,6 +129,7 @@ namespace pfasst
  	const static int dim=1;
 	const int degree =1;
 	int nelements;
+	int nlevel;
 
         typedef Dune::YaspGrid<dim> Grid;
         typedef Grid::ctype DF;
@@ -138,10 +139,14 @@ namespace pfasst
         std::shared_ptr<Grid> gridp;// = std::shared_ptr<Grid>(new Grid(h,n));
 
         //gridp->refineOptions(false); // keep overlap in cells
-        typedef Grid::LeafGridView GV;
+        //typedef Grid::LeafGridView GV;
+	typedef Grid::LevelGridView GV;
         //GV gv=gridp->leafGridView();
-	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
-        
+	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+	typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double,  1> FEM;  
+	//typedef	Dune::PDELab::PkQkLocalFiniteElementMap<GV, DF, double, 1 > FEM;        
+
+
 	 std::shared_ptr<FEM> fem; 
 	//FEM fem(gridp->leafGridView()); //anststatt gv
 
@@ -202,10 +207,12 @@ namespace pfasst
 
   	using X = Dune::PDELab::Backend::Vector<GFS,double>;
   	shared_ptr<X> x;//(gfs,0.0);
+  	shared_ptr<X> y;//(gfs,0.0);
 
   	//represent operator as a matrix
 	typedef typename GO::template MatrixContainer<RF>::Type M;
 	std::shared_ptr<M> m;
+	std::shared_ptr<M> mM;
   	//M m(*(this->M_dune));
 	//mm = std::make_shared<M>(*(this->M_dune));
 

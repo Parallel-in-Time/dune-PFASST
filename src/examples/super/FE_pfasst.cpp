@@ -85,7 +85,8 @@ using std::shared_ptr;
         //gridp->globalRefine(1);
         typedef Grid::LeafGridView GV;
         //GV gv=gridp->leafGridView();
-	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+	typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double, 1> FEM;  
         //FEM fem(gv);
 
   	// Make grid function space

@@ -152,9 +152,11 @@ public:
 
         //gridp->refineOptions(false); // keep overlap in cells
         //gridp->globalRefine(1);
-        typedef Grid::LeafGridView GV;
+        //typedef Grid::LeafGridView GV;
+	typedef Grid::LevelGridView GV;
         //GV gv=gridp->leafGridView();
-	typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
+	typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double, 1> FEM;  
         //FEM fem(gv);
 
   	// Make grid function space
@@ -269,10 +271,13 @@ using pfasst::quadrature::quadrature_factory;
 	double t1, t2; 
 	t1 = MPI_Wtime();
 
+        std::cout << "####################################################################################################################  vor sdc "  <<  std::endl;
         auto sdc = std::make_shared<heat_FE_sdc_t>();
+        std::cout << "####################################################################################################################  nach sdc "  <<  std::endl;
         auto FinEl   = make_shared<fe_manager>(nelements,1); 
+        std::cout << "####################################################################################################################  nach finel "  <<  std::endl;
         auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
-
+        std::cout << "####################################################################################################################  nach sweeper "  <<  std::endl;
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
@@ -288,10 +293,13 @@ using pfasst::quadrature::quadrature_factory;
 
         sdc->setup();
 
+        std::cout << "####################################################################################################################  vor initial "  <<  std::endl;
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
+        std::cout << "####################################################################################################################  vor run "  <<  std::endl;
         sdc->run();
 
+        std::cout << "####################################################################################################################  nach run "  <<  std::endl;
         sdc->post_run();
 
 
@@ -307,7 +315,7 @@ using pfasst::quadrature::quadrature_factory;
         int my_rank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-	if(my_rank==0) for (int i=0; i< nelements/num_pro; i++){
+	if(my_rank==1) for (int i=0; i< nelements/num_pro; i++){
 	  	        std::cout << "##################################################  in schleife "  <<  std::endl;
           std::cout << Dune::PDELab::Backend::native(anfang->data())[i] << " " << Dune::PDELab::Backend::native(naeherung->data())[i] << "   " << Dune::PDELab::Backend::native(exact->data())[i]<< " "  <<  std::endl;
         }
