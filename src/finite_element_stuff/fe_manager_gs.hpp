@@ -104,7 +104,7 @@ const size_t GRID_LEVEL=1;
 	            const unsigned int dim = 2;
         Dune::FieldVector<typename GridType::ctype,dim> L;
         L[0]=1; L[1]=1;
-        typename Dune::array<int,dim> s;
+        typename std::array<int,dim> s;
         std::fill(s.begin(), s.end(), nelements);
         std::bitset<dim> periodic;//(true, true);
         periodic[0]=true; periodic[1]=true;

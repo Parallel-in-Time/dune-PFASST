@@ -15,11 +15,11 @@ using std::shared_ptr;
 using std::vector;
 //#include <dune/functions/functionspacebases/interpolate.hh>
 
-#include <boost/math/constants/constants.hpp>
+//#include <boost/math/constants/constants.hpp>
 
-using boost::math::constants::pi;
-using boost::math::constants::two_pi;
-using boost::math::constants::pi_sqr;
+//using boost::math::constants::pi;
+//using boost::math::constants::two_pi;
+//using boost::math::constants::pi_sqr;
 
 #include <pfasst/globals.hpp>
 #include <pfasst/util.hpp>
