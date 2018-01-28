@@ -38,7 +38,7 @@ namespace pfasst
     public:
       //! @copydoc Sweeper::traits
       using traits = SweeperTrait;
-
+      bool is_coarse;	
     protected:
 
 
@@ -54,6 +54,7 @@ namespace pfasst
       //std::shared_ptr<MatrixType> M_dune;
       MatrixType M_dune;
       MatrixType A_dune;
+
 
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 

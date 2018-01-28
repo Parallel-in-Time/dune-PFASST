@@ -91,7 +91,7 @@ namespace pfasst
 
 	std::cout <<"vor add_transfer" << std::endl;
         mlsdc->add_sweeper(coarse, true);
-        mlsdc->add_sweeper(fine, false);
+        mlsdc->add_sweeper(fine);
         mlsdc->add_transfer(transfer);
 
         std::cout <<"vor set_options" << std::endl;
@@ -106,6 +106,8 @@ namespace pfasst
 	std::cout <<"vor setup" << std::endl;
         mlsdc->setup();
 
+        coarse->is_coarse= true;
+        fine->is_coarse=false;
 
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
@@ -220,15 +222,15 @@ int main(int argc, char** argv)
 
   pfasst::init(argc, argv, sweeper_t::init_opts);
 
-  const size_t nelements = get_value<size_t>("num_elements", 2); //Anzahl der Elemente pro Dimension
+  const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
   //const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0.0;
-  const double dt = get_value<double>("dt", 0.001);
-  double t_end = get_value<double>("tend", 0.001);
+  const double dt = get_value<double>("dt", 2);
+  double t_end = get_value<double>("tend", 6);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");

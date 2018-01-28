@@ -192,8 +192,8 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
     const size_t nnodes = get_value<size_t>("num_nodes",3);
     const QuadratureType quad_type = QuadratureType::GaussRadau;
     const double t_0 = 0.0;
-    const double dt = get_value<double>("dt", 0.025);
-    double t_end = get_value<double>("tend", 0.1);
+    const double dt = get_value<double>("dt", 2);
+    double t_end = get_value<double>("tend", 6);
     size_t nsteps = get_value<size_t>("num_steps", 0);
     if (t_end == -1 && nsteps == 0) {
       ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");

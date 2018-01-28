@@ -284,7 +284,18 @@ namespace pfasst
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
       // rhs = u_0
      
-      M_dune.mv(this->get_states().front()->get_data(), rhs->data());
+      if (is_coarse){
+        rhs->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
+
+          
+      }else{
+        M_dune.mv(this->get_states().front()->get_data(), rhs->data());
+        //M_dune.mv(this->get_states().front()->get_data(), rhs->data());        
+
+        
+      }
+
+
       //rhs->data() = this->get_states().front()->get_data();
 //       ML_CVLOG(6, this->get_logger_id(), "  rhs = u[0]                    = " << to_string(rhs));
 
@@ -462,7 +473,12 @@ namespace pfasst
       const size_t cols = this->get_quadrature()->get_q_mat().cols();
       const size_t rows = this->get_quadrature()->get_q_mat().rows();
       
-      M_dune.mv(this->get_initial_state()->get_data(), this->residuals().back()->data());
+      if (is_coarse){
+        this->residuals().back()->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
+      }else{
+        M_dune.mv(this->get_initial_state()->get_data(), this->residuals().back()->data());
+      }
+      //M_dune.mv(this->get_initial_state()->get_data(), this->residuals().back()->data());
       //this->residuals().back()->data() = this->get_initial_state()->get_data();
       
       shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();	
@@ -490,8 +506,12 @@ namespace pfasst
 	  std::cout <<  "M  " << (M_dune)[i][i] << std::endl;
         }
 	std::cout << "**********************************" << std::endl;*/	
-	
-	M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
+	    if (is_coarse){
+        this->residuals()[m]->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
+    }else{
+        M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
+    }
+	//M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
 
   //       ML_CVLOG(5, this->get_logger_id(), "        -= u["<<m<<"]   = " << to_string(this->get_states()[m]));
 	

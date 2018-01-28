@@ -100,7 +100,7 @@ namespace pfasst
         std::cout << "2 Hallo Welt ich bin Prozess : " << my_rank<< std::endl;
 
         pfasst.add_sweeper(coarse, true);
-        pfasst.add_sweeper(fine, false);
+        pfasst.add_sweeper(fine);
 
 
         pfasst.add_transfer(transfer);
@@ -108,6 +108,8 @@ namespace pfasst
         //pfasst.add_sweeper(coarse, fine);
         std::cout << "4 Hallo Welt ich bin Prozess : " << my_rank<< std::endl;
         pfasst.set_options();
+
+
 
         std::cout << "5 Hallo Welt ich bin Prozess : " << my_rank<< std::endl;
 
@@ -117,6 +119,9 @@ namespace pfasst
         pfasst.status()->max_iterations() = niter;
 
         pfasst.setup();
+
+        coarse->is_coarse= true;
+        fine->is_coarse=false;
 
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
@@ -197,12 +202,12 @@ int main(int argc, char** argv)
   pfasst::Status<double>::create_mpi_datatype();
 
 
-  const size_t nelements = get_value<size_t>("num_elements", 4); //Anzahl der Elemente pro Dimension
+  const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0.0;
-  const double dt = get_value<double>("dt", 0.1);
-  double t_end = get_value<double>("tend", 0.2);
+  const double dt = get_value<double>("dt", 2);
+  double t_end = get_value<double>("tend", 12);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
