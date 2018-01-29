@@ -80,11 +80,13 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 	Dune::BlockVector<Dune::FieldVector<double, NR_OF_COMP> > w = sweeper->initial_state()->data();
 	
 	
-	
-       sdc->run();
+	double t1, t2;
+	t1=MPI_Wtime();	
+        sdc->run();
 
         sdc->post_run();
-
+	t2=MPI_Wtime();
+	printf("time is %f\n", t2-t1);
 
         /*if(BASIS_ORDER==1) {
           auto grid = (*sweeper).get_grid();

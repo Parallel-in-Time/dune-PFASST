@@ -123,16 +123,18 @@ namespace pfasst
         }*/
 
 
+	double t1, t2;
+	t1=MPI_Wtime();
 
 
-
-	      std::cout <<"vor run" << std::endl;
+	     
         //std::cout << "*********************************vor run"<<  std::endl ;
         mlsdc->run();
         //std::cout << "*********************************nach run"<<  std::endl ;
 
         mlsdc->post_run();
-
+	t2=MPI_Wtime();
+	printf("time is %f\n", t2-t1);
 
 
 

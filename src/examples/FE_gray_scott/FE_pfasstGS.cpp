@@ -127,9 +127,15 @@ namespace pfasst
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 
         //std::cout << "vor run Hallo Welt ich bin Prozess : " << my_rank<< std::endl;
-        pfasst.run();
+
+	double t1, t2;
+	t1=MPI_Wtime();	
+        
+	pfasst.run();
         pfasst.post_run();
 
+	t2=MPI_Wtime();
+	printf("time is %f\n", t2-t1);
 
 
         MPI_Barrier(MPI_COMM_WORLD);
