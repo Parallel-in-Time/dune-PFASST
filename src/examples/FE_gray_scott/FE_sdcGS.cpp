@@ -1,3 +1,4 @@
+
 #include <memory>
 #include <iostream>
 
@@ -79,14 +80,21 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 
 	Dune::BlockVector<Dune::FieldVector<double, NR_OF_COMP> > w = sweeper->initial_state()->data();
 	
-	
-	double t1, t2;
-	t1=MPI_Wtime();	
+ 	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
+
         sdc->run();
 
         sdc->post_run();
-	t2=MPI_Wtime();
-	printf("time is %f\n", t2-t1);
+
+ 	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
+
+ 	cout << "  time = " << time1 << " sec." << endl;
+	double t1, t2;
+	t1=MPI_Wtime();	
 
         /*if(BASIS_ORDER==1) {
           auto grid = (*sweeper).get_grid();

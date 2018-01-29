@@ -1,3 +1,4 @@
+
 #include <fenv.h>
 #include <memory>
 #include <stdexcept>
@@ -123,9 +124,9 @@ namespace pfasst
         }*/
 
 
-	double t1, t2;
-	t1=MPI_Wtime();
-
+ 	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
 
 	     
         //std::cout << "*********************************vor run"<<  std::endl ;
@@ -133,12 +134,15 @@ namespace pfasst
         //std::cout << "*********************************nach run"<<  std::endl ;
 
         mlsdc->post_run();
-	t2=MPI_Wtime();
-	printf("time is %f\n", t2-t1);
 
 
+ 	time1 += clock() - tstart;     // end
 
-        ofstream ff;
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
+
+ 	cout << "  time = " << time1 << " sec." << endl;
+
+        /*ofstream ff;
         stringstream sss;
         sss << nelements << "_iter";
         string st = "solution_mlsdc/" + sss.str() + ".dat";
@@ -148,7 +152,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
         //return mlsdc;
         /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
