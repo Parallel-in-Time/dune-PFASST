@@ -42,7 +42,7 @@ namespace pfasst
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;*/
 
       using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, 1, DIMENSION>>;
-      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>; //2
       using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
@@ -66,7 +66,8 @@ namespace pfasst
         auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2(), 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         
-        
+        coarse->is_coarse= true;
+        fine->is_coarse=false;
         //auto coarse = std::make_shared<sweeper_t>(FinEl, 1);
         //coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         //auto fine = std::make_shared<sweeper_t>(FinEl, 0);
