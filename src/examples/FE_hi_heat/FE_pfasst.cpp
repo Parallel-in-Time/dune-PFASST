@@ -139,7 +139,7 @@ namespace pfasst
         auto exact     = fine->exact(t_end)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
-        }
+        }*/
 
         std::cout << "******************************************* " << std::endl;
         std::cout << " " << std::endl;
@@ -177,8 +177,8 @@ namespace pfasst
         
         
         
-        }*/
-      }
+        }
+      //}
     }  // ::pfasst::examples::heat_FE
   } // ::pfasst::examples
 }  // ::pfasst

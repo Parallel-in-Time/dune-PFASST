@@ -83,32 +83,9 @@ namespace pfasst
         auto exact     = sweeper->exact(t_end)->data();
         for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        }*/
 
-        //if(BASIS_ORDER==1) {
-	    const int DIMENSION=2;
 
-	    Dune::FieldVector<double,DIMENSION> h = {1,1};
-	    
-	      
-	    array<int,DIMENSION> n;
-	    std::fill(n.begin(), n.end(), nelements);
-
-	    auto grid  = std::make_shared<GridType>(h,n);
-
-          //auto grid = (*sweeper).get_grid();
-          typedef GridType::LeafGridView GridView;
-          GridType::LeafGridView gridView = grid->leafGridView();
-          Dune::VTKWriter<GridView> vtkWriter(gridView);
-          typedef Dune::BlockVector<Dune::FieldVector<double, 1> > VectorType;
-          VectorType x = sweeper->get_end_state()->data();
-          VectorType y = sweeper->exact(t_end)->data();
-          VectorType z = sweeper->initial_state()->data();
-          //vtkWriter.addVertexData(x, "fe_solution");
-          //vtkWriter.addVertexData(y, "exact_solution");
-          //vtkWriter.addVertexData(z, "initial_data");
-          vtkWriter.write("heat_result");
-        //}
 
         sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
 	
@@ -116,15 +93,15 @@ namespace pfasst
         std::cout << "Error " << sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm() <<  std::endl ;
 
 
-	  ofstream f;
-	  stringstream ss;
-	  ss << nelements;
-	  string s = "solution_sdc/" + ss.str() + ".dat";
-	  f.open(s, ios::app | std::ios::out );
-	  f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm()<< endl;
-	  //f << nelements << " " << dt << " "<< x.infinity_norm()<< endl;
+	ofstream f;
+	stringstream ss;
+	ss << nelements;
+	string s = "solution_sdc/" + ss.str() + ".dat";
+	f.open(s, ios::app | std::ios::out );
+	f << nelements << " " << dt << " " << sweeper->states()[sweeper->get_states().size()-1]->get_data().infinity_norm()<< endl;
 
-	  f.close();
+
+	f.close();
 
         ofstream ff;
         stringstream sss;
@@ -136,7 +113,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();*/
+        ff.close();
 
 
 
