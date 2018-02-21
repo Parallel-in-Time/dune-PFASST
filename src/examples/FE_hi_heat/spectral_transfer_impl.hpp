@@ -48,11 +48,11 @@ namespace pfasst
             TransferTraits>::set_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> interpolate, Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> restrict)
     {
         
-        std::cout << "set matrix " << std::endl;
+        //std::cout << "set matrix " << std::endl;
 	    interpolate_matrix = interpolate;
         
         
-        for (int i=0; i< interpolate_matrix.N(); i++){
+        /*for (int i=0; i< interpolate_matrix.N(); i++){
 	      for (int j=0; j< interpolate_matrix.M(); j++){
             if(interpolate_matrix.exists(i,j)){	
                 std::cout<< interpolate_matrix[i][j] << " " ;
@@ -62,7 +62,7 @@ namespace pfasst
 
 	      }
 	      std::cout<< ""<< std::endl;
-        }
+        }*/
         //std::exit(0);
 	    
 	    restrict_matrix   = restrict;

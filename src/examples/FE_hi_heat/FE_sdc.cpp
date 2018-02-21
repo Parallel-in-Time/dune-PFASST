@@ -64,25 +64,51 @@ namespace pfasst
 
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
+	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
         sdc->run();
 
         sdc->post_run();
+ 	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
+
+ 	cout << "  time = " << time1 << " sec." << endl;
 
 
-        /*if(BASIS_ORDER==1) {
-          auto grid = (*sweeper).get_grid();
+
+        /*std::cout <<  "fein" << std::endl;
+        auto naeherung = sweeper->get_end_state()->data();
+        auto exact     = sweeper->exact(t_end)->data();
+        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+          std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }
+
+        //if(BASIS_ORDER==1) {
+	    const int DIMENSION=2;
+
+	    Dune::FieldVector<double,DIMENSION> h = {1,1};
+	    
+	      
+	    array<int,DIMENSION> n;
+	    std::fill(n.begin(), n.end(), nelements);
+
+	    auto grid  = std::make_shared<GridType>(h,n);
+
+          //auto grid = (*sweeper).get_grid();
           typedef GridType::LeafGridView GridView;
           GridType::LeafGridView gridView = grid->leafGridView();
-          VTKWriter<GridView> vtkWriter(gridView);
+          Dune::VTKWriter<GridView> vtkWriter(gridView);
           typedef Dune::BlockVector<Dune::FieldVector<double, 1> > VectorType;
           VectorType x = sweeper->get_end_state()->data();
           VectorType y = sweeper->exact(t_end)->data();
           VectorType z = sweeper->initial_state()->data();
-          vtkWriter.addVertexData(x, "fe_solution");
-          vtkWriter.addVertexData(y, "exact_solution");
-          vtkWriter.addVertexData(z, "initial_data");
+          //vtkWriter.addVertexData(x, "fe_solution");
+          //vtkWriter.addVertexData(y, "exact_solution");
+          //vtkWriter.addVertexData(z, "initial_data");
           vtkWriter.write("heat_result");
-        }*/
+        //}
 
         sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
 	
@@ -110,7 +136,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
 
 
 

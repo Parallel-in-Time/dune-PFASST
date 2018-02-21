@@ -49,6 +49,7 @@ namespace pfasst
 
         //this->FinEl = FinEl;
         this->basis = basis;
+
 	    
         assembleProblem(basis, this->A_dune, this->M_dune);
 
@@ -139,14 +140,14 @@ namespace pfasst
             return solution * std::exp(-t * dim * PI*PI * nu);
         };
 
-        auto N_x = [t](const InVectorType &x){
+        /*auto N_x = [t](const InVectorType &x){
             
             return x;
 
-        };
+        };*/
 
-        VectorType x_node;
-        interpolate(*basis, x_node, N_x);
+        //VectorType x_node;
+        //interpolate(*basis, x_node, N_x);
 
         interpolate(*basis, result->data(), exact_solution);
        
@@ -424,9 +425,10 @@ namespace pfasst
 
         Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
-                              1e-10, // desired residual reduction factor
+                              1e-12, // desired residual reduction factor
                               5000,    // maximum number of iterations
                               0);    // verbosity of the solver
+
 
         Dune::InverseOperatorResult statistics ;
 

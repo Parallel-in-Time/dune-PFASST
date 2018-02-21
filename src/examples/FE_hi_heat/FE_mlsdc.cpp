@@ -41,8 +41,8 @@ namespace pfasst
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;*/
 
-      using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, 1, DIMENSION>>;
-      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+      using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>>;
+      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>>;
       using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
@@ -82,6 +82,10 @@ namespace pfasst
            fine->set_abs_residual_tol(1e-10);
            coarse->set_abs_residual_tol(1e-10);
 	
+
+           fine->is_coarse=false;
+           coarse->is_coarse=true;
+
         mlsdc->add_sweeper(coarse, true);
         mlsdc->add_sweeper(fine);
 
@@ -103,7 +107,7 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 
-        for (int i=0; i< fine->initial_state()->data().size(); i++){
+        /*for (int i=0; i< fine->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte feiner Sweeper: " << " " << fine->initial_state()->data()[i] << std::endl;
         }
 
@@ -111,18 +115,24 @@ namespace pfasst
 
         for (int i=0; i< coarse->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte grober Sweeper: " << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }
+        }*/
 
 
 
-
+	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
         mlsdc->run();
 
 
         mlsdc->post_run();
+ 	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
 
+ 	cout << "  time = " << time1 << " sec." << endl;
 
-        std::cout <<  "fein" << std::endl;
+        /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
@@ -159,7 +169,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
 
 
 

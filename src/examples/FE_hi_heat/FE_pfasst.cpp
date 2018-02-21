@@ -39,8 +39,15 @@ typedef DuneEncapsulation<double, double, 1>                     EncapType;
 typedef Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>> SweeperType;
 
 
-typedef pfasst::transfer_traits<SweeperType, SweeperType, 1>       TransferTraits;
-typedef SpectralTransfer<TransferTraits>                           TransferType;
+//typedef pfasst::transfer_traits<SweeperType, SweeperType, 1>       TransferTraits;
+//typedef SpectralTransfer<TransferTraits>                           TransferType;
+
+
+
+
+
+
+
 
 
 namespace pfasst
@@ -49,6 +56,12 @@ namespace pfasst
   {
     namespace heat_FE
     {
+
+      using sweeper_t_coarse = Heat_FE<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>>;
+      using sweeper_t_fine = Heat_FE<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>>;
+      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
+      using TransferType = SpectralTransfer<transfer_traits_t>;
+
       void run_pfasst(const size_t nelements, const size_t basisorder, const size_t dim, const size_t& nnodes, const pfasst::quadrature::QuadratureType& quad_type,
                       const double& t_0, const double& dt, const double& t_end, const size_t& niter)
       {
@@ -63,10 +76,13 @@ namespace pfasst
 	
 	auto FinEl = make_shared<fe_manager>(nelements, 2);
 
-        auto coarse = std::make_shared<SweeperType>(FinEl, 1);
+        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<SweeperType>(FinEl, 0);
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2(), 0);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+        
+
+
 
         auto transfer = std::make_shared<TransferType>();
 
@@ -79,10 +95,11 @@ namespace pfasst
 	
 
         pfasst.add_transfer(transfer);
-	
+	           fine->is_coarse=false;
+           coarse->is_coarse=true;
 	
 	pfasst.add_sweeper(coarse, true);
-    pfasst.add_sweeper(fine);
+    	pfasst.add_sweeper(fine);
         
 
         pfasst.set_options();
@@ -98,16 +115,25 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 
+
+	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
         pfasst.run();
         pfasst.post_run();
 
-
-
         MPI_Barrier(MPI_COMM_WORLD);
+ 	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
+
+ 	cout << "  time = " << time1 << " sec." << endl;
+
+
 
 
         
-        if(my_rank==num_pro-1) {
+        /*if(my_rank==num_pro-1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
@@ -151,7 +177,7 @@ namespace pfasst
         
         
         
-        }
+        }*/
       }
     }  // ::pfasst::examples::heat_FE
   } // ::pfasst::examples

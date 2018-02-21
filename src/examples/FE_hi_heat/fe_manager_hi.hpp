@@ -50,21 +50,21 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t* n_dof;
 	  size_t n_levels;
 
-	  typedef Dune::YaspGrid<1> GridType; 
+	  typedef Dune::YaspGrid<2> GridType; 
       typedef GridType::LeafGridView GridView;
 	  //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>;
       
-      typedef DuneFunctionsBasis<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,1>> B11;
-      typedef DuneFunctionsBasis<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,2>> B22;
+      typedef DuneFunctionsBasis<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,COARSE_ORDER>> B11;
+      typedef DuneFunctionsBasis<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,BASE_ORDER>> B22;
 
-      typedef Dune::Functions::PQkNodalBasis<GridType::LeafGridView,1> B1;
-      typedef Dune::Functions::PQkNodalBasis<GridType::LeafGridView,2> B2;      
+      typedef Dune::Functions::PQkNodalBasis<GridType::LeafGridView,COARSE_ORDER> B1;
+      typedef Dune::Functions::PQkNodalBasis<GridType::LeafGridView,BASE_ORDER> B2;      
 
       std::shared_ptr<GridType> grid;
 	  
 
 
-	  std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<1>>> transfer;
+	  std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<2>>> transfer;
 	  std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 
 		    
@@ -83,9 +83,9 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    n_dof = new size_t [nlevels];
 
 	
-	    const int DIMENSION=1;
+	    const int DIMENSION=2;
 
-	    Dune::FieldVector<double,DIMENSION> h = {1};
+	    Dune::FieldVector<double,DIMENSION> h = {1,1};
 	    
 	      
 	    array<int,DIMENSION> n;
@@ -130,7 +130,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t get_nlevel() {return n_levels;}
 	  
 	  void create_transfer(GridType::LeafGridView gridView){
-	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1>>>(*grid);
+	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<2>>>(*grid);
 	    transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	      transferMatrix->push_back(new MatrixType()); 
 	    /*transfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
