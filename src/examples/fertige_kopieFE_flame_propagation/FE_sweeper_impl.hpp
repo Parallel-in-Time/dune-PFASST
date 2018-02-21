@@ -7,7 +7,7 @@
 #include <cmath>
 #include <complex>
 #include <functional>
-#include <memory>
+//#include <memory>
 #include <utility>
 #include <vector>
 using std::shared_ptr;
@@ -27,7 +27,7 @@ using boost::math::constants::pi_sqr;
 #include <pfasst/config.hpp>
 
 #include <iostream>
-#include <c++/4.8/memory>
+//#include <c++/4.8/memory>
 
 namespace pfasst
 {

@@ -109,11 +109,22 @@ namespace pfasst
 	
 
 
+	std::cout << "im interpolate " << interpolate_matrix.N() << " "<< interpolate_matrix.M() <<" "<< coarse->data().size() <<" "<< fine->data().size() <<std::endl;
+	//std::exit(0);
+	std::cout <<  "interpolation grob" <<  std::endl;
+        for (int i=0; i< coarse->data().size(); i++){
+          std::cout <<  coarse->data()[i] <<  std::endl;
+        }
+        std::cout <<  "interpolation " <<  std::endl;
 
         interpolate_matrix.mv(coarse->data(), fine->data());
         //Transfer_matrix.mv(coarse->data(), fine->data());
 
-
+	std::cout <<  "interpolation fein" <<  std::endl;
+        for (int i=0; i< fine->data().size(); i++){
+          std::cout <<  fine->data()[i] <<  std::endl;
+        }
+        std::cout <<  "interpolation " <<  std::endl;
         
       }
     }

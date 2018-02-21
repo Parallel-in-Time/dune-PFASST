@@ -83,16 +83,11 @@ namespace pfasst
 //     }
   }
 
-  template<class SweeperTrait, typename Enabled>
+  /*template<class SweeperTrait, typename Enabled>
   void
   IMEX<SweeperTrait, Enabled>::predict()
   {
     
-    	/*std::cout <<  "predict " << std::endl;
-        for (int i=0; i< this->get_end_state()->data().size(); i++){
-          std::cout <<  this->get_end_state()->data()[i] << std::endl;
-        }*/
-
 
     Sweeper<SweeperTrait, Enabled>::predict();
 
@@ -119,44 +114,75 @@ namespace pfasst
     for (size_t m = 0; m < num_nodes; ++m) {
       ML_CVLOG(1, this->get_logger_id(), "propagating from t["<<m<<"]=" << dt << " * " << nodes[m]
                           << " to t["<<(m+1)<<"]=" << dt << " * " << nodes[m+1]);
-//       ML_CVLOG(2, this->get_logger_id(), LOG_FLOAT << "  u["<<m<<"] = " << to_string(this->get_states()[m]));
 
-      // compute right hand side for implicit solve (i.e. the explicit part of the propagation)
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
-      //std::cout << "vor mv" << std::endl;
-      M_dune.mv(this->get_states()[m]->get_data(), rhs->data());
-      //std::cout << "nach mv" << std::endl;
-      //rhs->data() = this->get_states()[m]->get_data();
-//       ML_CVLOG(2, this->get_logger_id(), "  rhs = u["<<m<<"]                    = " << to_string(rhs));
-      rhs->scaled_add(dt * this->_q_delta_expl(m + 1, m), this->_expl_rhs[m]);
-//       ML_CVLOG(2, this->get_logger_id(), "     += dt * QE_{"<<(m+1)<<","<<m<<"} * f_ex["<<m<<"] = "
-//                           << LOG_FIXED << dt << " * " << this->_q_delta_expl(m + 1, m) << " * "
-//                           << LOG_FLOAT << to_string(this->_expl_rhs[m]));
-//       ML_CVLOG(2, this->get_logger_id(), "                                = " << to_string(rhs));
 
-      // solve the implicit part
+      M_dune.mv(this->get_states()[m]->get_data(), rhs->data());
+
+      rhs->scaled_add(dt * this->_q_delta_expl(m + 1, m), this->_expl_rhs[m]);
+
       ML_CVLOG(2, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
-      //afangswert setzen
+
       this->states()[m + 1]->data() = this->states()[m + 1]->get_data();
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m + 1, m + 1), rhs);
-//       ML_CVLOG(2, this->get_logger_id(), "  u["<<(m+1)<<"] = " << to_string(this->get_states()[m + 1]));
-    	/*std::cout <<  "predict nach impl solve" << std::endl;
-        for (int i=0; i< this->get_end_state()->data().size(); i++){
-          std::cout <<  this->get_end_state()->data()[i] << std::endl;
-        }*/
+
 
 
       // reevaluate the explicit part with the new solution value
       tm += dt * this->_q_delta_expl(m + 1, m);
       this->_expl_rhs[m + 1] = this->evaluate_rhs_expl(tm, this->get_states()[m + 1]);
 
-//       ML_CVLOG(1, this->get_logger_id(), LOG_FIXED << "  ==> values at t["<<(m+1)<<"]=" << (dt * nodes[m+1]));
-//       ML_CVLOG(1, this->get_logger_id(), LOG_FLOAT << "         u["<<m+1<<"]: " << to_string(this->get_states()[m + 1]));
-//       ML_CVLOG(2, this->get_logger_id(), LOG_FLOAT << "      f_ex["<<m+1<<"]: " << to_string(this->_expl_rhs[m + 1]));
-//       ML_CVLOG(2, this->get_logger_id(), LOG_FLOAT << "      f_im["<<m+1<<"]: " << to_string(this->_impl_rhs[m + 1]));
+
       ML_CVLOG(1, this->get_logger_id(), "");
     }
+  }*/
+
+  template<class SweeperTrait, typename Enabled>
+  void
+  IMEX<SweeperTrait, Enabled>::predict()
+  {
+    
+
+    Sweeper<SweeperTrait, Enabled>::predict();
+
+    assert(this->get_quadrature() != nullptr);
+    assert(this->get_status() != nullptr);
+
+    ML_CLOG_IF(this->get_quadrature()->left_is_node(), WARNING, this->get_logger_id(),
+      "IMEX Sweeper for quadrature nodes containing t_0 not implemented and tested.");
+
+    const typename traits::time_t t = this->get_status()->get_time();
+    const typename traits::time_t dt = this->get_status()->get_dt();
+
+    assert(this->get_quadrature() != nullptr);
+    auto nodes = this->get_quadrature()->get_nodes();
+    nodes.insert(nodes.begin(), typename traits::time_t(0.0));
+    const size_t num_nodes = this->get_quadrature()->get_num_nodes();
+
+    this->_impl_rhs.front() = this->evaluate_rhs_impl(t, this->get_states().front());
+
+    ML_CLOG(INFO, this->get_logger_id(),  "Predicting from t=" << t << " over " << num_nodes << " nodes"
+                          << " to t=" << (t + dt) << " (dt=" << dt << ")");
+    typename traits::time_t tm = t;
+
+    for (size_t m = 0; m < num_nodes; ++m) {
+      this->states()[m + 1]->data() = this->states()[m]->data();
+      /*for (size_t i = 0; i < this->states()[m]->get_data().size(); i++) {
+		std::cout << this->states()[m]->data()[i][0] << " " << this->states()[m]->data()[i][1] << " predict " <<  std::endl; 
+      }*/ 	
+      this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(tm, this->get_states()[m + 1]);
+      tm += dt *  (nodes[m+1] - nodes[m]);
+
+      ML_CVLOG(1, this->get_logger_id(), "");
+
+    }
+
   }
+
+
+
+
+
 
   template<class SweeperTrait, typename Enabled>
   void

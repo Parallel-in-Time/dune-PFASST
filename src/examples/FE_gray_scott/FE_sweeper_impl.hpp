@@ -489,7 +489,6 @@ namespace pfasst
 	
 	
 	
-	
 
         Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(M_dtA_dune);
 
@@ -539,8 +538,11 @@ namespace pfasst
           //std::cout << "f_solve " << f->data()[i] << std::endl;
         }
         
-        
-        
+	/*std::cout << "#############################################################################" << std::endl;        
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+		std::cout << u->data()[i][1] << std::endl; 
+        } 
+	std::cout << "#############################################################################" << std::endl;*/
         
         
         //evaluate_rhs_impl(0,u);

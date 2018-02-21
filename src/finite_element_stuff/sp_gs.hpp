@@ -52,8 +52,9 @@ namespace pfasst
 
         typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,2,2> > MatrixType;
         Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> interpolate_matrix;
+        Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> interpolate_matrix2;
         Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> restrict_matrix;
-
+        Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> restrict_matrix2;
 
       public:
 

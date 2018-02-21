@@ -352,7 +352,7 @@ namespace pfasst
     //encap::mat_apply(result, dt, q_mat, this->_impl_rhs, false);
 
     
-    std::cout << "groesse von rhs_impl " << this->_impl_rhs[0]->get_data().size() << std::endl;
+    //std::cout << "groesse von rhs_impl " << this->_impl_rhs[0]->get_data().size() << std::endl;
     return result;
   }
   
@@ -367,7 +367,7 @@ namespace pfasst
     auto result = encap::mat_mul_vec(dt, q_mat, this->_impl_rhs_restrict);
     
     
-    std::cout << "groesse von rhs_impl " << this->_impl_rhs[0]->get_data().size() << std::endl;
+    //std::cout << "groesse von rhs_impl " << this->_impl_rhs[0]->get_data().size() << std::endl;
     return result;
   }
   

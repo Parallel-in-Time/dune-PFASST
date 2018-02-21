@@ -208,9 +208,9 @@ void assembleProblem(const Basis &basis,
   }
 
 
-  //auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.9999 or x[1]<1e-8 or x[1]>0.9999);}; //ruth_dim
+  auto isDirichlet = [] (auto x) {return (x[0]<1e-12 or x[0]>0.999999999999 or x[1]<1e-12 or x[1]>0.999999999999);}; //ruth_dim
   //auto isDirichlet = [] (auto x) {return (x[0]<1e-8 or x[0]>0.999999);};
-  auto isDirichlet = [] (auto x) {return (x[0]<1e-9 or x[0]>1-1e-9 );};
+  //auto isDirichlet = [] (auto x) {return (x[0]<1e-12 or x[0]>1-1e-12 );};
 
   std::vector<char> dirichletNodes;
   interpolate(*basis, dirichletNodes, isDirichlet);
