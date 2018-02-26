@@ -142,21 +142,9 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 	  
 	}*/
 
-        /*std::cout <<  "ergebnisse " << std::endl;
-        auto naeherung = sweeper->get_end_state()->data();
-        auto exact     = sweeper->exact(t_end)->data();
-        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
-          std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
-         
-        
-        
-      sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
-      std::cout << "Fehler " << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;*/
 
 
-
-        /*ofstream ff;
+        ofstream ff;
         stringstream sss;
         sss << nelements << "_iter";
         string st = "solution_sdc/" + sss.str() + ".dat";
@@ -165,18 +153,10 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
         for (const auto &line : iter) {
           ff << dt <<"  " << line << std::endl;
         }
+        ff << "line" << std::endl;
 
-        ff.close();*/
-
-/*	ofstream f;
-	stringstream ss;
-	ss << nelements;
-	string s = "results_reaction_diffusion2/" + ss.str() + ".dat";
-	f.open(s, ios::app | std::ios::out );
-	f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->norm0() << endl;
-	f.close();
-	
-*/	
+        ff.close();
+	std::cout << "test" << std::endl;
         return sdc;
       }
     }

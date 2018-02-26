@@ -142,7 +142,7 @@ namespace pfasst
 
  	cout << "  time = " << time1 << " sec." << endl;
 
-        /*ofstream ff;
+        ofstream ff;
         stringstream sss;
         sss << nelements << "_iter";
         string st = "solution_mlsdc/" + sss.str() + ".dat";
@@ -152,7 +152,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();*/
+        ff.close();
         //return mlsdc;
         /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();

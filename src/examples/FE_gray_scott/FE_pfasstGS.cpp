@@ -140,11 +140,11 @@ namespace pfasst
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        /*for (int i=0; i<num_pro; i++){
+        for (int i=0; i<num_pro; i++){
           if(my_rank==i){
             ofstream ff;
             stringstream sss;
-            sss << nelements << "_iter";
+            sss << num_pro << "pro_iter";
             string st = "solution_pfasst/" + sss.str() + ".dat";
             ff.open(st, ios::app | std::ios::out );
             auto iter = pfasst._it_per_step;
@@ -157,7 +157,7 @@ namespace pfasst
           }
           MPI_Barrier(MPI_COMM_WORLD);
 
-        }*/
+        }
 
         //if(my_rank==num_pro-1) {
           /*auto anfang    = fine->exact(0)->data();

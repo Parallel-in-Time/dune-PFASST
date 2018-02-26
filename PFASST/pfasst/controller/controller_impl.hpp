@@ -231,7 +231,7 @@ namespace pfasst
     }
 
     _it_per_step.push_back("Number Iterations: " + std::to_string(this->get_status()->get_iteration()));
-
+    std::cout << "iter per step ############################################################################ " << std::to_string(this->get_status()->get_iteration()) << std::endl;	
     if (new_time > this->get_status()->get_t_end() && !almost_equal(new_time, this->get_status()->get_t_end())) {
       ML_CLOG(WARNING, this->get_logger_id(), "Not advancing " << num_steps
                                            << ((num_steps > 1) ? " time steps " : " time step ")
