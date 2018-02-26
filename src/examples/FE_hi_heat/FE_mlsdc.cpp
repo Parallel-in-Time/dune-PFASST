@@ -137,7 +137,7 @@ namespace pfasst
         auto exact     = fine->exact(t_end)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        }*/
 
 
         std::cout << "******************************************* " <<  std::endl ;
@@ -169,7 +169,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();*/
+        ff.close();
 
 
 
