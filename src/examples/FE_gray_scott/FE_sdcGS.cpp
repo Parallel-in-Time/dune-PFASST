@@ -93,8 +93,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
  	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
 
  	cout << "  time = " << time1 << " sec." << endl;
-	double t1, t2;
-	t1=MPI_Wtime();	
+
 
 
 

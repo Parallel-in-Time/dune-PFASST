@@ -151,7 +151,7 @@ namespace pfasst
             for (const auto &line : iter) {
               ff << my_rank << " " << line << std::endl;
             }
- 	    ff << "  time = " << time1 << endl;
+ 	    ff << "  time = " << t2-t1 << endl;
             ff.close();
 
           }
