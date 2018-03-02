@@ -91,7 +91,7 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 
-        for (int i=0; i< fine->initial_state()->data().size(); i++){
+        /*for (int i=0; i< fine->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte feiner Sweeper: " << " " << fine->initial_state()->data()[i] << std::endl;
         }
 
@@ -99,23 +99,29 @@ namespace pfasst
 
         for (int i=0; i< coarse->initial_state()->data().size(); i++){
           std::cout << "Anfangswerte grober Sweeper: " << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }
+        }*/
 
 
 
-
+ 	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
         mlsdc->run();
 
 
         mlsdc->post_run();
+	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
 
+ 	cout << "  time = " << time1 << " sec." << endl;
 
-        std::cout <<  "fein" << std::endl;
+        /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        }*/
 
 
         std::cout << "******************************************* " <<  std::endl ;

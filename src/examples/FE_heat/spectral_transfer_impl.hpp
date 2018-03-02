@@ -59,14 +59,20 @@ namespace pfasst
 	    
 	    restrict_matrix   = restrict;
 
-	    for (int i=0; i< restrict_matrix.N(); i++){
-	      for (int j=0; j< restrict_matrix.M(); j++){
-		if(restrict_matrix.exists(i,j)){	
-		  if (restrict_matrix[i][j]==0.5 ) restrict_matrix[i][j]=0;
-		}
+        for (int i=0; i< restrict_matrix.N(); i++){
+          for (int j=0; j< restrict_matrix.M(); j++){
+            if(restrict_matrix.exists(i,j)){
+              /*auto block = Transfer_matrix2[i][j];
+              for(int k =0; k < 2; k++){
+                if (block[k][k]==0.5 ) block[k][k]=0;
+              }*/
+              if ((restrict_matrix[i][j])[0][0]==0.5 ) (restrict_matrix[i][j])[0][0]=0;
+              if ((restrict_matrix[i][j])[1][1]==0.5 ) (restrict_matrix[i][j])[1][1]=0;
+            }
 
-	      }
-	    }
+          }
+          //std::cout <<  "" <<  std::endl;
+        }
     }
 
 
@@ -155,6 +161,8 @@ namespace pfasst
         }
         std::cout <<  "restriction " <<  std::endl;*/
 	restrict_matrix.mtv(fine->data(), coarse->data());
+        coarse->data() *= 0.25;
+
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
     /*std::cout <<  "restriction grob" <<  std::endl;

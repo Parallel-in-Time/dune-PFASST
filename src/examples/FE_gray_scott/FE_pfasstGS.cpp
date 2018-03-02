@@ -144,7 +144,7 @@ namespace pfasst
           if(my_rank==i){
             ofstream ff;
             stringstream sss;
-            sss << num_pro <<"_" << nelements*2 << "_" << dt << "_" << t_end;
+
             string st = "solution_pfasst/" + sss.str() + ".dat";
             ff.open(st, ios::app | std::ios::out );
             auto iter = pfasst._it_per_step;

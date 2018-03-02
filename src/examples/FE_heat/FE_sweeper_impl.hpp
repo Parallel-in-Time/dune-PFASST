@@ -1,6 +1,6 @@
 #include "FE_sweeper.hpp"
 
-#include "assemble.hpp"
+#include "../../finite_element_stuff/assemble.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -20,6 +20,11 @@ using std::vector;
 #include <pfasst/config.hpp>
 
 #include <iostream>
+
+
+
+#include <dune/istl/superlu.hh>
+#include "/home/ruth/SuperLU_5.2.1/SRC/slu_ddefs.h"
 
 namespace pfasst
 {
@@ -106,6 +111,9 @@ namespace pfasst
       shared_ptr<typename SweeperTrait::encap_t>
       Heat_FE<SweeperTrait, Enabled>::exact(const typename SweeperTrait::time_t& t)
       {
+
+
+
         auto result = this->get_encap_factory().create();
 
         const auto dim = DIMENSION;
@@ -113,23 +121,18 @@ namespace pfasst
 
         auto exact_solution = [t, nu, dim](const InVectorType &x){
             double solution=1.0;
-            for(int i=0; i<dim; i++){solution *= std::sin(PI * x[i]);}
-            return solution * std::exp(-t * dim * PI*PI * nu);
+            for(int i=0; i<dim; i++){solution *= std::sin(4 * PI * x[i]);}
+            return solution * std::exp(-t * 32 * PI*PI * nu);
         };
 
-        auto N_x = [t](const InVectorType &x){
-            
-            return x;
-
-        };
-
-        VectorType x_node;
-        interpolate(*basis, x_node, N_x);
 
         interpolate(*basis, result->data(), exact_solution);
        
 
         return result;
+
+
+
       }
 
       template<class SweeperTrait, typename Enabled>
@@ -388,9 +391,18 @@ namespace pfasst
 
         Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
-                              1e-10, // desired residual reduction factor
-                              5000,    // maximum number of iterations
+                              1e-4, // desired residual reduction factor
+                              8000,    // maximum number of iterations
                               0);    // verbosity of the solver
+
+	/*Dune::BiCGSTABSolver<VectorType> cg(linearOperator,
+                                                    preconditioner,
+                                                    1.e-12, // desired residual reduction factor
+                                                    500, // maximum number of iterations
+                                                    0); // verbosity of the solver*/
+
+
+	//Dune::SuperLU<MatrixType> superLUsolver(M_dtA_dune);
 
         Dune::InverseOperatorResult statistics ;
 

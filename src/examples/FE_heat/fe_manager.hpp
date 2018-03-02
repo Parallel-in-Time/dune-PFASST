@@ -52,7 +52,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t* n_dof;
 	  size_t n_levels;
 
-	  typedef Dune::YaspGrid<1> GridType; 
+	  typedef Dune::YaspGrid<2> GridType; 
 	  //typedef GridType::LeafGridView GridView;
           typedef GridType::LevelGridView GridView;
 	  using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>;// BASE_ORDER>;
@@ -65,7 +65,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  //std::shared_ptr<std::vector<std::shared_ptr<BasisFunction>>> basis; 
 	  //std::vector<std::shared_ptr<BasisFunction> > fe_basis;
 
-	  std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<1>>> transfer;
+	  std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<2>>> transfer;
 	  std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 	  //MatrixType m1;
 	  //std::vector<MatrixType> m;
@@ -87,19 +87,23 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    n_dof = new size_t [nlevels];
 
 	
-	    const int DIMENSION=1;
-	    //if(DIMENSION==2){
-	      //Dune::FieldVector<double,DIMENSION> h = {1, 1};
-	    //}
-	    Dune::FieldVector<double,DIMENSION> h = {1};
+	    const int DIMENSION=2;
+
+	
+	    Dune::FieldVector<double,DIMENSION> h = {1,1};
 	    
 	      
 	    array<int,DIMENSION> n;
 	    std::fill(n.begin(), n.end(), nelements);
 
-	    this->grid  = std::make_shared<GridType>(h,n);
-	    //this->basis = std::make_shared<std::vector<BasisFunction*>>(nlevels);
-	    //std::vector<std::shared_ptr<BasisFunction>> test  
+
+	    std::bitset<DIMENSION> periodic;
+            periodic[0]=true; periodic[1]=true;
+            this->grid  = std::make_shared<GridType>(h,n,periodic,0);
+	    //this->grid  = std::make_shared<GridType>(h,n);
+
+
+
 	    
 	    
 	    //std::cout << "***** Anzahl der finiten Elemente " << nelements << std::endl;
@@ -163,7 +167,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t get_nlevel() {return n_levels;}
 	  
 	  void create_transfer(){
-	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1>>>(*grid);
+	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<2>>>(*grid);
 	    transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	    for (int i=0; i< n_levels-1; i++){
 	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??

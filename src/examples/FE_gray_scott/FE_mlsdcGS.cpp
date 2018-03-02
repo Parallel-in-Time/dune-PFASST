@@ -155,6 +155,7 @@ namespace pfasst
         }
  	ff << "  time = " << time1 << endl;
 
+
         ff << "-----------------------------------------------  " << std::endl;
         ff.close();
         

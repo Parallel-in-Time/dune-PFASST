@@ -101,22 +101,30 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 
+ 	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
+
         pfasst.run();
         pfasst.post_run();
 
 
 
         MPI_Barrier(MPI_COMM_WORLD);
+	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
 
+ 	cout << "  time = " << time1 << " sec." << endl;
 
         
-        if(my_rank==num_pro-1) {
+        /*if(my_rank==num_pro-1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
-        }
+        }*/
 
         std::cout << "******************************************* " << std::endl;
         std::cout << " " << std::endl;
@@ -154,7 +162,7 @@ namespace pfasst
         
         
         
-        }
+        //}
       }
     }  // ::pfasst::examples::heat_FE
   } // ::pfasst::examples
@@ -192,7 +200,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 50);
+  const size_t niter = get_value<size_t>("num_iters", 500);
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 

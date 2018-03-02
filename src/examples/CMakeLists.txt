@@ -1,8 +1,6 @@
 #add_subdirectory(FE_heat)
 #add_subdirectory(fertige_kopieFE_flame_propagation)
 #add_subdirectory(FE_flame_propagation_Newton)
-#add_subdirectory(FE_heat)
-#add_subdirectory(FE_hi_heat)
 #add_subdirectory(Newton_PFASST)
 #add_subdirectory(FE_Newton)
 #add_subdirectory(heat)

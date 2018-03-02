@@ -15,10 +15,11 @@ using std::vector;
 
 #include "fe_manager.hpp"
 
-#ifndef PI
-#define PI 3.1415926535897932385
-#endif
+//#ifndef PI
+//#define PI 3.1415926535897932385
+//#endif
 
+//const double PI = 3.1415926535897932385;
 
 namespace pfasst
 {
@@ -68,7 +69,7 @@ namespace pfasst
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
-          spatial_t                                      _nu{0.1};//0.1
+          spatial_t                                      _nu{1};//0.1
           pfasst::contrib::FFT<typename traits::encap_t> _fft;
           vector<vector<spatial_t>>                      _lap;
 

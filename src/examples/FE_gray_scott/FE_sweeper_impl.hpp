@@ -499,9 +499,11 @@ namespace pfasst
 
         Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(M_dtA_dune,1.0);
 
+	double tol=1e-15;
+	//if(this->is_coarse==1){tol=1e-8;}
         Dune::BiCGSTABSolver<VectorType> cg(linearOperator,
                               preconditioner,
-                              1e-15, // desired residual reduction factor
+                              tol, // desired residual reduction factor
                               500,    // maximum number of iterations
                               0);    // verbosity of the solver
 	

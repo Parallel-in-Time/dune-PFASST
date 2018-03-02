@@ -83,7 +83,7 @@ namespace pfasst
 //     }
   }
 
-  /*template<class SweeperTrait, typename Enabled>
+  template<class SweeperTrait, typename Enabled>
   void
   IMEX<SweeperTrait, Enabled>::predict()
   {
@@ -135,9 +135,9 @@ namespace pfasst
 
       ML_CVLOG(1, this->get_logger_id(), "");
     }
-  }*/
+  }
 
-  template<class SweeperTrait, typename Enabled>
+  /*template<class SweeperTrait, typename Enabled>
   void
   IMEX<SweeperTrait, Enabled>::predict()
   {
@@ -167,9 +167,7 @@ namespace pfasst
 
     for (size_t m = 0; m < num_nodes; ++m) {
       this->states()[m + 1]->data() = this->states()[m]->data();
-      /*for (size_t i = 0; i < this->states()[m]->get_data().size(); i++) {
-		std::cout << this->states()[m]->data()[i][0] << " " << this->states()[m]->data()[i][1] << " predict " <<  std::endl; 
-      }*/ 	
+	
       this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(tm, this->get_states()[m + 1]);
       tm += dt *  (nodes[m+1] - nodes[m]);
 
@@ -177,7 +175,7 @@ namespace pfasst
 
     }
 
-  }
+  }*/
 
 
 
@@ -474,8 +472,8 @@ namespace pfasst
       assert(this->get_quadrature() != nullptr);
       assert(this->get_initial_state() != nullptr);
 
-      //this->end_state()->data() = this->get_initial_state()->get_data();
-      M_dune.mv(this->get_initial_state()->get_data(), this->end_state()->data());
+      this->end_state()->data() = this->get_initial_state()->get_data();
+      //M_dune.mv(this->get_initial_state()->get_data(), this->end_state()->data()); //getauscht
       this->end_state()->scaled_add(1.0, encap::mat_mul_vec(dt, this->get_quadrature()->get_b_mat(), this->_expl_rhs)[0]);
       this->end_state()->scaled_add(1.0, encap::mat_mul_vec(dt, this->get_quadrature()->get_b_mat(), this->_impl_rhs)[0]);
 //       ML_CVLOG(1, this->get_logger_id(), "end state: " << to_string(this->get_end_state()));

@@ -42,9 +42,10 @@ namespace pfasst
         using pfasst::quadrature::quadrature_factory;
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
-        auto FinEl   = make_shared<fe_manager>(nelements,1); 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
+        auto FinEl   = make_shared<fe_manager>(nelements,2); 
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 1);
 
+        sweeper->is_coarse=false;
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
@@ -63,11 +64,24 @@ namespace pfasst
 
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
+ 	double time1=0.0, tstart;      // time measurment variables
+ 
+ 	tstart = clock();              // start
+
         sdc->run();
 
         sdc->post_run();
+	time1 += clock() - tstart;     // end..
+ 
+ 	time1 = time1/CLOCKS_PER_SEC;  // rescale to seconds
 
+ 	cout << "  time = " << time1 << " sec." << endl;
 
+        /*auto naeherung = sweeper->get_end_state()->data();
+        auto exact     = sweeper->exact(t_end)->data();
+        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+          std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }*/
         /*if(BASIS_ORDER==1) {
           auto grid = (*sweeper).get_grid();
           typedef GridType::LeafGridView GridView;
@@ -135,8 +149,8 @@ namespace pfasst
     const size_t nnodes    = get_value<size_t>("num_nodes", 3);
     const QuadratureType quad_type = QuadratureType::GaussRadau;
     const double t_0 = 0.0;
-    const double dt = get_value<double>("dt", 0.05);
-    double t_end = get_value<double>("tend", 0.1);
+    const double dt = get_value<double>("dt", 0.2);
+    double t_end = get_value<double>("tend", 1);
     size_t nsteps = get_value<size_t>("num_steps", 0);
     if (t_end == -1 && nsteps == 0) {
       ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
@@ -151,7 +165,7 @@ namespace pfasst
     } else if (nsteps != 0) {
       t_end = t_0 + dt * nsteps;
     }
-    const size_t niter = get_value<size_t>("num_iters", 10);
+    const size_t niter = get_value<size_t>("num_iters", 500);
 
     pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 

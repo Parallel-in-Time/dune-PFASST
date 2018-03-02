@@ -147,6 +147,41 @@ namespace pfasst
           this->get_sweeper()->post_sweep();
         }
       } while(this->advance_iteration());
+
+      auto grid = (*(this->get_sweeper())).get_grid();
+      typedef Dune::BlockVector<Dune::FieldVector<double, 2> > VectorType;
+      typedef Dune::BlockVector<Dune::FieldVector<double, 1> > ColumnType;
+      typedef Dune::YaspGrid<2> GridType; //ruth_dim
+      typedef GridType::LevelGridView GridView;
+      GridType::LevelGridView gridView = grid->levelGridView(0);
+      Dune::VTKWriter<GridView> vtkWriter(gridView);
+
+
+      VectorType x = this->get_sweeper()->get_end_state()->data();
+
+
+      stringstream toss;
+      toss << this->get_status()->get_step();
+      string name = toss.str();
+      //string name = boost::lexical_cast<string>(this->get_status()->get_step());
+
+      ColumnType sol_u, sol_v;
+      sol_u.resize(x.size());
+      sol_v.resize(x.size());
+      for (int i =0; i< x.size(); ++i)
+      {
+        sol_u[i] = x[i][0];
+        sol_v[i] = x[i][1];
+      }
+
+
+      vtkWriter.addVertexData(sol_u, "fe_solution_u");
+      vtkWriter.addVertexData(sol_v, "fe_solution_v");
+
+
+      vtkWriter.write("gray_scott" + name);
+
+
     } while(this->advance_time());
   }
 

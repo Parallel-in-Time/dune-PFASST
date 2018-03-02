@@ -110,8 +110,8 @@ namespace pfasst
       // iterate on each time step (i.e. iterations on single time step)
       do {
         if (this->get_status()->get_primary_state() == (+PrimaryState::PREDICTING)) {
-          this->predictor();
-
+          this->predictor(); //##ersetze predictor durch feinen sweep #delite
+	  //this->sweep_fine();  //##ersetze predictor durch feinen sweep #add
         } else if (this->get_status()->get_primary_state() == (+PrimaryState::ITERATING)) {
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration " << this->get_status()->get_iteration());
@@ -125,7 +125,7 @@ namespace pfasst
           this->cycle_up();
 
           this->sweep_fine();
-          this->send_fine();
+          this->send_fine();  //##ersetze durch senden an anderer stelle #delite
 
         } else {
           ML_CLOG(FATAL, this->get_logger_id(), "Something went severly wrong with the states.");
@@ -368,9 +368,11 @@ namespace pfasst
 
     this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true);
 
+    //this->send_fine();  //##senden an anderer stelle #add
+
     this->recv_fine();
 
-    this->get_transfer()->interpolate_initial(this->get_coarse(), this->get_fine());
+    this->get_transfer()->interpolate_initial(this->get_coarse(), this->get_fine()); //## senden an anderer stelle ##delete
   }
 
   template<class TransferT, class CommT>

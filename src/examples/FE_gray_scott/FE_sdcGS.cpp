@@ -98,6 +98,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 
 
 
+
         ofstream ff;
         stringstream sss;
         sss << nelements << "_" << dt << "_" << t_end;
@@ -109,13 +110,7 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
           ff << i <<"  " << line << std::endl;
           i++;
         }
- 	ff << "  time = " << time1 << endl;
 
-        ff << "-----------------------------------------------  " << std::endl;
-        ff.close();
-
-	
-        //return sdc;
       }
     }
   }

@@ -53,8 +53,10 @@ namespace pfasst
 
       {
 
-		    this->FinEl = FinEl;
-	      basis = FinEl->get_basis(nlevel);
+	std::cout << "neu compiliert" << std::endl; std::exit(0);
+
+	this->FinEl = FinEl;
+	basis = FinEl->get_basis(nlevel);
         grid  = FinEl->get_grid();
 
         assembleProblem(basis, A_dune, M_dune);
@@ -151,25 +153,25 @@ namespace pfasst
 
         const auto dim = SweeperTrait::DIM;
         spatial_t nu = this-> _nu; 
-	
+
 	
 	auto exact_solution1 = [t,  nu, dim](const Dune::FieldVector<double,dim>&x){
              
 	   
-	   double eps = 1e-8;
-	   
-	  if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
+	   //double eps = 1e-8;
+	   return = 0;//1 - 0.5 * power(sin(PI * x[0] / 100), 100)*power(sin(PI * x[1] / 100), 100);
+	  /*if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
 	    return 0.5;
-	    return 1.0;
+	    return 1.0;*/
             
         };
 
 	auto exact_solution2 = [t, nu, dim](const Dune::FieldVector<double,dim>&x){
-          double eps = 1e-8; 
-
-	   if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
+          //double eps = 1e-8; 
+	   return 0;//0.25 * power(sin(PI * x[0] / 100), 100)*power(sin(PI * x[0] / 100), 100);
+	   /*if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
 	   return 0.25;
-	   return 0.0;
+	   return 0.0;*/
 	};
 	
 	 auto N_x = [t](const Dune::FieldVector<double,dim>&x){
