@@ -140,16 +140,16 @@ namespace pfasst
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        /*for (int i=0; i<num_pro; i++){
+        for (int i=0; i<num_pro; i++){
           if(my_rank==i){
             ofstream ff;
             stringstream sss;
-            sss << nelements << "_iter";
+            sss << num_pro <<"_" << nelements*2 << "_" << dt << "_" << t_end;
             string st = "solution_pfasst/" + sss.str() + ".dat";
             ff.open(st, ios::app | std::ios::out );
             auto iter = pfasst._it_per_step;
             for (const auto &line : iter) {
-              ff << my_rank << " " << dt <<"     " << line << std::endl;
+              ff << my_rank << " " << line << std::endl;
             }
 
             ff.close();
@@ -157,39 +157,9 @@ namespace pfasst
           }
           MPI_Barrier(MPI_COMM_WORLD);
 
-        }*/
-
-        //if(my_rank==num_pro-1) {
-          /*auto anfang    = fine->exact(0)->data();
-          auto naeherung = fine->get_end_state()->data();
-          auto exact     = fine->exact(t_end)->data();
-          for (int i=0; i< fine->get_end_state()->data().size(); i++){
-            //std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
-          }
-
-          std::cout << "******************************************* " << std::endl;
-          std::cout << " " << std::endl;
-          std::cout << " " << std::endl;
-          //std::cout << "Fehler: " << std::endl;
-          //auto norm =  fine->exact(t_end))->data();
-          fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
-          std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << my_rank<< std::endl;
-          */
+        }
 
 
-          //fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
-          //std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
-          //std::cout << fine->get_states().size()  << std::endl;
-          std::cout << "******************************************* " << std::endl;
-        //}
-
-        /*ofstream f;
-        stringstream ss;
-        ss << nelements;
-        string s = "konv_pfasst/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out );
-        f << nelements << " " << dt << " "<< fine->get_end_state()->norm0() << endl;
-        f.close();*/
 
       }
     }  // ::pfasst::examples::heat_FE

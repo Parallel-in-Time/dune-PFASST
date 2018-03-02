@@ -142,71 +142,22 @@ namespace pfasst
 
  	cout << "  time = " << time1 << " sec." << endl;
 
-        /*ofstream ff;
+        ofstream ff;
         stringstream sss;
-        sss << nelements << "_iter";
+        sss << nelements*2 << "_" << dt << "_" << t_end;
         string st = "solution_mlsdc/" + sss.str() + ".dat";
         ff.open(st, ios::app | std::ios::out );
         auto iter = mlsdc->_it_per_step;
+	int i=0;
         for (const auto &line : iter) {
-          ff << dt <<"  " << line << std::endl;
+          ff << i <<"  " << line << std::endl;
+          i++;
         }
+ 	ff << "  time = " << time1 << endl;
 
-        ff.close();*/
-        //return mlsdc;
-        /*std::cout <<  "fein" << std::endl;
-        auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
-        std::cout <<  "grob" << std::endl;
-        for (int i=0; i< coarse->get_end_state()->data().size(); i++){
-          std::cout << coarse->exact(0)->data()[i] << " " << coarse->get_end_state()->data()[i] << "   " << coarse->exact(t_end)->data()[i] << std::endl;
-        }
-
-        std::cout << "******************************************* " <<  std::endl ;
-        std::cout << " " <<  std::endl ;
-        std::cout << " " <<  std::endl ;
-        std::cout << "Fehler: " <<  std::endl ;
-        //auto norm =  fine->exact(t_end))->data();
-        fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
-        std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
-        //std::cout << "number states " << fine->get_states().size() << std::endl ;
-        std::cout << "******************************************* " <<  std::endl ;*/
-
-        /*std::cout << "Fehler: " <<  std::endl ;
-        coarse->states()[coarse->get_states().size()-1]->scaled_add(-1.0 , coarse->exact(t_end));
-        std::cout << coarse->states()[coarse->get_states().size()-1]->norm0()<<  std::endl ;*/
-
-
-        /*if(BASIS_ORDER==1) {
-          auto grid = (*fine).get_grid();
-          typedef GridType::LeafGridView GridView;
-          GridType::LeafGridView gridView = grid->leafGridView();
-          VTKWriter <GridView> vtkWriter(gridView);
-          typedef Dune::BlockVector <Dune::FieldVector<double, 1>> VectorType;
-          VectorType x = fine->get_end_state()->data();
-          VectorType y = fine->exact(t_end)->data();
-          VectorType z = fine->initial_state()->data();
-          vtkWriter.addVertexData(x, "fe_solution");
-          vtkWriter.addVertexData(y, "exact_solution");
-          vtkWriter.addVertexData(z, "initial_data");
-
-          vtkWriter.write("heat_result");
-          //std::cout << nelements << "   " << x.size() <<  std::endl ;
-        }*/
-
-
-
-        /*ofstream f;
-        stringstream ss;
-        ss << nelements;
-        string s = "neu_mlsdc/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out );
-        f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << endl;
-        f.close();*/
-        //std::cout << "test"<<  std::endl ;
+        ff << "-----------------------------------------------  " << std::endl;
+        ff.close();
+        
 
       }
 

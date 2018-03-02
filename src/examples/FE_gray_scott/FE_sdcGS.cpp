@@ -60,8 +60,8 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 
 
 
-        auto FinEl   = make_shared<fe_manager>(nelements,1);
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
+        auto FinEl   = make_shared<fe_manager>(nelements,2);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 1);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
@@ -96,88 +96,26 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 	double t1, t2;
 	t1=MPI_Wtime();	
 
-        /*if(BASIS_ORDER==1) {
-          auto grid = (*sweeper).get_grid();
-          typedef GridType::LeafGridView GridView;
-          GridType::LeafGridView gridView = grid->leafGridView();
-          VTKWriter<GridView> vtkWriter(gridView);
-          typedef Dune::BlockVector<Dune::FieldVector<double, NR_OF_COMP> > VectorType;
-	  typedef Dune::BlockVector<Dune::FieldVector<double, 1> > ColumnType;
-         
-	  
-	  VectorType x = sweeper->get_end_state()->data();
-      //    VectorType y = sweeper->exact(t_end)->data();
-          VectorType z = sweeper->initial_state()->data();
-	  
-	  ColumnType sol_u, sol_v, init_sol_u, init_sol_v ;
-	  sol_u.resize(x.size());
-	  sol_v.resize(x.size());
-	  init_sol_u.resize(x.size());
-	  init_sol_v.resize(x.size());
-	  
-	  
-	  for (int i =0; i< x.size(); ++i)
-	  {
-	    sol_u[i] = x[i][0];
-	    sol_v[i] = x[i][1];
-	    init_sol_u[i] = w[i][0];
-	    init_sol_v[i] = w[i][1];
-	    
-	    
-	  }
-	
-	    //std::cout << x << std::endl;
-	    //std::cout << y << std::endl;
-          //vtkWriter.addVertexData(sol_u, "fe_solution_u");
-	        //vtkWriter.addVertexData(sol_v, "fe_solution_v");
-          //vtkWriter.addVertexData(init_sol_u, "exact_solution_u");
-	        //vtkWriter.addVertexData(init_sol_v, "exact_solution_v");
-         
-          //vtkWriter.write("gray_scott_result");
-      
-	  
-	  
-	  
-	  
-	  
-	}*/
-
-        /*std::cout <<  "ergebnisse " << std::endl;
-        auto naeherung = sweeper->get_end_state()->data();
-        auto exact     = sweeper->exact(t_end)->data();
-        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
-          std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
-         
-        
-        
-      sweeper->states()[sweeper->get_states().size()-1]->scaled_add(-1.0 , sweeper->exact(t_end));
-      std::cout << "Fehler " << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;*/
 
 
-
-        /*ofstream ff;
+        ofstream ff;
         stringstream sss;
-        sss << nelements << "_iter";
+        sss << nelements << "_" << dt << "_" << t_end;
         string st = "solution_sdc/" + sss.str() + ".dat";
         ff.open(st, ios::app | std::ios::out );
         auto iter = sdc->_it_per_step;
+	int i=0;
         for (const auto &line : iter) {
-          ff << dt <<"  " << line << std::endl;
+          ff << i <<"  " << line << std::endl;
+          i++;
         }
+ 	ff << "  time = " << time1 << endl;
 
-        ff.close();*/
+        ff << "-----------------------------------------------  " << std::endl;
+        ff.close();
 
-/*	ofstream f;
-	stringstream ss;
-	ss << nelements;
-	string s = "results_reaction_diffusion2/" + ss.str() + ".dat";
-	f.open(s, ios::app | std::ios::out );
-	f << nelements << " " << dt << " "<< sweeper->states()[sweeper->get_states().size()-1]->norm0() << endl;
-	f.close();
 	
-*/	
-        return sdc;
+        //return sdc;
       }
     }
   }
