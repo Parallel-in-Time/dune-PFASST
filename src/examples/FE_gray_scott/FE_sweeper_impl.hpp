@@ -156,11 +156,11 @@ namespace pfasst
 	
 	auto exact_solution1 = [t,  nu, dim](const Dune::FieldVector<double,dim>&x){
              
-            double solution=1.0;
+	  /*double solution=1.0;
             for(int i=0; i<dim; i++){solution *= pow(std::sin(PI * x[i]/1),1);}
-            return solution * std::exp(-t * dim * PI*PI * nu)*(-0.5) +1;
+            return solution * std::exp(-t * dim * PI*PI * nu)*(-0.5) +1;*/
 
-	  return 1 - 0.5 * pow(sin(PI * x[0] / 10)*sin(PI * x[1] / 1), 1);
+	  //return 1 - 0.5 * pow(sin(PI * x[0] / 10)*sin(PI * x[1] / 1), 1);
 	  if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
 	    return 0.5;
 	    return 1.0;
@@ -168,11 +168,11 @@ namespace pfasst
         };
 
 	auto exact_solution2 = [t, nu, dim](const Dune::FieldVector<double,dim>&x){
-            double solution=1.0;
+	  /*double solution=1.0;
             for(int i=0; i<dim; i++){solution *= pow(std::sin(PI * x[i]/1),1);}
-            return solution * std::exp(-t * dim * PI*PI * nu)*(0.25);
+            return solution * std::exp(-t * dim * PI*PI * nu)*(0.25);*/
 
-	   return 0.25 * pow(sin(PI * (x[0]) / 10)*sin(PI * (x[1]) / 10), 10);
+	  //return 0.25 * pow(sin(PI * (x[0]) / 10)*sin(PI * (x[1]) / 10), 10);
 	   if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
 	   return 0.25;
 	   return 0.0;

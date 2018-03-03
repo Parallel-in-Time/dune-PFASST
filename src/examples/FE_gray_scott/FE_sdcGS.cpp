@@ -60,8 +60,8 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, DIM,
 
 
 
-        auto FinEl   = make_shared<fe_manager>(nelements,2);
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 1);
+        auto FinEl   = make_shared<fe_manager>(nelements,1);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
