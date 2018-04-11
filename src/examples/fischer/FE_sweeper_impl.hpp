@@ -55,7 +55,7 @@ namespace pfasst
          for (int i=0; i< this->M_dune.N(); i++){
 	      for (int j=0; j< this->M_dune.M(); j++){
             if(this->M_dune.exists(i,j)){	
-                std::cout<< this->M_dune[i][j] << " " ;
+                std::cout<< (this->M_dune)[i][j] << " " ;
             }else{
                 std::cout<< 0 << " " ;
             }

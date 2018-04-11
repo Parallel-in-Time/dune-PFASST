@@ -161,10 +161,10 @@ namespace pfasst
       EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::apply_Mass(shared_ptr<typename traits::mass_t> mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol)//, EncapsulationTrait &sol)
+               >::type>::apply_Mass(typename traits::mass_t mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol)//, EncapsulationTrait &sol)
     {
     	//typename EncapsulationTrait::data_t copy= this->get_data();
-	mass->mv(this->data(), sol->data());//sol->data());  
+	mass.mv(this->data(), sol->data());//sol->data());  
     } 
 
     template<class EncapsulationTrait>
@@ -273,7 +273,7 @@ namespace pfasst
       return std::make_shared<Encapsulation<EncapsulationTrait>>(this->size());
     }
 
-    template<class EncapsulationTrait>
+    /*template<class EncapsulationTrait>
     void
     EncapsulationFactory<
       EncapsulationTrait,
@@ -282,7 +282,7 @@ namespace pfasst
                >::type>::set_gfs(typename EncapsulationTrait::gfs_t& gfs)
     {
       this->_gfs = std::make_shared<typename EncapsulationTrait::gfs_t>(gfs);
-    }
+    }*/
 
     template<class EncapsulationTrait>
     void

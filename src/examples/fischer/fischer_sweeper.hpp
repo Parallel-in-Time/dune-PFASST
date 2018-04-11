@@ -76,7 +76,7 @@ namespace pfasst
                 for(int i=0; i<this->M_dune.M(); i++){
                     for(int j=0; j<this->M_dune.M(); j++){
                         if(this->M_dune.exists(i,j))
-                            (*w)[i][0]= ((double) (*w)[i][0]) + ((double) this->M_dune[i][j][0][0]);
+                            (*w)[i][0]= ((double) (*w)[i][0]) + ((double) ((this->M_dune))[i][j][0][0]);
                     }
                 }
 
@@ -145,7 +145,7 @@ namespace pfasst
 
          u->zero();
 	 for (int i=0; i< 200 ;i++){
-            Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
+            Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >((this->M_dune)); ///////M
             evaluate_f(f, u, dt, rhs);
             evaluate_df(df, u, dt);
             df.mv(u->data(), newton_rhs);
@@ -340,10 +340,10 @@ namespace pfasst
             {
                 df[i][i]= (_nu*_nu)*(_n+1) * pow(u->get_data()[i], _n) * ((double) (*w)[i]);	
             }
-            df.axpy((-_nu*_nu), this->M_dune);
-            df-=this->A_dune;
+            df.axpy((-_nu*_nu), (this->M_dune));
+            df-=(this->A_dune);
             df*=dt;
-            df+=this->M_dune;
+            df+=(this->M_dune);
       } 
           
     };   

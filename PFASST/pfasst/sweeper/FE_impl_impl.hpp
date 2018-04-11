@@ -31,10 +31,10 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
     pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize();
-	std::cout << "im initialize "<< std::endl;
+    //std::cout << "im initialize "<< std::endl;
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
-    std::cout << this->get_states().size() << std::endl;
-    std::cout << num_nodes+1 << std::endl;
+    //std::cout << this->get_states().size() << std::endl;
+    //std::cout << num_nodes+1 << std::endl;
     assert(this->get_states().size() == num_nodes + 1);
 
     this->_q_integrals.resize(num_nodes + 1);
@@ -102,12 +102,12 @@ namespace pfasst
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
     	int my_rank, num_pro;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
+        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
     for (size_t m = 0; m < num_nodes; ++m) {
       this->states()[m + 1]->data() = this->states()[m]->data();
-    if(my_rank==0) for(auto r =this->states()[m]->data().begin(); r !=this->states()[m]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;} //std::exit(0);
-      std::cout << "vor zuweisung " << std::endl; //std::exit(0);	
+    //if(my_rank==0) for(auto r =this->states()[m]->data().begin(); r !=this->states()[m]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;} //std::exit(0);
+      //std::cout << "vor zuweisung " << std::endl; //std::exit(0);	
       this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(tm, this->get_states()[m + 1]);
       //std::cout << "nach zuweisung " << std::endl; std::exit(0);	
       tm += dt *  (nodes[m+1] - nodes[m]);
@@ -157,9 +157,9 @@ namespace pfasst
     ML_CVLOG(6, this->get_logger_id(), "           += dt * Q * f_im");
 
     	int my_rank, num_pro;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
-    if(my_rank==0) for(auto r =this->states()[2]->data().begin(); r !=this->states()[2]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;}// std::exit(0);
+        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
+    //if(my_rank==0) for(auto r =this->states()[2]->data().begin(); r !=this->states()[2]->data().end(); ++r){std::cout << "ds states " << *r <<std::endl;}// std::exit(0);
     //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "pre_sweep rhs_impl " << *r <<std::endl;} //std::exit(0);
 
     encap::mat_apply(this->_q_integrals, dt, q_mat, this->_impl_rhs, true); //false
@@ -216,9 +216,9 @@ namespace pfasst
 //       ML_CVLOG(5, this->get_logger_id(), LOG_FLOAT << "  u["<<m<<"] = " << to_string(this->get_states()[m]));
 
       // compute right hand side for implicit solve (i.e. the explicit part of the propagation)
-      std::cout << "vorm create rhs" << std::endl;	
+      //std::cout << "vorm create rhs" << std::endl;	
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
-      std::cout << "nach create rhs " << std::endl;
+      //std::cout << "nach create rhs " << std::endl;
       // rhs = u_0
      
       if (is_coarse){
@@ -235,9 +235,9 @@ namespace pfasst
 	//std::cout << "rhs debugging " << std::endl;
 	//M_dune->jacobian_apply((this->get_states().front()->data()), (rhs->data()));
 	//std::cout << "rhs glueck " << std::endl;
-	this->get_states().front()->apply_Mass(M_dune, rhs); 	std::cout << "bevor ich den quatsch hier lese" << std::endl;
-	for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}
-	std::cout << "rhs debugging " << std::endl;
+	this->get_states().front()->apply_Mass(M_dune, rhs); 	//std::cout << "bevor ich den quatsch hier lese" << std::endl;
+	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}
+	//std::cout << "rhs debugging " << std::endl;
 	//std::exit(0);
 
 
@@ -253,30 +253,30 @@ namespace pfasst
       // rhs += dt * \sum_{i=0}^m (QI_{m+1,i} fI(u_i^{k+1}) + QE_{m+1,i-1} fE(u_{i-1}^{k+1}) ) + QE_{m+1,m} fE(u_{m}^{k+1})
       for (size_t n = 0; n <= m; ++n) {
         rhs->scaled_add(dt * this->_q_delta_impl(m + 1, n), this->_impl_rhs[n]);
-	std::cout << dt * this->_q_delta_impl(m + 1, n) << std::endl;
-      }        MPI_Barrier(MPI_COMM_WORLD);// std::exit(0);
+	//std::cout << dt * this->_q_delta_impl(m + 1, n) << std::endl;
+      } //       MPI_Barrier(MPI_COMM_WORLD);// std::exit(0);
 
       //for(auto r =this->_q_integrals[m + 1]->data().begin(); r !=this->_q_integrals[m + 1]->data().end(); ++r){std::cout << "q_integrals " << *r <<std::endl;}
       //for(auto r =this->_q_integrals[m + 1]->data().begin(); r != this->_q_integrals[m + 1]->data().end(); ++r){std::cout << "q_integrals " << *r <<std::endl;}
       rhs->scaled_add(1.0, this->_q_integrals[m + 1]);
     	int my_rank, num_pro;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
-	if (my_rank==0) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}     MPI_Barrier(MPI_COMM_WORLD); 
-	if (my_rank==1) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}     MPI_Barrier(MPI_COMM_WORLD); std::exit(0);
+        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
+	//if (my_rank==0) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}     MPI_Barrier(MPI_COMM_WORLD); 
+	//if (my_rank==1) for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "rhs nachm mult " << *r <<std::endl;}     MPI_Barrier(MPI_COMM_WORLD); std::exit(0);
       //std::exit(0);
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m+1, m+1), rhs);
-    std::cout << "ende aufruuf impl solve " << std::endl;
+    //std::cout << "ende aufruuf impl solve " << std::endl;
       // reevaluate the explicit part with the new solution value
       tm += dt * this->_q_delta_impl(m+1, m+1);
       
       ML_CVLOG(4, this->get_logger_id(), "");
-    std::cout << "schleife " << num_nodes << " " << m << std::endl;
+    //std::cout << "schleife " << num_nodes << " " << m << std::endl;
 
     }
-    std::cout << "ende sweep " << std::endl;
+    //std::cout << "ende sweep " << std::endl;
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -452,13 +452,13 @@ namespace pfasst
       //this->residuals()[m]->scaled_add(-1.0,uM);
 
       
-      for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals1 rhs_impl " << *r <<std::endl;} //std::exit(0);
+      //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals1 rhs_impl " << *r <<std::endl;} //std::exit(0);
       this->residuals().back()->scaled_add(1.0, this->get_tau().back());
       for (size_t n = 0; n < cols; ++n) {
         //this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_expl_rhs[n]);
         this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_impl_rhs[n]);
       }
-      for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals2 rhs_impl " << *r <<std::endl;} //std::exit(0);	
+      //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals2 rhs_impl " << *r <<std::endl;} //std::exit(0);	
     } else {
       for (size_t m = 0; m < num_nodes; ++m) {
         assert(this->get_states()[m] != nullptr);

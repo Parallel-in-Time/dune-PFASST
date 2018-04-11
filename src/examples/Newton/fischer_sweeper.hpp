@@ -8,7 +8,7 @@
 
 //the konstructer: mass- and stiffnessmatrix are already assembeld in the base class, but here we make a another discretisation vector w, because we use lumping for the nonlinearity
 
-//exact: gives the exact solution of Fischers equation, we use it in the main to construct the initial value and to calculate the error after the simulation
+//exact: gives the exact solution of Fischers equation, we use it in the main to construct the initial value and to calculate the error after the simulations
 
 //evaluate_rhs_impl: it gives back the right hand side of the discrtised ODE
 
@@ -32,12 +32,14 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
-        double                                     	_nu{1.2};
-        double                                     	_n{2.0};
+        double                                     	_nu{1.0}; //1.2
+        double                                     	_n{1.0}; //2.0
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 
+
             
         public:
+	int                                             num_solves=0;        
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
                                     : Heat_FE<SweeperTrait, BaseFunction, Enabled>(basis, nlevel, grid){
         
@@ -233,7 +235,8 @@ namespace pfasst
           
           
             Dune::InverseOperatorResult statistics ;
-            cg.apply(u->data(), nv->data() , statistics ); //newton_rhs
+            cg.apply(u->data(), nv->data() , statistics ); //newton_rhs 
+	    num_solves++;
 
             evaluate_f(f, u, dt, rhs);
           

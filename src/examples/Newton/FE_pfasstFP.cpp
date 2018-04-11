@@ -111,62 +111,50 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 		}
     	}
 
-
-std::cout << "############################################################################################################################################num_pro  " << num_pro  <<std::endl;
+std::cout << "num_pro " << num_pro << std::endl;
+int num_solves=0;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
-    for(int ne=0; ne<3; ne++){
 
+    std::cout << "-------------------------------------------------------------------------------------------------------  die zeit " << time << " " << std::endl;	
+    for(int ne=0; ne<4; ne++){
 
-
+	std::cout << "-------------------------------------------------------------------------------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
-
-        
 
         auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        
-        
+
         coarse->is_coarse=true;
         fine->is_coarse=false;
                         
         dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
 	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	for (int i=0; i< n_levels-1; i++){
-	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
+	      transferMatrix->push_back(new MatrixType()); 
 	}
 	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
 	    
 	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
 
-	for (int i=0; i< vecvec->at(0)->N(); i++){
-	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
-		if(vecvec->at(0)->exists(i,j)){
-		}
-	      }
-        }
         
        
         auto transfer = std::make_shared<TransferType>();
 	transfer->create(vecvec);
 
+	fine->num_solves+=num_solves;
 
-        fine->set_abs_residual_tol(1e-12);
-        coarse->set_abs_residual_tol(1e-12);
-
-
+	
 
 	pfasst.add_sweeper(coarse, true);
 	pfasst.add_sweeper(fine);
         
         pfasst.add_transfer(transfer);
-        std::cout << "nach add ransfer"<< std::endl;
-
         pfasst.set_options();
 
-
+	std::cout << "----------------------------------------------------------------------- 2 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 
         pfasst.status()->time() =  t_0 + time*dt*num_pro;
         pfasst.status()->dt() = dt;
@@ -175,24 +163,31 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         std::cout << "******************************** pfasst t0 " << pfasst.status()->time() << "tend " << pfasst.status()->t_end() << std::endl;
         pfasst.setup();
 
-        coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
-        fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
+        coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time()); //nur für den ersten Zeitschritt
+        fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     //
+
+	std::cout << "----------------------------------------------------------------------- 2,5 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 
 
-	if(time=0 && ne==0) 	
-	for(int i=0; i< num_time_steps; i++){	
-		for(int j=0; j<num_nodes +1; j++){
-		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
-    		 (*_new_newton_state_coarse[i][j]).data()[k]= 0; 
-    		}
-		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
-    		 (*_new_newton_state_fine[i][j]).data()[k]= 0; 
-    		}
+	if(time==0 && ne==0){ 	
+		for(int i=0; i< num_time_steps; i++){	
+			for(int j=0; j<num_nodes +1; j++){
+				//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    		 		//(*_new_newton_state_coarse[i][j]).data()[k]= 0; 
+    				//}
+				//for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
+    		 		//(*_new_newton_state_fine[i][j]).data()[k]= 0; 
+    				//}
+				(_new_newton_state_fine[i][j])  = fine->exact( pfasst.status()->time());
+				(_new_newton_state_coarse[i][j]) = coarse->exact( pfasst.status()->time());
+			}
+
 		}
 	}
 
+	std::cout << "----------------------------------------------------------------------- 3 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 
-
+        std::cout << "-------------------------------------------------------------------------------------------------------  die zeit weiter vorne " << time << " " << std::endl;	
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 			//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
@@ -200,7 +195,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 			//}
     			transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
 			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
-    			fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
+    				fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
 			}
     		}
 	}
@@ -247,18 +242,19 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         std::cout << " " << std::endl;
         std::cout << " " << std::endl;
 
-        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
-        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-        std::cout << "Time: "  << time << " " << "Newton: " << ne << std::endl;
 
-	std::cout << "******************************************* " << std::endl;
+        std::cout << "-------------------------------------------------------------------------------------------------------  die zeit schon wieder " << time << " " << std::endl;	
+	//auto f2 = fine->get_end_state();
+        //f2.scaled_add(-1.0, fine->exact(t_end));
+        //std::cout << "Fehler: "  << f2.norm0() << " " << std::endl;
+        //std::cout << "Time: "  << time << " " << "Newton: " << ne << std::endl;
+
+	//std::cout << "******************************************* " << std::endl;
 	}
 
-        MPI_Barrier(MPI_COMM_WORLD);
 
-	std::cout << "rank " << my_rank<< std::endl;
         
-                /*if(my_rank==1) {
+        /*if(my_rank==1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
@@ -277,6 +273,24 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	std::cout << "******************************************* " << std::endl;
 	}*/
 
+	fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_time_steps-1][num_nodes]);
+        if (my_rank == num_pro-1) std::cout << "NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+	std::cout << my_rank << " num_solves  " << fine->num_solves << std::endl;
+        MPI_Barrier(MPI_COMM_WORLD);
+
+	int local=0, global=0;
+	if (fine->get_end_state()->norm0()<1e-10) local=1;	
+	MPI_Reduce(&local, &global, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+	MPI_Bcast(&global, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	if(global>0) break;
+
+
+
+	num_solves = fine->num_solves;
+        MPI_Barrier(MPI_COMM_WORLD);
+
+	std::cout << "rank " << my_rank<< std::endl;
+
     	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
 			for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++)
@@ -288,9 +302,15 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	}
 	
 
+
+
         MPI_Barrier(MPI_COMM_WORLD);
 	std::cout << "after last barrier rank " << my_rank<< std::endl;
+
+std::cout << "-------------------------------------------------------------------------------------------------------  beginn weiterer zeitschritt" << time << " " << ne << std::endl;
 }
+
+std::cout << "-------------------------------------------------------------------------------------------------------  beginn weiterer zeitschritt" << time << " " << std::endl;
 }
 
 
@@ -318,9 +338,9 @@ int main(int argc, char** argv)
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
-  const double t_0 = 0.0;
-  const double dt = get_value<double>("dt", 0.05);
-  double t_end = get_value<double>("tend", 0.4);
+  const double t_0 = 0.1;
+  const double dt = get_value<double>("dt", 0.1);
+  double t_end = get_value<double>("tend", 0.2);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
@@ -335,7 +355,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 10);
+  const size_t niter = get_value<size_t>("num_iters", 30);
 
   run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 

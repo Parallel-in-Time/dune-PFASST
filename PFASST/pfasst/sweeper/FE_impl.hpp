@@ -65,8 +65,8 @@ namespace pfasst
       //typename SweeperTrait::encap_traits::mass_t M_dune;
       //typename SweeperTrait::encap_traits::mass_t A_dune;
       //MatrixType A_dune;
-      shared_ptr<typename SweeperTrait::encap_traits::mass_t> M_dune;
-      //shared_ptr<typename SweeperTrait::encap_traits::mass_t> A_dune;	
+      typename SweeperTrait::encap_traits::mass_t M_dune;
+      typename SweeperTrait::encap_traits::mass_t A_dune;	
       
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
@@ -296,8 +296,8 @@ namespace pfasst
             
       virtual vector<shared_ptr<typename SweeperTrait::encap_t>> integrate_new(const typename SweeperTrait::time_t& dt);
   
-      shared_ptr<typename SweeperTrait::encap_traits::mass_t> get_M_dune(){return this->M_dune;};
-      //shared_ptr<MatrixType> get_A_dune() {return make_shared<MatrixType>(A_dune);};
+      //shared_ptr<typename SweeperTrait::encap_traits::mass_t> get_M_dune(){return this->M_dune;};
+      shared_ptr<MatrixType> get_M_dune() {return make_shared<MatrixType>(M_dune);};
   };
 }  // ::pfasst
 

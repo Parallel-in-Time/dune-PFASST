@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 
     std::shared_ptr<GridType> grid;
-    
+    std::cout << "test "<< std::endl;
 
     int n_levels=2;
 
@@ -167,8 +167,9 @@ int main(int argc, char** argv) {
 
     for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << sweeper->initial_state()->data()[i] << std::endl;
     //std::exit(0);
+    std::cout << "vor run "<< std::endl;
     sdc->run();
-    
+    std::cout << "nach run"<< std::endl;    
     
     //do not need a post run for GaussRadau nodes not sure about that should ask robert
     //sdc->post_run();

@@ -75,9 +75,9 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
    	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
    	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
 
-        //pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
+
         pfasst.communicator() = std::make_shared<CommunicatorType>(comm_t);
-// 	auto FinEl = make_shared<fe_manager>(nelements, 2);
+
 
                  
         typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
@@ -170,10 +170,10 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         pfasst.status()->t_end() = t_end;
         pfasst.status()->max_iterations() = niter;
         std::cout << "vor setup"<< std::endl;
-        MPI_Barrier(MPI_COMM_WORLD);
+        //MPI_Barrier(MPI_COMM_WORLD);
         pfasst.setup();
         std::cout << "vor initial state"<< std::endl;
-        MPI_Barrier(MPI_COMM_WORLD);
+        //MPI_Barrier(MPI_COMM_WORLD);
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 	coarse->set_comm(comm_x);
