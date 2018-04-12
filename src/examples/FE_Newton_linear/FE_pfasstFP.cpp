@@ -185,7 +185,7 @@ int main(int argc, char** argv)
   const size_t nelements = get_value<size_t>("num_elements", 4); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
-  const double t_0 = 0.1;
+  const double t_0 = 0;
   const double dt = get_value<double>("dt", 0.1);
   double t_end = get_value<double>("tend", 0.2);
   size_t nsteps = get_value<size_t>("num_steps", 0);

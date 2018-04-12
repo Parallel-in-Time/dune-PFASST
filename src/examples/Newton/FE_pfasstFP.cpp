@@ -96,7 +96,16 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
     	const auto num_time_steps = 1;//t_end/dt;
 
 	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_coarse;
-	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_fine;	
+	vector<vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>>  _new_newton_state_fine;
+
+	shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t> _new_initial_coarse;
+	shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t> _new_initial_fine;
+	shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t> _copy_end_state;
+
+	_copy_end_state = fine->get_encap_factory().create();
+	_new_initial_coarse = coarse->get_encap_factory().create();
+	_new_initial_fine = fine->get_encap_factory().create();
+	
 	//vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state_coarse;
 	//vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state_fine;
     	_new_newton_state_coarse.resize(num_time_steps);
@@ -156,15 +165,27 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 	std::cout << "----------------------------------------------------------------------- 2 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 
-        pfasst.status()->time() =  t_0 + time*dt*num_pro;
+        pfasst.status()->time() =  t_0 + time*dt;
         pfasst.status()->dt() = dt;
-        pfasst.status()->t_end() = t_0 + (time+1)*dt*num_pro;
+        pfasst.status()->t_end() = t_0 + (time+num_pro)*dt;
         pfasst.status()->max_iterations() = niter;
         std::cout << "******************************** pfasst t0 " << pfasst.status()->time() << "tend " << pfasst.status()->t_end() << std::endl;
         pfasst.setup();
 
-        coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time()); //nur für den ersten Zeitschritt
-        fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     //
+	if(time==0){
+        	//coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time()); //nur für den ersten Zeitschritt
+        	fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     //
+	}else {
+		for (int i=0; i< fine->initial_state()->data().size(); i++) fine->initial_state()->data()[i] = _new_initial_fine->data()[i];   
+	}
+
+
+	if(time==2){ 
+		for(int i=0; i< fine->exact(pfasst.get_status()->get_time())->data().size(); i++){
+			std::cout << pfasst.get_status()->get_time() <<" "<< _new_initial_fine->data()[i] << " " <<fine->exact(pfasst.get_status()->get_time())->data()[i] << std::endl;
+		}
+	//std::exit(0);
+	}	
 
 	std::cout << "----------------------------------------------------------------------- 2,5 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 
@@ -183,6 +204,8 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 			}
 
 		}
+	}else{
+
 	}
 
 	std::cout << "----------------------------------------------------------------------- 3 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
@@ -233,9 +256,9 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         if(my_rank==num_pro-1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
+        auto exact     = fine->exact( t_0 + (time+num_pro)*dt)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
+          std::cout <<  t_0 + (time+num_pro)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
         }
 
         std::cout << "******************************************* " << std::endl;
@@ -273,16 +296,35 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	std::cout << "******************************************* " << std::endl;
 	}*/
 
+	//_new_initial_fine->data() =fine->exact(0)->data();
+	//std::cout << "vorm cp rank " << my_rank<< std::endl;
+
+
+	//std::cout << "nachm cp rank " << my_rank<< std::endl;
+
+	for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
 	fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_time_steps-1][num_nodes]);
         if (my_rank == num_pro-1) std::cout << "NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-	std::cout << my_rank << " num_solves  " << fine->num_solves << std::endl;
+	std::cout << my_rank << " num_solves  " << fine->num_solves << " " << _new_initial_fine->data().size() << std::endl;
         MPI_Barrier(MPI_COMM_WORLD);
 
 	int local=0, global=0;
 	if (fine->get_end_state()->norm0()<1e-10) local=1;	
 	MPI_Reduce(&local, &global, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 	MPI_Bcast(&global, 1, MPI_INT, 0, MPI_COMM_WORLD);
-	if(global>0) break;
+
+
+	if(global>0) {
+		if (my_rank == num_pro-1){for (int i=0; i< fine->get_end_state()->data().size(); i++) _new_initial_fine->data()[i] = _copy_end_state->data()[i];}
+		MPI_Bcast(&(_new_initial_fine->data()[0]),_new_initial_fine->data().size(), MPI_DOUBLE, num_pro-1,MPI_COMM_WORLD);
+        //for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          //std::cout <<  " end state bla " << _new_initial_fine->data()[i]  <<  std::endl;
+        //}
+		//MPI_Bcast(&,)
+		//_new_initial_coarse->data
+		//_new_initial_fine->data
+		break;
+	}
 
 
 
@@ -338,7 +380,7 @@ int main(int argc, char** argv)
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
   const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
-  const double t_0 = 0.1;
+  const double t_0 = 0;
   const double dt = get_value<double>("dt", 0.1);
   double t_end = get_value<double>("tend", 0.2);
   size_t nsteps = get_value<size_t>("num_steps", 0);
