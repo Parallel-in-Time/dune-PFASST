@@ -109,19 +109,26 @@ namespace pfasst
       this->status()->set_primary_state(PrimaryState::PREDICTING);
 
       // iterate on each time step (i.e. iterations on single time step)
+
+      bool last_predict=false;
       do {
         if (this->get_status()->get_primary_state() == (+PrimaryState::PREDICTING)) {
           this->predictor();
+	  last_predict=true;
 
         } else if (this->get_status()->get_primary_state() == (+PrimaryState::ITERATING)) {
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration " << this->get_status()->get_iteration());
 
-          this->cycle_down();
+	  if(!last_predict){
+          	this->cycle_down();
 
-          this->recv_coarse();
-          this->sweep_coarse();
-          this->send_coarse();
+          	this->recv_coarse();
+
+          	this->sweep_coarse();
+          	this->send_coarse();
+
+	  }last_predict=false;
 
           this->cycle_up();
 
@@ -386,16 +393,18 @@ namespace pfasst
     // restrict fine initial condition ...
     this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
     // ... and spread it to all nodes on the coarse level
-    this->get_coarse()->spread();
+    this->get_coarse()->spread_Newton(); 
+    //this->get_coarse()->spread(10000);	
     this->get_coarse()->save();
 
     // perform PFASST prediction sweeps on coarse level
-    for (size_t predict_step = 0;
+    /*for (size_t predict_step = 0;
          predict_step <= this->get_communicator()->get_rank();
          ++predict_step) {
       // do the sweeper's prediction once ...
       if (predict_step == 0) {
-        this->predict_coarse();
+        //this->predict_coarse();
+	this->get_coarse()->spread(0);
       } else {
         // and default sweeps for subsequent processes
         this->recv_coarse();
@@ -403,19 +412,27 @@ namespace pfasst
       }
 
       this->send_coarse();
-    }
+    }*/
 
     // return to fine level
     ML_CVLOG(1, this->get_logger_id(), "cycle up onto fine level");
-    this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true);
-    this->sweep_fine();
+    //this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true); //raus
+    //this->sweep_fine(); //raus
 
-    this->send_fine();
+    //this->send_fine();
 
     // finalize prediction step
     this->get_coarse()->save();
-    this->get_fine()->save();
+    //this->get_fine()->save(); //raus
   }
+
+
+
+
+
+
+
+
 
   template<class TransferT, class CommT>
   void

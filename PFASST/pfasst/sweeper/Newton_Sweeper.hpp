@@ -58,6 +58,15 @@ namespace pfasst
       MatrixType M_dune;
       MatrixType A_dune;
 
+
+      virtual void spread_Newton();
+      /**
+       * Save solution at all time nodes.
+       *
+       * This copies the spatial values of all `states()` to `previous_states()`.
+       */
+
+
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
       /**

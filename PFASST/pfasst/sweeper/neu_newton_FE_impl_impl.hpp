@@ -69,51 +69,7 @@ namespace pfasst
     this->compute_delta_matrices();
   }
 
-  template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
-  IMEX<SweeperTrait, BaseFunction, Enabled>::last_newton_state()
-  {
-    return this->_last_newton_state;
-  }
-  
 
-  template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
-  IMEX<SweeperTrait, BaseFunction, Enabled>::get_last_newton_state() const
-  {
-    return this->_last_newton_state;
-  }
-
-
-  template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
-  IMEX<SweeperTrait, BaseFunction, Enabled>::new_newton_state()
-  {
-    return this->_new_newton_state;
-  }
-  
-
-  template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
-  IMEX<SweeperTrait, BaseFunction, Enabled>::get_new_newton_state() const
-  {
-    return this->_new_newton_state;
-  }
-
-  template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
-  IMEX<SweeperTrait, BaseFunction, Enabled>::coarse_rhs()
-  {
-    return this->_coarse_rhs;
-  }
-  
-
-  template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
-  IMEX<SweeperTrait, BaseFunction, Enabled>::get_coarse_rhs() const
-  {
-    return this->_coarse_rhs;
-  }
 
 
 

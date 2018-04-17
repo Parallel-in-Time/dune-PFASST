@@ -32,7 +32,7 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
-        double                                     	_nu{1.0}; //1.2
+        double                                     	_nu{1.2}; //1.2
         double                                     	_n{1.0}; //2.0
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 

@@ -98,7 +98,7 @@ namespace pfasst
         std::cout << " set_options " <<  std::endl;  
         IMEX<SweeperTrait, Enabled>::set_options();
 
-        this->_nu = config::get_value<spatial_t>("nu", this->_nu);
+        //this->_nu = config::get_value<spatial_t>("nu", this->_nu);
 
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
@@ -114,9 +114,9 @@ namespace pfasst
         auto result = this->get_encap_factory().create();
 
         
-                const auto dim = 1; //SweeperTrait::DIM;
+        const auto dim = 1; //SweeperTrait::DIM;
 	spatial_t n  = this-> _n;
-    spatial_t l0 = this-> _nu;
+    	spatial_t l0 = this-> _nu;
 	spatial_t l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
 	spatial_t d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
 	//std::cout << "nu = " << this->_nu << std::endl;
@@ -394,6 +394,7 @@ namespace pfasst
         auto u2 = this->get_encap_factory().create();
         double nu =this->_nu;
 
+	std::cout << "++++++++++++ " << this->_nu << std::endl;
 	u2->zero();
 	for (int i=0; i<u->get_data().size(); ++i)
 	    {
@@ -401,18 +402,18 @@ namespace pfasst
 	    }
 	this->M_dune.mv(u2->get_data(), result->data());
 	this->M_dune.umv(u->get_data(), result->data());
-	result->data()*=_nu*_nu;
+	result->data()*=(this->_nu*this->_nu);
 	this->A_dune.umv(u->get_data(), result->data());
 
 	
 
         //result->data() *= nu;
-	/*std::cout << "evaluate  " << std::endl;
+	std::cout << "evaluate  " << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
 
 	  std::cout << "f " << result->data()[i] << std::endl;
 
-         }*/
+         }
         
         return result;
       }
@@ -466,10 +467,10 @@ namespace pfasst
 	  /*for(int i=0; i<rhs->data().size(); ++i){
 	
 	    if(dirichletLeftNodes[i])
-	    newton_rhs[i] = exact(t)->get_data()[i]; //1;//-dt;
+	    newton_rhs[i] = -dt; // exact(t)->get_data()[i]; //1;//-dt;
 
 	    if(dirichletRightNodes[i])
-	    newton_rhs[i] = exact(t)->get_data()[i]; //0;
+	    newton_rhs[i] = 0; //exact(t)->get_data()[i]; //0;
 
 
 	  
@@ -487,24 +488,24 @@ namespace pfasst
 
   
 	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
-	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1.0);
+	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1);
 	  Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
-                              1e-10, // desired residual reduction factor
+                              1e-12, // desired residual reduction factor
                               5000,    // maximum number of iterations
                               0);    // verbosity of the solver
 	  Dune::InverseOperatorResult statistics ;
 	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
 	  num_solves++;
-	  df.mv(u->data(), residuum->data());
-      	  residuum->data() -= newton_rhs2;
-          std::cout << "residuums norm " << residuum->norm0() << std::endl;
+	  //df.mv(u->data(), residuum->data());
+      	  //residuum->data() -= newton_rhs2;
+          //std::cout << "residuums norm " << residuum->norm0() << std::endl;
           //if (residuum->norm0()< _abs_newton_tol){break;}
           evaluate_f(f, u, dt, rhs);
         int my_rank, num_pro;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-          if(f->norm0()<1e-10){if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
+        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+          if(f->norm0()<1e-10){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
 	  
           for (size_t i = 0; i < u->get_data().size(); i++) {
 
@@ -533,12 +534,14 @@ namespace pfasst
 //std::cout << "impl solve "  << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-	  //std::cout << "f " << f->data()[i] << std::endl;
+	  std::cout << "f " << f->data()[i] << std::endl;
         }
-        //evaluate_rhs_impl(0, u);
+        evaluate_rhs_impl(0, u);
+        evaluate_f(f, u, dt, rhs);
+	std::cout << "***************************************** das neue f " << f->norm0() << std::endl;
 	//std::exit(0);
         this->_num_impl_solves++;
-        //if (this->_num_impl_solves==5) std::exit(0);
+        if (this->_num_impl_solves==5) std::exit(0);
 
 
       }
@@ -553,13 +556,14 @@ namespace pfasst
           
           
           f->zero();
+	std::cout << "-------------- "<< this->_nu << std::endl;
 	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
         fneu.resize(u->get_data().size());
 	for (int i=0; i<u->get_data().size(); ++i)
 	{
 	  fneu[i]= pow(u->get_data()[i], _n+1) - u->get_data()[i];	
 	}
-	f->data() *= (_nu*_nu);
+	f->data() *= (this->_nu*this->_nu);
 	this->M_dune.mv(fneu, f->data());
 	this->A_dune.mmv(u->get_data(),f->data());
 	f->data() *= dt;
@@ -593,7 +597,7 @@ namespace pfasst
  						){
           
           
-          
+          std::cout << "############### " << this->_nu<< std::endl;
           
           
           for (int i=0; i<df.N(); ++i)
@@ -601,10 +605,11 @@ namespace pfasst
             for (int j=0; j<df.M(); ++j)
                 {
                     if (df.exists(i,j)) 
-                        df[i][j]= (_nu*_nu)*(_n+1) *this->M_dune[i][j] * pow(u->get_data()[j], _n);	
+                        df[i][j]= -(_n+1) *this->M_dune[i][j] * pow(u->get_data()[j], _n);	
                 }
             }
-            df.axpy((-_nu*_nu), this->M_dune);
+            df += this->M_dune;
+	    df *= (- this->_nu*this->_nu);	
             df-=this->A_dune;
             df*=dt;
             df+=this->M_dune;

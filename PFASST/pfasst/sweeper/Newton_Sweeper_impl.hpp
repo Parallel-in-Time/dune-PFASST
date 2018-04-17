@@ -26,6 +26,22 @@ namespace pfasst
       , _num_impl_solves(0)
   {}
 
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  void
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::spread_Newton()
+  {
+    ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
+
+    assert(this->get_initial_state() != nullptr);
+    //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
+    for(size_t m = 1; m < this->get_states().size(); ++m) {
+      assert(this->states()[m] != nullptr);
+      this->states()[m]->data() = this->last_newton_state()[(this->get_status()->get_time()/this->get_status()->get_dt())][m]->data();
+    }
+  }
+
+
   template<class SweeperTrait, typename Enabled>
   void
   IMEX<SweeperTrait, Enabled>::initialize()

@@ -396,12 +396,88 @@ namespace pfasst
     ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
 
     assert(this->get_initial_state() != nullptr);
-
+    //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
       this->states()[m]->data() = this->get_initial_state()->get_data();
     }
   }
+
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  void
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::spread(double value)
+  {
+    ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
+
+    assert(this->get_initial_state() != nullptr);
+    //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
+    for(size_t m = 1; m < this->get_states().size(); ++m) {
+      assert(this->states()[m] != nullptr);
+      this->states()[m]->data() = value; //this->get_initial_state()->get_data();
+    }
+  }
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  void
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::spread_Newton()
+  {
+    ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
+
+    /*assert(this->get_initial_state() != nullptr);
+    //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
+    for(size_t m = 1; m < this->get_states().size(); ++m) {
+      assert(this->states()[m] != nullptr);
+      this->states()[m]->data() = this->last_newton_state()[(this->get_status()->get_time()/this->get_status()->get_dt())][m]->data();
+    }*/
+  }
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::last_newton_state()
+  {
+    return this->_last_newton_state;
+  }
+  
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_last_newton_state() const
+  {
+    return this->_last_newton_state;
+  }
+
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::new_newton_state()
+  {
+    return this->_new_newton_state;
+  }
+  
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_new_newton_state() const
+  {
+    return this->_new_newton_state;
+  }
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::coarse_rhs()
+  {
+    return this->_coarse_rhs;
+  }
+  
+
+  template<class SweeperTrait, class BaseFunction, typename Enabled>
+  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  Sweeper<SweeperTrait, BaseFunction, Enabled>::get_coarse_rhs() const
+  {
+    return this->_coarse_rhs;
+  }
+
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
   void

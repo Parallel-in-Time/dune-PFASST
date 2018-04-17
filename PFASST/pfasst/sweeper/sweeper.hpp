@@ -50,6 +50,7 @@ namespace pfasst
     : public std::enable_shared_from_this<Sweeper<SweeperTrait, BaseFunction, Enabled>>
   {
     public:
+
       /**
        * Sweeper type traits providing important type information for the sweeper.
        *
@@ -63,6 +64,23 @@ namespace pfasst
                   "Encapsulation type must be constructible");
     static_assert(std::is_destructible<typename traits::encap_t>::value,
                   "Encapsulation type must be destructible");*/
+
+
+      vector<vector<shared_ptr<typename traits::encap_t>>>        _last_newton_state;  
+      virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& last_newton_state();
+      virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_last_newton_state() const; 
+      vector<vector<shared_ptr<typename traits::encap_t>>>        _new_newton_state;  
+      virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& new_newton_state();
+      virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_new_newton_state() const; 
+
+      vector<vector<shared_ptr<typename traits::encap_t>>>    _coarse_rhs;
+      virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& coarse_rhs();
+      virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_coarse_rhs() const;
+ 
+      vector<vector<shared_ptr<MatrixType>>> df_dune;
+
+
+
 
      shared_ptr<typename traits::encap_t>                _M_initial;
     public:
@@ -373,6 +391,15 @@ namespace pfasst
        *
        * This copies the spatial values of all `states()` to `previous_states()`.
        */
+      virtual void spread(double value);
+      /**
+       * Save solution at all time nodes.
+       *
+       * This copies the spatial values of all `states()` to `value`.
+       */
+
+      virtual void spread_Newton();
+
       virtual void save();
       /**
        * Evaluate the right hand side of the problem equation.

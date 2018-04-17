@@ -85,12 +85,13 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         for (int i=0; i<n_levels; i++){	      
 	      grid->globalRefine((bool) i);
 	      auto view = grid->levelGridView(i);
-              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); 
 
         } 
 
 
 	auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
+
 
         auto fine = std::make_shared<SweeperType>(fe_basis[0] , 0, grid);	const auto num_nodes = nnodes;	
     	const auto num_time_steps = 1;//t_end/dt;
@@ -106,8 +107,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	_new_initial_coarse = coarse->get_encap_factory().create();
 	_new_initial_fine = fine->get_encap_factory().create();
 	
-	//vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state_coarse;
-	//vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state_fine;
+
     	_new_newton_state_coarse.resize(num_time_steps);
     	_new_newton_state_fine.resize(num_time_steps);
 
@@ -124,19 +124,21 @@ std::cout << "num_pro " << num_pro << std::endl;
 int num_solves=0;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
 
-    std::cout << "-------------------------------------------------------------------------------------------------------  die zeit " << time << " " << std::endl;	
-    for(int ne=0; ne<4; ne++){
+    std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
+    for(int ne=0; ne<20; ne++){
 
-	std::cout << "-------------------------------------------------------------------------------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
 
         auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
+	auto coarse_helper = std::make_shared<SweeperType>(fe_basis[1], 1,  grid); 
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+        coarse_helper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
         coarse->is_coarse=true;
+	coarse_helper->is_coarse=true;
         fine->is_coarse=false;
                         
         dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
@@ -163,65 +165,51 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         pfasst.add_transfer(transfer);
         pfasst.set_options();
 
-	std::cout << "----------------------------------------------------------------------- 2 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
-
         pfasst.status()->time() =  t_0 + time*dt;
         pfasst.status()->dt() = dt;
         pfasst.status()->t_end() = t_0 + (time+num_pro)*dt;
         pfasst.status()->max_iterations() = niter;
-        std::cout << "******************************** pfasst t0 " << pfasst.status()->time() << "tend " << pfasst.status()->t_end() << std::endl;
+
         pfasst.setup();
 
 	if(time==0){
-        	//coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time()); //nur für den ersten Zeitschritt
-        	fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     //
+        	fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     
 	}else {
 		for (int i=0; i< fine->initial_state()->data().size(); i++) fine->initial_state()->data()[i] = _new_initial_fine->data()[i];   
 	}
 
 
-	if(time==2){ 
-		for(int i=0; i< fine->exact(pfasst.get_status()->get_time())->data().size(); i++){
-			std::cout << pfasst.get_status()->get_time() <<" "<< _new_initial_fine->data()[i] << " " <<fine->exact(pfasst.get_status()->get_time())->data()[i] << std::endl;
-		}
-	//std::exit(0);
-	}	
-
-	std::cout << "----------------------------------------------------------------------- 2,5 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
-
-
 	if(time==0 && ne==0){ 	
 		for(int i=0; i< num_time_steps; i++){	
 			for(int j=0; j<num_nodes +1; j++){
-				//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
-    		 		//(*_new_newton_state_coarse[i][j]).data()[k]= 0; 
-    				//}
-				//for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
-    		 		//(*_new_newton_state_fine[i][j]).data()[k]= 0; 
-    				//}
 				(_new_newton_state_fine[i][j])  = fine->exact( pfasst.status()->time());
 				(_new_newton_state_coarse[i][j]) = coarse->exact( pfasst.status()->time());
 			}
 
 		}
-	}else{
-
 	}
 
-	std::cout << "----------------------------------------------------------------------- 3 --------------------------------  die zeit ganz vorne " << time << " " << std::endl;	
 
-        std::cout << "-------------------------------------------------------------------------------------------------------  die zeit weiter vorne " << time << " " << std::endl;	
+
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
-			//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
-    			//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
-			//}
     			transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
 			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
     				fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
 			}
     		}
 	}
+
+
+
+
+
+
+
+
+
+
+
 
 	    for(int m=0; m< num_nodes +1; m++){
 	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
@@ -235,17 +223,11 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 	    	fine->coarse_rhs()[0][m]->data() =result->data();
 		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
-                
-	    	//Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > vgl_M = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(coarse->M_dune); ///////M
-		//transfer->restrict_dune_matrix(*fine->df_dune[0][m], vgl_M);
 
 
 	    }
 
 
-
-
-        std::cout << "vor run"<< std::endl;
         pfasst.run();
         pfasst.post_run();
 
@@ -260,52 +242,18 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout <<  t_0 + (time+num_pro)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
         }
-
-        std::cout << "******************************************* " << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " " << std::endl;
-
-
-        std::cout << "-------------------------------------------------------------------------------------------------------  die zeit schon wieder " << time << " " << std::endl;	
-	//auto f2 = fine->get_end_state();
-        //f2.scaled_add(-1.0, fine->exact(t_end));
-        //std::cout << "Fehler: "  << f2.norm0() << " " << std::endl;
-        //std::cout << "Time: "  << time << " " << "Newton: " << ne << std::endl;
-
-	//std::cout << "******************************************* " << std::endl;
 	}
 
 
-        
-        /*if(my_rank==1) {
-        auto anfang    = fine->exact(0)->data();
-        auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
-        }
-
-        std::cout << "******************************************* " << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " " << std::endl;
-
-        fine->get_end_state()->scaled_add(-1.0, fine->exact(t_end));
-        std::cout << "Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
 
 
-	std::cout << "******************************************* " << std::endl;
-	}*/
 
-	//_new_initial_fine->data() =fine->exact(0)->data();
-	//std::cout << "vorm cp rank " << my_rank<< std::endl;
-
-
-	//std::cout << "nachm cp rank " << my_rank<< std::endl;
+	
 
 	for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
 	fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_time_steps-1][num_nodes]);
         if (my_rank == num_pro-1) std::cout << "NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-	std::cout << my_rank << " num_solves  " << fine->num_solves << " " << _new_initial_fine->data().size() << std::endl;
+	std::cout << my_rank << " num_solves  " << fine->num_solves <<  std::endl;
         MPI_Barrier(MPI_COMM_WORLD);
 
 	int local=0, global=0;
@@ -317,12 +265,28 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	if(global>0) {
 		if (my_rank == num_pro-1){for (int i=0; i< fine->get_end_state()->data().size(); i++) _new_initial_fine->data()[i] = _copy_end_state->data()[i];}
 		MPI_Bcast(&(_new_initial_fine->data()[0]),_new_initial_fine->data().size(), MPI_DOUBLE, num_pro-1,MPI_COMM_WORLD);
-        //for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          //std::cout <<  " end state bla " << _new_initial_fine->data()[i]  <<  std::endl;
-        //}
-		//MPI_Bcast(&,)
-		//_new_initial_coarse->data
-		//_new_initial_fine->data
+
+		_copy_end_state->scaled_add(-1.0, fine->exact( t_0 + (time+num_pro)*dt));
+        	std::cout << "Fehler am Ender : "  << _copy_end_state->norm0() << " " << std::endl;
+
+		if(t_0 + (time+num_pro)*dt == t_end){	
+			int final_solves=0;				
+			MPI_Reduce(&fine->num_solves, &final_solves, 1, MPI_INT, MPI_SUM, num_pro-1, MPI_COMM_WORLD);
+        		if (my_rank == num_pro-1){ std::cout << "NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+
+        			ofstream f;
+        			stringstream ss;
+        			ss << nelements;
+        			string s = "solution_pfasst12/" + ss.str() + ".dat";
+        			f.open(s, ios::app | std::ios::out );
+        			f << nelements << " " << dt << " "<< _copy_end_state->norm0() << " number solves " << final_solves << endl;
+        			f.close();
+        			std::cout << "******************************************* " << std::endl;
+			}
+        	
+
+
+		}
 		break;
 	}
 
@@ -349,7 +313,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         MPI_Barrier(MPI_COMM_WORLD);
 	std::cout << "after last barrier rank " << my_rank<< std::endl;
 
-std::cout << "-------------------------------------------------------------------------------------------------------  beginn weiterer zeitschritt" << time << " " << ne << std::endl;
+
 }
 
 std::cout << "-------------------------------------------------------------------------------------------------------  beginn weiterer zeitschritt" << time << " " << std::endl;
@@ -378,7 +342,7 @@ int main(int argc, char** argv)
 
 
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
-  const size_t nnodes = get_value<size_t>("num_nodes", 3);
+  const size_t nnodes = get_value<size_t>("num_nodes", 5);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0;
   const double dt = get_value<double>("dt", 0.1);
@@ -401,14 +365,10 @@ int main(int argc, char** argv)
 
   run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
 
-	std::cout << "in main " << my_rank<< std::endl;
-
   pfasst::Status<double>::free_mpi_datatype();
 
-        MPI_Barrier(MPI_COMM_WORLD);
-	std::cout << "vor finalize " << my_rank<< std::endl;
+  MPI_Barrier(MPI_COMM_WORLD);
 
-  std::cout << "my rank " << my_rank<< " of "<< num_pro << std::endl;
 
 
   MPI_Finalize();

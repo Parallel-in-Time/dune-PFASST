@@ -129,8 +129,8 @@ namespace pfasst
         ofstream f;
         stringstream ss;
         ss << nelements;
-        string s = "solution_pfasst/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out );
+        string s = "solution_pfasst01/" + ss.str() + ".dat";
+        f.open(s, ios::app | std::ios::out< );
         f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << " number solves " << fine->num_solves << endl;
         f.close();
         std::cout << "******************************************* " << std::endl;
@@ -141,7 +141,7 @@ namespace pfasst
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        for (int i=0; i<num_pro; i++){
+        /*for (int i=0; i<num_pro; i++){
           if(my_rank==i){
             ofstream ff;
             stringstream sss;
@@ -151,6 +151,7 @@ namespace pfasst
             auto iter = pfasst._it_per_step;
             for (const auto &line : iter) {
               ff << my_rank << " " << dt <<"     " << line << std::endl;
+
             }
 
             ff.close();
@@ -158,7 +159,7 @@ namespace pfasst
           }
           MPI_Barrier(MPI_COMM_WORLD);
 
-        }
+        }*/
 
 
 

@@ -70,9 +70,9 @@ namespace pfasst
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
-          double                                     	 _nu{1.0};
+          double                                     	 _nu{1.1};
           double                                     	 _n{1.0};
-          double                                      	 _delta{1.0};
+          //double                                      	 _delta{1.0};
           double                                        _abs_newton_tol=1e-10;
 	  
 	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
