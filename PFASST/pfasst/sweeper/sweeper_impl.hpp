@@ -411,11 +411,12 @@ namespace pfasst
     ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
 
     assert(this->get_initial_state() != nullptr);
-    //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
+    std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
       this->states()[m]->data() = value; //this->get_initial_state()->get_data();
     }
+    std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -424,12 +425,16 @@ namespace pfasst
   {
     ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
 
-    /*assert(this->get_initial_state() != nullptr);
+    assert(this->get_initial_state() != nullptr);
     //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
+    std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
+    int i= 0; //(this->get_status()->get_time()/this->get_status()->get_dt()); 	
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
-      this->states()[m]->data() = this->last_newton_state()[(this->get_status()->get_time()/this->get_status()->get_dt())][m]->data();
-    }*/
+      //std::cout << i << " " << this->last_newton_state()[i][m]->data()  << " " << i << std::endl;
+      this->states()[m]->data() = this->last_newton_state()[i][m]->data();
+    }
+    std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -469,7 +474,7 @@ namespace pfasst
   {
     return this->_coarse_rhs;
   }
-  
+  //
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
   const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&

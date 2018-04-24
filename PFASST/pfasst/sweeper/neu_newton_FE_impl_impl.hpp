@@ -122,8 +122,9 @@ namespace pfasst
     typename traits::time_t tm = t;
 
     for (size_t m = 0; m < num_nodes; ++m) {
-      this->states()[m + 1]->data() = this->states()[m]->data();
-      this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
+      this->states()[m + 1]->data() = this->last_newton_state()[0][m]->data(); //this->states()[m]->data();
+      //this->states()[m+1]->data() = this->last_newton_state()[0][m+1]->data();
+      this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m, this->last_newton_state()[0][m]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
       tm += dt *  (nodes[m+1] - nodes[m]);
 
       ML_CVLOG(1, this->get_logger_id(), "");

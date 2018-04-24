@@ -182,8 +182,14 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	if(time==0 && ne==0){ 	
 		for(int i=0; i< num_time_steps; i++){	
 			for(int j=0; j<num_nodes +1; j++){
-				(_new_newton_state_fine[i][j])  = fine->exact( pfasst.status()->time());
-				(_new_newton_state_coarse[i][j]) = coarse->exact( pfasst.status()->time());
+				/*for(int k=0; k<(_new_newton_state_coarse[i][j])->data().size(); k++){
+					(_new_newton_state_coarse[i][j])->data()[k] = fine->exact( pfasst.status()->time()); //0;
+				}
+				for(int k=0; k<(_new_newton_state_fine[i][j])->get_data().size(); k++){
+					(_new_newton_state_fine[i][j])->data()[k] = coarse->exact( pfasst.status()->time());
+				}*/
+				(_new_newton_state_fine[0][j])  = fine->exact( pfasst.status()->time());
+				(_new_newton_state_coarse[0][j]) = coarse->exact( pfasst.status()->time());
 			}
 
 		}
@@ -196,7 +202,10 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
     			transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
 			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
     				fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
+    				//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
 			}
+			//if (my_rank==1) fine->last_newton_state()[i][j] =  fine->exact(1) ;
+			//if (my_rank==0) fine->last_newton_state()[i][j] =  fine->exact(0.5) ;
     		}
 	}
 
@@ -211,7 +220,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 
 
-	    for(int m=0; m< num_nodes +1; m++){
+	    /*for(int m=0; m< num_nodes +1; m++){
 	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
             	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[0][m]);
 	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
@@ -225,7 +234,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
 
 
-	    }
+	    }*/
 
 
         pfasst.run();
@@ -342,7 +351,7 @@ int main(int argc, char** argv)
 
 
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
-  const size_t nnodes = get_value<size_t>("num_nodes", 5);
+  const size_t nnodes = get_value<size_t>("num_nodes", 3);
   const QuadratureType quad_type = QuadratureType::GaussRadau;
   const double t_0 = 0;
   const double dt = get_value<double>("dt", 0.1);

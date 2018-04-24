@@ -434,7 +434,7 @@ int main(int argc, char** argv)
   	LS ls(gfs,100,verbose);
 
 
-	for (int i=0; i<100; i++){
+	for (int i=0; i<10; i++){
 		ls.apply(m, sol, z, 0);
 		//for(auto r =sol.begin(); r !=sol.end(); ++r){std::cout << "vector " << *r <<std::endl;}
 		gom.jacobian_apply(sol, z);
@@ -462,12 +462,12 @@ int main(int argc, char** argv)
 
 
 	vgl -= sol; 
-	for(auto r =vgl.begin(); r !=vgl.end(); ++r){std::cout << "vector " << *r <<std::endl;}
+	//for(auto r =vgl.begin(); r !=vgl.end(); ++r){std::cout << "vector " << *r <<std::endl;}
 	//gom.applyscaleadd(-1, sol, vgl);
 	std::cout << "norm" << Dune::PDELab::Backend::native(vgl).infinity_norm() << std::endl;
 
-	for(int i=0; i<Dune::PDELab::Backend::native(m).N(); i++)
-				std::cout << "initial " << Dune::PDELab::Backend::native(initial)[i][0] << " num " << Dune::PDELab::Backend::native(sol)[i][0] << " alg " << Dune::PDELab::Backend::native(vgl)[i][0] << std::endl;
+	//for(int i=0; i<Dune::PDELab::Backend::native(m).N(); i++)
+				//std::cout << "initial " << Dune::PDELab::Backend::native(initial)[i][0] << " num " << Dune::PDELab::Backend::native(sol)[i][0] << " alg " << Dune::PDELab::Backend::native(vgl)[i][0] << std::endl;
 
 	t2 = MPI_Wtime(); ///////////////
 	printf( "Elapsed time is %f\n", t2 - t1 ); 

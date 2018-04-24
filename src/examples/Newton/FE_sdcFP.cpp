@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     double t_end = get_value<double>("tend", 0.1);                      // right point of the time intervall  
     const size_t nnodes = get_value<size_t>("num_nodes", 3);            // time intervall: number of sdc quadrature points
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
-    const size_t niter = get_value<size_t>("num_iters", 10);            // maximal number of sdc iterations
+    const size_t niter = get_value<size_t>("num_iters", 200);            // maximal number of sdc iterations
 
     
     
@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
 
 for(int time=0; time<(t_end-t_0)/dt; time++){	
 //int time=0;
-    for(int ne=0; ne<4; ne++){	
+    for(int ne=0; ne<10; ne++){	
 
 
 	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); // mass and stiff are just dummies
@@ -171,7 +171,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 		for(int k=0; k< _new_newton_state[i][j]->size(); k++){
-    		 (*_new_newton_state[i][j])[k]= 0; //sweeper->exact(i*dt+j*1/3.*dt)->data()[k];
+    		 (*_new_newton_state[i][j])[k]= sweeper->exact(0)->data()[k];
     		}
 		}
 	}

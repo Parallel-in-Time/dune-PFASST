@@ -135,6 +135,8 @@ namespace pfasst
           this->sweep_fine();
           this->send_fine();
 
+
+
         } else {
           ML_CLOG(FATAL, this->get_logger_id(), "Something went severly wrong with the states.");
           ML_CLOG(FATAL, this->get_logger_id(), "Expected state: PREDICTING or ITERATING, got: "
@@ -394,25 +396,25 @@ namespace pfasst
     this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
     // ... and spread it to all nodes on the coarse level
     this->get_coarse()->spread_Newton(); 
-    //this->get_coarse()->spread(10000);	
+    //this->get_coarse()->spread();	
     this->get_coarse()->save();
 
     // perform PFASST prediction sweeps on coarse level
-    /*for (size_t predict_step = 0;
+    for (size_t predict_step = 0;
          predict_step <= this->get_communicator()->get_rank();
          ++predict_step) {
       // do the sweeper's prediction once ...
       if (predict_step == 0) {
         //this->predict_coarse();
-	this->get_coarse()->spread(0);
+	//this->get_coarse()->spread(0);
       } else {
         // and default sweeps for subsequent processes
-        this->recv_coarse();
-        this->sweep_coarse();
+        //this->recv_coarse();
+        //this->sweep_coarse();
       }
 
       this->send_coarse();
-    }*/
+    }
 
     // return to fine level
     ML_CVLOG(1, this->get_logger_id(), "cycle up onto fine level");
@@ -420,7 +422,21 @@ namespace pfasst
     //this->sweep_fine(); //raus
 
     //this->send_fine();
+	  for(int m=0; m< this->get_fine()->get_quadrature()->get_num_nodes() +1; m++){
+	    	this->get_fine()->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(this->get_fine()->M_dune); 
+            	this->get_fine()->evaluate_df2(*this->get_fine()->df_dune[0][m], this->get_fine()->last_newton_state()[0][m]);
+	    	this->get_coarse()->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(this->get_coarse()->M_dune); 
+	    	this->get_transfer()->restrict_dune_matrix(*this->get_fine()->df_dune[0][m], *this->get_coarse()->df_dune[0][m]);
+		auto result = this->get_fine()->get_encap_factory().create();
+            	result->zero();
+                this->get_fine()->evaluate_f2(result, this->get_fine()->last_newton_state()[0][m]);
+		this->get_fine()->df_dune[0][m]->mmv(this->get_fine()->last_newton_state()[0][m]->data(), result->data());
 
+	    	this->get_fine()->coarse_rhs()[0][m]->data() =result->data();
+		this->get_transfer()->restrict_data(this->get_fine()->coarse_rhs()[0][m], this->get_coarse()->coarse_rhs()[0][m]);
+
+
+	    }
     // finalize prediction step
     this->get_coarse()->save();
     //this->get_fine()->save(); //raus
