@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     const double t_0 = 0.0;                                             // left point of the time intervall is zero 
     const double dt = get_value<double>("dt", 0.1);                    // size of timesteping
     double t_end = get_value<double>("tend", 0.1);                      // right point of the time intervall  
-    const size_t nnodes = get_value<size_t>("num_nodes", 3);            // time intervall: number of sdc quadrature points
+    const size_t nnodes = get_value<size_t>("num_nodes", 2);            // time intervall: number of sdc quadrature points
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
     const size_t niter = get_value<size_t>("num_iters", 200);            // maximal number of sdc iterations
 
@@ -145,16 +145,13 @@ int main(int argc, char** argv) {
     	}
 
 
-for(int time=0; time<(t_end-t_0)/dt; time++){	
-//int time=0;
-    for(int ne=0; ne<10; ne++){	
+for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
+    for(int ne=0; ne<20; ne++){	//Newtonschritte
 
 
-	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); // mass and stiff are just dummies
+	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); 
 	sweeper->is_coarse = false;
-	std::cout << "test1 "<< std::endl;
     	sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-	std::cout << "test2 "<< std::endl;
     	auto sdc = std::make_shared<heat_FE_sdc_t>();    
     	sdc->add_sweeper(sweeper);
     	sdc->set_options();
@@ -163,32 +160,32 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
     	sdc->status()->t_end() = t_0 + (time+1)*dt;
 	std::cout << t_0 << " "<< t_0 + time*dt <<" "<< t_0 + (time+1)*dt<< " " << t_end<< std::endl;
     	sdc->status()->max_iterations() = niter;
-	std::cout << "vor setup "<< std::endl;
     	sdc->setup();
 
-	std::cout << "test3 "<< std::endl;
+
 	if(time==0 && ne==0) 	//im ersten Newton Lauf Anfangswerte setzen
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
-		for(int k=0; k< _new_newton_state[i][j]->size(); k++){
-    		 (*_new_newton_state[i][j])[k]= sweeper->exact(0)->data()[k];
-    		}
+		//for(int k=0; k< _new_newton_state[i][j]->size(); k++){
+    		 (*_new_newton_state[i][j]) = sweeper->exact(sdc->get_status()->get_time())->data();
+    		//}
 		}
 	}
-	std::cout << "test4 "<< std::endl;
 
-        sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 
-	for(int i=0; i< num_time_steps; i++){	
+        if (ne==0) sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+        if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//(*_new_newton_state[0][0]);
+
+	for(int i=0; i< num_time_steps; i++){	//last_newton_state
 		for(int j=0; j<num_nodes +1; j++){
 			for(int k=0; k< _new_newton_state[i][j]->size(); k++){
-    			sweeper->last_newton_state()[i][j]->data()[k] = (*_new_newton_state[i][j])[k]  ;
+    				sweeper->last_newton_state()[i][j]->data()[k] = (*_new_newton_state[i][j])[k]  ;
 			}
     		}
 	}
-	std::cout << "test5 "<< std::endl;
 
-	    for(int m=0; m< num_nodes +1; m++){
+
+	for(int m=0; m< num_nodes +1; m++){
 	    	sweeper->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(sweeper->M_dune); 
             	sweeper->evaluate_df2(*sweeper->df_dune[0][m], sweeper->last_newton_state()[0][m]);
 		auto result = sweeper->get_encap_factory().create();
@@ -196,9 +193,10 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
                 sweeper->evaluate_f2(result, sweeper->last_newton_state()[0][m]);
 		sweeper->df_dune[0][m]->mmv(sweeper->last_newton_state()[0][m]->data(), result->data());
 
-	    	sweeper->coarse_rhs()[0][m]->data() =result->data();
+	    	sweeper->coarse_rhs()[0][m]->data() =result->data();  
+		//sweeper->coarse_rhs()[0][m]->data() *= sweeper->get_status()->get_dt() *  sweeper->_q_delta_impl(m, m);
 
-	    }
+	}
 
 
     	sdc->run();   
@@ -206,13 +204,17 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;
 
+	(*_new_newton_state[num_time_steps-1][num_nodes]) -= sweeper->get_end_state()->data();
+        std::cout << "NEWTON *****************************************      Fehler: "  << (*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() << " " << std::endl;
 
     	auto naeherung = sweeper->get_end_state()->data();
     	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
     	auto initial   = sweeper->exact(t_0 + time*dt)->data();
-    	for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << initial[i] << " result " << naeherung[i] << " " << exact[i] << std::endl;
+    	for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << initial[i] << " result " << naeherung[i] << " " << sweeper->new_newton_state()[0][num_nodes]->data()[i] << " " << exact[i] << std::endl;
 	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
         std::cout << "***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  std::endl ;
+
+
 
     	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
@@ -220,6 +222,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
     		(*_new_newton_state[i][j])[k] = sweeper->new_newton_state()[i][j]->data()[k];
     		}
 	}	
+
+
+	//for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
 
 	//std::cout << "################################################################################# this i want to copy " << sweeper->last_newton_state()[num_time_steps-1][num_nodes]->data()[5] << std::endl;
 

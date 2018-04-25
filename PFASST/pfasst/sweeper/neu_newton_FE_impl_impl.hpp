@@ -122,9 +122,10 @@ namespace pfasst
     typename traits::time_t tm = t;
 
     for (size_t m = 0; m < num_nodes; ++m) {
-      this->states()[m + 1]->data() = this->last_newton_state()[0][m]->data(); //this->states()[m]->data();
+      this->states()[m + 1]->data() = this->last_newton_state()[0][m+1]->data(); //this->states()[m]->data();
       //this->states()[m+1]->data() = this->last_newton_state()[0][m+1]->data();
-      this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m, this->last_newton_state()[0][m]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
+      this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m + 1, this->states()[m + 1]);//this->last_newton_state()[0][m+1]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
+      std::cout << "erstelle rhs_impl " << this->_impl_rhs[m + 1]->norm0() <<std::endl;	
       tm += dt *  (nodes[m+1] - nodes[m]);
 
       ML_CVLOG(1, this->get_logger_id(), "");
@@ -175,12 +176,17 @@ namespace pfasst
 
 
     for (size_t m = 0; m < num_nodes; ++m) {
+        for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ impl rhs #### "<<  this->_impl_rhs[m]->data()[k] << std::endl;
       for (size_t n = 0; n < m + 1; ++n) {
-        this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_impl(m + 1, n + 1), this->_impl_rhs[n + 1]);
+        this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_impl(m + 1, n + 1), this->_impl_rhs[n + 1]);	
       }
 
 //       ML_CVLOG(6, this->get_logger_id(), LOG_FLOAT << "  q_int["<<(m+1)<<"] += tau["<<(m+1)<<"]                  = "
 //                                        << to_string(this->get_tau()[m + 1]));
+
+
+      std::cout << "#################################################################################################################### "<<  std::endl;	
+        for (int k=0; k <this->get_tau()[m + 1]->data().size(); k++ )std::cout << "################################################################################################################ tau #### "<<  this->get_tau()[m + 1]->data()[k] << std::endl;
       this->_q_integrals[m + 1]->scaled_add(1.0, this->get_tau()[m + 1]);
     }
 
@@ -443,8 +449,10 @@ namespace pfasst
       
       this->residuals().back()->scaled_add(1.0, this->get_tau().back());
       for (size_t n = 0; n < cols; ++n) {
+	std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
         //this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_expl_rhs[n]);
         this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_impl_rhs[n]);
+	std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
       }
     } else {
       for (size_t m = 0; m < num_nodes; ++m) {
@@ -461,18 +469,20 @@ namespace pfasst
 	std::cout << "**********************************" << std::endl;	*/
 	
     
-    if (is_coarse){
-        this->residuals()[m]->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
-    }else{
-        M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
-    }
+    	if (is_coarse){
+        	this->residuals()[m]->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
+    	}else{
+        	M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
+    	}
     
 	//M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
 
   //       ML_CVLOG(5, this->get_logger_id(), "        -= u["<<m<<"]   = " << to_string(this->get_states()[m]));
 	
 	shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();
-	
+	for(int i =0; i < this->get_initial_state()->get_data().size(); i++){
+		std::cout << "initial " << this->get_initial_state()->get_data()[i] << "state " << this->get_states()[m]->get_data()[i] <<std::endl;
+	}
 
 	M_dune.mv(this->get_states()[m]->get_data(), uM->data());
 
@@ -489,7 +499,11 @@ namespace pfasst
       //encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_expl_rhs, false);
 
       ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_im");
-      encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false);
+	std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
+	std::cout << "new impl " << this->coarse_rhs()[0][1]->norm0() << std::endl;
+	std::cout << "impl_rhs " << this->_impl_rhs[1]->norm0() << std::endl;
+        encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false);
+	std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
 
       ML_CVLOG(5, this->get_logger_id(), "  ==>");
       for (size_t m = 0; m < num_nodes; ++m) {

@@ -32,7 +32,7 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
-        double                                     	_nu{1.2}; //1.2
+        double                                     	_nu{1.0}; //1.2
         double                                     	_n{1.0}; //2.0
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 
@@ -98,7 +98,7 @@ namespace pfasst
 
 		auto u_old = this->get_encap_factory().create();
 		for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
-    		u_old->data()[k] = this->last_newton_state()[0][m]->data()[k];}
+    			u_old->data()[k] = this->last_newton_state()[0][m]->data()[k];}
 
 		Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
             	evaluate_f2(f, u_old);
@@ -106,16 +106,21 @@ namespace pfasst
             	df.mv(u_old->data(), newton_rhs->data());
             	newton_rhs->data() -= f->data();
 		df.mv(u->data(), result->data());
-		result->data() *= -1;
 		result->data() -= newton_rhs->data();
+		result->data() *= -1;
 
 
 
 		auto neu = this->get_encap_factory().create();
 		neu->zero();
 		this->df_dune[0][m]->mv(u->data(), neu->data());
-		neu->data() += this->coarse_rhs()[0][m]->data(); 
-		neu->data() *=-1;
+		neu->data() += this->coarse_rhs()[0][m]->data();
+ 		neu->data() *= -1;//dt;
+
+ 		//neu->data() *= -1;//dt;
+
+		//neu->data() *=-1;
+		//std::exit(0);
 
 
 		/*for (int i=0; i<u->get_data().size(); ++i)
@@ -171,7 +176,12 @@ namespace pfasst
                 //std::cout << "evaluate ende" << std::endl;     
 
 
-            	return neu; //result
+		for (int i=0; i<neu->get_data().size(); ++i)
+          	{
+     	     		std::cout <<"evaluate impl " <<  neu->get_data()[i] <<std::endl;	 
+          	}
+
+            	return neu;
 
 
         }
@@ -183,71 +193,54 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs){
 	
          ML_CVLOG(4, this->get_logger_id(), "IMPLICIT spatial SOLVE at node number" << m << " with dt=" << dt);
-        //std::cout << "implcit solve start" << std::endl;
 
          auto residuum = this->get_encap_factory().create();
 	 Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
          newton_rhs.resize(rhs->get_data().size());
          newton_rhs2.resize(rhs->get_data().size());
     
-	 //u->data() = this->last_newton_state()[0][m]->data();
 
-    	//for(int i=0; i< num_time_steps; i++){	
-
-		for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
-		//std::cout << " " << m << " " << u->data()[k] << "   " << this->last_newton_state()[0][m]->data()[k] << std::endl;
-    		u->data()[k] = this->last_newton_state()[0][m]->data()[k];}
-
-	//}
+	for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
+    		u->data()[k] = this->last_newton_state()[0][m]->data()[k];
+	}
 
 
-         //u->zero();
-	 for (int i=0; i< 1 ;i++){
-            Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
-            evaluate_f(f, u, dt, rhs);
-            evaluate_df(df, u, dt);
-            df.mv(u->data(), newton_rhs);
-            newton_rhs -= f->data();
-            newton_rhs2 = newton_rhs;
+
+        Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
+        evaluate_f(f, u, dt, rhs);
+        evaluate_df(df, u, dt);
+        df.mv(u->data(), newton_rhs);
+        newton_rhs -= f->data();
+        newton_rhs2 = newton_rhs;
 
 		
-	    auto nv = this->get_encap_factory().create();
-	    nv->data() = this->coarse_rhs()[0][m]->data();
-	    nv->data() *= -dt;
-	    nv->data() += rhs->data();
+	auto nv = this->get_encap_factory().create();
+	nv->data() = this->coarse_rhs()[0][m]->data();
+	nv->data() *= -dt;
+	nv->data() += rhs->data();
 
-	    Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df_neu = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(*this->df_dune[0][m]); ///////M
- 	    df_neu*=dt;
-            df_neu+=this->M_dune;
-            for (int i=0; i<u->get_data().size(); ++i)
-          	{
-     	     		//std::cout << "newton " << newton_rhs[i] << " " << nv->data()[i] <<std::endl;	 
-          	}
-            Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df_neu); //neu df
+	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df_neu = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(*this->df_dune[0][m]); ///////M
+ 	df_neu*=dt;
+        df_neu+=this->M_dune;
+
+        Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df_neu); //neu df
 	  
-            Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df_neu,1.0); //neu df
+        Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df_neu,1.0); //neu df
 	  
-            Dune::CGSolver<VectorType> cg(linearOperator,
+        Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
                               1e-16, // desired residual reduction factor
                               5000,    // maximum number of iterations
                               0);    // verbosity of the solver
           
           
-            Dune::InverseOperatorResult statistics ;
-            cg.apply(u->data(), nv->data() , statistics ); //newton_rhs 
-	    num_solves++;
+        Dune::InverseOperatorResult statistics ;
+        cg.apply(u->data(), nv->data() , statistics ); //newton_rhs 
+        num_solves++;
 
-            evaluate_f(f, u, dt, rhs);
+        //evaluate_f(f, u, dt, rhs);
           
-            //std::cout << i << " residuumsnorm von f(u) " << f->norm0() << std::endl;  
-            //if(f->norm0()<1e-10){   break;} //  std::exit(0); std::cout << "genauigkeit erreicht " << i << std::endl;
-          
-            //df.mv(u->data(), residuum->data());
-            //residuum->data() -= newton_rhs2;
-            //std::cout << "residuums norm " << residuum->norm0() << std::endl;
 
-	}
 
 	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
         M_u.resize(u->get_data().size());
@@ -255,23 +248,23 @@ namespace pfasst
 
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-	  //std::cout << "f " << f->data()[i] << std::endl;
+	  //std::cout << "implcit solve " << f->data()[i] << std::endl;
         }
 
         //f = this->evaluate_rhs_impl(dt * this->_q_delta_impl(m+1, m+1), u); 
-        //evaluate_rhs_impl(0, u);
-	//std::exit(0);
-        this->_num_impl_solves++;
-                //std::cout << "implcit solve end" << std::endl;
+        //evaluate_rhs_impl(m, u);
+
+        this->_num_impl_solves++; //if (this->_num_impl_solves==11)	std::exit(0);
+        //std::cout << "implcit solve end" << std::endl;
 
       }
       
         //private:
             
       void evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
-            const shared_ptr<typename SweeperTrait::encap_t> u,
-            const typename SweeperTrait::time_t& dt,
-            const shared_ptr<typename SweeperTrait::encap_t> rhs){
+          const shared_ptr<typename SweeperTrait::encap_t> u,
+          const typename SweeperTrait::time_t& dt,
+          const shared_ptr<typename SweeperTrait::encap_t> rhs){
 
           double _nu=this->_nu;
           double _n=this->_n;
