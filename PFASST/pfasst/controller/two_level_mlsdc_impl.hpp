@@ -204,7 +204,7 @@ namespace pfasst
 	  //if(!last_predict){
 	  std::cout << "vor cycle down else" <<std::endl;
           this->cycle_down();
-	  std::cout << "vor sweep coarse else" <<std::endl;
+	  std::cout << "vor sweep coarse else" <<std::endl;//
           this->sweep_coarse();
 	  std::cout << "vor cycle up else" <<std::endl;
 	  //}else{

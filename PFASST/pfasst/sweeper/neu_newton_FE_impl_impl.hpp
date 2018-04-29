@@ -278,7 +278,13 @@ namespace pfasst
         //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################ _q_delta_impl  #### "<<  _q_->data()[k] 	<< std::endl;
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], m+1 , dt * this->_q_delta_impl(m+1, m+1), rhs); //tm
 
+/*<<<<<<< HEAD
        // for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "########################################################################################################### states nachm sweep  #### "<<  this->states()[m + 1]->data()[k] 	<< std::endl;
+=======
+       // for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "###### ##################################################################################################### states nachm sweep  #### "<<  this->states()[m + 1]->data()[k] 	<< std::endl;
+>>>>>>> aee2bc2560fbd215584cc81c3d2f2bfda3be88e4*/
+
+
       for(int p=0; p<this->states()[m + 1]->data().size(); p++)
       this->new_newton_state()[0][m + 1]->data()[p] = this->states()[m + 1]->data()[p];	
 

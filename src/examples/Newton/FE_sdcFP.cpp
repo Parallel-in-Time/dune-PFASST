@@ -202,7 +202,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     	sdc->run();   
 	sdc->post_run();
 
-	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;
+	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;//
 
 	(*_new_newton_state[num_time_steps-1][num_nodes]) -= sweeper->get_end_state()->data();
         std::cout << "NEWTON *****************************************      Fehler: "  << (*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() << " " << std::endl;

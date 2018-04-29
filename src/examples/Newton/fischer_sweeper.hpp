@@ -89,7 +89,7 @@ namespace pfasst
             ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << m);
                     //std::cout << "evaluate start" << std::endl;
 
-            	auto result = this->get_encap_factory().create();
+            	/*auto result = this->get_encap_factory().create();
 		auto newton_rhs = this->get_encap_factory().create();
 		auto f = this->get_encap_factory().create();
 
@@ -107,7 +107,7 @@ namespace pfasst
             	newton_rhs->data() -= f->data();
 		df.mv(u->data(), result->data());
 		result->data() -= newton_rhs->data();
-		result->data() *= -1;
+		result->data() *= -1;*/
 
 
 
@@ -202,6 +202,8 @@ namespace pfasst
 
 	for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
     		u->data()[k] = this->last_newton_state()[0][m]->data()[k];
+		//std::cout << "this last newton state " << this->last_newton_state()[0][m]->data()[k] << std::endl;
+		//std::cout << "this coarse_rhs " << this->coarse_rhs()[0][m]->data()[k] << std::endl;
 	}
 
 
@@ -215,9 +217,17 @@ namespace pfasst
 
 		
 	auto nv = this->get_encap_factory().create();
-	nv->data() = this->coarse_rhs()[0][m]->data();
-	nv->data() *= -dt;
-	nv->data() += rhs->data();
+	this->evaluate_f(nv, this->last_newton_state()[0][m], dt, rhs);
+	nv->data() *= -1;
+	//nv->data() = this->coarse_rhs()[0][m]->data();
+	//nv->data() *= -dt;
+	//nv->data() += rhs->data();
+
+
+	/*for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
+		std::cout << dt << " nv " << nv->data()[k] << std::endl;
+	}*/
+
 
 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df_neu = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(*this->df_dune[0][m]); ///////M
  	df_neu*=dt;
@@ -235,9 +245,10 @@ namespace pfasst
           
           
         Dune::InverseOperatorResult statistics ;
-        cg.apply(u->data(), nv->data() , statistics ); //newton_rhs 
+        cg.apply(newton_rhs, nv->data() , statistics ); //newton_rhs 
         num_solves++;
 
+	u->data()+=newton_rhs;
         //evaluate_f(f, u, dt, rhs);
           
 

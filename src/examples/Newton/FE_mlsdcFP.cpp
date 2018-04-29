@@ -94,7 +94,7 @@ using namespace pfasst::examples::fischer_example;
 
 	auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid);
 
-        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);
+        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);    //[0]
 
 
 	const auto num_nodes = nnodes;	
@@ -115,11 +115,11 @@ using namespace pfasst::examples::fischer_example;
 			_new_newton_state_coarse[i][j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
 		}
     	}
-
+std::cout.precision ( 10 );
 
 for(int time=0; time<(t_end-t_0)/dt; time++){	
 
-    for(int ne=0; ne<4; ne++){
+    for(int ne=0; ne<5; ne++){
 
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
@@ -137,7 +137,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         
         
 
-        
+        std::cout << "erstelle tranfer" << std::endl;
         
         dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
 	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
@@ -159,6 +159,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(vecvec);
            
+        std::cout << "nach erstelle tranfer" << std::endl;
         
         mlsdc->add_sweeper(coarse, true);
 	mlsdc->add_sweeper(fine);
@@ -190,23 +191,27 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 	if(time==0 && ne==0) 	
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
-		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
-    		 (*_new_newton_state_coarse[i][j]).data()[k]= 0; 
-    		}
-		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
-    		 (*_new_newton_state_fine[i][j]).data()[k]= 0; 
-    		}
+		//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    		 (*_new_newton_state_coarse[i][j]) = coarse->exact(mlsdc->get_status()->get_time())->data(); 
+    		//}
+		//for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
+    		 (*_new_newton_state_fine[i][j]) = fine->exact(mlsdc->get_status()->get_time())->data(); 
+    		//}
 		}
 	}
 
-
+        std::cout << "vor lns" << std::endl;
 
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
-			//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
-    			//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
-			//}
-    			transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
+			for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    			coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
+			}
+    			//transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
+			for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    			   std::cout << "coarse state " << coarse->last_newton_state()[i][j]->data()[k] << std::endl;
+			}
+
 			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
     			fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
 			}
@@ -214,10 +219,10 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 	}
 
 
-	Dune::BlockVector<Dune::FieldVector<double,1>> rM_rv;
+	/*Dune::BlockVector<Dune::FieldVector<double,1>> rM_rv;
 	Dune::BlockVector<Dune::FieldVector<double,1>> rMv;
 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > vgl_M = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(coarse->M_dune); ///////M
-	transfer->restrict_dune_matrix(fine->M_dune, vgl_M);
+	transfer->restrict_dune_matrix(fine->M_dune, vgl_M);*/
 	
         /*std::cout << "coarse Stiffnessmatrix" << std::endl;
 	for(int i=0; i< coarse->M_dune.M(); i++)
@@ -226,39 +231,41 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 	if (ne==0) std::exit(0);*/
            
 
-
+        std::cout << "vor crhs" << std::endl;
 
 	    for(int m=0; m< num_nodes +1; m++){
 	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
             	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[0][m]);
+
 	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
-	    	transfer->restrict_dune_matrix(*fine->df_dune[0][m], *coarse->df_dune[0][m]);
+            	coarse->evaluate_df2(*coarse->df_dune[0][m], coarse->last_newton_state()[0][m]);	    	
+		//transfer->restrict_dune_matrix(*fine->df_dune[0][m], *coarse->df_dune[0][m]);
+
 		auto result = fine->get_encap_factory().create();
             	result->zero();
+
                 fine->evaluate_f2(result, fine->last_newton_state()[0][m]);
 		fine->df_dune[0][m]->mmv(fine->last_newton_state()[0][m]->data(), result->data());
 
 	    	fine->coarse_rhs()[0][m]->data() =result->data();
-		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
+		
+
+		auto resultc = coarse->get_encap_factory().create();
+            	resultc->zero();
+
+                coarse->evaluate_f2(resultc, coarse->last_newton_state()[0][m]);
+		coarse->df_dune[0][m]->mmv(coarse->last_newton_state()[0][m]->data(), resultc->data());
+
+	    	coarse->coarse_rhs()[0][m]->data() =resultc->data();
+
+
+		//transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
                 
 	    	//Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > vgl_M = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(coarse->M_dune); ///////M
 		//transfer->restrict_dune_matrix(*fine->df_dune[0][m], vgl_M);
 
 
 	    }
-
-
-	
-		
-
-
-
-            
-
-
-
-
-
 
 
 
@@ -273,7 +280,12 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         
         mlsdc->post_run();
 
-
+        auto anfang    = fine->exact(0)->data();
+        auto naeherung = fine->get_end_state()->data();
+        auto exact     = fine->exact( t_0 + (time+1)*dt)->data();
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout <<  t_0 + (time)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
+        }
 
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
@@ -287,11 +299,14 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
     	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
-		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++)
-    		(*_new_newton_state_coarse[i][j]).data()[k] = coarse->new_newton_state()[i][j]->data()[k];
-    		
-		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++)
+		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    			(*_new_newton_state_coarse[i][j]).data()[k] = coarse->new_newton_state()[i][j]->data()[k];
+			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
+    		}
+		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
     			(*_new_newton_state_fine[i][j]).data()[k] = fine->new_newton_state()[i][j]->data()[k];
+			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
+		}
     		}
 	}
 	
@@ -323,7 +338,7 @@ int main(int argc, char** argv)
   pfasst::init(argc, argv, sweeper_t_fine::init_opts);
 
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
-  const size_t nnodes = get_value<size_t>("num_nodes", 3);
+  const size_t nnodes = get_value<size_t>("num_nodes", 2);
   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
   //const size_t nnodes = get_value<size_t>("num_nodes", 3);
