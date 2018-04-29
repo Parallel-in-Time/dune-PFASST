@@ -176,10 +176,10 @@ namespace pfasst
                 //std::cout << "evaluate ende" << std::endl;     
 
 
-		for (int i=0; i<neu->get_data().size(); ++i)
+		/*for (int i=0; i<neu->get_data().size(); ++i)
           	{
      	     		std::cout <<"evaluate impl " <<  neu->get_data()[i] <<std::endl;	 
-          	}
+          	}*/
 
             	return neu;
 

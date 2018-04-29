@@ -34,7 +34,7 @@ namespace pfasst
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
     assert(this->get_states().size() == num_nodes + 1);
 
-    const auto num_time_steps = 1;//this->get_status()->get_t_end()/this->get_status()->get_dt();
+    const auto num_time_steps = this->get_status()->get_t_end()/this->get_status()->get_dt();
 		
     this->last_newton_state().resize(num_time_steps);
     this->new_newton_state().resize(num_time_steps);
@@ -67,6 +67,7 @@ namespace pfasst
     
 
     this->compute_delta_matrices();
+    std::cout << "end initialize " << std::endl;	
   }
 
 
@@ -83,12 +84,14 @@ namespace pfasst
       "IMEX Sweeper for quadrature nodes containing t_0 not implemented and tested.");
 
     this->initialize();
+
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
   IMEX<SweeperTrait, BaseFunction, Enabled>::pre_predict()
   {
+    std::cout << "im prepredict " << std::endl;		
     Sweeper<SweeperTrait, BaseFunction, Enabled>::pre_predict();
 
   }
@@ -97,7 +100,7 @@ namespace pfasst
   void
   IMEX<SweeperTrait, BaseFunction, Enabled>::predict()
   {
-    
+    std::cout << "im predict  " << std::endl;	
 
     Sweeper<SweeperTrait, BaseFunction, Enabled>::predict();
 
@@ -109,10 +112,10 @@ namespace pfasst
 
     const typename traits::time_t t = this->get_status()->get_time();
     const typename traits::time_t dt = this->get_status()->get_dt();
-
+    
     assert(this->get_quadrature() != nullptr);
     auto nodes = this->get_quadrature()->get_nodes();
-    nodes.insert(nodes.begin(), typename traits::time_t(0.0));
+    //nodes.insert(nodes.begin(), typename traits::time_t(0.0));
     const size_t num_nodes = this->get_quadrature()->get_num_nodes();
 
     this->_impl_rhs.front() = this->evaluate_rhs_impl(0, this->get_states().front());
@@ -121,16 +124,22 @@ namespace pfasst
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
 
-    for (size_t m = 0; m < num_nodes; ++m) {
-      this->states()[m + 1]->data() = this->last_newton_state()[0][m+1]->data(); //this->states()[m]->data();
-      //this->states()[m+1]->data() = this->last_newton_state()[0][m+1]->data();
-      this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m + 1, this->states()[m + 1]);//this->last_newton_state()[0][m+1]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
-      std::cout << "erstelle rhs_impl " << this->_impl_rhs[m + 1]->norm0() <<std::endl;	
-      tm += dt *  (nodes[m+1] - nodes[m]);
+    //for (size_t m = 0; m < ; ++m) {
+    std::cout << "pre_predict  !!!!!!!!!!!!!!!!!!!!!!!!!!!"<< std::endl;	
+    for (size_t m = 0; m < num_nodes+1; ++m) {
+      //std::cout << "################################################################################################################ impl rhs #### "<<  this->get_quadrature()->get_nodes()[m] << std::endl;	
+      if (m!=0) this->states()[m]->data() = this->last_newton_state()[0][m]->data(); //this->states()[m]->data();
+      this->_impl_rhs[m] = this->evaluate_rhs_impl(m, this->states()[m]);//this->last_newton_state()[0][m+1]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
+      //if (m!=0){for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ states im predict #### "<<  this->states()[m]->data()[k] << std::endl;}
+      //{for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ _impl_rhs im predict #### "<<  this->_impl_rhs[m]->data()[k] << std::endl;}
 
-      ML_CVLOG(1, this->get_logger_id(), "");
+      //std::cout << "erstelle rhs_impl " << this->_impl_rhs[m]->norm0() <<std::endl;	
+      //tm += dt *  (nodes[m+1] - nodes[m]);
+
+      //ML_CVLOG(1, this->get_logger_id(), "");
 
     }
+    std::cout << "schleife geloest pre_predict  !!!!!!!!!!!!!!!!!!!!!!!!!!!"<< std::endl;	
 
   }
 
@@ -174,9 +183,11 @@ namespace pfasst
 
     ML_CVLOG(4, this->get_logger_id(), "  subtracting function evaluations of previous iteration and adding FAS correction");
 
-
-    for (size_t m = 0; m < num_nodes; ++m) {
-        for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ impl rhs #### "<<  this->_impl_rhs[m]->data()[k] << std::endl;
+    std::cout << "pre_sweep  !!!!!!!!!!!!!!!!!!!!!!!!!!!"<< std::endl;	
+    for (size_t m = 0; m < num_nodes+1; ++m) {
+        //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ impl rhs #### "<<  this->_impl_rhs[m]->data()[k] 		<< std::endl;
+    }
+    for (size_t m = 0; m < num_nodes; ++m){
       for (size_t n = 0; n < m + 1; ++n) {
         this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_impl(m + 1, n + 1), this->_impl_rhs[n + 1]);	
       }
@@ -185,10 +196,11 @@ namespace pfasst
 //                                        << to_string(this->get_tau()[m + 1]));
 
 
-      std::cout << "#################################################################################################################### "<<  std::endl;	
-        for (int k=0; k <this->get_tau()[m + 1]->data().size(); k++ )std::cout << "################################################################################################################ tau #### "<<  this->get_tau()[m + 1]->data()[k] << std::endl;
+      //std::cout << "#################################################################################################################### "<<  std::endl;	
+      //for (int k=0; k <this->get_tau()[m + 1]->data().size(); k++ )std::cout << "################################################################################################################ tau #### "<<  this->get_tau()[m + 1]->data()[k] << std::endl;
       this->_q_integrals[m + 1]->scaled_add(1.0, this->get_tau()[m + 1]);
     }
+    std::cout << "ende pre_sweep  !!!!!!!!!!!!!!!!!!!!!!!!!!!"<< std::endl;	
 
 //     for (size_t m = 0; m < num_nodes + 1; ++m) {
 //       ML_CVLOG(5, this->get_logger_id(), LOG_FLOAT << "  q_int["<<m<<"] = " << to_string(this->_q_integrals[m]));
@@ -218,6 +230,11 @@ namespace pfasst
     ML_CLOG(INFO, this->get_logger_id(), "Sweeping from t=" << t << " over " << num_nodes
                           << " nodes to t=" << (t + dt) << " (dt=" << dt << ")");
 
+    for (size_t m = 0; m < num_nodes+1; ++m) {
+	//std::cout << "################################################################################################################ impl rhs #### "<<  this->get_quadrature()->get_nodes()[m] << std::endl;
+        for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "########################################################################################################### states im sweep  #### "<<  this->states()[m]->data()[k] 	<< std::endl;
+    }//std::exit(0);
+
 
     typename traits::time_t tm = t;
     // note: m=0 is initial value and not a quadrature node
@@ -241,7 +258,7 @@ namespace pfasst
         
       }
 
-
+      //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################ initial rhs  #### "<<  rhs->data()[k] 	<< std::endl;
       // rhs += dt * \sum_{i=0}^m (QI_{m+1,i} fI(u_i^{k+1}) + QE_{m+1,i-1} fE(u_{i-1}^{k+1}) ) + QE_{m+1,m} fE(u_{m}^{k+1})
       for (size_t n = 0; n <= m; ++n) {
 	//shared_ptr<typename SweeperTrait::encap_t>  new_impl_rhs;
@@ -256,16 +273,20 @@ namespace pfasst
 
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
+        //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################ vorm impl solve impl_rhs  #### "<<  this->_impl_rhs[m + 1]->data()[k] 	<< std::endl;
+        //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################ vorm impl solve rhs  #### "<<  rhs->data()[k] 	<< std::endl;
+        //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################ _q_delta_impl  #### "<<  _q_->data()[k] 	<< std::endl;
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], m+1 , dt * this->_q_delta_impl(m+1, m+1), rhs); //tm
 
+       // for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "########################################################################################################### states nachm sweep  #### "<<  this->states()[m + 1]->data()[k] 	<< std::endl;
       for(int p=0; p<this->states()[m + 1]->data().size(); p++)
       this->new_newton_state()[0][m + 1]->data()[p] = this->states()[m + 1]->data()[p];	
 
 
-      	/*std::cout <<  "sweeper nach imp solve " << std::endl;
+      	std::cout <<  "sweeper nach imp solve " << std::endl;
         for (int i=0; i< this->get_end_state()->data().size(); i++){
-          std::cout <<  this->get_states().front()->data()[i] << std::endl;
-        }*/
+          //std::cout <<  this->states()[m+1]->data()[i] << std::endl;
+        }
         //std::exit(0);
       // reevaluate the explicit part with the new solution value
       tm += dt * this->_q_delta_impl(m+1, m+1);
@@ -276,8 +297,8 @@ namespace pfasst
 //       ML_CVLOG(6, this->get_logger_id(), LOG_FLOAT << "      f_ex["<<m+1<<"]: " << to_string(this->_expl_rhs[m + 1]));
 //       ML_CVLOG(6, this->get_logger_id(), LOG_FLOAT << "      f_im["<<m+1<<"]: " << to_string(this->_impl_rhs[m + 1]));
       ML_CVLOG(4, this->get_logger_id(), "");
-    }
-  }
+    }//std::exit(0);
+  }//
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
   void
@@ -449,10 +470,11 @@ namespace pfasst
       
       this->residuals().back()->scaled_add(1.0, this->get_tau().back());
       for (size_t n = 0; n < cols; ++n) {
-	std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
+	//std::cout << "############################################################### tau " << this->get_tau().back()->norm0() << std::endl;
+	//std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
         //this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_expl_rhs[n]);
         this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_impl_rhs[n]);
-	std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
+	//std::cout << "residuum only_last " << this->residuals().back()->norm0() << std::endl;
       }
     } else {
       for (size_t m = 0; m < num_nodes; ++m) {
@@ -480,9 +502,9 @@ namespace pfasst
   //       ML_CVLOG(5, this->get_logger_id(), "        -= u["<<m<<"]   = " << to_string(this->get_states()[m]));
 	
 	shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();
-	for(int i =0; i < this->get_initial_state()->get_data().size(); i++){
-		std::cout << "initial " << this->get_initial_state()->get_data()[i] << "state " << this->get_states()[m]->get_data()[i] <<std::endl;
-	}
+	//for(int i =0; i < this->get_initial_state()->get_data().size(); i++){
+	//	std::cout << "initial " << this->get_initial_state()->get_data()[i] << "state " << this->get_states()[m]->get_data()[i] <<std::endl;
+	//}
 
 	M_dune.mv(this->get_states()[m]->get_data(), uM->data());
 
@@ -493,18 +515,20 @@ namespace pfasst
         assert(this->get_tau()[m] != nullptr);
   //       ML_CVLOG(5, this->get_logger_id(), "        += tau["<<m<<"] = " << to_string(this->get_tau()[m]));
         this->residuals()[m]->scaled_add(1.0, this->get_tau()[m]);
+	//std::cout << "############################################################### tau " << this->get_tau()[m]->norm0() << std::endl;
+	//std::cout << "############################################################### resiuduum " << this->residuals()[m]->norm0() << std::endl;
       }
 
       //ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_ex");
       //encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_expl_rhs, false);
 
       ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_im");
-	std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
-	std::cout << "new impl " << this->coarse_rhs()[0][1]->norm0() << std::endl;
-	std::cout << "impl_rhs " << this->_impl_rhs[1]->norm0() << std::endl;
+	//std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;                                //f
+	//std::cout << "new impl " << this->coarse_rhs()[0][1]->norm0() << std::endl;                                     //r
+	//std::cout << "impl_rhs " << this->_impl_rhs[1]->norm0() << std::endl;                                           //f
         encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false);
-	std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
-
+	//std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;                                //f
+	//std::cout << "############################################################### resiuduum nach schleife " << this->residuals()[2]->norm0() << std::endl;
       ML_CVLOG(5, this->get_logger_id(), "  ==>");
       for (size_t m = 0; m < num_nodes; ++m) {
         //ML_CVLOG(5, this->get_logger_id(), "    |res["<<m<<"]| = " << LOG_FLOAT << this->get_residuals()[m]->norm0());
