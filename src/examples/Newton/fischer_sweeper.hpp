@@ -89,7 +89,7 @@ namespace pfasst
             ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << m);
                     //std::cout << "evaluate start" << std::endl;
 
-            	/*auto result = this->get_encap_factory().create();
+            	auto result = this->get_encap_factory().create();
 		auto newton_rhs = this->get_encap_factory().create();
 		auto f = this->get_encap_factory().create();
 
@@ -107,7 +107,7 @@ namespace pfasst
             	newton_rhs->data() -= f->data();
 		df.mv(u->data(), result->data());
 		result->data() -= newton_rhs->data();
-		result->data() *= -1;*/
+		result->data() *= -1;
 
 
 
@@ -135,20 +135,15 @@ namespace pfasst
           	this->M_dune.mv(fneu2, result->data());
           
           	this->M_dune.mmv(u->get_data(), result->data());
-
           	result->data() *= (_nu*_nu);
-
 	  	this->A_dune.mmv(u->get_data(),result->data());	
-
 	  	result->data()*=-1;
         	for (size_t i = 0; i < u->get_data().size(); i++) {
 	  		std::cout << "f evaluate " << result->data()[i] << std::endl;
         	}
-
                 std::cout << "evaluate ende fast" << std::endl;
          	auto dt = this->get_status()->get_dt();
                 std::cout << "evaluate ende dt bestimmt" << std::endl;
-
 		for (int i=0; i<u->get_data().size(); ++i)
           	{
      	     		std::cout << result->get_data()[i] <<std::endl;	 
@@ -166,7 +161,6 @@ namespace pfasst
       		}else{
         		this->M_dune.umv(this->get_states().front()->get_data(), result->data());
       		}
-
 		std::cout << "vor _q delta" << std::endl;
       		for (size_t n = 0; n < (int) m; ++n) { //<=
 			std::cout << "vor _q delta" << std::endl;
@@ -176,10 +170,10 @@ namespace pfasst
                 //std::cout << "evaluate ende" << std::endl;     
 
 
-		/*for (int i=0; i<neu->get_data().size(); ++i)
+		for (int i=0; i<neu->get_data().size(); ++i)
           	{
      	     		std::cout <<"evaluate impl " <<  neu->get_data()[i] <<std::endl;	 
-          	}*/
+          	}
 
             	return neu;
 
@@ -202,8 +196,6 @@ namespace pfasst
 
 	for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
     		u->data()[k] = this->last_newton_state()[0][m]->data()[k];
-		//std::cout << "this last newton state " << this->last_newton_state()[0][m]->data()[k] << std::endl;
-		//std::cout << "this coarse_rhs " << this->coarse_rhs()[0][m]->data()[k] << std::endl;
 	}
 
 
@@ -217,17 +209,9 @@ namespace pfasst
 
 		
 	auto nv = this->get_encap_factory().create();
-	this->evaluate_f(nv, this->last_newton_state()[0][m], dt, rhs);
-	nv->data() *= -1;
-	//nv->data() = this->coarse_rhs()[0][m]->data();
-	//nv->data() *= -dt;
-	//nv->data() += rhs->data();
-
-
-	/*for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
-		std::cout << dt << " nv " << nv->data()[k] << std::endl;
-	}*/
-
+	nv->data() = this->coarse_rhs()[0][m]->data();
+	nv->data() *= -dt;
+	nv->data() += rhs->data();
 
 	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df_neu = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(*this->df_dune[0][m]); ///////M
  	df_neu*=dt;
@@ -245,10 +229,9 @@ namespace pfasst
           
           
         Dune::InverseOperatorResult statistics ;
-        cg.apply(newton_rhs, nv->data() , statistics ); //newton_rhs 
+        cg.apply(u->data(), nv->data() , statistics ); //newton_rhs 
         num_solves++;
 
-	u->data()+=newton_rhs;
         //evaluate_f(f, u, dt, rhs);
           
 

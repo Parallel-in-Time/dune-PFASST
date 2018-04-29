@@ -138,7 +138,7 @@ namespace pfasst
 
 
         } else {
-          ML_CLOG(FATAL, this->get_logger_id(), "Something went severly wrong with the states.");//
+          ML_CLOG(FATAL, this->get_logger_id(), "Something went severly wrong with the states.");
           ML_CLOG(FATAL, this->get_logger_id(), "Expected state: PREDICTING or ITERATING, got: "
                                                 << (+this->get_status()->get_primary_state())._to_string());
           throw std::runtime_error("something went severly wrong");
@@ -406,7 +406,7 @@ namespace pfasst
       // do the sweeper's prediction once ...
       if (predict_step == 0) {
         //this->predict_coarse();
-	//this->get_coarse()->spread_Newton();
+	//this->get_coarse()->spread(0);
       } else {
         // and default sweeps for subsequent processes
         //this->recv_coarse();
@@ -486,4 +486,4 @@ namespace pfasst
 
     return tag;
   }
-}  // ::pfasst
+} // ::pfasst
