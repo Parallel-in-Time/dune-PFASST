@@ -143,10 +143,10 @@ int main(int argc, char** argv) {
 			_new_newton_state[i][j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
 		}
     	}
-
+std::cout.precision ( 10 );
 
 for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
-    for(int ne=0; ne<20; ne++){	//Newtonschritte
+    for(int ne=0; ne<10; ne++){	//Newtonschritte
 
 
 	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); 
@@ -202,18 +202,21 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     	sdc->run();   
 	sdc->post_run();
 
-	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;
+	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;//
 
 	(*_new_newton_state[num_time_steps-1][num_nodes]) -= sweeper->get_end_state()->data();
         std::cout << "NEWTON *****************************************      Fehler: "  << (*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() << " " << std::endl;
 
+
     	auto naeherung = sweeper->get_end_state()->data();
     	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
     	auto initial   = sweeper->exact(t_0 + time*dt)->data();
-    	for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << initial[i] << " result " << naeherung[i] << " " << sweeper->new_newton_state()[0][num_nodes]->data()[i] << " " << exact[i] << std::endl;
+    	for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) std::cout << initial[i] << " result " << naeherung[i] << " " << naeherung[i] << " " << exact[i] << std::endl;
 	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
-        std::cout << "***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  std::endl ;
 
+
+        std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  std::endl ;
+	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < 1e-12){ std::exit(0);}
 
 
     	for(int i=0; i< num_time_steps; i++){	
