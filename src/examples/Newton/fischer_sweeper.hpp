@@ -89,7 +89,7 @@ namespace pfasst
             ML_CVLOG(4, this->get_logger_id(),  "evaluating IMPLICIT part at t=" << m);
                     //std::cout << "evaluate start" << std::endl;
 
-            	auto result = this->get_encap_factory().create();
+            	/*auto result = this->get_encap_factory().create();
 		auto newton_rhs = this->get_encap_factory().create();
 		auto f = this->get_encap_factory().create();
 
@@ -107,16 +107,16 @@ namespace pfasst
             	newton_rhs->data() -= f->data();
 		df.mv(u->data(), result->data());
 		result->data() -= newton_rhs->data();
-		result->data() *= -1;
+		result->data() *= -1;*/
 
 
-
+		std::cout << "im " << std::endl;
 		auto neu = this->get_encap_factory().create();
 		neu->zero();
 		this->df_dune[0][m]->mv(u->data(), neu->data());
 		neu->data() += this->coarse_rhs()[0][m]->data();
  		neu->data() *= -1;//dt;
-
+		std::cout << "im 2" << std::endl;
  		//neu->data() *= -1;//dt;
 
 		//neu->data() *=-1;
@@ -170,10 +170,10 @@ namespace pfasst
                 //std::cout << "evaluate ende" << std::endl;     
 
 
-		for (int i=0; i<neu->get_data().size(); ++i)
+		/*for (int i=0; i<neu->get_data().size(); ++i)
           	{
      	     		std::cout <<"evaluate impl " <<  neu->get_data()[i] <<std::endl;	 
-          	}
+          	}*/
 
             	return neu;
 

@@ -120,7 +120,7 @@ namespace pfasst
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration " << this->get_status()->get_iteration());
 
-	  if(!last_predict){
+	  //if(!last_predict){
           	this->cycle_down();
 
           	this->recv_coarse();
@@ -128,7 +128,7 @@ namespace pfasst
           	this->sweep_coarse();
           	this->send_coarse();
 
-	  }last_predict=false;
+	  //}last_predict=false;
 
           this->cycle_up();
 
@@ -396,20 +396,25 @@ namespace pfasst
     this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
     // ... and spread it to all nodes on the coarse level
     this->get_coarse()->spread_Newton(); 
+    this->get_fine()->spread_Newton(); 
     //this->get_coarse()->spread();	
-    this->get_coarse()->save();
+    //this->get_coarse()->save();this->get_fine()->save();
 
+    //this->get_coarse()->predict();
+
+        this->predict_coarse();
+        this->predict_fine();
     // perform PFASST prediction sweeps on coarse level
     for (size_t predict_step = 0;
          predict_step <= this->get_communicator()->get_rank();
          ++predict_step) {
       // do the sweeper's prediction once ...
       if (predict_step == 0) {
-        //this->predict_coarse();
+
 	//this->get_coarse()->spread(0);
       } else {
         // and default sweeps for subsequent processes
-        //this->recv_coarse();
+        this->recv_coarse();
         //this->sweep_coarse();
       }
 
@@ -418,11 +423,11 @@ namespace pfasst
 
     // return to fine level
     ML_CVLOG(1, this->get_logger_id(), "cycle up onto fine level");
-    //this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true); //raus
+    this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true); //raus
     //this->sweep_fine(); //raus
-
-    //this->send_fine();
-	  for(int m=0; m< this->get_fine()->get_quadrature()->get_num_nodes() +1; m++){
+    //this->predict_fine();
+    this->send_fine();
+	  /*for(int m=0; m< this->get_fine()->get_quadrature()->get_num_nodes() +1; m++){
 	    	this->get_fine()->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(this->get_fine()->M_dune); 
             	this->get_fine()->evaluate_df2(*this->get_fine()->df_dune[0][m], this->get_fine()->last_newton_state()[0][m]);
 	    	this->get_coarse()->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(this->get_coarse()->M_dune); 
@@ -436,10 +441,10 @@ namespace pfasst
 		this->get_transfer()->restrict_data(this->get_fine()->coarse_rhs()[0][m], this->get_coarse()->coarse_rhs()[0][m]);
 
 
-	    }
+	    }*/
     // finalize prediction step
     this->get_coarse()->save();
-    //this->get_fine()->save(); //raus
+    this->get_fine()->save(); //raus
   }
 
 

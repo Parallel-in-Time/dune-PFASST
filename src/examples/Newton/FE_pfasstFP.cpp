@@ -125,7 +125,7 @@ int num_solves=0;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
 
     std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
-    for(int ne=0; ne<4; ne++){
+    for(int ne=0; ne<9; ne++){
 
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
@@ -174,6 +174,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 	if(time==0){
         	fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     
+        	coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());     
 	}else {
 		for (int i=0; i< fine->initial_state()->data().size(); i++) fine->initial_state()->data()[i] = _new_initial_fine->data()[i];   
 	}
@@ -204,6 +205,10 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
     				fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
     				//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
 			}
+			for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    				//fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
+    				coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
+			}
 			//if (my_rank==1) fine->last_newton_state()[i][j] =  fine->exact(1) ;
 			//if (my_rank==0) fine->last_newton_state()[i][j] =  fine->exact(0.5) ;
     		}
@@ -220,7 +225,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 
 
-	    /*for(int m=0; m< num_nodes +1; m++){
+	    for(int m=0; m< num_nodes +1; m++){
 	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
             	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[0][m]);
 	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
@@ -231,7 +236,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		fine->df_dune[0][m]->mmv(fine->last_newton_state()[0][m]->data(), result->data());
 	    	fine->coarse_rhs()[0][m]->data() =result->data();
 		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
-	    }*/
+	    }
 
 
         pfasst.run();

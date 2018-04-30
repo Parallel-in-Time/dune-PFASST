@@ -98,9 +98,13 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::predict()
   {
     
+        int myrank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &myrank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
+	std::cout << myrank << " anfang predict " << std::endl;
     Sweeper<SweeperTrait, BaseFunction, Enabled>::predict();
-
+	std::cout << myrank << " anfang predict 2 " << std::endl;
     assert(this->get_quadrature() != nullptr);
     assert(this->get_status() != nullptr);
 
@@ -115,12 +119,13 @@ namespace pfasst
     nodes.insert(nodes.begin(), typename traits::time_t(0.0));
     const size_t num_nodes = this->get_quadrature()->get_num_nodes();
 
+	std::cout << myrank << " anfang predict 3" << std::endl;
     this->_impl_rhs.front() = this->evaluate_rhs_impl(0, this->get_states().front());
 
     ML_CLOG(INFO, this->get_logger_id(),  "Predicting from t=" << t << " over " << num_nodes << " nodes"
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
-
+	std::cout << myrank << " anfang predict 4" << std::endl;
     for (size_t m = 0; m < num_nodes; ++m) {
       this->states()[m + 1]->data() = this->last_newton_state()[0][m+1]->data(); //this->states()[m]->data();
       //this->states()[m+1]->data() = this->last_newton_state()[0][m+1]->data();
@@ -131,7 +136,7 @@ namespace pfasst
       ML_CVLOG(1, this->get_logger_id(), "");
 
     }
-
+	std::cout << myrank << " anfang predict 19" << std::endl;
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -176,7 +181,7 @@ namespace pfasst
 
 
     for (size_t m = 0; m < num_nodes; ++m) {
-        for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ impl rhs #### "<<  this->_impl_rhs[m]->data()[k] << std::endl;
+        //for (int k=0; k <this->_impl_rhs[m]->data().size(); k++ )std::cout << "################################################################################################################ impl rhs #### "<<  this->_impl_rhs[m]->data()[k] << std::endl;
       for (size_t n = 0; n < m + 1; ++n) {
         this->_q_integrals[m + 1]->scaled_add(-dt * this->_q_delta_impl(m + 1, n + 1), this->_impl_rhs[n + 1]);	
       }
@@ -185,8 +190,8 @@ namespace pfasst
 //                                        << to_string(this->get_tau()[m + 1]));
 
 
-      std::cout << "#################################################################################################################### "<<  std::endl;	
-        for (int k=0; k <this->get_tau()[m + 1]->data().size(); k++ )std::cout << "################################################################################################################ tau #### "<<  this->get_tau()[m + 1]->data()[k] << std::endl;
+      //std::cout << "#################################################################################################################### "<<  std::endl;	
+        //for (int k=0; k <this->get_tau()[m + 1]->data().size(); k++ )std::cout << "################################################################################################################ tau #### "<<  this->get_tau()[m + 1]->data()[k] << std::endl;
       this->_q_integrals[m + 1]->scaled_add(1.0, this->get_tau()[m + 1]);
     }
 
@@ -480,9 +485,9 @@ namespace pfasst
   //       ML_CVLOG(5, this->get_logger_id(), "        -= u["<<m<<"]   = " << to_string(this->get_states()[m]));
 	
 	shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();
-	for(int i =0; i < this->get_initial_state()->get_data().size(); i++){
+	/*for(int i =0; i < this->get_initial_state()->get_data().size(); i++){
 		std::cout << "initial " << this->get_initial_state()->get_data()[i] << "state " << this->get_states()[m]->get_data()[i] <<std::endl;
-	}
+	}*/
 
 	M_dune.mv(this->get_states()[m]->get_data(), uM->data());
 
@@ -499,11 +504,11 @@ namespace pfasst
       //encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_expl_rhs, false);
 
       ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_im");
-	std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
-	std::cout << "new impl " << this->coarse_rhs()[0][1]->norm0() << std::endl;
-	std::cout << "impl_rhs " << this->_impl_rhs[1]->norm0() << std::endl;
+	//std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
+	//std::cout << "new impl " << this->coarse_rhs()[0][1]->norm0() << std::endl;
+	//std::cout << "impl_rhs " << this->_impl_rhs[1]->norm0() << std::endl;
         encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false);
-	std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
+	//std::cout << "not only_last " << this->residuals().back()->norm0() << std::endl;
 
       ML_CVLOG(5, this->get_logger_id(), "  ==>");
       for (size_t m = 0; m < num_nodes; ++m) {
