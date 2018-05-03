@@ -164,7 +164,6 @@ namespace pfasst
 
       this->status()->set_primary_state(PrimaryState::PREDICTING);
 
-      bool last_predict=false;
       // iterate on each time step
       do {
         if (this->get_status()->get_primary_state() == (+PrimaryState::PREDICTING)) {
@@ -177,45 +176,24 @@ namespace pfasst
           this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
 
 
-
           // ... and spread it to all nodes on the coarse level
-	  std::cout << "vor get coarse spread" <<std::endl;
-          this->get_coarse()->spread_Newton(); 
-	  this->get_fine()->spread_Newton();
-	  std::cout << "vor get coarse save" <<std::endl;
-          this->get_coarse()->save(); this->get_fine()->save();
-	  last_predict=true;
+          this->get_coarse()->spread();
+          this->get_coarse()->save();
 
-          //this->get_transfer()->fas(this->get_status()->get_dt(), this->get_fine(), this->get_coarse());
-
-	  std::cout << "vor predict coarse" <<std::endl;
           this->predict_coarse();
-	  this->predict_fine();	
-	  /*std::cout << "vor cycle up" <<std::endl;
+
           this->cycle_up();
-	  std::cout << "vor sweep fine" <<std::endl;
           this->sweep_fine();
-	  std::cout << "nach sweep fine" <<std::endl;*/
 
         } else {
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration " << this->get_status()->get_iteration());
 
-	  //if(!last_predict){
-	  std::cout << "vor cycle down else" <<std::endl;
           this->cycle_down();
-	  std::cout << "vor sweep coarse else" <<std::endl;//
           this->sweep_coarse();
-	  std::cout << "vor cycle up else" <<std::endl;
-	  //}else{
-          //  this->get_transfer()->fas(this->get_status()->get_dt(), this->get_fine(), this->get_coarse());
-	  //}last_predict=false; 
-
 
           this->cycle_up();
-	  std::cout << "vor sweep fine else" <<std::endl;
           this->sweep_fine();
-	  std::cout << "nach sweep fine else" <<std::endl;
         }
 
         this->status()->set_primary_state(PrimaryState::INTER_ITER);
@@ -389,8 +367,7 @@ namespace pfasst
   {
     ML_CLOG(INFO, this->get_logger_id(), "Interpolate onto fine level");
     this->status()->set_secondary_state(SecondaryState::CYCLE_UP);
-    std::cout << "666666666666666666666666666666666666666666666666666666666666666666666666666 vor interpolate" << std::endl;	
+
     this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true);
-    std::cout << "666666666666666666666666666666666666666666666666666666666666666666666666666 nach interpolate" << std::endl;	
   }
 }  // ::pfasst

@@ -96,7 +96,6 @@ namespace pfasst
       throw std::logic_error("SDC requires one level");
     }
 
-    //std::cout <<  this->get_status().get_data().N() << std::endl; this->get_states().size()	
     this->get_sweeper()->status() = this->get_status();
     this->get_sweeper()->setup();
   }
@@ -130,13 +129,12 @@ namespace pfasst
 	        
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration 0 (SDC Prediction)");
-	  std::cout << "-----------------------------------------------------------------------------------------                vorm pre_predict" <<  std::endl;
           this->get_sweeper()->pre_predict();
 
-	  std::cout << "-----------------------------------------------------------------------------------------                vorm predict" <<  std::endl;
+
 	  this->get_sweeper()->predict();
 	  	        
-	  std::cout << "-----------------------------------------------------------------------------------------                vorm post_predict" <<  std::endl;
+
           this->get_sweeper()->post_predict();
 	        
 
@@ -144,11 +142,8 @@ namespace pfasst
 	        
           ML_CLOG(INFO, this->get_logger_id(), "");
           ML_CLOG(INFO, this->get_logger_id(), "Iteration " << this->get_status()->get_iteration());
-	  std::cout << "-----------------------------------------------------------------------------------------                vorm presweep" <<  std::endl;
           this->get_sweeper()->pre_sweep();
-	  std::cout << "-----------------------------------------------------------------------------------------                vorm sweep" <<  std::endl;
           this->get_sweeper()->sweep();
-	  std::cout << "-----------------------------------------------------------------------------------------                vorm post_sweep" <<  std::endl;
           this->get_sweeper()->post_sweep();
         }
       } while(this->advance_iteration());

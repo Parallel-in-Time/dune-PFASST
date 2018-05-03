@@ -3,7 +3,7 @@
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
-#include <pfasst/controller/sdc.hpp>
+#include <pfasst/controller/sdc_n.hpp>
 #include <pfasst/contrib/spectral_transfer.hpp>
 
 #include "../../datatypes/dune_vec.hpp"
@@ -57,10 +57,10 @@ int main(int argc, char** argv) {
     const double t_0 = 0.0;                                             // left point of the time intervall is zero 
     const double dt = get_value<double>("dt", 0.1);                    // size of timesteping
     double t_end = get_value<double>("tend", 0.1);                      // right point of the time intervall  
-    const size_t nnodes = get_value<size_t>("num_nodes", 2);            // time intervall: number of sdc quadrature points
+    const size_t nnodes = get_value<size_t>("num_nodes", 3);            // time intervall: number of sdc quadrature points
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
     const size_t niter = get_value<size_t>("num_iters", 200);            // maximal number of sdc iterations
-
+    const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
     
     
     typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
@@ -144,12 +144,12 @@ int main(int argc, char** argv) {
 		}
     	}
 std::cout.precision ( 10 );
-
+int num_solves = 0;
 for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     for(int ne=0; ne<10; ne++){	//Newtonschritte
 
 
-	auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); 
+	auto sweeper = std::make_shared<sweeper_t>(fe_basis[1] , 0, grid); 
 	sweeper->is_coarse = false;
     	sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
     	auto sdc = std::make_shared<heat_FE_sdc_t>();    
@@ -161,7 +161,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
 	std::cout << t_0 << " "<< t_0 + time*dt <<" "<< t_0 + (time+1)*dt<< " " << t_end<< std::endl;
     	sdc->status()->max_iterations() = niter;
     	sdc->setup();
-
+	sweeper->num_solves+=num_solves;
 
 	if(time==0 && ne==0) 	//im ersten Newton Lauf Anfangswerte setzen
 	for(int i=0; i< num_time_steps; i++){	
@@ -174,7 +174,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
 
 
         if (ne==0) sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
-        if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//(*_new_newton_state[0][0]);
+        if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//
 
 	for(int i=0; i< num_time_steps; i++){	//last_newton_state
 		for(int j=0; j<num_nodes +1; j++){
@@ -201,6 +201,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
 
     	sdc->run();   
 	sdc->post_run();
+	num_solves = sweeper->num_solves;
 
 	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;//
 
@@ -215,8 +216,8 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
 	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
 
 
-        std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  std::endl ;
-	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < 1e-12){ std::exit(0);}
+        std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
+	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < newton){ break;}//std::exit(0);}
 
 
     	for(int i=0; i< num_time_steps; i++){	

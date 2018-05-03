@@ -10,7 +10,7 @@ using std::shared_ptr;
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
-#include <pfasst/controller/two_level_mlsdc.hpp>
+#include <pfasst/controller/two_level_mlsdc_n.hpp>
 
 
 
@@ -47,7 +47,7 @@ using namespace pfasst::examples::fischer_example;
       void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t DIM, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
-                                           const size_t niter) {
+                                           const size_t niter, double newton) {
 
 
 
@@ -208,9 +208,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
     			coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
 			}
     			//transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
-			for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+			/*for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
     			   std::cout << "coarse state " << coarse->last_newton_state()[i][j]->data()[k] << std::endl;
-			}
+			}*/
 
 			for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
     			fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
@@ -283,9 +283,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact( t_0 + (time+1)*dt)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+        /*for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout <<  t_0 + (time)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
-        }
+        }*/
 
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
@@ -296,6 +296,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         std::cout << "time step " << time << std::endl ;
         std::cout << "******************************************* " <<  std::endl ;
 
+	(*_new_newton_state_fine[0][num_nodes]).data() -= fine->new_newton_state()[0][num_nodes]->data();
+	if((_new_newton_state_fine[0][num_nodes])->norm0()< newton){
+		break;}
 
     	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
@@ -347,6 +350,7 @@ int main(int argc, char** argv)
   const double dt = get_value<double>("dt", 0.1);
   double t_end = get_value<double>("tend", 0.1);
   size_t nsteps = get_value<size_t>("num_steps", 0);
+    const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -362,6 +366,6 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
 
-  run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
+  run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton);
 }
 #endif 

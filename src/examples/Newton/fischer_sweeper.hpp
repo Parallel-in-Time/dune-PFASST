@@ -110,13 +110,13 @@ namespace pfasst
 		result->data() *= -1;*/
 
 
-		std::cout << "im " << std::endl;
+		//std::cout << "im " << std::endl;
 		auto neu = this->get_encap_factory().create();
 		neu->zero();
 		this->df_dune[0][m]->mv(u->data(), neu->data());
 		neu->data() += this->coarse_rhs()[0][m]->data();
  		neu->data() *= -1;//dt;
-		std::cout << "im 2" << std::endl;
+		//std::cout << "im 2" << std::endl;
  		//neu->data() *= -1;//dt;
 
 		//neu->data() *=-1;
@@ -223,7 +223,7 @@ namespace pfasst
 	  
         Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
-                              1e-16, // desired residual reduction factor
+                              1e-15, // desired residual reduction factor
                               5000,    // maximum number of iterations
                               0);    // verbosity of the solver
           
@@ -345,9 +345,44 @@ namespace pfasst
 
       } 
 
+      void evaluate_f3(shared_ptr<typename SweeperTrait::encap_t> f,
+            const shared_ptr<typename SweeperTrait::encap_t> u){
+
+          double _nu=this->_nu;
+          double _n=this->_n;
+
+          f->zero();
+          Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > fneu(this->M_dune);
+          Dune::BlockVector<Dune::FieldVector<double,1> > fneu2;
+          fneu2.resize(u->get_data().size());
+
+          for (int i=0; i<u->get_data().size(); ++i)
+          {
+     	     fneu2[i] = pow(u->get_data()[i], _n + 1);	 
+          }
+          this->M_dune.mv(fneu2, f->data());
+          
+
+          f->data() *= (_nu*_nu);
 
 
+          
+      }
 
+      void evaluate_df3(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
+                                                 const shared_ptr<typename SweeperTrait::encap_t> u
+ 						){
+	    
+            double _nu=this->_nu;
+            double _n=this->_n;
+            for (int i=0; i<df.N(); ++i)
+            {
+		for(int j=0; j< df.M(); j++)
+                	if (df.exists(i,j)) df[i][j]= (_nu*_nu)*(_n+1) * pow(u->get_data()[j], _n) * this->M_dune[i][j];	
+            }
+
+
+      } 
 
 
   

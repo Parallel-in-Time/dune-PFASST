@@ -49,7 +49,7 @@ namespace pfasst
 
       shared_ptr<heat_FE_sdc_t> run_sdc(const size_t nelements, const size_t basisorder, const size_t dim, const size_t nnodes,
                                        const QuadratureType& quad_type, const double& t_0,
-                                       const double& dt, const double& t_end, const size_t niter)
+                                       const double& dt, const double& t_end, const size_t niter, double newton)
       {
         using pfasst::quadrature::quadrature_factory;
 
@@ -60,8 +60,9 @@ namespace pfasst
         auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+	sweeper->newton=newton;
 
-        sweeper->set_abs_residual_tol(1e-10);
+        //sweeper->set_abs_residual_tol(1e-10);
         sdc->add_sweeper(sweeper);
 
         sdc->set_options();
@@ -124,7 +125,7 @@ namespace pfasst
           //std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
 
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-	  std::cout << sweeper->get_end_state()->norm0()<<  std::endl ;
+	  std::cout << "FEHLER" << sweeper->get_end_state()->norm0()<< " number solves " << sweeper->num_solves << std::endl ;
 	
       ofstream f;
 	  stringstream ss;
@@ -174,6 +175,8 @@ namespace pfasst
     const double dt = get_value<double>("dt", 0.05);
     double t_end = get_value<double>("tend", 0.1);
     size_t nsteps = get_value<size_t>("num_steps", 0);
+    double newton = get_value<double>("newton", 0.1);
+
     if (t_end == -1 && nsteps == 0) {
       ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
       throw std::runtime_error("either t_end or num_steps must be specified");
@@ -192,7 +195,7 @@ namespace pfasst
     
     const size_t niter = get_value<size_t>("num_iters", 10);
 
-    pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter);
+    pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter, newton);
 
   }
 

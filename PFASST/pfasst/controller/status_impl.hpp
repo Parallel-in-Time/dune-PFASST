@@ -309,9 +309,9 @@ namespace pfasst
   vector<string>
   Status<precision>::summary() const
   {
-        int my_rank, num_pro;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+        int my_rank=0;
+        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
     vector<string> out;
     out.push_back(std::to_string(my_rank) + " Number Iterations: " + std::to_string(this->get_iteration()));
     {

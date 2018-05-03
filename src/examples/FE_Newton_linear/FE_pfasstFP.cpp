@@ -63,7 +63,7 @@ namespace pfasst
     namespace heat_FE
     {
       void run_pfasst(const size_t nelements, const size_t basisorder, const size_t dim, const size_t& nnodes, const pfasst::quadrature::QuadratureType& quad_type,
-                      const double& t_0, const double& dt, const double& t_end, const size_t& niter)
+                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton)
       {
 
 
@@ -105,6 +105,8 @@ namespace pfasst
 
         coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
+	fine->newton=newton;
+	coarse->newton=newton;
 
         pfasst.run();
         pfasst.post_run();
@@ -116,9 +118,9 @@ namespace pfasst
         if(my_rank==num_pro-1) {
           auto naeherung = fine->get_end_state()->data();
           auto exact = fine->exact(t_end)->data();
-          for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
+          /*for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
             std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          }
+          }*/
           std::cout << "******************************************* " << std::endl;
           std::cout << " " << std::endl;
           std::cout << " " << std::endl;
@@ -130,7 +132,7 @@ namespace pfasst
         stringstream ss;
         ss << nelements;
         string s = "solution_pfasst01/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out< );
+        f.open(s, ios::app | std::ios::out );
         f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << " number solves " << fine->num_solves << endl;
         f.close();
         std::cout << "******************************************* " << std::endl;
@@ -190,6 +192,7 @@ int main(int argc, char** argv)
   const double dt = get_value<double>("dt", 0.1);
   double t_end = get_value<double>("tend", 0.2);
   size_t nsteps = get_value<size_t>("num_steps", 0);
+  double newton = get_value<double>("newton", 1e-2);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -205,7 +208,7 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 1000);
 
-  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter);
+  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton);
 
   pfasst::Status<double>::free_mpi_datatype();
 

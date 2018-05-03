@@ -394,7 +394,7 @@ namespace pfasst
         auto u2 = this->get_encap_factory().create();
         double nu =this->_nu;
 
-	std::cout << "++++++++++++ " << this->_nu << std::endl;
+	//std::cout << "++++++++++++ " << this->_nu << std::endl;
 	u2->zero();
 	for (int i=0; i<u->get_data().size(); ++i)
 	    {
@@ -408,12 +408,12 @@ namespace pfasst
 	
 
         //result->data() *= nu;
-	std::cout << "evaluate  " << std::endl;
+	/*std::cout << "evaluate  " << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
 
 	  std::cout << "f " << result->data()[i] << std::endl;
 
-         }
+         }*/
         
         return result;
       }
@@ -505,7 +505,7 @@ namespace pfasst
         int my_rank, num_pro;
         //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-          if(f->norm0()<1e-10){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
+          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
 	  
           for (size_t i = 0; i < u->get_data().size(); i++) {
 
@@ -534,14 +534,14 @@ namespace pfasst
 //std::cout << "impl solve "  << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-	  std::cout << "f " << f->data()[i] << std::endl;
+	  //std::cout << "f " << f->data()[i] << std::endl;
         }
-        evaluate_rhs_impl(0, u);
-        evaluate_f(f, u, dt, rhs);
-	std::cout << "***************************************** das neue f " << f->norm0() << std::endl;
+        //evaluate_rhs_impl(0, u);
+        //evaluate_f(f, u, dt, rhs);
+	//std::cout << "***************************************** das neue f " << f->norm0() << std::endl;
 	//std::exit(0);
         this->_num_impl_solves++;
-        if (this->_num_impl_solves==5) std::exit(0);
+        //if (this->_num_impl_solves==5) std::exit(0);
 
 
       }
@@ -556,7 +556,7 @@ namespace pfasst
           
           
           f->zero();
-	std::cout << "-------------- "<< this->_nu << std::endl;
+	//std::cout << "-------------- "<< this->_nu << std::endl;
 	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
         fneu.resize(u->get_data().size());
 	for (int i=0; i<u->get_data().size(); ++i)
@@ -597,7 +597,7 @@ namespace pfasst
  						){
           
           
-          std::cout << "############### " << this->_nu<< std::endl;
+          //std::cout << "############### " << this->_nu<< std::endl;
           
           
           for (int i=0; i<df.N(); ++i)
