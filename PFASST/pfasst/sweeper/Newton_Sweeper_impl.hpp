@@ -37,7 +37,7 @@ namespace pfasst
     //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
-      this->states()[m]->data() = this->last_newton_state()[(this->get_status()->get_time()/this->get_status()->get_dt())][m]->data();
+      this->states()[m]->data() = this->last_newton_state()[][m]->data();
     }
   }
 

@@ -103,10 +103,9 @@ namespace pfasst
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
 	std::cout << myrank << " anfang predict " << std::endl;
-    Sweeper<SweeperTrait, BaseFunction, Enabled>::predict();
-	std::cout << myrank << " anfang predict 2 " << std::endl;
-    assert(this->get_quadrature() != nullptr);
-    assert(this->get_status() != nullptr);
+        Sweeper<SweeperTrait, BaseFunction, Enabled>::predict();
+        assert(this->get_quadrature() != nullptr);
+        assert(this->get_status() != nullptr);
 
     ML_CLOG_IF(this->get_quadrature()->left_is_node(), WARNING, this->get_logger_id(),
       "IMEX Sweeper for quadrature nodes containing t_0 not implemented and tested.");
@@ -119,24 +118,27 @@ namespace pfasst
     nodes.insert(nodes.begin(), typename traits::time_t(0.0));
     const size_t num_nodes = this->get_quadrature()->get_num_nodes();
 
-	std::cout << myrank << " anfang predict 3" << std::endl;
-    this->_impl_rhs.front() = this->evaluate_rhs_impl(0, this->get_states().front());
 
     ML_CLOG(INFO, this->get_logger_id(),  "Predicting from t=" << t << " over " << num_nodes << " nodes"
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
-	std::cout << myrank << " anfang predict 4" << std::endl;
+
     for (size_t m = 0; m < num_nodes; ++m) {
       this->states()[m + 1]->data() = this->last_newton_state()[0][m+1]->data(); //this->states()[m]->data();
-      //this->states()[m+1]->data() = this->last_newton_state()[0][m+1]->data();
       this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m + 1, this->states()[m + 1]);//this->last_newton_state()[0][m+1]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
-      std::cout << "erstelle rhs_impl " << this->_impl_rhs[m + 1]->norm0() <<std::endl;	
       tm += dt *  (nodes[m+1] - nodes[m]);
 
       ML_CVLOG(1, this->get_logger_id(), "");
 
     }
-	std::cout << myrank << " anfang predict 19" << std::endl;
+
+        int my_rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+	MPI_Status Stat;
+	if(my_rank==0) 	MPI_Send(&(this->last_newton_state()[0][num_nodes]->data()[0]), this->last_newton_state()[0][num_nodes]->data().size(),  MPI_FLOAT, 1,77, MPI_COMM_WORLD);
+	if(my_rank==1) 	MPI_Recv(&(this->get_states()[0]->data()[0]), this->last_newton_state()[0][num_nodes]->data().size(),  MPI_FLOAT, 0,77, MPI_COMM_WORLD, &Stat);
+        this->_impl_rhs.front() = this->evaluate_rhs_impl(0, this->get_states().front());
+
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>

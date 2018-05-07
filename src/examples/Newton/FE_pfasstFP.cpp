@@ -207,8 +207,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         pfasst.setup();
 
 	//if(time==0){
-        	fine->initial_state() = fine->exact(pfasst.get_status()->get_time());     
-        	coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());     
+   
 	//}else {
 	//	for (int i=0; i< fine->initial_state()->data().size(); i++) fine->initial_state()->data()[i] = _new_initial_fine->data()[i];   
 	//}
@@ -225,8 +224,8 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 				}*/
 				(_new_newton_state_fine[0][j])  = fine->exact( pfasst.status()->time());
 				(_new_newton_state_coarse[0][j]) = coarse->exact( pfasst.status()->time());
-				for(int k=0; k<(_new_newton_state_coarse[0][j])->data().size(); k++){
-					std::cout << "start coarse" <<  (_new_newton_state_coarse[0][j])->data()[k] << std::endl;
+				for(int k=0; k<(_new_newton_state_fine[0][j])->data().size(); k++){
+					if(my_rank==0) std::cout << "start fine" <<  (_new_newton_state_fine[0][j])->data()[k] << std::endl;
 				}
 			}
 
@@ -234,17 +233,44 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	}
 
 
+        fine->initial_state() = (_new_newton_state_fine[0][0]);     
+        coarse->initial_state() = (_new_newton_state_coarse[0][0]);  
+	//MPI_Bcast(&fine->initial_state()->data()[0], fine->initial_state()->data().size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
+	//MPI_Bcast(&coarse->initial_state()->data()[0], coarse->initial_state()->data().size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
+
+	/*MPI_Status Stat;
+	if(my_rank==0) 	MPI_Send(&(_new_newton_state_fine[0][_new_newton_state_fine[0][0]->data().size()-1]), _new_newton_state_fine[0][0]->data().size(),  MPI_FLOAT, 1,7, MPI_COMM_WORLD);
+	if(my_rank==1) 	MPI_Recv(&(fine->initial_state()->data()[0]), _new_newton_state_fine[0][0]->data().size(),  MPI_FLOAT, 0,7, MPI_COMM_WORLD, &Stat);
+
+	if(my_rank==0) 	MPI_Send(&(_new_newton_state_fine[0][_new_newton_state_coarse[0][0]->data().size()-1]), _new_newton_state_coarse[0][0]->data().size(),  MPI_FLOAT, 1,7, MPI_COMM_WORLD);
+	if(my_rank==1) 	MPI_Recv(&(coarse->initial_state()->data()[0]), _new_newton_state_coarse[0][0]->data().size(),  MPI_FLOAT, 0,7, MPI_COMM_WORLD, &Stat);*/
+
+ 	/*for (size_t predict_step = 0;
+         predict_step <= this->get_communicator()->get_rank();
+         ++predict_step) {
+      	// do the sweeper's prediction once ...
+      	if (my_rank ) {
+        //this->predict_coarse();
+	//this->get_coarse()->spread(0);
+      	} else {
+        // and default sweeps for subsequent processes
+        //this->recv_coarse();
+        //this->sweep_coarse();
+      	}*/
+
 
 	//for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
     			transfer->restrict_u(_new_newton_state_fine[0][j], coarse->last_newton_state()[0][j]);
 			for(int k=0; k< _new_newton_state_fine[0][j]->data().size(); k++){
     				fine->last_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
+    				fine->new_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
     				//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
 			}
 			for(int k=0; k< _new_newton_state_coarse[0][j]->data().size(); k++){
     				//fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
     				coarse->last_newton_state()[0][j]->data()[k] = _new_newton_state_coarse[0][j]->data()[k]  ;
+    				coarse->new_newton_state()[0][j]->data()[k] = _new_newton_state_coarse[0][j]->data()[k]  ;
 			}
 			//if (my_rank==1) fine->last_newton_state()[i][j] =  fine->exact(1) ;
 			//if (my_rank==0) fine->last_newton_state()[i][j] =  fine->exact(0.5) ;
@@ -283,6 +309,9 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	    }
 
 
+        //if(ne ==3) fine->set_abs_residual_tol(1e-1);
+        //if(ne ==3) coarse->set_abs_residual_tol(1e-1);
+
         pfasst.run();
         pfasst.post_run();
 
@@ -295,6 +324,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact( t_0 + (time+num_pro)*dt)->data();
+        auto exact2     = fine->exact( t_0 + (time+1)*dt)->data();
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout <<  t_0 + (time+num_pro)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
         }
@@ -318,10 +348,8 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	MPI_Bcast(&global, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 
-	_copy_end_state->scaled_add(-1.0, fine->exact( t_0 + (time+num_pro)*dt));
-       	std::cout << my_rank << " Fehler am Ender : "  << _copy_end_state->norm0() << " " << std::endl;
 
-	if(global>0) {
+	if(global>0 || ne==3) {
 		//if (my_rank == num_pro-1){for (int i=0; i< fine->get_end_state()->data().size(); i++) _new_initial_fine->data()[i] = _copy_end_state->data()[i];}
 		//MPI_Bcast(&(_new_initial_fine->data()[0]),_new_initial_fine->data().size(), MPI_DOUBLE, num_pro-1,MPI_COMM_WORLD);
 
@@ -345,6 +373,9 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 
 		}*/
+	fine->new_newton_state()[0][num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
+       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[0][num_nodes]->norm0() << " " << std::endl;
+
 		std::cout << " vor dem break " << std::endl; break;
 	}
 
@@ -358,14 +389,16 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
     	//for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
 			for(int k=0; k< _new_newton_state_coarse[0][j]->data().size(); k++)
-    				(*_new_newton_state_coarse[0][j]).data()[k] = coarse->new_newton_state()[0][j]->data()[k];
+    				(_new_newton_state_coarse[0][j])->data()[k] = coarse->states()[j]->data()[k]; //coarse->new_newton_state()[0][j]->data()[k];
     		
 			for(int k=0; k< _new_newton_state_fine[0][j]->data().size(); k++)
-    				(*_new_newton_state_fine[0][j]).data()[k] = fine->new_newton_state()[0][j]->data()[k];
+    				(_new_newton_state_fine[0][j])->data()[k] = fine->states()[j]->data()[k]; //new_newton_state()[0][j]->data()[k];
     		}
 	//}
 	
 
+	fine->new_newton_state()[0][num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
+       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[0][num_nodes]->norm0() << " " << std::endl;
 
 
         MPI_Barrier(MPI_COMM_WORLD);
