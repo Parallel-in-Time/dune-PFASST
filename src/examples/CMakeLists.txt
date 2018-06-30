@@ -1,5 +1,7 @@
 #add_subdirectory(FE_heat)
 #add_subdirectory(fischer)
+
+add_subdirectory(raum-zeit-parallel)
 add_subdirectory(Newton)
 
 #add_executable("parallel_solver" parallel_solver.cpp)
