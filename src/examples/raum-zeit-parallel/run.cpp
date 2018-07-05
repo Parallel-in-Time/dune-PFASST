@@ -480,7 +480,7 @@ int main(int argc, char** argv) {
 
   auto &x=u;
   using MGSetup = Dune::ParMG::ParallelMultiGridSetup< FEBasis, MatrixType, VectorType >;
-  MGSetup mgSetup{*grid};
+  MGSetup mgSetup{*grid,1}; //0 grobgitter
   auto gridView = mgSetup.bases_.back().gridView();
 
  using MG = Dune::ParMG::Multigrid<VectorType>;
@@ -516,8 +516,8 @@ int main(int argc, char** argv) {
     mg.levelOperations(levelOp);
     mg.coarseSolver(mgSetup.coarseSolver());
 
-    //levelOp.back().maybeRestrictToMaster(newton_rhs);
-    levelOp.back().maybeCollect(newton_rhs);
+    levelOp.back().maybeRestrictToMaster(newton_rhs);
+    //levelOp.back().maybeCollect(newton_rhs);
 
             for (int i = 0; i< newton_rhs.size(); i++) if (rank==0) std::cout << i <<"0 rhs local" << newton_rhs[i]<< std::endl;
 	    MPI_Barrier(MPI_COMM_WORLD);
@@ -595,7 +595,7 @@ int steps = 100;
             df_global[df_global.N()-1][df_global.M()-2]=0;
             
             newton_rhs_global[0] =0;
-            newton_rhs_global[u.size()] =1;
+            newton_rhs_global[u_global.size()] =1;
           
           
           
