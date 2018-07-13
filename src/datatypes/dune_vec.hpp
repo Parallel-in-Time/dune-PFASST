@@ -141,6 +141,7 @@ namespace pfasst
     {
       protected:
         size_t _size;
+        MatrixType A_dune;
 	//typename std::shared_ptr<typename EncapsulationTrait::gfs_t> _gfs;
 	//typename EncapsulationTrait::gfs_t *_gfs;
 
@@ -156,6 +157,7 @@ namespace pfasst
         virtual shared_ptr<Encapsulation<EncapsulationTrait>> create() const;
 
         virtual void set_size(const size_t& size);
+        virtual void set_FE_manager(std::shared_ptr<fe_manager> FinEl, int nlevel);
         //virtual void set_gfs(typename EncapsulationTrait::gfs_t& gfs);
         virtual size_t size() const;
     };

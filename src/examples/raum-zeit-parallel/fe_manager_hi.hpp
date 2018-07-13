@@ -114,7 +114,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    fe_basis1 = std::make_shared<B1>(gridView); 
 	    n_dof[1]    = fe_basis1->size();
         
-
+	    std::cout << "***** Ordnung " << fe_basis1[0]->size() << std::endl;
 	    
 	    
 	    if(nlevels>1){ 

@@ -1,6 +1,5 @@
 
-//#include <dune/grid/yaspgrid.hh>
-//#include "assemble.hpp"
+
 #include <dune/fufem/assemblers/transferoperatorassembler.hh>
 
 
@@ -39,12 +38,11 @@
 
 
 
-//const size_t DIMENSION=1;
-//const size_t BASE_ORDER=1;
-//const size_t GRID_LEVEL=1;
 
-typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
-typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
+const size_t GRID_LEVEL=1;
+
+//typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
+//typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 
  class fe_manager{
 	  
@@ -52,10 +50,8 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t* n_dof;
 	  size_t n_levels;
 
-	  typedef Dune::YaspGrid<1> GridType; 
-	  //typedef GridType::LeafGridView GridView;
-          typedef GridType::LevelGridView GridView;
-	  using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>;// BASE_ORDER>;
+	  
+
 	  //Dune::Functions::PQkNodalBasis<GridType::LeafGridView GridView,BASE_ORDER>;
 
           std::shared_ptr<GridType> grid;
@@ -65,7 +61,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  //std::shared_ptr<std::vector<std::shared_ptr<BasisFunction>>> basis; 
 	  //std::vector<std::shared_ptr<BasisFunction> > fe_basis;
 
-	  std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<1>>> transfer;
+	  std::shared_ptr<TransferOperatorAssembler<Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> >>> transfer;
 	  std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 	  //MatrixType m1;
 	  //std::vector<MatrixType> m;
@@ -91,13 +87,36 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    //if(DIMENSION==2){
 	      //Dune::FieldVector<double,DIMENSION> h = {1, 1};
 	    //}
-	    Dune::FieldVector<double,DIMENSION> h = {1};
+	    std::cout << DIMENSION << std::endl; 
 	    
-	      
+	    Dune::FieldVector<double,DIMENSION> h = {1};//-20, 20};
+	    Dune::FieldVector<double,DIMENSION> hR = {200};
+	    Dune::FieldVector<double,DIMENSION> hL = {-200};
 	    array<int,DIMENSION> n;
+
 	    std::fill(n.begin(), n.end(), nelements);
 
-	    this->grid  = std::make_shared<GridType>(h,n);
+#if HAVE_MPI
+ 	//grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, comm_x); //overlap
+ 	this->grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_WORLD); 
+#else
+        this->grid = std::make_shared<GridType>(hL, hR, n);
+        //grid_global = std::make_shared<GridType>(hL, hR, n);
+#endif	    
+	    
+	    //this->grid = std::make_shared<GridType>(hL, hR, n);
+	    //this->grid = std::make_shared<GridType>(h, n);
+	    //grid.globalRefine(0);
+	    
+	    
+	    
+	    //Dune::FieldVector<double,DIMENSION> h = {1};
+	    
+	      
+	    //array<int,DIMENSION> n;
+	    //std::fill(n.begin(), n.end(), nelements);
+
+	    //this->grid  = std::make_shared<GridType>(h,n);
 	    //this->basis = std::make_shared<std::vector<BasisFunction*>>(nlevels);
 	    //std::vector<std::shared_ptr<BasisFunction>> test  
 	    
@@ -122,7 +141,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	    
 	      //while(basis.size() < nlevels)
 	      auto view = grid->levelGridView(i);
-          fe_basis[nlevels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+              fe_basis[nlevels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
 	      n_dof[nlevels-i-1]    = fe_basis[nlevels-i-1]->size();
 
 	    } 
@@ -163,7 +182,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t get_nlevel() {return n_levels;}
 	  
 	  void create_transfer(){
-	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1>>>(*grid);
+	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1>>>>(*grid);
 	    transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	    for (int i=0; i< n_levels-1; i++){
 	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??

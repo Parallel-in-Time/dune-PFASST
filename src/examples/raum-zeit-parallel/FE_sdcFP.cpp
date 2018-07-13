@@ -1,3 +1,4 @@
+#include <config.h>
 #include <memory>
 #include <iostream>
 
@@ -55,13 +56,13 @@ namespace pfasst
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
 	
-	auto FinEl   = make_shared<fe_manager>(nelements,1); 
+	auto FinEl   = make_shared<fe_manager>(nelements,2); 
 
         auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton;
-
+        sweeper->is_coarse = false;
         //sweeper->set_abs_residual_tol(1e-10);
         sdc->add_sweeper(sweeper);
 
@@ -125,9 +126,11 @@ namespace pfasst
           //std::cout << sweeper->states()[sweeper->get_states().size()-1]->norm0()<<  std::endl ;
 
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+	      MPI_Barrier(MPI_COMM_WORLD);
 	  std::cout << "FEHLER" << sweeper->get_end_state()->norm0()<< " number solves " << sweeper->num_solves << std::endl ;
-	
-      ofstream f;
+	    MPI_Barrier(MPI_COMM_WORLD);
+	    
+      /*ofstream f;
 	  stringstream ss;
 	  ss << nelements;
 	  string s = "solution_sdc/" + ss.str() + ".dat";
@@ -147,7 +150,7 @@ namespace pfasst
           ff << dt <<"  " << line << std::endl;
         }
 
-        ff.close();
+        ff.close();*/
 	
 	
         return sdc;
@@ -165,6 +168,25 @@ namespace pfasst
     using pfasst::examples::heat_FE::Heat_FE;
 
     using sweeper_t = Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, BASIS_ORDER, DIM>>;
+
+    MPI_Init(&argc, &argv);
+	
+    int rank, num_pro;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+        
+    /*MPI_Comm comm_x, comm_t; 
+    int myid, xcolor, tcolor;
+    int space_num=2;
+    xcolor = (rank / space_num);
+    tcolor = rank % space_num;
+
+    MPI_Comm_split( MPI_COMM_WORLD, xcolor, rank, &comm_x );
+    MPI_Comm_split( MPI_COMM_WORLD, tcolor, rank, &comm_t );*/
+
+
+
+
 
     pfasst::init(argc, argv, sweeper_t::init_opts);
 
@@ -195,7 +217,18 @@ namespace pfasst
     
     const size_t niter = get_value<size_t>("num_iters", 10);
 
+    MPI_Barrier(MPI_COMM_WORLD);
+    auto st = MPI_Wtime();
+
+
     pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+    
+    
+    auto ut = MPI_Wtime()-st;
+    double time;
+    MPI_Reduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    std::cout << rank << "Zeit ist am end" << time << std::endl;
+    MPI_Finalize();
 
   }
 

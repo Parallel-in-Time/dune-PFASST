@@ -149,10 +149,17 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::norm0() const
     {
-      return std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
+      //std::cout << " in der normberechnung " << std::endl;
+      double max = std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
                                [](const typename EncapsulationTrait::spatial_t& a,
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
+      double global_max;
+      MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+      return global_max;
+      /*using Norm =  EnergyNorm<MatrixType,VectorType>;
+      auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(this->A_dune, restrictToMaster, gridView.grid().comm());
+      return parallel_energyNorm(this->get_data());*/
     }
 
     template<class EncapsulationTrait>
@@ -294,6 +301,35 @@ namespace pfasst
     {
       this->_size = size;
     }
+    
+            
+    template<class EncapsulationTrait>
+    void
+    EncapsulationFactory<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::set_FE_manager(std::shared_ptr<fe_manager> FinEl, int nlevel)
+    {
+      	auto sBackend = Dune::Fufem::istlMatrixBackend(this->A_dune);
+	//auto view = FinEl.get_grid()->levelGridView(nlevel);
+        using Assembler = Dune::Fufem::DuneFunctionsOperatorAssembler<BasisFunction, BasisFunction>;
+        auto basis = FinEl->get_basis(nlevel);
+        auto assembler = Assembler{*basis, *basis};
+
+        using FiniteElement = std::decay_t<decltype(basis->localView().tree().finiteElement())>;
+
+
+        auto vintageLaplace = LaplaceAssembler<GridType,FiniteElement, FiniteElement>();
+       
+        auto localAssembler = [&](const auto& element, auto& localMatrixType, auto&& trialLocalView, auto&& ansatzLocalView){
+                    vintageLaplace.assemble(element, localMatrixType, trialLocalView.tree().finiteElement(), ansatzLocalView.tree().finiteElement());
+        };
+
+        assembler.assembleBulk(sBackend, localAssembler);
+
+    }
+              
 
     template<class EncapsulationTrait>
     size_t

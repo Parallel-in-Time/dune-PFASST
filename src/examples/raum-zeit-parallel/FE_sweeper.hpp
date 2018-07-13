@@ -14,7 +14,7 @@ using std::vector;
 //#include <pfasst/sweeper/imex.hpp>
 
 #include <pfasst/contrib/fft.hpp>
-#include "../../finite_element_stuff/fe_manager_fp.hpp"
+#include "fe_manager_fp.hpp"
 //#include "fe_manager_hi.hpp"
 
 

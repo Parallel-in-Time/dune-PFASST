@@ -29,6 +29,104 @@ using boost::math::constants::pi_sqr;
 #include <iostream>
 //#include <c++/4.8/memory>
 
+
+
+
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+#include <dune/common/densematrix.hh>
+#include<dune/common/parallel/mpihelper.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+#include <dune/istl/bvector.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+#include <dune/istl/io.hh>
+#include<dune/istl/matrixmarket.hh>
+#include<dune/istl/matrixredistribute.hh>
+#include <dune/istl/schwarz.hh>
+
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+#include <dune/grid/io/file/vtk/vtkwriter.hh>
+#include <dune/grid/uggrid.hh>
+#include <dune/grid/io/file/vtk/vtksequencewriter.hh>
+
+#include <dune/typetree/utility.hh>
+
+#include <dune/functions/functionspacebases/interpolate.hh>
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#if USE_DG
+#  include <dune/functions/functionspacebases/lagrangedgbasis.hh>
+#else
+#  include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#endif
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+
+#include <dune/fufem/assemblers/dunefunctionsoperatorassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/massassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh>
+#include <dune/fufem/assemblers/istlbackend.hh>
+#include <dune/fufem/formatstring.hh>
+#include <dune/fufem/assemblers/transferoperatorassembler.hh>
+
+#include<dune/istl/paamg/pinfo.hh>
+#include<dune/istl/paamg/graph.hh>
+#if USE_DG
+#  include <dune/parmg/test/dglaplacematrix.hh>
+#else
+#  include <dune/parmg/test/laplacematrix.hh>
+#endif
+#include <dune/parmg/iterationstep/lambdastep.hh>
+#include <dune/parmg/iterationstep/multigrid.hh>
+#include <dune/parmg/iterationstep/multigridstep.hh>
+#include <dune/parmg/norms/normadapter.hh>
+#include <dune/parmg/parallel/communicationp1.hh>
+#include <dune/parmg/parallel/communicationdg.hh>
+#include <dune/parmg/parallel/datahandle.hh>
+#include <dune/parmg/parallel/dofmap.hh>
+#include <dune/parmg/parallel/globaldofindex.hh>
+#include <dune/parmg/parallel/istlcommunication.hh>
+#include <dune/parmg/parallel/matrixalgebra.hh>
+#include <dune/parmg/parallel/vectoralgebra.hh>
+#include <dune/parmg/parallel/redistributematrix.hh>
+#include <dune/parmg/parallel/redistributevector.hh>
+#include <dune/parmg/parallel/parallelenergyfunctional.hh>
+#include <dune/parmg/parallel/parallelenergynorm.hh>
+#include <dune/parmg/parallel/restrictmatrix.hh>
+#include <dune/parmg/solvers/coarsesuperlusolver.hh>
+#include <dune/parmg/solvers/linesearch.hh>
+#include <dune/parmg/solvers/directionsearch.hh>
+#include <dune/parmg/iterationstep/multigridsetup.hh>
+#include <dune/parmg/iterationstep/parallelprojectedgs.hh>
+
+#include <dune/solvers/iterationsteps/blockgssteps.hh>
+#include <dune/solvers/norms/energynorm.hh>
+#include <dune/solvers/solvers/loopsolver.hh>
+#include <dune/solvers/transferoperators/compressedmultigridtransfer.hh>
+
+
+
+using namespace std;
+using namespace Dune;
+
+using namespace Dune;
+using namespace Dune::ParMG;
+
 namespace pfasst
 {
   namespace examples
@@ -77,13 +175,39 @@ namespace pfasst
         this->encap_factory()->set_size(basis->size());*/
 	this->FinEl = FinEl;
 	basis = FinEl->get_basis(nlevel);
+	grid = FinEl->get_grid();
 	    
-	assembleProblem(basis, this->A_dune, this->M_dune);
+	//assembleProblem(basis, this->A_dune, this->M_dune);
+	auto sBackend = Dune::Fufem::istlMatrixBackend(this->A_dune);
+        auto mBackend = Dune::Fufem::istlMatrixBackend(this->M_dune);
+
+        using Assembler = Dune::Fufem::DuneFunctionsOperatorAssembler<BasisFunction, BasisFunction>;
+        auto assembler = Assembler{*basis, *basis};
+
+        using FiniteElement = std::decay_t<decltype(basis->localView().tree().finiteElement())>;
+
+
+        auto vintageLaplace = LaplaceAssembler<GridType,FiniteElement, FiniteElement>();
+        auto vintageMass = MassAssembler<GridType,FiniteElement, FiniteElement>();
+       
+        auto localAssembler = [&](const auto& element, auto& localMatrixType, auto&& trialLocalView, auto&& ansatzLocalView){
+                    vintageLaplace.assemble(element, localMatrixType, trialLocalView.tree().finiteElement(), ansatzLocalView.tree().finiteElement());
+        };
+        auto localMassAssembler = [&](const auto& element, auto& localMatrixType, auto&& trialLocalView, auto&& ansatzLocalView){
+                    vintageMass.assemble(element, localMatrixType, trialLocalView.tree().finiteElement(), ansatzLocalView.tree().finiteElement());
+        };
+        assembler.assembleBulk(sBackend, localAssembler);
+        assembler.assembleBulk(mBackend, localMassAssembler);  
 
         const auto bs = basis->size();
         std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
 
         this->encap_factory()->set_size(bs);
+        //this->encap_factory()->set_FE_manager(*FinEl);
+        this->A_dune*=-1;
+        
+        std::cout << "alles assembliert" << std::endl;
+	MPI_Barrier(MPI_COMM_WORLD);
 
       }
       
@@ -104,6 +228,7 @@ namespace pfasst
 
         //assembleProblem(basis, A_dune, M_dune);
         std::cout << " set_options " <<  std::endl; 
+        MPI_Barrier(MPI_COMM_WORLD);
 
       }
 
@@ -405,7 +530,8 @@ namespace pfasst
 	result->data()*=(this->_nu*this->_nu);
 	this->A_dune.umv(u->get_data(), result->data());
 
-	
+	//std::cout << "im evaluate " << std::endl;
+	//std::exit(0);
 
         //result->data() *= nu;
 	/*std::cout << "evaluate  " << std::endl;
@@ -414,7 +540,6 @@ namespace pfasst
 	  std::cout << "f " << result->data()[i] << std::endl;
 
          }*/
-        
         return result;
       }
 
@@ -436,58 +561,164 @@ namespace pfasst
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
-
+	int rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 	
 
-    auto residuum = this->get_encap_factory().create();
+        auto residuum = this->get_encap_factory().create();
 	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
-    newton_rhs.resize(rhs->get_data().size());
-    newton_rhs2.resize(rhs->get_data().size());
-    
-	
+        newton_rhs.resize(rhs->get_data().size());
+        newton_rhs2.resize(rhs->get_data().size());
+        
+        //auto u = this->get_encap_factory().create();
+        auto delta_u = u->data();
+        delta_u*=0;
+	/*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << i << "_rhs " << rhs->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==num_pro-1) std::cout << i << " rhs " << rhs->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);std::exit(0);*/
+        
 	for (int i=0; i< 200 ;i++){
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
 	  evaluate_f(f, u, dt, rhs);
+	 	  
+
 	  evaluate_df(df, u, dt);
-	  df.mv(u->data(), newton_rhs);
+	  //df.mv(u->data(), newton_rhs);
+	  newton_rhs*=0;
 	  newton_rhs -= f->data();
       	  newton_rhs2 = newton_rhs;
+      	  
 
-	  auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
-	  auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
- 
+	/*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << "newton_rhs " << newton_rhs[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==1) std::cout << "newton_rhs " << newton_rhs[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/
+     
+
+
+	MPI_Barrier(MPI_COMM_WORLD);
 	
+
 	
-	  std::vector<double> dirichletLeftNodes;
-	  interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  
+	///////////////////////////////////////////////////////////////////////////////////////
 
-	  std::vector<double> dirichletRightNodes;
-	  interpolate(*basis, dirichletRightNodes, isRightDirichlet);
-	
-	  /*for(int i=0; i<rhs->data().size(); ++i){
-	
-	    if(dirichletLeftNodes[i])
-	    newton_rhs[i] = -dt; // exact(t)->get_data()[i]; //1;//-dt;
-
-	    if(dirichletRightNodes[i])
-	    newton_rhs[i] = 0; //exact(t)->get_data()[i]; //0;
-
-
-	  
-	  }
-	  for (size_t j=0; j<df.N(); j++){
-	    if (dirichletRightNodes[j] || dirichletLeftNodes[j]){
-	      auto cIt = df[j].begin();
-	      auto cEndIt = df[j].end();
-	      for(; cIt!=cEndIt; ++cIt){
-		  *cIt = (j==cIt.index()) ? 1.0 : 0.0;
-	      }
-	    }
-	  }*/
-	  //std::cout << "5"<<std::endl;
-
+	//here we use parmg solver to solve the local system (df * u = newton_rhs) for the unknown u
+  	auto &x=delta_u;
+  	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
+  		MPI_Barrier(MPI_COMM_WORLD);
+  	std::cout << rank << "vor er ersten grid aktion" << std::endl;
+	MPI_Barrier(MPI_COMM_WORLD);
+  	MGSetup mgSetup{*grid,1}; //0 grobgitter
+  	std::cout << "nach der ersten grid aktion" << std::endl;
+	//MPI_Barrier(MPI_COMM_WORLD);
+  	auto gridView = mgSetup.bases_.back().gridView();
+ 	using MG = Dune::ParMG::Multigrid<VectorType>;
+  	MG mg;
   
-	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
+    	using namespace Dune::ParMG;
+    	auto& levelOp = mgSetup.levelOps_;
+    	auto df_pointer = std::make_shared<MatrixType>(df);	
+    	mgSetup.matrix(df_pointer);
+    	auto fineIgnore = std::make_shared< Dune::BitSetVector<1> >(u->get_data().size());
+    	for (std::size_t i = 0; i < u->get_data().size(); ++i){
+      		(*fineIgnore)[i] = false;
+      		if(i==0 &&rank==0) (*fineIgnore)[i] = true;
+      		if(rank==num_pro - 1 && i== u->get_data().size()-1) (*fineIgnore)[i] = true;
+      	}
+      	    		std::cout << "nach ignore gesetzt " << std::endl;
+      	//std::cout << "im sweeper ignore gestzt" << std::endl;
+	//MPI_Barrier(MPI_COMM_WORLD);
+    	mgSetup.ignore(fineIgnore);
+    	mgSetup.setupLevelOps();
+    	double dampening =1.0;
+    	mgSetup.setupSmoother(dampening);
+    	bool enableCoarseCorrection=true;
+    	if (enableCoarseCorrection)
+      		mgSetup.setupCoarseSuperLUSolver();
+    	else
+      		mgSetup.setupCoarseNullSolver();
+    	mg.levelOperations(levelOp);
+    	mg.coarseSolver(mgSetup.coarseSolver());
+    	levelOp.back().maybeRestrictToMaster(newton_rhs);
+    	std::function<void(VectorType&)> collect = Dune::ParMG::makeCollect<VectorType>(*mgSetup.comms_.back());
+    	std::function<void(VectorType&)> restrictToMaster = [op=levelOp.back()](VectorType& x) { op.maybeRestrictToMaster(x); };
+    	std::cout << "im sweeper vor energyfunctional" << std::endl;
+	//MPI_Barrier(MPI_COMM_WORLD);
+	
+    	auto energyFunctional = Dune::ParMG::makeParallelEnergyFunctional(
+      		*df_pointer,
+      		newton_rhs,
+      		gridView.grid().comm(),
+      		//collect
+      		restrictToMaster
+      	);
+      	
+      	auto vz =  this->A_dune;
+	vz *=-1;
+    	auto energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(*df_pointer, restrictToMaster, gridView.grid().comm()); //*df_pointer
+    	levelOp.back().maybeCopyFromMaster(x);
+    	double tol = 1e-13;
+    	std::cout << "im sweeper vor apply" << std::endl;
+	//MPI_Barrier(MPI_COMM_WORLD);
+    	auto realIterationStep = [&](VectorType& x) {
+      		auto b = newton_rhs;
+      		mg.apply(x, b);
+    	};
+  	auto& feBasis = mgSetup.bases_.back();
+    	auto solverNorm = std::make_shared< NormAdapter<VectorType> >(energyNorm);
+	auto iterationStep = std::make_shared< LambdaStep<VectorType> >(realIterationStep, x);
+	int steps = 500;
+    	auto solver = Dune::Solvers::LoopSolver<VectorType>(iterationStep, steps, tol, solverNorm, NumProc::FULL);
+    		std::cout << "im sweeper vorm solver aufruf " << std::endl;
+	solver.preprocess();
+    	solver.solve();
+    	num_solves++;
+
+//////////////////////////////////////////////////////////////////////////////////////
+	
+
+	
+           //evaluate_f(f, u, rhs, M_dune, A_dune, *w); 
+           u->data()+=delta_u;
+
+	  	/*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << "newton_rhs " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==1) std::cout << "newton_rhs " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/
+
+           
+           	  /*for (size_t i = 0; i < u->get_data().size(); i++) {
+
+	  if (rank ==0) std::cout <<i << "newton  u " << u->data()[i] << std::endl;
+
+        } 	MPI_Barrier(MPI_COMM_WORLD);// std::exit(0);*/
+        
+           evaluate_f(f, u, dt, rhs);            
+                     
+           using Norm =  EnergyNorm<MatrixType,VectorType>;
+  
+	    
+
+	   auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(vz, restrictToMaster, gridView.grid().comm());
+	    
+            //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) infinity " << norm_global(f) << std::endl;  	                  
+            //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) energy " << f.infinity_norm() << std::endl;  
+           std::cout << i << " rank "<< rank << " residuumsnorm von f(u) " << parallel_energyNorm(f->data()) << std::endl; 
+           if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
+            
+        /*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank) std::cout << "u " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/
+  
+	  /*Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1);
 	  Dune::CGSolver<VectorType> cg(linearOperator,
                               preconditioner,
@@ -497,32 +728,20 @@ namespace pfasst
 	  Dune::InverseOperatorResult statistics ;
 	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
 	  num_solves++;
-	  //df.mv(u->data(), residuum->data());
-      	  //residuum->data() -= newton_rhs2;
-          //std::cout << "residuums norm " << residuum->norm0() << std::endl;
-          //if (residuum->norm0()< _abs_newton_tol){break;}
+
           evaluate_f(f, u, dt, rhs);
-        int my_rank, num_pro;
-        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
+          int my_rank, num_pro;
+
+          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}*/
 	  
-          for (size_t i = 0; i < u->get_data().size(); i++) {
 
-	    //std::cout << "u " << u->data()[i] << std::endl;
-
-          }
 	}
 
 	
 	
 	//std::exit(0);
 	
-        /*for (size_t i = 0; i < u->get_data().size(); i++) {
 
-	  std::cout << "u " << u->data()[i] << std::endl;
-
-        }*/
 	
 	
 	
@@ -531,7 +750,7 @@ namespace pfasst
         M_u.resize(u->get_data().size());
 	this->M_dune.mv(u->get_data(), M_u);
 
-//std::cout << "impl solve "  << std::endl;
+        //std::cout << "impl solve "  << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
 	  //std::cout << "f " << f->data()[i] << std::endl;
@@ -546,7 +765,7 @@ namespace pfasst
 
       }
       
-            template<class SweeperTrait, typename Enabled>
+      template<class SweeperTrait, typename Enabled>
       void
       Heat_FE<SweeperTrait, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
@@ -554,7 +773,8 @@ namespace pfasst
 						 const shared_ptr<typename SweeperTrait::encap_t> rhs
 						){
           
-          
+          	int rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank );
           f->zero();
 	//std::cout << "-------------- "<< this->_nu << std::endl;
 	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
@@ -563,14 +783,29 @@ namespace pfasst
 	{
 	  fneu[i]= (this->_nu*this->_nu) * (pow(u->get_data()[i], _n+1) - u->get_data()[i]);	
 	}
+	
+
 	//f->data() *= (this->_nu*this->_nu);
 	this->M_dune.mv(fneu, f->data());
 	this->A_dune.mmv(u->get_data(),f->data());
 	f->data() *= dt;
 	this->M_dune.umv(u->get_data(),f->data());
-	f->data() -=rhs->get_data();
-          
+	/*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << "fneu " << f->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==1) std::cout << "fneu " << f->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/ 
 	
+	f->data() -=rhs->get_data();
+
+	/*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << "fneu " << f->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==1) std::cout << "fneu " << f->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/          
+
 	/*f->zero();
 	
 	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
