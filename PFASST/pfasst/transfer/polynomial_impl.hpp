@@ -266,6 +266,7 @@ namespace pfasst
       this->restrict_u(fine_integral[m], fas[m]);
       fas[m]->scaled_add(-1.0, coarse_integral[m]);
       coarse->tau()[m]->data() = fas[m]->get_data();
+      //coarse->tau()[m]->data() *=0;
       /*for(int i=0; i<coarse->tau()[m]->data().size(); i++){
       std::cout << coarse->tau()[m]->data() << std::endl;
       }*/

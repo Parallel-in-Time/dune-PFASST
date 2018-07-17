@@ -34,6 +34,8 @@ namespace pfasst
               const vector<shared_ptr<Encapsulation<EncapsulationTrait>>>& y,
               const bool zero_vec_x)
     {
+       int rank, num_pro;
+       MPI_Comm_rank(MPI_COMM_WORLD, &rank );
       CLOG_IF(x.size() != (size_t)mat.rows(), WARNING, "ENCAP")
         << "size of result vector (" << x.size()
         << ") does not match result of matrix-vector multiplication (" << mat.rows() << ")";
@@ -47,14 +49,15 @@ namespace pfasst
 
       const size_t cols = mat.cols();
       const size_t rows = mat.rows();
-      //std::cout << "eigen mat  " << Dune::PDELab::Backend::native(y[0]->data())[2][0] <<std::endl;
+
       for (size_t n = 0; n < rows; ++n) {
         for (size_t m = 0; m < cols; ++m) {
+         
           x[n]->scaled_add(a * mat(n, m), y[m]);
-	  //std::cout << "eigen mat  " << Dune::PDELab::Backend::native(y[n]->data())[2][0] <<std::endl;
+
         }
       }
-      //std::exit(0);	
+      //MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);
     }
 
     template<class EncapsulationTrait>

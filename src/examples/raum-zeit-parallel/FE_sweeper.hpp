@@ -73,6 +73,7 @@ namespace pfasst
           double                                     	 _nu{1.0};
           double                                     	 _n{1.0};
           //double                                      	 _delta{1.0};
+          size_t nlevel =1;
 
 	  
 	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
@@ -119,12 +120,12 @@ namespace pfasst
                                       const typename SweeperTrait::time_t& dt,
                                       const shared_ptr<typename SweeperTrait::encap_t> rhs) override;
 
-          virtual vector<shared_ptr<typename SweeperTrait::encap_t>>
+          /*virtual vector<shared_ptr<typename SweeperTrait::encap_t>>
           compute_error(const typename SweeperTrait::time_t& t);
 
           virtual vector<shared_ptr<typename SweeperTrait::encap_t>>
           compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
-                                 const typename SweeperTrait::time_t& t);
+                                 const typename SweeperTrait::time_t& t);*/
 	  
 	  	  virtual void
 	  evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,

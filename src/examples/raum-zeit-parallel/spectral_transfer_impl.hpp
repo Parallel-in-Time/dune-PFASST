@@ -29,7 +29,7 @@ namespace pfasst
 	
 	      std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
           std::cout << "tranfer create " << std::endl;
-	      set_matrix(*vecvec->at(0), *vecvec->at(0));
+	      set_matrix(*vecvec->at(1), *vecvec->at(1));
           
           
           
@@ -103,22 +103,24 @@ namespace pfasst
         fine->data() = coarse->get_data();
 
       } else {
-
+    int rank, num_pro;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
 	
-	/*std::cout <<  "interpolate grob" <<  std::endl;
+	if(rank==0) std::cout <<  "interpolate grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
-          std::cout <<  coarse->data()[i] <<  std::endl;
+          if(rank==0) std::cout <<  coarse->data()[i] <<  std::endl;
         }
-        std::cout <<  "interpolate " <<  std::endl;*/
+        if(rank==0) std::cout <<  "interpolate " <<  std::endl;
 
 
         interpolate_matrix.mv(coarse->data(), fine->data());
         //Transfer_matrix.mv(coarse->data(), fine->data());
-	/*std::cout <<  "interpolate fein" <<  std::endl;
+	if(rank==0) std::cout <<  "interpolate fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
-          std::cout <<  fine->data()[i] <<  std::endl;
+          if(rank==0) std::cout <<  fine->data()[i] <<  std::endl;
         }
-        std::cout <<  "interpolate ende" <<  std::endl;*/
+        if(rank==0) std::cout <<  "interpolate ende" <<  std::endl;
+        //std::exit(0);
 
         
       }
@@ -143,22 +145,23 @@ namespace pfasst
         coarse->data() = fine->get_data();
 
       } else {
+          	int rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank );
 
-
-	/*std::cout <<  "restriktion fein" <<  std::endl;
+	if(rank==0) std::cout <<  "restriktion fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
-          std::cout <<  fine->data()[i] <<  std::endl;
+          if(rank==0) std::cout <<  i << " " << fine->data()[i] <<  std::endl;
         }
-        std::cout <<  "restriction " <<  std::endl;*/
+        if(rank==0) std::cout <<  "restriction " <<  std::endl;
 	restrict_matrix.mtv(fine->data(), coarse->data());
     //interpolate_matrix.mtv(fine->data(), coarse->data());
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
-	/*std::cout <<  "restriction grob" <<  std::endl;
+	if(rank==0)  std::cout <<  "restriction grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
-          std::cout <<  coarse->data()[i] <<  std::endl;
+          if(rank==0) std::cout << i << " " << coarse->data()[i] <<  std::endl;
         }
-        std::cout <<  "restriction ende " <<  std::endl;*/
+        if(rank==0) std::cout <<  "restriction ende " <<  std::endl;
 
 
       }

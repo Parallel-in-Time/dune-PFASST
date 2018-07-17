@@ -128,7 +128,7 @@ const size_t GRID_LEVEL=1;
 	    
 	    for (int i=0; i<nlevels; i++){
 	      
-	      grid->globalRefine((bool) i);
+	      grid->globalRefine(1);//mlsdc 1
 	      //GridType::LeafGridView gridView = grid->leafGridView();
 	      //BasisFunction* b = new BasisFunction(gridView);
 	      //std::cout << "***** groesse" << b->size() << std::endl;
@@ -140,26 +140,27 @@ const size_t GRID_LEVEL=1;
 	   
 	    
 	      //while(basis.size() < nlevels)
-	      auto view = grid->levelGridView(i);
-              fe_basis[nlevels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
+              fe_basis[nlevels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i +1)); //grid->levelGridView(i));//gridView);
+	      std::cout << i << " " << nlevels-i-1 << " *****  Ordnung " << fe_basis[nlevels-i-1]->size() << std::endl;              
 	      n_dof[nlevels-i-1]    = fe_basis[nlevels-i-1]->size();
 
 	    } 
 	    //std::shared_ptr<BasisFunction> ruth = (*basis)[0];
 	    //ruth->size();
 	    //(*basis)[0]->gridView();
-	    
-	    std::cout << "***** Ordnung " << fe_basis[0]->size() << std::endl;
+
+	    std::cout << "***** 0 Ordnung " << fe_basis[0]->size() << std::endl;
+	    //std::cout << "***** 1 Ordnung " << fe_basis[1]->size() << std::endl;
 	    //std::cout << "***** Ordnung " << fe_basis[1]->size() << std::endl;
 	    //std::cout << "***** Ordnung " << fe_basis[2]->size() << std::endl;
 
-	     //std::cout << "***** Anzahl der finiten Elemente " << nelements << std::endl;
+	    std::cout << "***** Anzahl der finiten Elemente " << nelements << std::endl;
 	    if(nlevels>1){ 
 	      this->create_transfer();
 	      //m.resize(nlevels);
 	      
 	    }
-	     //std::cout << "***** Anzahl der finiten Elemente " << nelements << std::endl;
+	    std::cout << "***** Anzahl der finiten Elemente " << nelements << std::endl;
 	    //this->basis = std::make_shared<BasisFunction>(gridView);
 
 	    //std::cout << "***** Basis erstellt mit " <<  fe_basis[0]->size() << " Elementen " << std::endl;
@@ -182,15 +183,18 @@ const size_t GRID_LEVEL=1;
 	  size_t get_nlevel() {return n_levels;}
 	  
 	  void create_transfer(){
+	    std::cout << "im create transfer  neu " << std::endl;
 	    transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1>>>>(*grid);
 	    transferMatrix = std::make_shared<std::vector<MatrixType*>>();
-	    for (int i=0; i< n_levels-1; i++){
+	    	    std::cout << "im create transfer 1 " << std::endl;
+	    for (int i=0; i< n_levels; i++){
 	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
 	    }
 	    transfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
 	    
 	    std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
-	    //std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(0)).M() <<  std::endl;
+	    	    	    std::cout << "im create transfer vecvec " <<  (*vecvec->at(0)).M() << (*vecvec->at(0)).N() << (*vecvec->at(1)).M() << (*vecvec->at(1)).N() << std::endl;
+	    std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(1)).M() <<  std::endl;
 	    for (int i=0; i< vecvec->at(0)->N(); i++){
 	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
 		if(vecvec->at(0)->exists(i,j)){
@@ -198,7 +202,8 @@ const size_t GRID_LEVEL=1;
 		}
 	      }
 
-        }
+            }
+            //std::exit(0);
 	  }
 	  
 	  

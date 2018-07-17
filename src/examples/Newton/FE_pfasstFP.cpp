@@ -63,9 +63,9 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
         std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
-
+        std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer_0;
         std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
-
+        std::shared_ptr<std::vector<MatrixType*>> transferMatrix_0;
         std::shared_ptr<GridType> grid;
 
         int n_levels=2;
@@ -159,7 +159,11 @@ int num_solves=0;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
 
     std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
-    for(int ne=0; ne<12; ne++){
+    for(int ne=0; ne<120; ne++){
+
+
+
+
 
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
@@ -235,6 +239,10 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
         fine->initial_state() = (_new_newton_state_fine[0][0]);     
         coarse->initial_state() = (_new_newton_state_coarse[0][0]);  
+
+
+
+
 	//MPI_Bcast(&fine->initial_state()->data()[0], fine->initial_state()->data().size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
 	//MPI_Bcast(&coarse->initial_state()->data()[0], coarse->initial_state()->data().size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
 
@@ -265,12 +273,16 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 			for(int k=0; k< _new_newton_state_fine[0][j]->data().size(); k++){
     				fine->last_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
     				fine->new_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
+
+
     				//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
 			}
 			for(int k=0; k< _new_newton_state_coarse[0][j]->data().size(); k++){
     				//fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
     				coarse->last_newton_state()[0][j]->data()[k] = _new_newton_state_coarse[0][j]->data()[k]  ;
     				coarse->new_newton_state()[0][j]->data()[k] = _new_newton_state_coarse[0][j]->data()[k]  ;
+
+
 			}
 			//if (my_rank==1) fine->last_newton_state()[i][j] =  fine->exact(1) ;
 			//if (my_rank==0) fine->last_newton_state()[i][j] =  fine->exact(0.5) ;
@@ -349,7 +361,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 
 
-	if(global>0 || ne==3) {
+	if(global>0 ) {
 		//if (my_rank == num_pro-1){for (int i=0; i< fine->get_end_state()->data().size(); i++) _new_initial_fine->data()[i] = _copy_end_state->data()[i];}
 		//MPI_Bcast(&(_new_initial_fine->data()[0]),_new_initial_fine->data().size(), MPI_DOUBLE, num_pro-1,MPI_COMM_WORLD);
 
@@ -403,6 +415,102 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
         MPI_Barrier(MPI_COMM_WORLD);
 	std::cout << "after last barrier rank " << my_rank<< std::endl;
+	TwoLevelPfasst<TransferType, CommunicatorType> pfasst_0;
+        pfasst_0.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
+
+        auto coarse_0 = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
+	auto coarse_helper_0 = std::make_shared<SweeperType>(fe_basis[1], 1,  grid); 
+        coarse_0->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+        coarse_helper_0->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+        auto fine_0 = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
+        fine_0->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+
+        coarse_0->is_coarse=true;
+	coarse_helper_0->is_coarse=true;
+        fine_0->is_coarse=false;
+                        
+        dunetransfer_0 = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
+	transferMatrix_0 = std::make_shared<std::vector<MatrixType*>>();
+	for (int i=0; i< n_levels-1; i++){
+	      transferMatrix_0->push_back(new MatrixType()); 
+	}
+	dunetransfer_0->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
+	    
+	std::shared_ptr<std::vector<MatrixType*>> vecvec_0 = transferMatrix;
+
+        
+       
+        auto transfer_0 = std::make_shared<TransferType>();
+	transfer_0->create(vecvec_0);
+
+	//fine_0->num_solves+=num_solves;
+
+	
+
+	pfasst_0.add_sweeper(coarse_0, true);
+	pfasst_0.add_sweeper(fine_0);
+        
+        pfasst_0.add_transfer(transfer_0);
+        pfasst_0.set_options();
+
+        pfasst_0.status()->time() =  t_0 + time*dt;
+        pfasst_0.status()->dt() = dt;
+        pfasst_0.status()->t_end() = t_0 + (time+num_pro)*dt;
+        pfasst_0.status()->max_iterations() = niter;
+
+        pfasst_0.setup();
+
+
+		for(int j=0; j<num_nodes +1; j++){
+    			transfer->restrict_u(_new_newton_state_fine[0][j], coarse->last_newton_state()[0][j]);
+			for(int k=0; k< _new_newton_state_fine[0][j]->data().size(); k++){
+
+    				fine_0->last_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
+    				fine_0->new_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
+    				//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
+			}
+			for(int k=0; k< _new_newton_state_coarse[0][j]->data().size(); k++){
+    				//fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
+
+    				coarse_0->last_newton_state()[0][j]->data()[k] = _new_newton_state_coarse[0][j]->data()[k]  ;
+    				coarse_0->new_newton_state()[0][j]->data()[k] = _new_newton_state_coarse[0][j]->data()[k]  ;
+			}
+			//if (my_rank==1) fine->last_newton_state()[i][j] =  fine->exact(1) ;
+			//if (my_rank==0) fine->last_newton_state()[i][j] =  fine->exact(0.5) ;
+    		}
+
+        fine_0->initial_state() = (_new_newton_state_fine[0][0]);     
+        coarse_0->initial_state() = (_new_newton_state_coarse[0][0]); 
+	    for(int m=0; m< num_nodes +1; m++){
+	    	fine_0->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine_0->M_dune); 
+            	fine_0->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[0][m]);
+
+	    	coarse_0->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse_0->M_dune); 
+	    	transfer_0->restrict_dune_matrix(*fine->df_dune[0][m], *coarse->df_dune[0][m]);
+		
+		auto result_0 = fine_0->get_encap_factory().create();
+            	result_0->zero();
+                fine_0->evaluate_f2(result_0, fine_0->last_newton_state()[0][m]);
+		fine_0->df_dune[0][m]->mmv(fine_0->last_newton_state()[0][m]->data(), result_0->data());
+		//fine->evaluate_f3(result, fine->last_newton_state()[0][m]);	    	
+		//auto mat = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
+		//fine->evaluate_df3(*mat, fine->last_newton_state()[0][m]);
+		//mat->mv(fine->last_newton_state()[0][m], result->data());
+
+		fine_0->coarse_rhs()[0][m]->data() =result_0->data();
+		transfer_0->restrict_data(fine_0->coarse_rhs()[0][m], coarse_0->coarse_rhs()[0][m]);
+	    }
+        pfasst_0.run();
+        pfasst_0.post_run();
+
+
+		for(int j=0; j<num_nodes +1 ; j++){
+			for(int k=0; k< _new_newton_state_coarse[0][j]->data().size(); k++)
+    				(_new_newton_state_coarse[0][j])->data()[k] = coarse_0->states()[j]->data()[k]; //coarse->new_newton_state()[0][j]->data()[k];
+    		
+			for(int k=0; k< _new_newton_state_fine[0][j]->data().size(); k++)
+    				(_new_newton_state_fine[0][j])->data()[k] = fine_0->states()[j]->data()[k]; //new_newton_state()[0][j]->data()[k];
+    		}
 
 
 }

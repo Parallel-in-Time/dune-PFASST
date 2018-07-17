@@ -149,12 +149,52 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::norm0() const
     {
+    
+          	int rank, num_pro;
+    	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    	MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
       //std::cout << " in der normberechnung " << std::endl;
       double max = std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
                                [](const typename EncapsulationTrait::spatial_t& a,
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
       double global_max;
+      std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
+      MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+      std::cout << "------------------------------------------------------------------------------ neue norm all" << max << std::endl;
+      return global_max;
+      /*using Norm =  EnergyNorm<MatrixType,VectorType>;
+      auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(this->A_dune, restrictToMaster, gridView.grid().comm());
+      return parallel_energyNorm(this->get_data());*/
+    }
+
+    template<class EncapsulationTrait>
+    typename EncapsulationTrait::spatial_t
+    Encapsulation<
+      EncapsulationTrait,
+      typename std::enable_if<
+                 std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
+               >::type>::norm0(bool ignore) const
+    {
+    
+      if(!ignore) return this->norm0();
+      int rank, num_pro;
+      MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+      MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+      //std::cout << " in der normberechnung " << std::endl;
+      
+      //this->data()[4]=100;
+      double max;
+      auto begin=this->get_data().begin()++;
+      auto end=this->get_data().end()--;
+      if(rank==0) begin--;
+      if(rank==num_pro-1)end++; 
+      max = std::abs(*(std::max_element(begin, end,
+                               [](const typename EncapsulationTrait::spatial_t& a,
+                                  const typename EncapsulationTrait::spatial_t& b)
+                                 { return std::abs(a) < std::abs(b); })));
+      double global_max;
+      std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
       MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
       return global_max;
       /*using Norm =  EnergyNorm<MatrixType,VectorType>;
@@ -309,24 +349,60 @@ namespace pfasst
       EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::set_FE_manager(std::shared_ptr<fe_manager> FinEl, int nlevel)
+               >::type>::set_FE_manager(std::shared_ptr<fe_manager> FinEl, int nlevel, MatrixType A_dune)
     {
-      	auto sBackend = Dune::Fufem::istlMatrixBackend(this->A_dune);
-	//auto view = FinEl.get_grid()->levelGridView(nlevel);
-        using Assembler = Dune::Fufem::DuneFunctionsOperatorAssembler<BasisFunction, BasisFunction>;
+    	int rank, num_pro;
+    	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    	MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
         auto basis = FinEl->get_basis(nlevel);
-        auto assembler = Assembler{*basis, *basis};
+        auto grid = FinEl->get_grid();
+        auto bs = basis->size();
+        
+  	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
+  	MGSetup mgSetup{*grid,grid->maxLevel() - (nlevel)};
+  	auto gridView = mgSetup.bases_.back().gridView();
+ 	using MG = Dune::ParMG::Multigrid<VectorType>;
+  	MG mg;
+  
+    	using namespace Dune::ParMG;
+    	auto& levelOp = mgSetup.levelOps_;
+    	auto df_pointer = std::make_shared<MatrixType>(A_dune);	
+    	mgSetup.matrix(df_pointer);
+    	auto fineIgnore = std::make_shared< Dune::BitSetVector<1> >(bs);
+    	for (std::size_t i = 0; i < bs; ++i){
+      		(*fineIgnore)[i] = false;
+      		if(i==0 &&rank==0) (*fineIgnore)[i] = true;
+      		if(rank==num_pro - 1 && i== bs-1) (*fineIgnore)[i] = true;
+      	}
+      	    		std::cout << "nach ignore gesetzt " << std::endl;
 
-        using FiniteElement = std::decay_t<decltype(basis->localView().tree().finiteElement())>;
+    	mgSetup.ignore(fineIgnore);
+    	mgSetup.setupLevelOps();
+    	double dampening =1.0;
+    	mgSetup.setupSmoother(dampening);
+    	bool enableCoarseCorrection=true;
+    	if (enableCoarseCorrection)
+      		mgSetup.setupCoarseSuperLUSolver();
+    	else
+      		mgSetup.setupCoarseNullSolver();
+    	mg.levelOperations(levelOp);
+    	mg.coarseSolver(mgSetup.coarseSolver());
+    	//levelOp.back().maybeRestrictToMaster(newton_rhs);
+    	
+    	
+    	std::function<void(VectorType&)> collect = Dune::ParMG::makeCollect<VectorType>(*mgSetup.comms_.back());
+    	std::function<void(VectorType&)> restrictToMaster = [op=levelOp.back()](VectorType& x) { op.maybeRestrictToMaster(x); };
+    	std::cout << "im sweeper vor energyfunctional" << std::endl;
+    	
+
+      	auto vz =  A_dune;
+	vz *=-1;    	
 
 
-        auto vintageLaplace = LaplaceAssembler<GridType,FiniteElement, FiniteElement>();
-       
-        auto localAssembler = [&](const auto& element, auto& localMatrixType, auto&& trialLocalView, auto&& ansatzLocalView){
-                    vintageLaplace.assemble(element, localMatrixType, trialLocalView.tree().finiteElement(), ansatzLocalView.tree().finiteElement());
-        };
+	auto parallel_energyNorm  = Dune::ParMG::parallelEnergyNorm<VectorType>(vz, restrictToMaster, gridView.grid().comm());
 
-        assembler.assembleBulk(sBackend, localAssembler);
+
+
 
     }
               

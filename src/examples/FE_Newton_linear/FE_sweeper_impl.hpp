@@ -561,9 +561,9 @@ namespace pfasst
         fneu.resize(u->get_data().size());
 	for (int i=0; i<u->get_data().size(); ++i)
 	{
-	  fneu[i]= pow(u->get_data()[i], _n+1) - u->get_data()[i];	
+	  fneu[i]= (this->_nu*this->_nu) * (pow(u->get_data()[i], _n+1) - u->get_data()[i]);	
 	}
-	f->data() *= (this->_nu*this->_nu);
+	//f->data() *= (this->_nu*this->_nu);
 	this->M_dune.mv(fneu, f->data());
 	this->A_dune.mmv(u->get_data(),f->data());
 	f->data() *= dt;
@@ -588,8 +588,27 @@ namespace pfasst
 	f->data() -=rhs->get_data();*/
 
       }
+
+template<class SweeperTrait, typename Enabled>
+      void
+      Heat_FE<SweeperTrait, Enabled>::evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
+                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
+						 const typename SweeperTrait::time_t& dt
+ 						){
+            double _nu=this->_nu;
+            double _n=this->_n;
+            for (int i=0; i<df.N(); ++i)
+            {
+		for(int j=0; j< df.M(); j++)
+                	if (df.exists(i,j)) df[i][j]= (_nu*_nu)*(_n+1) * pow(u->get_data()[j], _n) * this->M_dune[i][j];	
+            }
+            df.axpy((-_nu*_nu), this->M_dune);
+            df-=this->A_dune;
+            df*=dt;
+            df+=this->M_dune;
+      } 
 						
-      template<class SweeperTrait, typename Enabled>
+      /*template<class SweeperTrait, typename Enabled>
       void
       Heat_FE<SweeperTrait, Enabled>::evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
@@ -609,29 +628,24 @@ namespace pfasst
                 }
             }
             df += this->M_dune;
-	    df *= (- this->_nu*this->_nu);	
+          for (int i=0; i<df.N(); ++i)
+            {
+            for (int j=0; j<df.M(); ++j)
+                {
+                    if (df.exists(i,j)) 
+                        df[i][j]= df[i][j]*(- this->_nu*this->_nu) ;	
+                }
+            }
+	    //df *= (- this->_nu*this->_nu);	
             df-=this->A_dune;
             df*=dt;
             df+=this->M_dune;
           
           
           
-	/*for (int i=0; i<df.N(); ++i)
-	{
-	  for (int j=0; j<df.M(); ++j)
-	    {
-	  if (df.exists(i,j)) {
-	    df[i][j]=  -(_nu*_nu)*this->M_dune[i][j]  *(16* ((double) u->get_data()[j]) -24* ((double) u->get_data()[j])*((double) u->get_data()[j]))/(this->_delta*this->_delta);	
-	  }
-	    //std::cout << df[i][j]<<std::endl;
-	  }
-	}
-	df-=this->A_dune;
-	
-	df*=dt;
-	df+=this->M_dune;*/
 
-      }  
+
+      } */ 
       
       
     }  // ::pfasst::examples::heat1

@@ -454,7 +454,7 @@ namespace pfasst
 
         //std::exit(0);
         this->_num_impl_solves++; 
-
+	if(this->_num_impl_solves==2) std::exit(0);
 
       }
     }  // ::pfasst::examples::heat1

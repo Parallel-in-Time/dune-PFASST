@@ -58,7 +58,7 @@ namespace pfasst
 	
 	auto FinEl   = make_shared<fe_manager>(nelements,2); 
 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0);
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 1); //fine 0
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton;
@@ -107,9 +107,23 @@ namespace pfasst
 	/*for(int i=0; i< sweeper->get_end_state()->data().size(); i++){
 	std::cout << "ergebnis " << sweeper->get_end_state()->data()[i] << " " << sweeper->exact(t_end)->data()[i] <<  std::endl ;
 	}*/
+	            int rank, num_pro;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+        
 	        std::cout <<  "fein" << std::endl;
+        //auto naeherung = sweeper->get_end_state()->data();
+        //auto exact     = sweeper->exact(t_end)->data();
+        
+                        std::cout <<  "fein" << std::endl;
         auto naeherung = sweeper->get_end_state()->data();
         auto exact     = sweeper->exact(t_end)->data();
+        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+          if(rank==0) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+          if(rank==1) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }
         /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
         }*/

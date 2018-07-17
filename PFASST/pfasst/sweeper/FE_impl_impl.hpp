@@ -14,6 +14,97 @@ using std::vector;
 
 #include <ios>
 
+
+
+#include <dune/common/function.hh>
+#include <dune/common/bitsetvector.hh>
+#include <dune/common/indices.hh>
+#include <dune/common/densematrix.hh>
+#include<dune/common/parallel/mpihelper.hh>
+
+#include <dune/istl/matrix.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+#include <dune/istl/multitypeblockvector.hh>
+#include <dune/istl/matrixindexset.hh>
+#include <dune/istl/solvers.hh>
+#include <dune/istl/preconditioners.hh>
+#include <dune/istl/bvector.hh>
+#include <dune/istl/bcrsmatrix.hh>
+#include <dune/istl/multitypeblockmatrix.hh>
+#include <dune/istl/io.hh>
+#include<dune/istl/matrixmarket.hh>
+#include<dune/istl/matrixredistribute.hh>
+#include <dune/istl/schwarz.hh>
+
+#include <dune/geometry/quadraturerules.hh>
+
+#include <dune/grid/yaspgrid.hh>
+#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+#include <dune/grid/io/file/vtk/vtkwriter.hh>
+#include <dune/grid/uggrid.hh>
+#include <dune/grid/io/file/vtk/vtksequencewriter.hh>
+
+#include <dune/typetree/utility.hh>
+
+#include <dune/functions/functionspacebases/interpolate.hh>
+#include <dune/functions/functionspacebases/taylorhoodbasis.hh>
+#include <dune/functions/functionspacebases/hierarchicvectorwrapper.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/gridfunctions/gridviewfunction.hh>
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#if USE_DG
+#  include <dune/functions/functionspacebases/lagrangedgbasis.hh>
+#else
+#  include <dune/functions/functionspacebases/pqknodalbasis.hh>
+#endif
+#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+
+#include <dune/fufem/assemblers/dunefunctionsoperatorassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/massassembler.hh>
+#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh>
+#include <dune/fufem/assemblers/istlbackend.hh>
+#include <dune/fufem/formatstring.hh>
+#include <dune/fufem/assemblers/transferoperatorassembler.hh>
+
+#include<dune/istl/paamg/pinfo.hh>
+#include<dune/istl/paamg/graph.hh>
+#if USE_DG
+#  include <dune/parmg/test/dglaplacematrix.hh>
+#else
+#  include <dune/parmg/test/laplacematrix.hh>
+#endif
+#include <dune/parmg/iterationstep/lambdastep.hh>
+#include <dune/parmg/iterationstep/multigrid.hh>
+#include <dune/parmg/iterationstep/multigridstep.hh>
+#include <dune/parmg/norms/normadapter.hh>
+#include <dune/parmg/parallel/communicationp1.hh>
+#include <dune/parmg/parallel/communicationdg.hh>
+#include <dune/parmg/parallel/datahandle.hh>
+#include <dune/parmg/parallel/dofmap.hh>
+#include <dune/parmg/parallel/globaldofindex.hh>
+#include <dune/parmg/parallel/istlcommunication.hh>
+#include <dune/parmg/parallel/matrixalgebra.hh>
+#include <dune/parmg/parallel/vectoralgebra.hh>
+#include <dune/parmg/parallel/redistributematrix.hh>
+#include <dune/parmg/parallel/redistributevector.hh>
+#include <dune/parmg/parallel/parallelenergyfunctional.hh>
+#include <dune/parmg/parallel/parallelenergynorm.hh>
+#include <dune/parmg/parallel/restrictmatrix.hh>
+#include <dune/parmg/solvers/coarsesuperlusolver.hh>
+#include <dune/parmg/solvers/linesearch.hh>
+#include <dune/parmg/solvers/directionsearch.hh>
+#include <dune/parmg/iterationstep/multigridsetup.hh>
+#include <dune/parmg/iterationstep/parallelprojectedgs.hh>
+
+#include <dune/solvers/iterationsteps/blockgssteps.hh>
+#include <dune/solvers/norms/energynorm.hh>
+#include <dune/solvers/solvers/loopsolver.hh>
+#include <dune/solvers/transferoperators/compressedmultigridtransfer.hh>
+
+using namespace Dune::ParMG;
+
 namespace pfasst
 {
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -220,11 +311,12 @@ namespace pfasst
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
       //std::cout << "nach create rhs " << std::endl;
       // rhs = u_0
-     
+      
       if (is_coarse){
         rhs->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();	
 	
 	//for(auto r =rhs->data().begin(); r !=rhs->data().end(); ++r){std::cout << "sweeper " << *r <<std::endl;}
+	//MPI_Barrier(MPI_COMM_WORLD);
 	//std::cout << "rhs debugging " << std::endl;
 	//std::exit(0);	
 
@@ -246,7 +338,7 @@ namespace pfasst
 
         
       }
-
+      //std::cout << "is coarse " << is_coarse <<  std::endl; std::exit(0);
       
       //ML_CVLOG(6, this->get_logger_id(), "  rhs = u[0]                    = " << to_string(rhs));
 
@@ -301,6 +393,7 @@ namespace pfasst
 
     assert(this->get_end_state() != nullptr);
     ML_CVLOG(4, this->get_logger_id(), "advancing");
+
 
     this->initial_state()->data() = this->get_end_state()->get_data();
     assert(this->get_quadrature() != nullptr);
@@ -422,19 +515,23 @@ namespace pfasst
     assert(this->get_status() != nullptr);
     assert(this->get_quadrature() != nullptr);
     assert(this->get_initial_state() != nullptr);
-
+    int rank, num_pro;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
     const typename traits::time_t dt = this->get_status()->get_dt();
     const size_t num_nodes = this->get_quadrature()->get_num_nodes() + 1;
-
+    if (rank==0) std::cout << "***************************************************************  compute residuuals " << std::endl;
     if (only_last) {
+      if (rank==0) std::cout << "***************************************************************  compute residuuals only last " << std::endl;
       const size_t cols = this->get_quadrature()->get_q_mat().cols();
       const size_t rows = this->get_quadrature()->get_q_mat().rows();
       
       
       
       if (is_coarse){
+        if (rank==0) std::cout << "***************************************************************  compute residuuals only last coarse" << std::endl;
         this->residuals().back()->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
       }else{
+        if (rank==0) std::cout << "***************************************************************  compute residuuals only last fine" << std::endl;
         //M_dune.mv(this->get_initial_state()->get_data(), this->residuals().back()->data());
 	this->get_initial_state()->apply_Mass(M_dune, this->residuals().back());
       }
@@ -460,58 +557,105 @@ namespace pfasst
       }
       //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals2 rhs_impl " << *r <<std::endl;} //std::exit(0);	
     } else {
+      if (rank==0) std::cout << "***************************************************************  compute residuuals NOT only last " << std::endl;
+
       for (size_t m = 0; m < num_nodes; ++m) {
         assert(this->get_states()[m] != nullptr);
         assert(this->residuals()[m] != nullptr);
+        
+        /*if(!is_coarse){
+        for(int i=0; i< this->get_residuals()[m]->get_data().size(); i++){
+           if(rank==0) std::cout<< rank << " rein ini " << m << " " << i << " " << this->get_initial_state()->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for(int i=0; i< this->get_residuals()[m]->get_data().size(); i++){
+           if(rank==1) std::cout<< rank << " rein ini " << m << " " << i << " " << this->get_initial_state()->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);}*/
 
-  //       ML_CVLOG(5, this->get_logger_id(), "  res["<<m<<"] = u[0]   = " << to_string(this->get_initial_state()));
-        //this->residuals()[m]->data() = this->get_initial_state()->get_data();
-
-	
     
-    if (is_coarse){
-        this->residuals()[m]->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
-    }else{
-        //M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
-	//this->get_initial_state()->apply_Mass(M_dune);
-	this->get_initial_state()->apply_Mass(M_dune,  this->residuals()[m]);
-    }
+    	if (is_coarse){
+    		std::cout << "------------------------------------------------------is coarse " << std::endl; 
+        	this->residuals()[m]->data() =  this->_M_initial->get_data(); 
+    	}else{
+    		std::cout << "------------------------------------------------------is fine " << std::endl; 
+		this->get_initial_state()->apply_Mass(M_dune,  this->residuals()[m]);
+    	}
+    	/*MPI_Barrier(MPI_COMM_WORLD);
+    	
+    	for (int i=0; i<M_dune.N(); ++i)
+            {
+            for (int j=0; j<M_dune.M(); ++j)
+                {
+                    if(rank==0) if (M_dune.exists(i,j)) {std::cout << M_dune[i][j] << " ";}
+                    //else {std::cout << std::endl;} 
+                } if(rank==0) std::cout << std::endl;
+            }       
+    	
+    	
+    	MPI_Barrier(MPI_COMM_WORLD);
+    	for (int i=0; i<M_dune.N(); ++i)
+            {
+            for (int j=0; j<M_dune.M(); ++j)
+                {
+                    if(rank==1) if (M_dune.exists(i,j)) {std::cout << M_dune[i][j] << " ";}
+                    //else {std::cout << std::endl;} 
+                }if(rank==1) std::cout << std::endl;
+            }       
+    	
+    	
+    	MPI_Barrier(MPI_COMM_WORLD);*/
     
-	//M_dune.mv(this->get_initial_state()->get_data(), this->residuals()[m]->data());
 
-  //       ML_CVLOG(5, this->get_logger_id(), "        -= u["<<m<<"]   = " << to_string(this->get_states()[m]));
-	
+        //if (!is_coarse) std::exit(0);    
+    
 	shared_ptr<typename traits::encap_t> uM = this->get_encap_factory().create();
-	
-
-	//M_dune.mv(this->get_states()[m]->get_data(), uM->data());
 	this->get_states()[m]->apply_Mass(M_dune, uM);
-
-	
 	this->residuals()[m]->scaled_add(-1.0,uM);
-        //this->residuals()[m]->scaled_add(-1.0, this->get_states()[m]);
-
         assert(this->get_tau()[m] != nullptr);
-  //       ML_CVLOG(5, this->get_logger_id(), "        += tau["<<m<<"] = " << to_string(this->get_tau()[m]));
+        
         this->residuals()[m]->scaled_add(1.0, this->get_tau()[m]);
+        
       }
 
-      //ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_ex");
-      //encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_expl_rhs, false);
+      ML_CVLOG(5, this->get_logger_id(), "vor  res += dt * Q * F_im");
 
-      ML_CVLOG(5, this->get_logger_id(), "  res += dt * Q * F_im");
-      //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals3 rhs_impl " << *r <<std::endl;} //std::exit(0);
-      //for(auto r =this->residuals()[2]->data().begin(); r !=this->residuals()[2]->data().end(); ++r){std::cout << "residuals--------------------------- rhs_impl " << *r <<std::endl;} //std::exit(0);
-      encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false);
-      //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals4 rhs_impl " << *r <<std::endl;} //std::exit(0);
+      /*for (size_t m = 0; m < num_nodes; ++m) {
+        double d1 = this->get_residuals()[m]->norm0();
+        double d2 =this->_impl_rhs[m]->norm0();
+        if(rank==0){ ML_CVLOG(0, this->get_logger_id(), "  vor mat_apply  |res["<<m<<"]| = " << d1 << " "<< d2);}
+        for(int i=0; i< this->get_residuals()[m]->get_data().size(); i++){
+           if(rank==0) std::cout<< "get residuals " << m << " " << i << " " << this->get_residuals()[m]->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for(int i=0; i< this->get_residuals()[m]->get_data().size(); i++){
+           if(rank==1) std::cout<< "get residuals " << m << " " << i << " " << this->get_residuals()[m]->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);
 
-      ML_CVLOG(5, this->get_logger_id(), "  ==>");
+      }MPI_Barrier(MPI_COMM_WORLD);*/
+
+      encap::mat_apply(this->residuals(), dt, this->get_quadrature()->get_q_mat(), this->_impl_rhs, false); //DAS IST FALSCH RUTH!!! 
+      	
+      	  for (size_t m = 0; m < num_nodes; ++m) {
+        for(int i=0; i< this->get_residuals()[m]->get_data().size(); i++){
+           if(rank==0) std::cout<< rank << " residuals " << m << " " << i << " " << this->get_residuals()[m]->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for(int i=0; i< this->get_residuals()[m]->get_data().size(); i++){
+           if(rank==1) std::cout<< rank << " residuals " << m << " " << i << " " << this->residuals()[m]->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);
+        }
+      	
       for (size_t m = 0; m < num_nodes; ++m) {
-        //ML_CVLOG(5, this->get_logger_id(), "    |res["<<m<<"]| = " << LOG_FLOAT << this->get_residuals()[m]->norm0());
-        ML_CVLOG(5, this->get_logger_id(), "    |res["<<m<<"]| = " << this->get_residuals()[m]->norm0());
-  //                                       << "    res["<<m<<"] = " << to_string(this->get_residuals()[m]));
+	if (rank!=num_pro-1) this->get_residuals()[m]->data()[this->get_residuals()[m]->data().size()-1] =0;
+	if (rank!=0) this->get_residuals()[m]->data()[0] =0; 
+        double d1 = this->get_residuals()[m]->norm0();
+        double d1_ = this->get_residuals()[m]->norm0(true);
+        double d2 =this->_impl_rhs[m]->norm0();
+        double d2_ =this->_impl_rhs[m]->norm0(true);
+        if(rank==0){ ML_CVLOG(0, this->get_logger_id(), " mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm nach mat_apply  |res["<<m<<"]| = " << d1 << " "<< d1_);}
+        //typedef Dune::BlockVector<Dune::FieldVector<double,NR_COMP> > VectorType;
+        //VectorType a = this->get_residuals()[m]->data();
+        //collect(a);
+        //if(rank==0){ ML_CVLOG(0, this->get_logger_id(), "  nach collect  |res["<<m<<"]| = " << d1 << " "<< d2);}
+      }MPI_Barrier(MPI_COMM_WORLD);
 
-      }
       
     }
     //std::exit(0);

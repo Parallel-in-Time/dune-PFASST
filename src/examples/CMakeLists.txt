@@ -9,7 +9,7 @@ add_subdirectory(Newton)
 
 #add_executable("pamg" pamg.cpp)
 #target_link_dune_default_libraries("pamg")
-add_subdirectory(pdelab)
+#add_subdirectory(pdelab)
 #add_subdirectory(istl)
 #add_subdirectory(super)
 #add_subdirectory(heat_drp)

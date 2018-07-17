@@ -122,9 +122,9 @@ using boost::math::constants::pi_sqr;
 
 
 using namespace std;
-using namespace Dune;
+//using namespace Dune;
 
-using namespace Dune;
+//using namespace Dune;
 using namespace Dune::ParMG;
 
 namespace pfasst
@@ -174,13 +174,15 @@ namespace pfasst
 
         this->encap_factory()->set_size(basis->size());*/
 	this->FinEl = FinEl;
+	std::cout << "get basis " << std::endl;
 	basis = FinEl->get_basis(nlevel);
+	this->nlevel=nlevel;
 	grid = FinEl->get_grid();
 	    
 	//assembleProblem(basis, this->A_dune, this->M_dune);
 	auto sBackend = Dune::Fufem::istlMatrixBackend(this->A_dune);
         auto mBackend = Dune::Fufem::istlMatrixBackend(this->M_dune);
-
+	
         using Assembler = Dune::Fufem::DuneFunctionsOperatorAssembler<BasisFunction, BasisFunction>;
         auto assembler = Assembler{*basis, *basis};
 
@@ -202,10 +204,59 @@ namespace pfasst
         const auto bs = basis->size();
         std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;
 
+	int rank, num_pro;
+    	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    	MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+    	
+
+    	
+  	/*using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
+  	MGSetup mgSetup{*grid,grid->maxLevel() - (this->nlevel)};
+  	auto gridView = mgSetup.bases_.back().gridView();
+ 	using MG = Dune::ParMG::Multigrid<VectorType>;
+  	MG mg;
+  
+    	using namespace Dune::ParMG;
+    	auto& levelOp = mgSetup.levelOps_;
+    	auto df_pointer = std::make_shared<MatrixType>(this->A_dune);	
+    	mgSetup.matrix(df_pointer);
+    	auto fineIgnore = std::make_shared< Dune::BitSetVector<1> >(bs);
+    	for (std::size_t i = 0; i < bs; ++i){
+      		(*fineIgnore)[i] = false;
+      		if(i==0 &&rank==0) (*fineIgnore)[i] = true;
+      		if(rank==num_pro - 1 && i== bs-1) (*fineIgnore)[i] = true;
+      	}
+      	    		std::cout << "nach ignore gesetzt " << std::endl;
+
+    	mgSetup.ignore(fineIgnore);
+    	mgSetup.setupLevelOps();
+    	double dampening =1.0;
+    	mgSetup.setupSmoother(dampening);
+    	bool enableCoarseCorrection=true;
+    	if (enableCoarseCorrection)
+      		mgSetup.setupCoarseSuperLUSolver();
+    	else
+      		mgSetup.setupCoarseNullSolver();
+    	mg.levelOperations(levelOp);
+    	mg.coarseSolver(mgSetup.coarseSolver());
+    	//levelOp.back().maybeRestrictToMaster(newton_rhs);
+    	std::function<void(VectorType&)> collect = Dune::ParMG::makeCollect<VectorType>(*mgSetup.comms_.back());
+    	std::function<void(VectorType&)> restrictToMaster = [op=levelOp.back()](VectorType& x) { op.maybeRestrictToMaster(x); };
+    	std::cout << "im sweeper vor energyfunctional vor" << std::endl;
+    	
+
+      	auto vz =  this->A_dune;
+	vz *=-1;    
+
+		
+        auto  parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(vz, restrictToMaster, gridView.grid().comm());*/
+        //std::cout << typeid(parallel_energyNorm).name() << std::endl; std::exit(0);
+	//int i= parallel_energyNorm;
+
         this->encap_factory()->set_size(bs);
-        //this->encap_factory()->set_FE_manager(*FinEl);
+        //this->encap_factory()->set_FE_manager(FinEl, (this->nlevel), this->A_dune);
         this->A_dune*=-1;
-        
+        std::cout << "############################################### groesse mass matrix " << this->A_dune.N() << std::endl;
         std::cout << "alles assembliert" << std::endl;
 	MPI_Barrier(MPI_COMM_WORLD);
 
@@ -239,34 +290,16 @@ namespace pfasst
         auto result = this->get_encap_factory().create();
 
         
-        const auto dim = 1; //SweeperTrait::DIM;
+        const auto dim = 1; 
 	spatial_t n  = this-> _n;
     	spatial_t l0 = this-> _nu;
 	spatial_t l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
 	spatial_t d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
-	//std::cout << "nu = " << this->_nu << std::endl;
-	//std::cout << "delta = " << this->_delta << std::endl;
+
         auto exact_solution = [l0, l1, n, d, t](const Dune::FieldVector<double,dim>&x){ 
 	  return pow((1 + (pow(2, n/2.)-1 )* exp(-(n/2.)*d*(x+2*l1*t)) ), -2./n);
         };
 
-        
-        
-        
-        
-        
-        /*const auto dim = 1; //SweeperTrait::DIM;
-        spatial_t nu = this-> _nu; 
-	spatial_t delta = this->_delta;
-	//std::cout << "nu = " << this->_nu << std::endl;
-	//std::cout << "delta = " << this->_delta << std::endl;
-        auto exact_solution = [t, nu, dim, delta](const Dune::FieldVector<double,dim>&x){
-          double c = 2./delta;  
-	  return 0.5*(1.0-std::tanh((x[0] - c*t*nu)/(delta)));
-        };*/
-
-
-	
 
         auto N_x = [t](const Dune::FieldVector<double,dim>&x){
             return x;
@@ -275,12 +308,16 @@ namespace pfasst
 
         Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
         interpolate(*basis, x_node, N_x);
-
+    	int rank, num_pro;
+    	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
         interpolate(*basis, result->data(), exact_solution);
+        /*for(int i=0; i< result->get_data().size(); i++){
+           if(rank==0) std::cout<< rank << " initial " << i << " " << result->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for(int i=0; i< result->get_data().size(); i++){
+           if(rank==1) std::cout<< rank << " initial " << " " << i << " " << result->get_data()[i] <<std::endl;         	
+        }MPI_Barrier(MPI_COMM_WORLD);*/
 
-	/*for (int i=0; i< result->data().size(); i++){
-	 std::cout << "result = " << result->data()[i] << std::endl;
-	}*/
         return result;
       }
       
@@ -434,7 +471,7 @@ namespace pfasst
       }*/
 
 
-      template<class SweeperTrait, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
+      /*template<class SweeperTrait, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
       vector<shared_ptr<typename SweeperTrait::encap_t>>
       Heat_FE<SweeperTrait, Enabled>::compute_error(const typename SweeperTrait::time_t& t)
       {
@@ -483,7 +520,7 @@ namespace pfasst
         }
 
         return rel_error;
-      }
+      }*/
 
       /*template<class SweeperTrait, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
@@ -539,7 +576,7 @@ namespace pfasst
 
 	  std::cout << "f " << result->data()[i] << std::endl;
 
-         }*/
+        }*/
         return result;
       }
 
@@ -612,9 +649,9 @@ namespace pfasst
   	auto &x=delta_u;
   	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
   		MPI_Barrier(MPI_COMM_WORLD);
-  	std::cout << rank << "vor er ersten grid aktion" << std::endl;
+  	std::cout << rank << "vor er ersten grid aktion" << (this->nlevel) << std::endl;
 	MPI_Barrier(MPI_COMM_WORLD);
-  	MGSetup mgSetup{*grid,1}; //0 grobgitter
+  	MGSetup mgSetup{*grid,grid->maxLevel() - (this->nlevel)};//sdc -1 mlsdc - (this->nlevel)}; //0 grobgitter
   	std::cout << "nach der ersten grid aktion" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
   	auto gridView = mgSetup.bases_.back().gridView();
@@ -686,32 +723,38 @@ namespace pfasst
 	
            //evaluate_f(f, u, rhs, M_dune, A_dune, *w); 
            u->data()+=delta_u;
-
+	   //collect(u->data());
 	  	/*for (size_t i = 0; i < u->get_data().size(); i++) {
 	  if (rank==0) std::cout << "newton_rhs " << u->data()[i] << std::endl;
         }MPI_Barrier(MPI_COMM_WORLD);
         for (size_t i = 0; i < u->get_data().size(); i++) {
 	  if (rank==1) std::cout << "newton_rhs " << u->data()[i] << std::endl;
         }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/
-
+	/*for (int i=0; i< u->data().size(); i++){
+          if(rank==0) std::cout << rank << " " << i << " " <<  u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);
+        for (int i=0; i< u->data().size(); i++){
+          if(rank==1) std::cout  << rank << " " << i << " " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);*/
            
            	  /*for (size_t i = 0; i < u->get_data().size(); i++) {
 
 	  if (rank ==0) std::cout <<i << "newton  u " << u->data()[i] << std::endl;
 
-        } 	MPI_Barrier(MPI_COMM_WORLD);// std::exit(0);*/
+        } 	MPI_Barrier(MPI_COMM_WORLD); std::exit(0);*/
         
            evaluate_f(f, u, dt, rhs);            
                      
            using Norm =  EnergyNorm<MatrixType,VectorType>;
   
 	    
-
+//MPI_Barrier(MPI_COMM_WORLD); std::exit(0);
 	   auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(vz, restrictToMaster, gridView.grid().comm());
 	    
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) infinity " << norm_global(f) << std::endl;  	                  
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) energy " << f.infinity_norm() << std::endl;  
-           std::cout << i << " rank "<< rank << " residuumsnorm von f(u) " << parallel_energyNorm(f->data()) << std::endl; 
+           //std::cout << i << " rank "<< rank << " residuumsnorm von f(u) " << parallel_energyNorm(f->data()) << std::endl; 
+           //if(i == 3) break; 
            if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
             
         /*for (size_t i = 0; i < u->get_data().size(); i++) {

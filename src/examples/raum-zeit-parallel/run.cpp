@@ -218,7 +218,7 @@ int main(int argc, char** argv) {
         //grid_global = std::make_shared<GridType>(L,s,periodic);
 #endif
 	
-	int level_number=0;  
+	int level_number=;  
 	grid->globalRefine(level_number);
 	grid_global->globalRefine(level_number);   
 	 
@@ -448,7 +448,7 @@ int main(int argc, char** argv) {
 	//here we use parmg solver to solve the local system (df * u = newton_rhs) for the unknown u
   	auto &x=u;
   	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< FEBasis, MatrixType, VectorType >;
-  	MGSetup mgSetup{*grid,1}; //0 grobgitter
+  	MGSetup mgSetup{*grid,0}; //0 grobgitter
   	auto gridView = mgSetup.bases_.back().gridView();
  	using MG = Dune::ParMG::Multigrid<VectorType>;
   	MG mg;
