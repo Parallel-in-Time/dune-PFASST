@@ -1,6 +1,6 @@
 
-add_executable("error" error_gridview.cpp)
-target_link_dune_default_libraries("error")
+add_executable("_pfasst" FE_pfasstFP.cpp)
+target_link_dune_default_libraries("_pfasst")
 
 add_executable("_sdc" FE_sdcFP.cpp)
 target_link_dune_default_libraries("_sdc")

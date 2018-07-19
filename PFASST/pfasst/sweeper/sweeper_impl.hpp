@@ -571,9 +571,9 @@ namespace pfasst
     } else {
       for (size_t m = 0; m < num_residuals - 1; ++m) {
         assert(this->get_residuals()[m] != nullptr);
-        const auto norm = this->get_residuals()[m]->norm0();
+        const auto norm = this->get_residuals()[m]->norm0(true, this->comm);
         this->_abs_res_norms[m] = norm;
-        this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0();
+        this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0(true, this->comm);
       }
 
       this->status()->abs_res_norm() = *(std::max_element(this->_abs_res_norms.cbegin(), this->_abs_res_norms.cend()));

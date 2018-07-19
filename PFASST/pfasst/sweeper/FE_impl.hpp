@@ -39,7 +39,7 @@ namespace pfasst
     public:
       //! @copydoc Sweeper::traits
       using traits = SweeperTrait;
-
+      	
     //protected:
 
 
@@ -53,7 +53,7 @@ namespace pfasst
       //std::shared_ptr<fe_manager> FinEl;
 
       //std::shared_ptr<MatrixType> M_dune;
-      
+
       bool is_coarse;
       
       bool dontmatter= true;

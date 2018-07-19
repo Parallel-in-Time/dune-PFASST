@@ -104,7 +104,7 @@ namespace pfasst
 	virtual void apply_Mass(typename traits::mass_t mass, shared_ptr<Encapsulation<EncapsulationTrait>> sol);//, EncapsulationTrait &sol); 
 
         virtual typename EncapsulationTrait::spatial_t norm0() const;
-        virtual typename EncapsulationTrait::spatial_t norm0(bool ignore) const;
+        virtual typename EncapsulationTrait::spatial_t norm0(bool ignore, MPI_Comm comm) const;
         template<class CommT>
         bool probe(shared_ptr<CommT> comm, const int src_rank, const int tag);
         template<class CommT>
@@ -140,9 +140,10 @@ namespace pfasst
       : public std::enable_shared_from_this<EncapsulationFactory<EncapsulationTrait>>
     {
       protected:
+      
         size_t _size;
         MatrixType A_dune;
-        //typedef std::shared_ptr<const Dune::ParMG::parallelEnergyNorm<typename VectorType>> parallel_energyNorm;
+        MPI_Comm comm_x;
 
 	//typename std::shared_ptr<typename EncapsulationTrait::gfs_t> _gfs;
 	//typename EncapsulationTrait::gfs_t *_gfs;
@@ -155,7 +156,7 @@ namespace pfasst
         virtual ~EncapsulationFactory() = default;
         EncapsulationFactory<EncapsulationTrait>& operator=(const EncapsulationFactory<EncapsulationTrait>& other);
         EncapsulationFactory<EncapsulationTrait>& operator=(EncapsulationFactory<EncapsulationTrait>&& other);
-
+        void set_comm(MPI_Comm comm){comm_x=comm;}  
         virtual shared_ptr<Encapsulation<EncapsulationTrait>> create() const;
 
         virtual void set_size(const size_t& size);

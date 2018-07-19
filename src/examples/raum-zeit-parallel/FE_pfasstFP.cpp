@@ -1,4 +1,5 @@
 //#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
+#include <config.h>
 
 #include <memory>
 #include <stdexcept>
@@ -70,10 +71,25 @@ namespace pfasst
         int my_rank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+        
+        MPI_Comm comm_x;//=MPI_COMM_SELF, 
+        MPI_Comm comm_t;//=MPI_COMM_WORLD; 
+	int myid, xcolor, tcolor;
+
+	int space_num=1;
+   	xcolor = (my_rank / space_num);
+   	tcolor = my_rank % space_num;
+
+   	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
+   	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
+
+
         TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
-        pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
+        pfasst.communicator() = std::make_shared<CommunicatorType>(comm_t);
+        
+        //pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
         //pfasst.grid_builder(nelements);
-	auto FinEl = make_shared<fe_manager>(nelements, 2);
+	auto FinEl = make_shared<fe_manager>(nelements, 2, comm_x);
 
         auto coarse = std::make_shared<SweeperType>(FinEl, 1);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
@@ -85,8 +101,10 @@ namespace pfasst
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
-
-        std::cout << "hier im code" <<std::endl;
+        coarse->comm=comm_x;
+        fine->comm=comm_x;
+    
+    
         //pfasst.add_sweeper(coarse, true);
         //pfasst.add_sweeper(fine, false);
         pfasst.add_transfer(transfer);
@@ -116,26 +134,31 @@ namespace pfasst
 
 
         if(my_rank==num_pro-1) {
-          auto naeherung = fine->get_end_state()->data();
-          auto exact = fine->exact(t_end)->data();
-          /*for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
-            std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          }*/
+
           std::cout << "******************************************* " << std::endl;
           std::cout << " " << std::endl;
+
+          auto naeherung  = fine->get_end_state()->data();
+          auto exact      = fine->exact(t_end)->data();
+          auto initial    = fine->exact(0)->data();          
+          for (int i=0; i< fine->get_end_state()->data().size(); i++){
+            std::cout << initial[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+          }/*MPI_Barrier(MPI_COMM_WORLD);
+          for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+            if(rank==1) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+          }*/
+          
           std::cout << " " << std::endl;
           std::cout << "Fehler: " << std::endl;
           //auto norm =  fine->exact(t_end))->data();
-          fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
-        std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
-        ofstream f;
-        stringstream ss;
-        ss << nelements;
-        string s = "solution_pfasst01/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out );
-        f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << " number solves " << fine->num_solves << endl;
-        f.close();
-        std::cout << "******************************************* " << std::endl;
+          fine->end_state()->scaled_add(-1.0, fine->exact(t_end));
+          
+          for (int i=0; i< fine->get_end_state()->data().size(); i++){
+            std::cout << fine->end_state()->get_data()[i] << std::endl;
+          }
+          
+          std::cout << "der fehler betraegt " << fine->end_state()->norm0() << std::endl;
+        
         }
 
 	std::cout << my_rank << " num_solves " << fine->num_solves << std::endl;
@@ -206,7 +229,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 1000);
+  const size_t niter = get_value<size_t>("num_iters", 10);
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton);
 

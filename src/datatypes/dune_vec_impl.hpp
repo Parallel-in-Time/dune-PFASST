@@ -150,17 +150,26 @@ namespace pfasst
                >::type>::norm0() const
     {
     
-          	int rank, num_pro;
-    	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
-    	MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-      //std::cout << " in der normberechnung " << std::endl;
+      /*int my_rank, num_pro;
+      MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+      MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+      MPI_Comm comm_x, comm_t; 
+      int myid, xcolor, tcolor;
+      int space_num=2;
+      xcolor = (my_rank / space_num);
+      tcolor = my_rank % space_num;
+      std::cout << "------------------------------------------------------------------------------ vor split im norm() " << my_rank << std::endl;
+      //MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
+      MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
+      std::cout << "------------------------------------------------------------------------------nach split im norm() " << my_rank << std::endl;
+      //std::cout << " in der normberechnung " << std::endl;*/
       double max = std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
                                [](const typename EncapsulationTrait::spatial_t& a,
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
-      double global_max;
+      double global_max=max;
       std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
-      MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+      //MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,comm_t);
       std::cout << "------------------------------------------------------------------------------ neue norm all" << max << std::endl;
       return global_max;
       /*using Norm =  EnergyNorm<MatrixType,VectorType>;
@@ -174,29 +183,42 @@ namespace pfasst
       EncapsulationTrait,
       typename std::enable_if<
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
-               >::type>::norm0(bool ignore) const
+               >::type>::norm0(bool ignore, MPI_Comm comm) const
     {
     
-      if(!ignore) return this->norm0();
-      int rank, num_pro;
-      MPI_Comm_rank(MPI_COMM_WORLD, &rank );
-      MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-      //std::cout << " in der normberechnung " << std::endl;
+      //return this->norm0();
       
-      //this->data()[4]=100;
+      /*int my_rank, num_pro;
+      MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+      MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+      MPI_Comm comm_x, comm_t; 
+      int myid, xcolor, tcolor;
+      int space_num=2;
+      xcolor = (my_rank / space_num);
+      tcolor = my_rank % space_num;*/
+      int rank, num_pro;
+      MPI_Comm_rank(comm, &rank );
+      MPI_Comm_size(comm, &num_pro );
+      std::cout << "------------------------------------------------------------------------------ vor split im norm() " << rank << std::endl;
+      //MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
+      //MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
+      //std::cout << "------------------------------------------------------------------------------nach split im norm() " << my_rank << std::endl;
+      
+      
       double max;
-      auto begin=this->get_data().begin()++;
-      auto end=this->get_data().end()--;
-      if(rank==0) begin--;
-      if(rank==num_pro-1)end++; 
-      max = std::abs(*(std::max_element(begin, end,
+      auto begin=this->get_data().begin();//++;
+      auto end=this->get_data().end();//--;
+      //if(rank==0) begin--;
+      //if(rank==num_pro-1)end++; 
+      max = std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
                                [](const typename EncapsulationTrait::spatial_t& a,
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
-      double global_max;
+      double global_max=max;
       std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
-      MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,MPI_COMM_WORLD);
+      MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,comm);
       return global_max;
+      
       /*using Norm =  EnergyNorm<MatrixType,VectorType>;
       auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(this->A_dune, restrictToMaster, gridView.grid().comm());
       return parallel_energyNorm(this->get_data());*/

@@ -324,7 +324,7 @@ int main(int argc, char** argv)
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
-         Dune::FakeMPIHelper::instance(argc, argv);
+         /*Dune::FakeMPIHelper::instance(argc, argv);
         std::vector<int> vec(100);
 
   for(int i = 0; i< 100; i++){
@@ -341,7 +341,7 @@ int main(int argc, char** argv)
        for(int i = 0; i< 100; i++){
       //std::cout << i << " "<< vec[i] <<std::endl;
   }          
-        }
+        }*/
   
   
   pfasst::init(argc, argv, SweeperType::init_opts);

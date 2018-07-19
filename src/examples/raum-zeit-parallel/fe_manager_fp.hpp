@@ -73,7 +73,7 @@ const size_t GRID_LEVEL=1;
 	  //Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dune;
           //Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > A_dune;  
 	    
-	  fe_manager(const size_t nelements, size_t nlevels=1, size_t base_order=1)
+	  fe_manager(const size_t nelements, size_t nlevels=1, MPI_Comm comm_x=MPI_COMM_WORLD, size_t base_order=1)
 	  :fe_basis(nlevels), n_levels(nlevels)
 	  {
 	    //Konstruktor
@@ -96,9 +96,24 @@ const size_t GRID_LEVEL=1;
 
 	    std::fill(n.begin(), n.end(), nelements);
 
+        /*int my_rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+
+        	MPI_Comm comm_x, comm_t; 
+	int myid, xcolor, tcolor;
+
+	int space_num=2;
+   	xcolor = (my_rank / space_num);
+   	tcolor = my_rank % space_num;
+
+   	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
+   	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );*/
+
+
 #if HAVE_MPI
  	//grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, comm_x); //overlap
- 	this->grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_WORLD); 
+ 	this->grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, comm_x); 
 #else
         this->grid = std::make_shared<GridType>(hL, hR, n);
         //grid_global = std::make_shared<GridType>(hL, hR, n);
