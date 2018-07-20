@@ -323,8 +323,8 @@ namespace pfasst
 
         Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
         interpolate(*basis, x_node, N_x);
-    	int rank, num_pro;
-    	MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    	//int rank, num_pro;
+    	//MPI_Comm_rank(MPI_COMM_WORLD, &rank );
         interpolate(*basis, result->data(), exact_solution);
         /*for(int i=0; i< result->get_data().size(); i++){
            if(rank==0) std::cout<< rank << " initial " << i << " " << result->get_data()[i] <<std::endl;         	
@@ -332,6 +332,18 @@ namespace pfasst
         for(int i=0; i< result->get_data().size(); i++){
            if(rank==1) std::cout<< rank << " initial " << " " << i << " " << result->get_data()[i] <<std::endl;         	
         }MPI_Barrier(MPI_COMM_WORLD);*/
+        
+        
+        /*int rank, num_pro;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+        MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+	
+
+        
+	for (size_t i = 0; i < result->get_data().size(); i++) {
+	  if (rank==0) std::cout << i << t << " u " << result->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);*/	//std::exit(0);
+        
 
         return result;
       }
@@ -669,8 +681,16 @@ namespace pfasst
 	for (int i=0; i< 10 ;i++){
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
 	  evaluate_f(f, u, dt, rhs);
-	 	  
-
+	/*for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << i << t << " rhs " << rhs->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);	 
+	for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << i << t << " u " << u->data()[i] << std::endl;
+        }MPI_Barrier(MPI_COMM_WORLD);	  
+         for (size_t i = 0; i < u->get_data().size(); i++) {
+	  if (rank==0) std::cout << i << t << " f " << f->data()[i] << std::endl;
+        }//MPI_Barrier(MPI_COMM_WORLD);std::exit(0);*/
+        
 	  evaluate_df(df, u, dt);
 	  //df.mv(u->data(), newton_rhs);
 	  newton_rhs*=0;
@@ -703,6 +723,36 @@ namespace pfasst
         //if (this->get_communicator()->get_rank()!=rank) std::exit(0);
     	using namespace Dune::ParMG;
     	auto& levelOp = mgSetup.levelOps_;
+    	
+    	auto isDirichlet_left = [] (auto x) {return (x[0] < -200.0 + 1e-8 ) ;};
+    	auto isDirichlet_right = [] (auto x) {return (x[0] > 200.0-1e-8) ;};
+  	std::vector<char> dirichletNodes_right, dirichletNodes_left;
+  	interpolate(*basis, dirichletNodes_right, isDirichlet_right); 
+  	interpolate(*basis, dirichletNodes_left, isDirichlet_left); 
+  	
+  	/*for (size_t i=0; i<df.N(); i++){
+    		if (dirichletNodes_left[i]||dirichletNodes_right[i]){
+      			auto cIt = df[i].begin();
+      			auto cEndIt = df[i].end();
+      		for(; cIt!=cEndIt; ++cIt){
+        		*cIt = (i==cIt.index()) ? 1.0 : 0.0; // 0.0;
+      		}
+      		if(dirichletNodes_left[i]) newton_rhs[i]=0;
+      		else newton_rhs[i]=0;
+    		}
+  	}*/
+    	
+    	/*MPI_Barrier(MPI_COMM_WORLD);
+    	  for (int i=0; i<df.N(); ++i)
+            {
+            for (int j=0; j<df.M(); ++j)
+                {
+                    if (df.exists(i,j)) {
+                        if(rank==0) std::cout << df[i][j] << " " ;}	
+                }
+            }std::cout<<std::endl;*/
+ 
+    	
     	auto df_pointer = std::make_shared<MatrixType>(df);	
     	mgSetup.matrix(df_pointer);
     	auto fineIgnore = std::make_shared< Dune::BitSetVector<1> >(u->get_data().size());
@@ -711,7 +761,7 @@ namespace pfasst
       		//if(i==0 ) (*fineIgnore)[i] = true; //&&(rank==0)
       		//if(i== u->get_data().size()-1) (*fineIgnore)[i] = true; //(rank==num_pro - 1)&&
       	}
-      	    		std::cout << "nach ignore gesetzt " << std::endl;
+      	    		//std::cout << "nach ignore gesetzt " << std::endl;
       	//std::cout << "im sweeper ignore gestzt" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
     	mgSetup.ignore(fineIgnore);
@@ -728,7 +778,7 @@ namespace pfasst
     	levelOp.back().maybeRestrictToMaster(newton_rhs);
     	std::function<void(VectorType&)> collect = Dune::ParMG::makeCollect<VectorType>(*mgSetup.comms_.back());
     	std::function<void(VectorType&)> restrictToMaster = [op=levelOp.back()](VectorType& x) { op.maybeRestrictToMaster(x); };
-    	std::cout << "im sweeper vor energyfunctional" << std::endl;
+    	//std::cout << "im sweeper vor energyfunctional" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
 	
     	auto energyFunctional = Dune::ParMG::makeParallelEnergyFunctional(
@@ -744,7 +794,7 @@ namespace pfasst
     	auto energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(*df_pointer, restrictToMaster, gridView.grid().comm()); //*df_pointer
     	levelOp.back().maybeCopyFromMaster(x);
     	double tol = 1e-13;
-    	std::cout << "im sweeper vor apply" << std::endl;
+    	//std::cout << "im sweeper vor apply" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
     	auto realIterationStep = [&](VectorType& x) {
       		auto b = newton_rhs;
@@ -755,7 +805,7 @@ namespace pfasst
 	auto iterationStep = std::make_shared< LambdaStep<VectorType> >(realIterationStep, x);
 	int steps = 500;
     	auto solver = Dune::Solvers::LoopSolver<VectorType>(iterationStep, steps, tol, solverNorm, NumProc::FULL);
-    		std::cout << "im sweeper vorm solver aufruf " << std::endl;
+    		//std::cout << "im sweeper vorm solver aufruf " << std::endl;
 	solver.preprocess();
     	solver.solve();
     	u->data()+=delta_u;
@@ -798,16 +848,16 @@ namespace pfasst
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) infinity " << norm_global(f) << std::endl;  	                  
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) energy " << f.infinity_norm() << std::endl;  
            //std::cout << i << " rank "<< rank << " ################################################################################                          residuumsnorm von f(u) " << parallel_energyNorm(f->data()) << std::endl; 
-           //if(i == 3) break; 
+           if(i == 3) break; 
            //std::cout << i << " rank "<< rank << " ################################################################################                          vor energir norm "  << std::endl; 
-           if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
+           //if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
            
            //if( f->norm0() < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
            
           // std::cout << i << " rank "<< rank << " ################################################################################                          vor energir norm "  << std::endl;  
         /*for (size_t i = 0; i < u->get_data().size(); i++) {
-	  if (rank) std::cout << "u " << u->data()[i] << std::endl;
-        }MPI_Barrier(MPI_COMM_WORLD);//std::exit(0);*/
+	  if (rank==0) std::cout << i << " u " << u->data()[i] << std::endl;
+        }*///MPI_Barrier(MPI_COMM_WORLD);std::exit(0);
   
 	  /*Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1);

@@ -150,16 +150,16 @@ namespace pfasst
 
 	if(rank==0) std::cout <<  "restriktion fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
-          if(rank==0) std::cout <<  i << " " << fine->data()[i] <<  std::endl;
+          if(rank==0) std::cout <<  i << " restrict " << fine->data()[i] <<  std::endl;
         }
-        if(rank==0) std::cout <<  "restriction " <<  std::endl;
+        if(rank==0) std::cout <<  " restriction " <<  std::endl;
 	restrict_matrix.mtv(fine->data(), coarse->data());
     //interpolate_matrix.mtv(fine->data(), coarse->data());
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
 	if(rank==0)  std::cout <<  "restriction grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
-          if(rank==0) std::cout << i << " " << coarse->data()[i] <<  std::endl;
+          if(rank==0) std::cout << i << " restrict " << coarse->data()[i] <<  std::endl;
         }
         if(rank==0) std::cout <<  "restriction ende " <<  std::endl;
 
@@ -188,19 +188,19 @@ namespace pfasst
       } else {
 
 
-	/*std::cout <<  "restriktion fein" <<  std::endl;
+	std::cout <<  "restriktion u fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
           std::cout <<  fine->data()[i] <<  std::endl;
         }
-        std::cout <<  "restriction " <<  std::endl;*/
+        std::cout <<  "restriction u " <<  std::endl;
 	interpolate_matrix.mtv(fine->data(), coarse->data());
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
-	/*std::cout <<  "restriction grob" <<  std::endl;
+	std::cout <<  "restriction grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
-          std::cout <<  coarse->data()[i] <<  std::endl;
+          std::cout << "restrict u " <<  coarse->data()[i] <<  std::endl;
         }
-        std::cout <<  "restriction ende " <<  std::endl;*/
+        std::cout <<  "restriction ende " <<  std::endl;
 
 
       }

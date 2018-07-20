@@ -19,7 +19,7 @@ using std::shared_ptr;
 
 #include "FE_sweeper.hpp"
 #include "../../datatypes/dune_vec.hpp"
-#include "../../finite_element_stuff/spectral_transfer.hpp"
+#include "spectral_transfer.hpp"
 //////////////////////////////////////////////////////////////////////////////////////
 //
 // Compiletimeparameter
@@ -76,9 +76,15 @@ namespace pfasst
         MPI_Comm comm_t;//=MPI_COMM_WORLD; 
 	int myid, xcolor, tcolor;
 
-	int space_num=1;
+	int space_num=2;
    	xcolor = (my_rank / space_num);
    	tcolor = my_rank % space_num;
+
+        //rank   xcolor    tcolor
+        // 0       0         0
+        // 1       0         1
+        // 2       1         0
+        // 3       1         1
 
    	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
    	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
@@ -132,8 +138,9 @@ namespace pfasst
 	int global_num;
 	MPI_Reduce(&(fine->num_solves), &global_num, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-
-        if(my_rank==num_pro-1) {
+	int space_rank;
+        MPI_Comm_rank(comm_x, &space_rank );
+        if(space_rank==0) {
 
           std::cout << "******************************************* " << std::endl;
           std::cout << " " << std::endl;
@@ -229,7 +236,7 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 10);
+  const size_t niter = get_value<size_t>("num_iters", 5);
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton);
 

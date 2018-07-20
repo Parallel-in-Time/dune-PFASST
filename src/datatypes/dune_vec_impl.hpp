@@ -169,6 +169,7 @@ namespace pfasst
                                  { return std::abs(a) < std::abs(b); })));
       double global_max=max;
       std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
+      //std::exit(0);
       //MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,comm_t);
       std::cout << "------------------------------------------------------------------------------ neue norm all" << max << std::endl;
       return global_max;
@@ -215,7 +216,7 @@ namespace pfasst
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
       double global_max=max;
-      std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
+      std::cout << "------------------------------------------------------------------------------ neue norm ausgerechnet " << max << " " << rank <<std::endl;
       MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,comm);
       return global_max;
       

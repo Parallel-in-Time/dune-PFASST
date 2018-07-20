@@ -545,9 +545,9 @@ namespace pfasst
 
     assert(this->get_residuals().back() != nullptr);
 
-    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();//ruth
+    this->_abs_res_norms.back() = this->get_residuals().back()->norm0(true, this->comm);//ruth
     //std::cout <<"hier abs res " << this->get_states().back()->norm0() << std::endl;
-    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); //ruth
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
     if (pre_check) {
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");

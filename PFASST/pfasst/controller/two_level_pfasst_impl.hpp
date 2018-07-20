@@ -108,10 +108,29 @@ namespace pfasst
 
       this->status()->set_primary_state(PrimaryState::PREDICTING);
 
+      /*int global_rank;
+      MPI_Comm_rank(MPI_COMM_WORLD, &global_rank);
+      for (size_t i = 0; i < this->get_fine()->end_state()->data().size(); i++) {
+	  if (global_rank==0) std::cout << i << " vor predict " << " u " << this->get_fine()->end_state()->data()[i] << std::endl;
+      }MPI_Barrier(MPI_COMM_WORLD);	
+      for (size_t i = 0; i < this->get_coarse()->end_state()->data().size(); i++) {
+	  if (global_rank==0) std::cout << i << " vor predict " << " u " << this->get_coarse()->end_state()->data()[i] << std::endl;
+      }MPI_Barrier(MPI_COMM_WORLD);*/
+      
+
+
       // iterate on each time step (i.e. iterations on single time step)
       do {
         if (this->get_status()->get_primary_state() == (+PrimaryState::PREDICTING)) {
           this->predictor();
+      /*for (size_t i = 0; i < this->get_fine()->end_state()->data().size(); i++) {
+	  if (global_rank==0) std::cout << i << " nach predict " << " u " << this->get_fine()->end_state()->data()[i] << std::endl;
+      }MPI_Barrier(MPI_COMM_WORLD);	
+      for (size_t i = 0; i < this->get_coarse()->end_state()->data().size(); i++) {
+	  if (global_rank==0) std::cout << i << " nach predict " << " u " << this->get_coarse()->end_state()->data()[i] << std::endl;
+      }MPI_Barrier(MPI_COMM_WORLD);*/
+      
+      //std::exit(0);
 
         } else if (this->get_status()->get_primary_state() == (+PrimaryState::ITERATING)) {
           ML_CLOG(INFO, this->get_logger_id(), "");
