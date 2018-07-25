@@ -271,8 +271,8 @@ namespace pfasst
         //this->encap_factory()->set_comm(comm_x);
         //this->encap_factory()->set_FE_manager(FinEl, (this->nlevel), this->A_dune);
         this->A_dune*=-1;
-        std::cout << "############################################### groesse mass matrix " << this->A_dune.N() << std::endl;
-        std::cout << "alles assembliert" << std::endl;
+        //std::cout << "############################################### groesse mass matrix " << this->A_dune.N() << std::endl;
+        //std::cout << "alles assembliert" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
 
       }
@@ -285,7 +285,7 @@ namespace pfasst
       {
 
 
-        std::cout << " set_options " <<  std::endl;  
+        //std::cout << " set_options " <<  std::endl;  
         IMEX<SweeperTrait, Enabled>::set_options();
 
         //this->_nu = config::get_value<spatial_t>("nu", this->_nu);
@@ -293,7 +293,7 @@ namespace pfasst
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
         //assembleProblem(basis, A_dune, M_dune);
-        std::cout << " set_options " <<  std::endl; 
+        //std::cout << " set_options " <<  std::endl; 
         //MPI_Barrier(MPI_COMM_WORLD);
 
       }
@@ -712,10 +712,10 @@ namespace pfasst
   	auto &x=delta_u;
   	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
   		//MPI_Barrier(MPI_COMM_WORLD);
-  	std::cout << rank << "vor er ersten grid aktion" << (this->nlevel) << std::endl;
+  	//std::cout << rank << "vor er ersten grid aktion" << (this->nlevel) << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
   	MGSetup mgSetup{*grid,grid->maxLevel() - (this->nlevel)};//sdc -1 mlsdc - (this->nlevel)}; //0 grobgitter
-  	std::cout << "nach der ersten grid aktion" << std::endl;
+  	//std::cout << "nach der ersten grid aktion" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
   	auto gridView = mgSetup.bases_.back().gridView();
  	using MG = Dune::ParMG::Multigrid<VectorType>;
@@ -804,9 +804,12 @@ namespace pfasst
     	auto solverNorm = std::make_shared< NormAdapter<VectorType> >(energyNorm);
 	auto iterationStep = std::make_shared< LambdaStep<VectorType> >(realIterationStep, x);
 	int steps = 500;
-    	auto solver = Dune::Solvers::LoopSolver<VectorType>(iterationStep, steps, tol, solverNorm, NumProc::FULL);
+    	auto solver = Dune::Solvers::LoopSolver<VectorType>(iterationStep, steps, tol, solverNorm, NumProc::QUIET);//NumProc::FULL);
     		//std::cout << "im sweeper vorm solver aufruf " << std::endl;
 	solver.preprocess();
+	
+	//solver.setOption(UMFPACK_PRL, 0);
+	
     	solver.solve();
     	u->data()+=delta_u;
     	num_solves++;

@@ -28,7 +28,7 @@ namespace pfasst
     {
 	
 	      std::shared_ptr<std::vector<MatrixType*>> vecvec(FinEl->get_transfer());
-          std::cout << "tranfer create " << std::endl;
+          //std::cout << "tranfer create " << std::endl;
 	      set_matrix(*vecvec->at(1), *vecvec->at(1));
           
           
@@ -48,7 +48,7 @@ namespace pfasst
             TransferTraits>::set_matrix(Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> interpolate, Dune::BCRSMatrix <Dune::FieldMatrix<double, 1, 1>> restrict)
     {
         
-        std::cout << "set matrix " << std::endl;
+        //std::cout << "set matrix " << std::endl;
 	    interpolate_matrix = interpolate;
         
         
@@ -67,14 +67,14 @@ namespace pfasst
 	    
 	    restrict_matrix   = restrict;
 
-	    for (int i=0; i< restrict_matrix.N(); i++){
+	    /*for (int i=0; i< restrict_matrix.N(); i++){
 	      for (int j=0; j< restrict_matrix.M(); j++){
 		if(restrict_matrix.exists(i,j)){	
 		  if (restrict_matrix[i][j]==0.5 ) restrict_matrix[i][j]=0;
 		}
 
 	      }
-	    }
+	    }*/
     }
 
 
@@ -103,24 +103,24 @@ namespace pfasst
         fine->data() = coarse->get_data();
 
       } else {
-    int rank, num_pro;
+    /*int rank, num_pro;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank );
 	
 	if(rank==0) std::cout <<  "interpolate grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
           if(rank==0) std::cout <<  coarse->data()[i] <<  std::endl;
         }
-        if(rank==0) std::cout <<  "interpolate " <<  std::endl;
+        if(rank==0) std::cout <<  "interpolate " <<  std::endl;*/
 
 
         interpolate_matrix.mv(coarse->data(), fine->data());
         //Transfer_matrix.mv(coarse->data(), fine->data());
-	if(rank==0) std::cout <<  "interpolate fein" <<  std::endl;
+	/*if(rank==0) std::cout <<  "interpolate fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
           if(rank==0) std::cout <<  fine->data()[i] <<  std::endl;
         }
         if(rank==0) std::cout <<  "interpolate ende" <<  std::endl;
-        //std::exit(0);
+        //std::exit(0);*/
 
         
       }
@@ -145,23 +145,23 @@ namespace pfasst
         coarse->data() = fine->get_data();
 
       } else {
-          	int rank, num_pro;
+        /*int rank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &rank );
 
 	if(rank==0) std::cout <<  "restriktion fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
           if(rank==0) std::cout <<  i << " restrict " << fine->data()[i] <<  std::endl;
         }
-        if(rank==0) std::cout <<  " restriction " <<  std::endl;
+        if(rank==0) std::cout <<  " restriction " <<  std::endl;*/
 	restrict_matrix.mtv(fine->data(), coarse->data());
     //interpolate_matrix.mtv(fine->data(), coarse->data());
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
-	if(rank==0)  std::cout <<  "restriction grob" <<  std::endl;
+	/*if(rank==0)  std::cout <<  "restriction grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
           if(rank==0) std::cout << i << " restrict " << coarse->data()[i] <<  std::endl;
         }
-        if(rank==0) std::cout <<  "restriction ende " <<  std::endl;
+        if(rank==0) std::cout <<  "restriction ende " <<  std::endl;*/
 
 
       }
@@ -188,19 +188,19 @@ namespace pfasst
       } else {
 
 
-	std::cout <<  "restriktion u fein" <<  std::endl;
+	/*std::cout <<  "restriktion u fein" <<  std::endl;
         for (int i=0; i< fine->data().size(); i++){
           std::cout <<  fine->data()[i] <<  std::endl;
         }
-        std::cout <<  "restriction u " <<  std::endl;
+        std::cout <<  "restriction u " <<  std::endl;*/
 	interpolate_matrix.mtv(fine->data(), coarse->data());
         //Transfer_matrix2.mtv(fine->data(), coarse->data());
         //coarse->data() *= 0.5;
-	std::cout <<  "restriction grob" <<  std::endl;
+	/*std::cout <<  "restriction grob" <<  std::endl;
         for (int i=0; i< coarse->data().size(); i++){
           std::cout << "restrict u " <<  coarse->data()[i] <<  std::endl;
         }
-        std::cout <<  "restriction ende " <<  std::endl;
+        std::cout <<  "restriction ende " <<  std::endl;*/
 
 
       }

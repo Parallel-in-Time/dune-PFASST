@@ -161,19 +161,21 @@ namespace pfasst
                 std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
+        if(rank==0){
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          if(rank==0) std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }MPI_Barrier(MPI_COMM_WORLD);
+           std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }}MPI_Barrier(MPI_COMM_WORLD);
+        if(rank==1){
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          if(rank==1) std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+           std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }}
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << "Fehler: " <<  std::endl ;
         //auto norm =  fine->exact(t_end))->data();
         fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
-        std::cout << "die norm des Fehlers " << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
+        std::cout << "die norm des Fehlers " << fine->states()[fine->get_states().size()-1]->norm0(true, MPI_COMM_WORLD)<<  std::endl ;
         std::cout << "number states " << fine->get_states().size() << std::endl ;
         std::cout << "******************************************* " <<  std::endl ;
 

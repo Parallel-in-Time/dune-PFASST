@@ -168,10 +168,10 @@ namespace pfasst
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
       double global_max=max;
-      std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
+      //std::cout << "------------------------------------------------------------------------------ neue norm" << max << std::endl;
       //std::exit(0);
       //MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,comm_t);
-      std::cout << "------------------------------------------------------------------------------ neue norm all" << max << std::endl;
+      //std::cout << "------------------------------------------------------------------------------ neue norm all" << max << std::endl;
       return global_max;
       /*using Norm =  EnergyNorm<MatrixType,VectorType>;
       auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(this->A_dune, restrictToMaster, gridView.grid().comm());
@@ -200,23 +200,23 @@ namespace pfasst
       int rank, num_pro;
       MPI_Comm_rank(comm, &rank );
       MPI_Comm_size(comm, &num_pro );
-      std::cout << "------------------------------------------------------------------------------ vor split im norm() " << rank << std::endl;
+      //std::cout << "------------------------------------------------------------------------------ vor split im norm() " << rank << std::endl;
       //MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
       //MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
       //std::cout << "------------------------------------------------------------------------------nach split im norm() " << my_rank << std::endl;
       
       
       double max;
-      auto begin=this->get_data().begin();//++;
-      auto end=this->get_data().end();//--;
-      //if(rank==0) begin--;
-      //if(rank==num_pro-1)end++; 
-      max = std::abs(*(std::max_element(this->get_data().begin(), this->get_data().end(),
+      auto begin=this->get_data().begin();begin++; begin++;
+      auto end=this->get_data().end();end--; end--;
+      if(rank==0) {begin--;begin--;}
+      if(rank==num_pro-1){end++;end++;} 
+      max = std::abs(*(std::max_element(begin, end,
                                [](const typename EncapsulationTrait::spatial_t& a,
                                   const typename EncapsulationTrait::spatial_t& b)
                                  { return std::abs(a) < std::abs(b); })));
       double global_max=max;
-      std::cout << "------------------------------------------------------------------------------ neue norm ausgerechnet " << max << " " << rank <<std::endl;
+      //std::cout << "------------------------------------------------------------------------------ neue norm ausgerechnet " << max << " " << rank <<std::endl;
       MPI_Allreduce(&max,&global_max,1,MPI_DOUBLE,MPI_MAX,comm);
       return global_max;
       
@@ -397,7 +397,7 @@ namespace pfasst
       		if(i==0 &&rank==0) (*fineIgnore)[i] = true;
       		if(rank==num_pro - 1 && i== bs-1) (*fineIgnore)[i] = true;
       	}
-      	    		std::cout << "nach ignore gesetzt " << std::endl;
+      	    		//std::cout << "nach ignore gesetzt " << std::endl;
 
     	mgSetup.ignore(fineIgnore);
     	mgSetup.setupLevelOps();
@@ -415,7 +415,7 @@ namespace pfasst
     	
     	std::function<void(VectorType&)> collect = Dune::ParMG::makeCollect<VectorType>(*mgSetup.comms_.back());
     	std::function<void(VectorType&)> restrictToMaster = [op=levelOp.back()](VectorType& x) { op.maybeRestrictToMaster(x); };
-    	std::cout << "im sweeper vor energyfunctional" << std::endl;
+    	//std::cout << "im sweeper vor energyfunctional" << std::endl;
     	
 
       	auto vz =  A_dune;

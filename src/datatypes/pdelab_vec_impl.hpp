@@ -35,7 +35,7 @@ namespace pfasst
         gridp->refineOptions(false); // keep overlap in cells
         //gridp->globalRefine(1);
         typedef Grid::LevelGridView GV;
-	std::cout << "*************************************   hier sollte ich nicht sein " << std::endl;
+	//std::cout << "*************************************   hier sollte ich nicht sein " << std::endl;
         GV gv=gridp->levelGridView(0);
 	//typedef Dune::PDELab::QkLocalFiniteElementMap<GV,DF,double,1> FEM;
 	typedef Dune::PDELab::PkLocalFiniteElementMap<GV, DF,double,  1> FEM;  
@@ -47,7 +47,7 @@ namespace pfasst
   	typedef Dune::PDELab::GridFunctionSpace<GV,FEM,CON,VBE> GFS;
   	GFS gfs(gv,fem);
  	//_data(gfs);
-	std::cout << "*************************************   erstelle pdevec mit gfs " << std::endl;
+	//std::cout << "*************************************   erstelle pdevec mit gfs " << std::endl;
 	this->_data = std::make_shared<typename EncapsulationTrait::data_t>(gfs);
 		
         //this->zero();
@@ -62,7 +62,7 @@ namespace pfasst
                >::type>::Encapsulation(typename EncapsulationTrait::gfs_t gfs)
        : size(100)
     {
-	std::cout << "im konstruktor gfs" << std::endl;
+	//std::cout << "im konstruktor gfs" << std::endl;
       this->_data = std::make_shared<typename EncapsulationTrait::data_t>(gfs);
       //this->zero();
     }
@@ -86,7 +86,7 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::operator=(const typename EncapsulationTrait::data_t& data)
     {
-      std::cout << "hier im gleich " << std::endl;	
+      //std::cout << "hier im gleich " << std::endl;	
       this->data() = data;
       return *this;
     }
@@ -371,9 +371,9 @@ namespace pfasst
                  std::is_same<dune_encap_tag, typename EncapsulationTrait::tag_t>::value
                >::type>::create() const
     {
-	std::cout << "im create" << std::endl;
+	//std::cout << "im create" << std::endl;
         
-	std::cout << "im create vor return " << std::endl;
+	//std::cout << "im create vor return " << std::endl;
       	return std::make_shared<Encapsulation<EncapsulationTrait>>(*(this->_gfs));
       	//return std::make_shared<EncapsulationTrait>(gfs);	
     }

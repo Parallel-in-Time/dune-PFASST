@@ -77,9 +77,13 @@ namespace pfasst
 	int myid, xcolor, tcolor;
 
 	int space_num=2;
+	int space_size, time_size;
    	xcolor = (my_rank / space_num);
    	tcolor = my_rank % space_num;
 
+
+
+        
         //rank   xcolor    tcolor
         // 0       0         0
         // 1       0         1
@@ -88,6 +92,19 @@ namespace pfasst
 
    	MPI_Comm_split( MPI_COMM_WORLD, xcolor, my_rank, &comm_x );
    	MPI_Comm_split( MPI_COMM_WORLD, tcolor, my_rank, &comm_t );
+	
+	int space_rank=77;
+        MPI_Comm_rank(comm_x, &space_rank );
+        MPI_Comm_size(comm_x, &space_size);
+        
+        int time_rank=77;
+        MPI_Comm_rank(comm_t, &time_rank );	
+
+	
+	std::cout << my_rank << space_rank << time_rank << " space_size "<<space_size << std::endl;
+	MPI_Barrier(MPI_COMM_WORLD);
+	//std::exit(0);
+	
 
 
         TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
@@ -138,9 +155,8 @@ namespace pfasst
 	int global_num;
 	MPI_Reduce(&(fine->num_solves), &global_num, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-	int space_rank;
-        MPI_Comm_rank(comm_x, &space_rank );
-        if(space_rank==0) {
+
+        //if(space_rank==space_size-1) {
 
           std::cout << "******************************************* " << std::endl;
           std::cout << " " << std::endl;
@@ -149,24 +165,28 @@ namespace pfasst
           auto exact      = fine->exact(t_end)->data();
           auto initial    = fine->exact(0)->data();          
           for (int i=0; i< fine->get_end_state()->data().size(); i++){
-            std::cout << initial[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          }/*MPI_Barrier(MPI_COMM_WORLD);
-          for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+            if(time_rank==1 && space_rank==1) std::cout << initial[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+          }
+          /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
             if(rank==1) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
           }*/
-          
+          MPI_Barrier(comm_t);
           std::cout << " " << std::endl;
           std::cout << "Fehler: " << std::endl;
           //auto norm =  fine->exact(t_end))->data();
           fine->end_state()->scaled_add(-1.0, fine->exact(t_end));
-          
+          MPI_Barrier(MPI_COMM_WORLD);          
           for (int i=0; i< fine->get_end_state()->data().size(); i++){
-            std::cout << fine->end_state()->get_data()[i] << std::endl;
+            if(time_rank==1 && space_rank==1) std::cout << fine->end_state()->get_data()[i] << std::endl;
           }
+          MPI_Barrier(MPI_COMM_WORLD);
+          std::cout << time_rank << " " << space_rank << " der lokale fehler betraegt " << fine->end_state()->norm0() << std::endl;          
           
-          std::cout << "der fehler betraegt " << fine->end_state()->norm0() << std::endl;
+          
+          double error= fine->end_state()->norm0(true, comm_x);
+          std::cout << time_rank << " " << space_rank << " der fehler betraegt " << error << std::endl;
         
-        }
+        //}
 
 	std::cout << my_rank << " num_solves " << fine->num_solves << std::endl;
 

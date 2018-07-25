@@ -519,19 +519,19 @@ namespace pfasst
     MPI_Comm_rank(this->comm, &rank );
     const typename traits::time_t dt = this->get_status()->get_dt();
     const size_t num_nodes = this->get_quadrature()->get_num_nodes() + 1;
-    if (rank==0) std::cout << "***************************************************************  compute residuuals " << std::endl;
+    //if (rank==0) std::cout << "***************************************************************  compute residuuals " << std::endl;
     if (only_last) {
-      if (rank==0) std::cout << "***************************************************************  compute residuuals only last " << std::endl;
+      //if (rank==0) std::cout << "***************************************************************  compute residuuals only last " << std::endl;
       const size_t cols = this->get_quadrature()->get_q_mat().cols();
       const size_t rows = this->get_quadrature()->get_q_mat().rows();
       
       
       
       if (is_coarse){
-        if (rank==0) std::cout << "***************************************************************  compute residuuals only last coarse" << std::endl;
+        //if (rank==0) std::cout << "***************************************************************  compute residuuals only last coarse" << std::endl;
         this->residuals().back()->data() =  this->_M_initial->get_data(); //   this->get_states().front()->get_data();
       }else{
-        if (rank==0) std::cout << "***************************************************************  compute residuuals only last fine" << std::endl;
+        //if (rank==0) std::cout << "***************************************************************  compute residuuals only last fine" << std::endl;
         //M_dune.mv(this->get_initial_state()->get_data(), this->residuals().back()->data());
 	this->get_initial_state()->apply_Mass(M_dune, this->residuals().back());
       }
@@ -557,7 +557,7 @@ namespace pfasst
       }
       //for(auto r =this->_impl_rhs[2]->data().begin(); r !=this->_impl_rhs[2]->data().end(); ++r){std::cout << "residuals2 rhs_impl " << *r <<std::endl;} //std::exit(0);	
     } else {
-      if (rank==0) std::cout << "***************************************************************  compute residuuals NOT only last " << std::endl;
+      //if (rank==0) std::cout << "***************************************************************  compute residuuals NOT only last " << std::endl;
 
       for (size_t m = 0; m < num_nodes; ++m) {
         assert(this->get_states()[m] != nullptr);
@@ -573,10 +573,10 @@ namespace pfasst
 
     
     	if (is_coarse){
-    		std::cout << "------------------------------------------------------is coarse " << std::endl; 
+    		//std::cout << "------------------------------------------------------is coarse " << std::endl; 
         	this->residuals()[m]->data() =  this->_M_initial->get_data(); 
     	}else{
-    		std::cout << "------------------------------------------------------is fine " << std::endl; 
+    		//std::cout << "------------------------------------------------------is fine " << std::endl; 
 		this->get_initial_state()->apply_Mass(M_dune,  this->residuals()[m]);
     	}
     	/*MPI_Barrier(MPI_COMM_WORLD);
@@ -642,21 +642,19 @@ namespace pfasst
         }MPI_Barrier(MPI_COMM_WORLD);
         }*/
       	
-      for (size_t m = 0; m < num_nodes; ++m) {
+      /*for (size_t m = 0; m < num_nodes; ++m) {
 	if (rank!=num_pro-1) this->get_residuals()[m]->data()[this->get_residuals()[m]->data().size()-1] =0;
 	if (rank!=0) this->get_residuals()[m]->data()[0] =0; 
         //double d1 = this->get_residuals()[m]->norm0();
         double d1_ = this->get_residuals()[m]->norm0(true, this->comm);
         //double d2 =this->_impl_rhs[m]->norm0();
         //double d2_ =this->_impl_rhs[m]->norm0(true, this->comm);
-        if(rank==0){ ML_CVLOG(0, this->get_logger_id(), " mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm nach mat_apply  |res["<<m<<"]| = " << d1_ << " ");}
+        //if(rank==0){ ML_CVLOG(0, this->get_logger_id(), " mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm nach mat_apply  |res["<<m<<"]| = " << d1_ << " ");}
         //typedef Dune::BlockVector<Dune::FieldVector<double,NR_COMP> > VectorType;
         //VectorType a = this->get_residuals()[m]->data();
         //collect(a);
         //if(rank==0){ ML_CVLOG(0, this->get_logger_id(), "  nach collect  |res["<<m<<"]| = " << d1 << " "<< d2);}
-      }//MPI_Barrier(MPI_COMM_WORLD);
-
-      
+      }//MPI_Barrier(MPI_COMM_WORLD);*/      
     }
     //std::exit(0);
   }
