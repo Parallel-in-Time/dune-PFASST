@@ -10,4 +10,4 @@ src/examples/fischer/parallel_solve.cpp
 src/examples/old_Newton/
 src/functions.hh
 src/nonsmooth-ac.cc
-
+cmake/modules/DunePFASSTMacros.cmake
