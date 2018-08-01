@@ -735,8 +735,8 @@ namespace pfasst
     	auto fineIgnore = std::make_shared< Dune::BitSetVector<1> >(u->get_data().size());
     	for (std::size_t i = 0; i < u->get_data().size(); ++i){
       		(*fineIgnore)[i] = false;
-      		if(i==0&&(rank==0) ) (*fineIgnore)[i] = true; //
-      		if((rank==num_pro - 1)&&i== u->get_data().size()-1) (*fineIgnore)[i] = true; //
+      		//if(i==0&&(rank==0) ) (*fineIgnore)[i] = true; //
+      		//if((rank==num_pro - 1)&&i== u->get_data().size()-1) (*fineIgnore)[i] = true; //
       	}
       	    		//std::cout << "nach ignore gesetzt " << std::endl;
       	//std::cout << "im sweeper ignore gestzt" << std::endl;

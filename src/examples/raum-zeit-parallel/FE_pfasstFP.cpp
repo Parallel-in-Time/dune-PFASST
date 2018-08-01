@@ -174,9 +174,9 @@ namespace pfasst
           auto naeherung  = fine->get_end_state()->data();
           auto exact      = fine->exact(t_end)->data();
           auto initial    = fine->exact(0)->data();          
-          /*for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          for (int i=0; i< fine->get_end_state()->data().size(); i++){
             if(time_rank==1 && space_rank==1) std::cout << initial[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          }*/
+          }
           /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
             if(rank==1) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
           }*/
@@ -275,10 +275,6 @@ int main(int argc, char** argv)
 
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton);
-    
-    
-
-    MPI_Finalize();
 
 
 
