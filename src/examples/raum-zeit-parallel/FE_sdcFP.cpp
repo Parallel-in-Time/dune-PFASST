@@ -52,6 +52,12 @@ namespace pfasst
                                        const QuadratureType& quad_type, const double& t_0,
                                        const double& dt, const double& t_end, const size_t niter, double newton)
       {
+      
+      
+      
+      	            int rank, num_pro;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
         using pfasst::quadrature::quadrature_factory;
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
@@ -63,6 +69,7 @@ namespace pfasst
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton;
         sweeper->is_coarse = false;
+        sweeper->comm=MPI_COMM_WORLD;
         //sweeper->set_abs_residual_tol(1e-10);
         sdc->add_sweeper(sweeper);
 
@@ -75,13 +82,23 @@ namespace pfasst
 
         sdc->setup();
 
+
+
         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
 	Dune::BlockVector<Dune::FieldVector<double, 1> > w = sweeper->initial_state()->data();
 	
+	
+	
+	
+	MPI_Barrier(MPI_COMM_WORLD);
+    	auto st = MPI_Wtime();
         sdc->run();
 
         sdc->post_run();
-
+        auto ut = MPI_Wtime()-st;
+        double time;
+        MPI_Reduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+        std::cout << rank << "Zeit ist am end" << time << std::endl;
 
         /*if(BASIS_ORDER==1) {
           auto grid = (*sweeper).get_grid();
@@ -107,9 +124,7 @@ namespace pfasst
 	/*for(int i=0; i< sweeper->get_end_state()->data().size(); i++){
 	std::cout << "ergebnis " << sweeper->get_end_state()->data()[i] << " " << sweeper->exact(t_end)->data()[i] <<  std::endl ;
 	}*/
-	            int rank, num_pro;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
-    MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+
         
 	        std::cout <<  "fein" << std::endl;
         //auto naeherung = sweeper->get_end_state()->data();
@@ -118,12 +133,12 @@ namespace pfasst
                         std::cout <<  "fein" << std::endl;
         auto naeherung = sweeper->get_end_state()->data();
         auto exact     = sweeper->exact(t_end)->data();
-        for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
+        /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           if(rank==0) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
         }MPI_Barrier(MPI_COMM_WORLD);
         for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           if(rank==1) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+        }*/
         /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
         }*/
@@ -229,19 +244,15 @@ namespace pfasst
     
     std::cout << "nsteps = " << nsteps << std::endl;
     
-    const size_t niter = get_value<size_t>("num_iters", 10);
+    const size_t niter = get_value<size_t>("num_iters", 20);
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    auto st = MPI_Wtime();
+
 
 
     pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter, newton);
     
     
-    auto ut = MPI_Wtime()-st;
-    double time;
-    MPI_Reduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
-    std::cout << rank << "Zeit ist am end" << time << std::endl;
+
     MPI_Finalize();
 
   }

@@ -546,7 +546,12 @@ namespace pfasst
     assert(this->get_residuals().back() != nullptr);
 
     this->_abs_res_norms.back() = this->get_residuals().back()->norm0(true, this->comm);//ruth
-    //std::cout <<"hier abs res " << this->get_states().back()->norm0() << std::endl;
+    //std::cout <<"hier abs res " << this->get_residuals().back()->norm0(true, this->comm) << std::endl;
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    /*for(int i=0; i< this->get_residuals().back()->get_data().size(); i++){
+    	if(rank==0) std::cout << this->get_residuals().back()->get_data()[i] << std::endl;
+    }*/
     this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
     if (pre_check) {
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {

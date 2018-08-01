@@ -615,14 +615,7 @@ namespace pfasst
                                                     const typename SweeperTrait::time_t& dt,
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
-	
 
-
-
-        
-	
-        ML_CVLOG(4, this->get_logger_id(),
-                 "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
 
 ////////////////////////////////////////////////////////////////////////////// non linear cg                 
@@ -673,50 +666,34 @@ namespace pfasst
         newton_rhs.resize(rhs->get_data().size());
         newton_rhs2.resize(rhs->get_data().size());
         
-        //auto u = this->get_encap_factory().create();
-        auto delta_u = u->data();
-        delta_u*=0;
+
+        auto delta_u = this->get_encap_factory().create(); //u->data();
+        delta_u->data()*=0;
 
         
 	for (int i=0; i< 10 ;i++){
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
 	  evaluate_f(f, u, dt, rhs);
-	/*for (size_t i = 0; i < u->get_data().size(); i++) {
-	  if (rank==0) std::cout << i << t << " rhs " << rhs->data()[i] << std::endl;
-        }MPI_Barrier(MPI_COMM_WORLD);	 
-	for (size_t i = 0; i < u->get_data().size(); i++) {
-	  if (rank==0) std::cout << i << t << " u " << u->data()[i] << std::endl;
-        }MPI_Barrier(MPI_COMM_WORLD);	  
-         for (size_t i = 0; i < u->get_data().size(); i++) {
-	  if (rank==0) std::cout << i << t << " f " << f->data()[i] << std::endl;
-        }//MPI_Barrier(MPI_COMM_WORLD);std::exit(0);*/
-        
+
 	  evaluate_df(df, u, dt);
-	  //df.mv(u->data(), newton_rhs);
+
 	  newton_rhs*=0;
 	  newton_rhs -= f->data();
       	  newton_rhs2 = newton_rhs;
       	  
 
-
+	std::cout  << rank << " im impl solve" << std::endl;
      
-
-
-	//MPI_Barrier(MPI_COMM_WORLD);
-	
-
 	
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	//here we use parmg solver to solve the local system (df * u = newton_rhs) for the unknown u
-  	auto &x=delta_u;
+  	//auto &x=delta_u->data();//abst
   	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
-  		//MPI_Barrier(MPI_COMM_WORLD);
-  	//std::cout << rank << "vor er ersten grid aktion" << (this->nlevel) << std::endl;
-	//MPI_Barrier(MPI_COMM_WORLD);
+
+
   	MGSetup mgSetup{*grid,grid->maxLevel() - (this->nlevel)};//sdc -1 mlsdc - (this->nlevel)}; //0 grobgitter
-  	//std::cout << "nach der ersten grid aktion" << std::endl;
-	//MPI_Barrier(MPI_COMM_WORLD);
+
   	auto gridView = mgSetup.bases_.back().gridView();
  	using MG = Dune::ParMG::Multigrid<VectorType>;
   	MG mg;
@@ -724,11 +701,11 @@ namespace pfasst
     	using namespace Dune::ParMG;
     	auto& levelOp = mgSetup.levelOps_;
     	
-    	auto isDirichlet_left = [] (auto x) {return (x[0] < -200.0 + 1e-8 ) ;};
+    	/*auto isDirichlet_left = [] (auto x) {return (x[0] < -200.0 + 1e-8 ) ;};
     	auto isDirichlet_right = [] (auto x) {return (x[0] > 200.0-1e-8) ;};
   	std::vector<char> dirichletNodes_right, dirichletNodes_left;
   	interpolate(*basis, dirichletNodes_right, isDirichlet_right); 
-  	interpolate(*basis, dirichletNodes_left, isDirichlet_left); 
+  	interpolate(*basis, dirichletNodes_left, isDirichlet_left); */
   	
   	/*for (size_t i=0; i<df.N(); i++){
     		if (dirichletNodes_left[i]||dirichletNodes_right[i]){
@@ -758,8 +735,8 @@ namespace pfasst
     	auto fineIgnore = std::make_shared< Dune::BitSetVector<1> >(u->get_data().size());
     	for (std::size_t i = 0; i < u->get_data().size(); ++i){
       		(*fineIgnore)[i] = false;
-      		//if(i==0 ) (*fineIgnore)[i] = true; //&&(rank==0)
-      		//if(i== u->get_data().size()-1) (*fineIgnore)[i] = true; //(rank==num_pro - 1)&&
+      		if(i==0&&(rank==0) ) (*fineIgnore)[i] = true; //
+      		if((rank==num_pro - 1)&&i== u->get_data().size()-1) (*fineIgnore)[i] = true; //
       	}
       	    		//std::cout << "nach ignore gesetzt " << std::endl;
       	//std::cout << "im sweeper ignore gestzt" << std::endl;
@@ -792,26 +769,29 @@ namespace pfasst
       	auto vz =  this->A_dune;
 	vz *=-1;
     	auto energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(*df_pointer, restrictToMaster, gridView.grid().comm()); //*df_pointer
-    	levelOp.back().maybeCopyFromMaster(x);
-    	double tol = 1e-13;
+    	levelOp.back().maybeCopyFromMaster(delta_u->data()); //abst
+    	double tol = 1e-12;
     	//std::cout << "im sweeper vor apply" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
+	
+        collect(newton_rhs);
     	auto realIterationStep = [&](VectorType& x) {
       		auto b = newton_rhs;
       		mg.apply(x, b);
     	};
   	auto& feBasis = mgSetup.bases_.back();
     	auto solverNorm = std::make_shared< NormAdapter<VectorType> >(energyNorm);
-	auto iterationStep = std::make_shared< LambdaStep<VectorType> >(realIterationStep, x);
+	auto iterationStep = std::make_shared< LambdaStep<VectorType> >(realIterationStep, delta_u->data()); //abst
 	int steps = 500;
-    	auto solver = Dune::Solvers::LoopSolver<VectorType>(iterationStep, steps, tol, solverNorm, NumProc::QUIET);//NumProc::FULL);
+    	auto solver = Dune::Solvers::LoopSolver<VectorType>(iterationStep, steps, tol, solverNorm,NumProc::QUIET);// NumProc::FULL); //
     		//std::cout << "im sweeper vorm solver aufruf " << std::endl;
 	solver.preprocess();
 	
 	//solver.setOption(UMFPACK_PRL, 0);
-	
+	std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
     	solver.solve();
-    	u->data()+=delta_u;
+    	std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << std::endl;
+    	u->data()+=delta_u->data();
     	num_solves++;
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -820,7 +800,7 @@ namespace pfasst
 	
            //evaluate_f(f, u, rhs, M_dune, A_dune, *w); 
 
-	   //collect(u->data());
+
 	  	/*for (size_t i = 0; i < u->get_data().size(); i++) {
 	  if (rank==0) std::cout << "newton_rhs " << u->data()[i] << std::endl;
         }MPI_Barrier(MPI_COMM_WORLD);
@@ -851,9 +831,9 @@ namespace pfasst
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) infinity " << norm_global(f) << std::endl;  	                  
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) energy " << f.infinity_norm() << std::endl;  
            //std::cout << i << " rank "<< rank << " ################################################################################                          residuumsnorm von f(u) " << parallel_energyNorm(f->data()) << std::endl; 
-           if(i == 3) break; 
+           //if(i == 3) break; 
            //std::cout << i << " rank "<< rank << " ################################################################################                          vor energir norm "  << std::endl; 
-           //if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
+           if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
            
            //if( f->norm0() < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
            
@@ -905,7 +885,7 @@ namespace pfasst
 	//std::exit(0);
         this->_num_impl_solves++;
         //if (this->_num_impl_solves==5) std::exit(0);
-
+	std::cout  << rank << " " << this->_num_impl_solves << " ende impl solve" << std::endl;
 
       }
       

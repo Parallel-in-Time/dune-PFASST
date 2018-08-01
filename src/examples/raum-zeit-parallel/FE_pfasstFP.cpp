@@ -135,7 +135,7 @@ namespace pfasst
 	pfasst.add_sweeper(fine);
         pfasst.set_options();
 
-        std::cout << "hier im code" <<std::endl;
+        //std::cout << "hier im code" <<std::endl;
 
         pfasst.status()->time() = t_0;
         pfasst.status()->dt() = dt;
@@ -149,8 +149,18 @@ namespace pfasst
 	fine->newton=newton;
 	coarse->newton=newton;
 
+
+
+    	MPI_Barrier(MPI_COMM_WORLD);
+    	auto st = MPI_Wtime();
         pfasst.run();
         pfasst.post_run();
+    	auto ut = MPI_Wtime()-st;
+    	double time;
+    	MPI_Reduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    	std::cout << my_rank << "Zeit ist am end" << time << std::endl;
+
+
 
 	int global_num;
 	MPI_Reduce(&(fine->num_solves), &global_num, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
@@ -158,29 +168,29 @@ namespace pfasst
 
         //if(space_rank==space_size-1) {
 
-          std::cout << "******************************************* " << std::endl;
-          std::cout << " " << std::endl;
+          //std::cout << "******************************************* " << std::endl;
+          //std::cout << " " << std::endl;
 
           auto naeherung  = fine->get_end_state()->data();
           auto exact      = fine->exact(t_end)->data();
           auto initial    = fine->exact(0)->data();          
-          for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          /*for (int i=0; i< fine->get_end_state()->data().size(); i++){
             if(time_rank==1 && space_rank==1) std::cout << initial[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          }
+          }*/
           /*for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
             if(rank==1) std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
           }*/
-          MPI_Barrier(comm_t);
-          std::cout << " " << std::endl;
-          std::cout << "Fehler: " << std::endl;
+          //MPI_Barrier(comm_t);
+          //std::cout << " " << std::endl;
+          //std::cout << "Fehler: " << std::endl;
           //auto norm =  fine->exact(t_end))->data();
           fine->end_state()->scaled_add(-1.0, fine->exact(t_end));
-          MPI_Barrier(MPI_COMM_WORLD);          
+          /*MPI_Barrier(MPI_COMM_WORLD);          
           for (int i=0; i< fine->get_end_state()->data().size(); i++){
             if(time_rank==1 && space_rank==1) std::cout << fine->end_state()->get_data()[i] << std::endl;
           }
-          MPI_Barrier(MPI_COMM_WORLD);
-          std::cout << time_rank << " " << space_rank << " der lokale fehler betraegt " << fine->end_state()->norm0() << std::endl;          
+          MPI_Barrier(MPI_COMM_WORLD);*/
+          //std::cout << time_rank << " " << space_rank << " der lokale fehler betraegt " << fine->end_state()->norm0() << std::endl;          
           
           
           double error= fine->end_state()->norm0(true, comm_x);
@@ -256,9 +266,21 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 5);
+  const size_t niter = get_value<size_t>("num_iters", 20);
+
+
+
+
+
+
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+    
+    
+
+    MPI_Finalize();
+
+
 
   pfasst::Status<double>::free_mpi_datatype();
 

@@ -81,7 +81,9 @@ namespace pfasst
         
         coarse->is_coarse=true;
         fine->is_coarse=false;
-        
+        coarse->comm=MPI_COMM_WORLD;
+        fine->comm=MPI_COMM_WORLD;
+                
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(FinEl);
 	
@@ -138,11 +140,23 @@ namespace pfasst
 
 
         //std::cout << "*********************************vor run"<<  std::endl ;
-        mlsdc->run();
-        //std::cout << "*********************************nach run"<<  std::endl ;
-	std::cout << "********************************************** NACH RUN *******************************************************************" << std::endl;
-        mlsdc->post_run();
 
+            int rank, num_pro;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+    MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+
+
+      MPI_Barrier(MPI_COMM_WORLD);
+    auto st = MPI_Wtime();
+
+        mlsdc->run();
+
+        mlsdc->post_run();
+    auto ut = MPI_Wtime()-st;
+    double time;
+    MPI_Reduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    std::cout << rank << "Zeit ist am end" << time << std::endl;
+    
         //return mlsdc;
         /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
@@ -154,21 +168,19 @@ namespace pfasst
         for (int i=0; i< coarse->get_end_state()->data().size(); i++){
           std::cout << coarse->exact(0)->data()[i] << " " << coarse->get_end_state()->data()[i] << "   " << coarse->exact(t_end)->data()[i] << std::endl;
         }*/
-            int rank, num_pro;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank );
-    MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
+
         
                 std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact(t_end)->data();
-        if(rank==0){
+        /*if(rank==0){
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
            std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
         }}MPI_Barrier(MPI_COMM_WORLD);
         if(rank==1){
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
            std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }}
+        }}*/
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << " " <<  std::endl ;
@@ -272,9 +284,15 @@ int main(int argc, char** argv)
   } else if (nsteps != 0) {
     t_end = t_0 + dt * nsteps;
   }
-  const size_t niter = get_value<size_t>("num_iters", 10);
+  const size_t niter = get_value<size_t>("num_iters", 20);
+  
 
-  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
-      MPI_Finalize();
+
+    pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter); 
+    
+
+    MPI_Finalize();
+  
+
 }
 #endif 

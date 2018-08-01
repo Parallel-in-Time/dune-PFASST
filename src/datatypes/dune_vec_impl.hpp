@@ -207,10 +207,10 @@ namespace pfasst
       
       
       double max;
-      auto begin=this->get_data().begin();begin++; begin++;
-      auto end=this->get_data().end();end--; end--;
-      if(rank==0) {begin--;begin--;}
-      if(rank==num_pro-1){end++;end++;} 
+      auto begin=this->get_data().begin();begin++; begin++;begin++;
+      auto end=this->get_data().end();end--; end--;end--;
+      if(rank==0) {begin--;begin--;begin--;}
+      if(rank==num_pro-1){end++;end++;end++;} 
       max = std::abs(*(std::max_element(begin, end,
                                [](const typename EncapsulationTrait::spatial_t& a,
                                   const typename EncapsulationTrait::spatial_t& b)
