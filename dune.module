@@ -8,4 +8,4 @@ Version: 1.0
 Maintainer: r.schoebel@fz-juelich.de
 #depending on
 Depends: dune-common dune-geometry dune-grid dune-localfunctions dune-istl dune-typetree dune-functions dune-matrix-vector dune-fufem 
-Suggests: dune-tnnmg dune-solvers  dune-hpdg dune-pdelab dune-parmg dune-uggrid
+Suggests: dune-tnnmg dune-solvers dune-hpdg dune-pdelab dune-parmg dune-uggrid

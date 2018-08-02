@@ -70,11 +70,11 @@ using std::vector;
 
 #include<dune/istl/paamg/pinfo.hh>
 #include<dune/istl/paamg/graph.hh>
-#if USE_DG
+/*#if USE_DG
 #  include <dune/parmg/test/dglaplacematrix.hh>
 #else
 #  include <dune/parmg/test/laplacematrix.hh>
-#endif
+#endif*/
 #include <dune/parmg/iterationstep/lambdastep.hh>
 #include <dune/parmg/iterationstep/multigrid.hh>
 #include <dune/parmg/iterationstep/multigridstep.hh>

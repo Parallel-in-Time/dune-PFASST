@@ -788,9 +788,9 @@ namespace pfasst
 	solver.preprocess();
 	
 	//solver.setOption(UMFPACK_PRL, 0);
-	//std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
+	std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
     	solver.solve();
-    	//std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << dt << std::endl;
+    	std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << dt << std::endl;
     	u->data()+=delta_u->data();
     	num_solves++;
 

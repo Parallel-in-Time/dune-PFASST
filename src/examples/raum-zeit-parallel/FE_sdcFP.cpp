@@ -156,7 +156,7 @@ namespace pfasst
 
 	  sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
 	      MPI_Barrier(MPI_COMM_WORLD);
-	  std::cout << "FEHLER" << sweeper->get_end_state()->norm0()<< " number solves " << sweeper->num_solves << std::endl ;
+	  std::cout << "FEHLER" << sweeper->get_end_state()->norm0()<< " numbersolves " << sweeper->num_solves << std::endl ;
 	    MPI_Barrier(MPI_COMM_WORLD);
 	    
       /*ofstream f;
