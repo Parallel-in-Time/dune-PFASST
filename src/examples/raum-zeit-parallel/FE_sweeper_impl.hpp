@@ -682,7 +682,7 @@ namespace pfasst
       	  newton_rhs2 = newton_rhs;
       	  
 
-	std::cout  << rank << " im impl solve" << std::endl;
+	//std::cout  << rank << " im impl solve" << std::endl;
      
 	
 	///////////////////////////////////////////////////////////////////////////////////////
@@ -788,9 +788,9 @@ namespace pfasst
 	solver.preprocess();
 	
 	//solver.setOption(UMFPACK_PRL, 0);
-	std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
+	//std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
     	solver.solve();
-    	std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << std::endl;
+    	//std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << dt << std::endl;
     	u->data()+=delta_u->data();
     	num_solves++;
 
@@ -831,9 +831,9 @@ namespace pfasst
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) infinity " << norm_global(f) << std::endl;  	                  
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) energy " << f.infinity_norm() << std::endl;  
            //std::cout << i << " rank "<< rank << " ################################################################################                          residuumsnorm von f(u) " << parallel_energyNorm(f->data()) << std::endl; 
-           //if(i == 3) break; 
+           if(i == 3) break; 
            //std::cout << i << " rank "<< rank << " ################################################################################                          vor energir norm "  << std::endl; 
-           if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
+           //if( parallel_energyNorm(f->data()) < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
            
            //if( f->norm0() < 1e-10) {           std::cout << i << " process rank breaks inner newton " << rank << std::endl;  break;} 
            
@@ -885,7 +885,7 @@ namespace pfasst
 	//std::exit(0);
         this->_num_impl_solves++;
         //if (this->_num_impl_solves==5) std::exit(0);
-	std::cout  << rank << " " << this->_num_impl_solves << " ende impl solve" << std::endl;
+	//std::cout  << rank << " " << this->_num_impl_solves << " ende impl solve" << std::endl;
 
       }
       
