@@ -59,11 +59,7 @@
 
 #include<dune/istl/paamg/pinfo.hh>
 #include<dune/istl/paamg/graph.hh>
-#if USE_DG
-#  include <dune/parmg/test/dglaplacematrix.hh>
-#else
-#  include <dune/parmg/test/laplacematrix.hh>
-#endif
+
 #include <dune/parmg/iterationstep/lambdastep.hh>
 #include <dune/parmg/iterationstep/multigrid.hh>
 #include <dune/parmg/iterationstep/multigridstep.hh>
@@ -98,7 +94,7 @@
 const int BASE_ORDER=1;
 const int DIMENSION=1;
 const int NR_COMP=1;
-const int nelements=128;
+const int nelements=16000;
 const int n_levels=2;
 const double _nu=1;
 const double _n=1;
@@ -218,7 +214,7 @@ int main(int argc, char** argv) {
         //grid_global = std::make_shared<GridType>(L,s,periodic);
 #endif
 	
-	int level_number=;  
+	int level_number=0;  
 	grid->globalRefine(level_number);
 	grid_global->globalRefine(level_number);   
 	 
@@ -337,8 +333,8 @@ int main(int argc, char** argv) {
 	}
 
 	
-	VectorType residuum(M_dune.M()), u(M_dune.M()), rhs(M_dune.M()), f(M_dune.M()), exact(M_dune.M()), newton_rhs(M_dune.M());
-	VectorType residuum_global(M_dune_global.M()), u_global(M_dune_global.M()), rhs_global(M_dune_global.M()), f_global(M_dune_global.M()), exact_global(M_dune_global.M()), newton_rhs_global(M_dune_global.M());
+	VectorType residuum(M_dune.M()), u(M_dune.M()), u_neu(M_dune.M()), rhs(M_dune.M()), f(M_dune.M()), exact(M_dune.M()), newton_rhs(M_dune.M());
+	VectorType residuum_global(M_dune_global.M()), u_global(M_dune_global.M()),u_neu_global(M_dune_global.M()), rhs_global(M_dune_global.M()), f_global(M_dune_global.M()), exact_global(M_dune_global.M()), newton_rhs_global(M_dune_global.M());
 
     
     
@@ -352,7 +348,9 @@ int main(int argc, char** argv) {
                 return pow((1 + (pow(2, _n/2.)-1 )* exp(-(_n/2.)*d*(x+2*l1*t)) ), -2./_n);
         };  
         interpolate(basis, u, initial);
+        interpolate(basis, u_neu, initial);
         interpolate(basis_global, u_global, initial);
+        interpolate(basis_global, u_neu_global, initial);
         double t_end=0.1;
         auto exact_solution = [l0, l1, _n, d, t_end](const Dune::FieldVector<double,1> &x){ 
                 return pow((1 + (pow(2, _n/2.)-1 )* exp(-(_n/2.)*d*(x+2*l1*t_end)) ), -2./_n);
@@ -383,7 +381,9 @@ int main(int argc, char** argv) {
 	
 
 	//start newton to solve the resulting nonlinear system
-	for (int i=0; i< 10 ;i++){
+	//for(int j=0; j < 100; j++)
+	
+	for (int i=0; i< 1000 ;i++){
 	    
 	    //setup jacobi-matrix df and newton_rhs
             MatrixType df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(M_dune); 
@@ -447,8 +447,9 @@ int main(int argc, char** argv) {
 
 	//here we use parmg solver to solve the local system (df * u = newton_rhs) for the unknown u
   	auto &x=u;
+  	x=0;
   	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< FEBasis, MatrixType, VectorType >;
-  	MGSetup mgSetup{*grid,0}; //0 grobgitter
+  	MGSetup mgSetup{*grid}; //0 grobgitter
   	auto gridView = mgSetup.bases_.back().gridView();
  	using MG = Dune::ParMG::Multigrid<VectorType>;
   	MG mg;
@@ -547,11 +548,11 @@ int main(int argc, char** argv) {
 
 
 
-	    for (int k=0; k<u_global.size(); k++)  if (rank==0) std::cout << "Newton " << i << " Index " << k<< " global u " << u_global[k] << " " << std::endl;	
-	    for (int k=0; k<u.size(); k++)  if (rank==0) std::cout << "rank 0 Newton " << i << " Index " << k<< " local u " << u[k] << " " << std::endl;
-	    MPI_Barrier(MPI_COMM_WORLD);
-	    for (int k=0; k<u.size(); k++)  if (rank==num_pro-1) std::cout << "rank 2 Newton " << i << " Index " << k<< " local u " << u[k] << " " << std::endl;
-	    MPI_Barrier(MPI_COMM_WORLD);
+	    //for (int k=0; k<u_global.size(); k++)  if (rank==0) std::cout << "Newton " << i << " Index " << k<< " global u " << u_global[k] << " " << std::endl;	
+	    //for (int k=0; k<u.size(); k++)  if (rank==0) std::cout << "rank 0 Newton " << i << " Index " << k<< " local u " << u[k] << " " << std::endl;
+	    //MPI_Barrier(MPI_COMM_WORLD);
+	    //for (int k=0; k<u.size(); k++)  if (rank==num_pro-1) std::cout << "rank 2 Newton " << i << " Index " << k<< " local u " << u[k] << " " << std::endl;
+	    //MPI_Barrier(MPI_COMM_WORLD);
 
             evaluate_f(f_global, u_global, rhs_global, M_dune_global, A_dune_global, *w_global);   
             evaluate_f(f, u, rhs, M_dune, A_dune, *w); 
@@ -588,7 +589,7 @@ int main(int argc, char** argv) {
 
 	//for(int i=0; i<u.size(); i++){std::cout << "***** Loesung " << u[i] << " exact "<< exact[i] << std::endl;}
 
-	std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
+	/*std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
 	std::shared_ptr<TransferOperatorAssembler<GridType>> transfer_global;
 	std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 	std::shared_ptr<std::vector<MatrixType*>> transferMatrix_global;  
@@ -641,23 +642,7 @@ int main(int argc, char** argv) {
 	      	}
 	}
 	
-	/*for (int i=0; i< interpolate_matrix.N(); i++){
-	      for (int j=0; j< interpolate_matrix.M(); j++){
-		if(interpolate_matrix.exists(i,j)){
-		  std::cout << (interpolate_matrix[i][j]) << std::endl;
-		}
-	      }
 
-        }
-	
-	for (int i=0; i< restrict_matrix.N(); i++){
-	      for (int j=0; j< restrict_matrix.M(); j++){
-		if(restrict_matrix.exists(i,j)){
-		  std::cout << (restrict_matrix[i][j]) << std::endl;
-		}
-	      }
-
-        }*/
 
 	restrict_matrix.mtv(u, coarse);
 	restrict_matrix_global.mtv(u_global, coarse_global);
@@ -665,7 +650,7 @@ int main(int argc, char** argv) {
 	interpolate_matrix_global.mtv(u_global, coarse_global);
 	
 	interpolate_matrix.mv(coarse, u);
-	interpolate_matrix_global.mv(coarse_global, u_global);
+	interpolate_matrix_global.mv(coarse_global, u_global);*/
 
 	//for (int i=0; i<coarse_global.size(); i++)  if (rank==0) std::cout <<i << " global u " << coarse_global[i] << " " << std::endl;
 	//for (int i=0; i<coarse.size(); i++)  if (rank==0) std::cout <<i << " local u " << coarse[i] << " " << std::endl;		
