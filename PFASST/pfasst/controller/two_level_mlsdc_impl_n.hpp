@@ -177,7 +177,7 @@ namespace pfasst
           this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
 
 
-	  std::cout << "#########################################  im predict mlsdc "  << std::endl;std::exit(0);
+	  //std::cout << "#########################################  im predict mlsdc "  << std::endl;std::exit(0);
           // ... and spread it to all nodes on the coarse level
           this->get_coarse()->spread_Newton(); 
 	  this->get_fine()->spread_Newton();

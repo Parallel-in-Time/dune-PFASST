@@ -29,6 +29,51 @@ using boost::math::constants::pi_sqr;
 #include <iostream>
 //#include <c++/4.8/memory>
 
+
+/*#include<dune/istl/paamg/pinfo.hh>
+#include<dune/istl/paamg/graph.hh>
+#if USE_DG
+#  include <dune/parmg/test/dglaplacematrix.hh>
+#else
+#  include <dune/parmg/test/laplacematrix.hh>
+#endif
+#include <dune/parmg/iterationstep/lambdastep.hh>
+#include <dune/parmg/iterationstep/multigrid.hh>
+#include <dune/parmg/iterationstep/multigridstep.hh>
+#include <dune/parmg/norms/normadapter.hh>
+#include <dune/parmg/parallel/communicationp1.hh>
+#include <dune/parmg/parallel/communicationdg.hh>
+#include <dune/parmg/parallel/datahandle.hh>
+#include <dune/parmg/parallel/dofmap.hh>
+#include <dune/parmg/parallel/globaldofindex.hh>
+#include <dune/parmg/parallel/istlcommunication.hh>
+#include <dune/parmg/parallel/matrixalgebra.hh>
+#include <dune/parmg/parallel/vectoralgebra.hh>
+#include <dune/parmg/parallel/redistributematrix.hh>
+#include <dune/parmg/parallel/redistributevector.hh>
+#include <dune/parmg/parallel/parallelenergyfunctional.hh>
+#include <dune/parmg/parallel/parallelenergynorm.hh>
+#include <dune/parmg/parallel/restrictmatrix.hh>
+#include <dune/parmg/solvers/coarsesuperlusolver.hh>
+#include <dune/parmg/solvers/linesearch.hh>
+#include <dune/parmg/solvers/directionsearch.hh>
+#include <dune/parmg/iterationstep/multigridsetup.hh>
+#include <dune/parmg/iterationstep/parallelprojectedgs.hh>
+
+#include <dune/solvers/iterationsteps/blockgssteps.hh>
+#include <dune/solvers/norms/energynorm.hh>
+#include <dune/solvers/solvers/loopsolver.hh>
+#include <dune/solvers/transferoperators/compressedmultigridtransfer.hh>
+
+
+
+using namespace std;
+//using namespace Dune;
+
+//using namespace Dune;
+using namespace Dune::ParMG;*/
+
+
 namespace pfasst
 {
   namespace examples
@@ -502,16 +547,17 @@ namespace pfasst
           //std::cout << "residuums norm " << residuum->norm0() << std::endl;
           //if (residuum->norm0()< _abs_newton_tol){break;}
           evaluate_f(f, u, dt, rhs);
-        int my_rank, num_pro;
+        //int my_rank, num_pro;
         //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
+        std::cout << i << " " << f->norm0() << " " << this->newton << std::endl;
+          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
 	  
-          for (size_t i = 0; i < u->get_data().size(); i++) {
+          /*for (size_t i = 0; i < u->get_data().size(); i++) {
 
 	    //std::cout << "u " << u->data()[i] << std::endl;
 
-          }
+          }*/
 	}
 
 	

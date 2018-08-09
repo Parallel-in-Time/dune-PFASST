@@ -64,7 +64,7 @@ namespace pfasst
       void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t DIM, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
-                                           const size_t niter) {
+                                           const size_t niter, const double newton) {
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
         auto FinEl = make_shared<fe_manager>(nelements, 2);
@@ -79,7 +79,12 @@ namespace pfasst
 
         
         coarse->is_coarse=true;
+        coarse->newton=newton;
         fine->is_coarse=false;
+        fine->newton=newton;
+        //coarse->is_coarse=true;
+        //fine->is_coarse=false;
+        
         
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(FinEl);
@@ -246,6 +251,7 @@ int main(int argc, char** argv)
   const double dt = get_value<double>("dt", 0.05);
   double t_end = get_value<double>("tend", 0.1);
   size_t nsteps = get_value<size_t>("num_steps", 0);
+  double newton = get_value<size_t>("newton", 1e-6);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -261,6 +267,6 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
 
-  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter);
+  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, DIM, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton);
 }
 #endif 

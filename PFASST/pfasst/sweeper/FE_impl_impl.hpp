@@ -75,7 +75,7 @@ using std::vector;
 #else
 #  include <dune/parmg/test/laplacematrix.hh>
 #endif*/
-#include <dune/parmg/iterationstep/lambdastep.hh>
+/*#include <dune/parmg/iterationstep/lambdastep.hh>
 #include <dune/parmg/iterationstep/multigrid.hh>
 #include <dune/parmg/iterationstep/multigridstep.hh>
 #include <dune/parmg/norms/normadapter.hh>
@@ -103,7 +103,7 @@ using std::vector;
 #include <dune/solvers/solvers/loopsolver.hh>
 #include <dune/solvers/transferoperators/compressedmultigridtransfer.hh>
 
-using namespace Dune::ParMG;
+using namespace Dune::ParMG;*/
 
 namespace pfasst
 {
@@ -152,7 +152,7 @@ namespace pfasst
 
     ML_CLOG_IF(this->get_quadrature()->left_is_node(), WARNING, this->get_logger_id(),
       "IMEX Sweeper for quadrature nodes containing t_0 not implemented and tested.");
-
+    //std::cout << "wird benutzt " << std::endl; std::exit(0);
     this->initialize();
   }
 
@@ -192,7 +192,7 @@ namespace pfasst
     ML_CLOG(INFO, this->get_logger_id(),  "Predicting from t=" << t << " over " << num_nodes << " nodes"
                           << " to t=" << (t + dt) << " (dt=" << dt << ")");
     typename traits::time_t tm = t;
-    	int my_rank, num_pro;
+    	//int my_rank, num_pro;
         //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
         //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );MPI_Barrier(MPI_COMM_WORLD); 
     for (size_t m = 0; m < num_nodes; ++m) {
@@ -309,7 +309,7 @@ namespace pfasst
       // compute right hand side for implicit solve (i.e. the explicit part of the propagation)
       //std::cout << "vorm create rhs" << std::endl;	
       shared_ptr<typename traits::encap_t> rhs = this->get_encap_factory().create();
-      //std::cout << "nach create rhs " << std::endl;
+      std::cout << "nach create rhs " << std::endl;
       // rhs = u_0
       
       if (is_coarse){
@@ -359,7 +359,9 @@ namespace pfasst
       //std::exit(0);
       // solve the implicit part
       ML_CVLOG(4, this->get_logger_id(), "  solve(u["<<(m+1)<<"] - dt * QI_{"<<(m+1)<<","<<(m+1)<<"} * f_im["<<(m+1)<<"] = rhs)");
+      std::cout << "vor solve " << std::endl;
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], tm, dt * this->_q_delta_impl(m+1, m+1), rhs);
+      std::cout << "nach solve" << std::endl;
     //std::cout << "ende aufruuf impl solve " << std::endl;
       // reevaluate the explicit part with the new solution value
       tm += dt * this->_q_delta_impl(m+1, m+1);
@@ -515,8 +517,8 @@ namespace pfasst
     assert(this->get_status() != nullptr);
     assert(this->get_quadrature() != nullptr);
     assert(this->get_initial_state() != nullptr);
-    int rank, num_pro;
-    MPI_Comm_rank(this->comm, &rank );
+    //int rank, num_pro;
+    //MPI_Comm_rank(this->comm, &rank );
     const typename traits::time_t dt = this->get_status()->get_dt();
     const size_t num_nodes = this->get_quadrature()->get_num_nodes() + 1;
     //if (rank==0) std::cout << "***************************************************************  compute residuuals " << std::endl;

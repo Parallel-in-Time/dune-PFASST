@@ -48,6 +48,8 @@ namespace pfasst
                                                            shared_ptr<typename TransferTraits::fine_sweeper_t> fine,
                                                            const bool initial)
   {
+
+
     ML_CVLOG(1, "TRANS", "interpolate");
 
     if (coarse->get_quadrature()->left_is_node() || fine->get_quadrature()->left_is_node()) {
@@ -78,7 +80,9 @@ namespace pfasst
 
     //  c_delta = restrict(u_m^F) - u_m^C
     //  f_delta = interpolate(c_delta)
+
     auto coarse_delta = coarse_factory.create();
+
     for (size_t m = 1; m < num_coarse_nodes; ++m) {
       this->restrict_data(fine->get_states()[m], coarse_delta);
       coarse_delta->scaled_add(-1.0, coarse->get_states()[m]);
@@ -104,6 +108,7 @@ namespace pfasst
 
     // update function evaluations on fine level
     fine->reevaluate();
+
   }
 
   template<class TransferTraits, typename Enabled>

@@ -98,11 +98,11 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::predict()
   {
     
-        int myrank, num_pro;
+        /*int myrank, num_pro;
         MPI_Comm_rank(MPI_COMM_WORLD, &myrank );
         MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
 
-	std::cout << myrank << " anfang predict " << std::endl;
+	std::cout << myrank << " anfang predict " << std::endl;*/
         Sweeper<SweeperTrait, BaseFunction, Enabled>::predict();
         assert(this->get_quadrature() != nullptr);
         assert(this->get_status() != nullptr);
@@ -132,12 +132,12 @@ namespace pfasst
 
     }
 
-        int my_rank;
+        /*int my_rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
 	MPI_Status Stat;
 	if(my_rank==0) 	MPI_Send(&(this->last_newton_state()[0][num_nodes]->data()[0]), this->last_newton_state()[0][num_nodes]->data().size(),  MPI_FLOAT, 1,77, MPI_COMM_WORLD);
 	if(my_rank==1) 	MPI_Recv(&(this->get_states()[0]->data()[0]), this->last_newton_state()[0][num_nodes]->data().size(),  MPI_FLOAT, 0,77, MPI_COMM_WORLD, &Stat);
-        this->_impl_rhs.front() = this->evaluate_rhs_impl(0, this->get_states().front());
+        this->_impl_rhs.front() = this->evaluate_rhs_impl(0, this->get_states().front());*/
 
   }
 

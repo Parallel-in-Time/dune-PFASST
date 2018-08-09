@@ -181,9 +181,11 @@ namespace pfasst
           this->get_coarse()->save();
 
           this->predict_coarse();
-
+	            ML_CLOG(INFO, this->get_logger_id(), "vor cycle");
           this->cycle_up();
+
           this->sweep_fine();
+
 
         } else {
           ML_CLOG(INFO, this->get_logger_id(), "");
@@ -369,5 +371,6 @@ namespace pfasst
     this->status()->set_secondary_state(SecondaryState::CYCLE_UP);
 
     this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true);
+
   }
 }  // ::pfasst

@@ -143,7 +143,8 @@ namespace pfasst
       
         size_t _size;
         MatrixType A_dune;
-        MPI_Comm comm_x;
+        
+        //MPI_Comm comm_x;
 
 	//typename std::shared_ptr<typename EncapsulationTrait::gfs_t> _gfs;
 	//typename EncapsulationTrait::gfs_t *_gfs;
@@ -156,11 +157,11 @@ namespace pfasst
         virtual ~EncapsulationFactory() = default;
         EncapsulationFactory<EncapsulationTrait>& operator=(const EncapsulationFactory<EncapsulationTrait>& other);
         EncapsulationFactory<EncapsulationTrait>& operator=(EncapsulationFactory<EncapsulationTrait>&& other);
-        void set_comm(MPI_Comm comm){comm_x=comm;}  
+        //void set_comm(MPI_Comm comm){comm_x=comm;}  
         virtual shared_ptr<Encapsulation<EncapsulationTrait>> create() const;
 
         virtual void set_size(const size_t& size);
-        virtual void set_FE_manager(std::shared_ptr<fe_manager> FinEl, int nlevel, MatrixType M);
+        //virtual void set_FE_manager(std::shared_ptr<fe_manager> FinEl, int nlevel, MatrixType M);
         //virtual void set_gfs(typename EncapsulationTrait::gfs_t& gfs);
         virtual size_t size() const;
     };

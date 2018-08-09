@@ -52,7 +52,7 @@ namespace pfasst
                                        const QuadratureType& quad_type, const double& t_0,
                                        const double& dt, const double& t_end, const size_t niter, double newton)
       {
-      
+   //   
       
       
       	            int rank, num_pro;
@@ -62,9 +62,9 @@ namespace pfasst
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
 	
-	auto FinEl   = make_shared<fe_manager>(nelements,2); 
+	auto FinEl   = make_shared<fe_manager>(nelements,4); 
 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 1); //fine 0
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0); //fine 0   1
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton;

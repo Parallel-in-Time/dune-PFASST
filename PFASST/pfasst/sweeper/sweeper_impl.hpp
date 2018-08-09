@@ -545,14 +545,20 @@ namespace pfasst
 
     assert(this->get_residuals().back() != nullptr);
 
+#if HAVE_MPI
     this->_abs_res_norms.back() = this->get_residuals().back()->norm0(true, this->comm);//ruth
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
+#else
+    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();//ruth
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); //ruth
+#endif        
     //std::cout <<"hier abs res " << this->get_residuals().back()->norm0(true, this->comm) << std::endl;
-    int rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    //int rank;
+    //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     /*for(int i=0; i< this->get_residuals().back()->get_data().size(); i++){
     	if(rank==0) std::cout << this->get_residuals().back()->get_data()[i] << std::endl;
     }*/
-    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
+
     if (pre_check) {
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");
@@ -576,9 +582,15 @@ namespace pfasst
     } else {
       for (size_t m = 0; m < num_residuals - 1; ++m) {
         assert(this->get_residuals()[m] != nullptr);
+#if HAVE_MPI        
         const auto norm = this->get_residuals()[m]->norm0(true, this->comm);
         this->_abs_res_norms[m] = norm;
         this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0(true, this->comm);
+#else
+        const auto norm = this->get_residuals()[m]->norm0();
+        this->_abs_res_norms[m] = norm;
+        this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0();
+#endif
       }
 
       this->status()->abs_res_norm() = *(std::max_element(this->_abs_res_norms.cbegin(), this->_abs_res_norms.cend()));

@@ -673,6 +673,9 @@ namespace pfasst
         
 	for (int i=0; i< 10 ;i++){
 	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
+
+	  
+	  
 	  evaluate_f(f, u, dt, rhs);
 
 	  evaluate_df(df, u, dt);
@@ -692,7 +695,7 @@ namespace pfasst
   	using MGSetup = Dune::ParMG::ParallelMultiGridSetup< BasisFunction, MatrixType, VectorType >;
 
 
-  	MGSetup mgSetup{*grid,grid->maxLevel() - (this->nlevel)};//sdc -1 mlsdc - (this->nlevel)}; //0 grobgitter
+  	MGSetup mgSetup{*grid, grid->maxLevel() - (this->nlevel)};//sdc -1 mlsdc - (this->nlevel)}; //0 grobgitter
 
   	auto gridView = mgSetup.bases_.back().gridView();
  	using MG = Dune::ParMG::Multigrid<VectorType>;
@@ -766,18 +769,21 @@ namespace pfasst
       		restrictToMaster
       	);
       	
-      	auto vz =  this->A_dune;
-	vz *=-1;
+      	//auto vz =  this->A_dune;
+	//vz *=-1;
     	auto energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(*df_pointer, restrictToMaster, gridView.grid().comm()); //*df_pointer
     	levelOp.back().maybeCopyFromMaster(delta_u->data()); //abst
-    	double tol = 1e-12;
+    	double tol = 1e-8;
     	//std::cout << "im sweeper vor apply" << std::endl;
 	//MPI_Barrier(MPI_COMM_WORLD);
 	
         collect(newton_rhs);
     	auto realIterationStep = [&](VectorType& x) {
+    	        //std::cout << "******************** realIterationStep " << std::endl;
       		auto b = newton_rhs;
+      		//std::cout << "******************** realIterationStep 1" << std::endl;
       		mg.apply(x, b);
+      		//std::cout << "******************** realIterationStep 2" << std::endl;
     	};
   	auto& feBasis = mgSetup.bases_.back();
     	auto solverNorm = std::make_shared< NormAdapter<VectorType> >(energyNorm);
@@ -788,9 +794,9 @@ namespace pfasst
 	solver.preprocess();
 	
 	//solver.setOption(UMFPACK_PRL, 0);
-	std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
+	//std::cout  << rank << " " << this->_num_impl_solves << " vor solver solve" << std::endl;
     	solver.solve();
-    	std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << dt << std::endl;
+    	//std::cout  << rank << " " << this->_num_impl_solves << " nach solver solve" << dt << std::endl;
     	u->data()+=delta_u->data();
     	num_solves++;
 
@@ -826,7 +832,7 @@ namespace pfasst
   
 	    
 //MPI_Barrier(MPI_COMM_WORLD); std::exit(0);
-	   auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(vz, restrictToMaster, gridView.grid().comm());
+	   //auto parallel_energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(vz, restrictToMaster, gridView.grid().comm());
 	    
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) infinity " << norm_global(f) << std::endl;  	                  
             //if (rank==0) std::cout << i << " residuumsnorm von f_global(u) energy " << f.infinity_norm() << std::endl;  

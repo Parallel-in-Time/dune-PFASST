@@ -1,5 +1,5 @@
 //#include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
-
+//#include <config.h>
 #include <memory>
 #include <stdexcept>
 using std::shared_ptr;
@@ -85,6 +85,9 @@ namespace pfasst
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
+        //coarse->comm=MPI_COMM_SELF;
+        //fine->comm=MPI_COMM_SELF;
+
 
         std::cout << "hier im code" <<std::endl;
         //pfasst.add_sweeper(coarse, true);
@@ -118,9 +121,9 @@ namespace pfasst
         if(my_rank==num_pro-1) {
           auto naeherung = fine->get_end_state()->data();
           auto exact = fine->exact(t_end)->data();
-          /*for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
+          for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
             std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-          }*/
+          }
           std::cout << "******************************************* " << std::endl;
           std::cout << " " << std::endl;
           std::cout << " " << std::endl;
@@ -176,6 +179,8 @@ namespace pfasst
 
 int main(int argc, char** argv)
 {
+
+
   using pfasst::config::get_value;
   using pfasst::quadrature::QuadratureType;
 

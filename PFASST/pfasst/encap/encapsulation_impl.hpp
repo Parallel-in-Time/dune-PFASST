@@ -35,7 +35,7 @@ namespace pfasst
               const bool zero_vec_x)
     {
        int rank, num_pro;
-       MPI_Comm_rank(MPI_COMM_WORLD, &rank );
+       //MPI_Comm_rank(MPI_COMM_WORLD, &rank );
       CLOG_IF(x.size() != (size_t)mat.rows(), WARNING, "ENCAP")
         << "size of result vector (" << x.size()
         << ") does not match result of matrix-vector multiplication (" << mat.rows() << ")";
