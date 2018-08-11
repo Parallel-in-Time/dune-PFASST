@@ -18,10 +18,10 @@ using std::shared_ptr;
 #include <vector>
 
 
-//#include "FE_sweeper.hpp"
+#include "../1d_transfer/fe_manager.hpp"
 #include "fischer_sweeper.hpp"
-#include "../../datatypes/dune_vec.hpp"
-#include "spectral_transfer.hpp"
+#include <pfasst/encap/dune_vec.hpp>
+#include "../1d_transfer/spectral_transfer.hpp"
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;

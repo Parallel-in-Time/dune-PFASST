@@ -30,18 +30,22 @@ namespace pfasst
    */
   template<
     class SweeperTrait,
+    class BaseFunction,
     typename Enabled = void
   >
   class IMEX
-    : public Sweeper<SweeperTrait, Enabled>
+    : public Sweeper<SweeperTrait, BaseFunction, Enabled>
   {
     public:
       //! @copydoc Sweeper::traits
       using traits = SweeperTrait;
 
+
+
+
     //protected:
-    //vector<shared_ptr<typename traits::encap_t>>        _states;
-      vector<shared_ptr<typename traits::encap_t>>        _last_newton_state;  
+
+
       //typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
 
 
@@ -55,18 +59,14 @@ namespace pfasst
       
       bool is_coarse;
       
+      bool dontmatter= true;
+      
+      //std::shared_ptr<MatrixType> M_dune;
+      //std::shared_ptr<MatrixType> A_dune;
+
       MatrixType M_dune;
       MatrixType A_dune;
-
-
-      virtual void spread_Newton();
-      /**
-       * Save solution at all time nodes.
-       *
-       * This copies the spatial values of all `states()` to `previous_states()`.
-       */
-
-
+      
       //Dune::BCRSMatrix <Dune::FieldMatrix<double, 2, 2>> M_dune;
 
       /**
@@ -176,20 +176,15 @@ namespace pfasst
       //! @}
 
     public:
-      //            vector<shared_ptr<typename SweeperTrait::encap_t>>& states();
-      virtual       vector<shared_ptr<typename SweeperTrait::encap_t>>& last_newton_state();
-      virtual const vector<shared_ptr<typename SweeperTrait::encap_t>>& get_last_newton_state() const; 
-        
-
-      
-      
+      bool                                            _write = false;
+  
       //! @{
       explicit IMEX();
-      IMEX(const IMEX<SweeperTrait, Enabled>& other) = default;
-      IMEX(IMEX<SweeperTrait, Enabled>&& other) = default;
+      IMEX(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;
+      IMEX(IMEX<SweeperTrait, BaseFunction, Enabled>&& other) = default;
       virtual ~IMEX() = default;
-      IMEX<SweeperTrait, Enabled>& operator=(const IMEX<SweeperTrait, Enabled>& other) = default;
-      IMEX<SweeperTrait, Enabled>& operator=(IMEX<SweeperTrait, Enabled>&& other) = default;
+      IMEX<SweeperTrait, BaseFunction, Enabled>& operator=(const IMEX<SweeperTrait, BaseFunction, Enabled>& other) = default;
+      IMEX<SweeperTrait, BaseFunction, Enabled>& operator=(IMEX<SweeperTrait, BaseFunction, Enabled>&& other) = default;
       //! @}
 
       //! @name Configuration and Setup
@@ -299,6 +294,6 @@ namespace pfasst
   };
 }  // ::pfasst
 
-#include "pfasst/sweeper/Newton_Sweeper_impl.hpp"
+#include "pfasst/sweeper/Newton_FE_impl_impl.hpp"
 
 #endif  // _PFASST__SWEEPER__IMEX_HPP_

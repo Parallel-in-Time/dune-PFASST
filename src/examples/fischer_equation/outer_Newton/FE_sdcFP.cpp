@@ -6,18 +6,14 @@
 #include <pfasst/controller/sdc_n.hpp>
 #include <pfasst/contrib/spectral_transfer.hpp>
 
-#include "../../datatypes/dune_vec.hpp"
+#include <pfasst/encap/dune_vec.hpp>
 #include "fischer_sweeper.hpp"
 
-//#include "assemble.hpp"
+
 
 #include <dune/fufem/functionspacebases/p1nodalbasis.hh>
 #include <dune/fufem/assemblers/operatorassembler.hh>
 #include <dune/fufem/assemblers/functionalassembler.hh>
-//#include <dune/fufem/assemblers/localassemblers/laplaceassembler.hh>
-//#include <dune/fufem/assemblers/localassemblers/massassembler.hh>
-//#include <dune/fufem/assemblers/localassemblers/l2functionalassembler.hh>
-//#include <dune/fufem/functiontools/basisinterpolator.hh>
 
 
 using namespace pfasst::examples::fischer_example;

@@ -14,7 +14,8 @@ using std::vector;
 //#include <pfasst/sweeper/imex.hpp>
 
 #include <pfasst/contrib/fft.hpp>
-#include "fe_manager_fp.hpp"
+//#include "fe_manager_fp.hpp"
+#include "../1d_transfer/fe_manager_fp.hpp"
 //#include "fe_manager_hi.hpp"
 
 

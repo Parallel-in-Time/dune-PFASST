@@ -9,16 +9,12 @@ using std::vector;
 
 #include <vector>
 
-//#include <pfasst/sweeper/FE_imex.hpp>
 #include <pfasst/sweeper/FE_impl.hpp>
-//#include <pfasst/sweeper/imex.hpp>
 
 #include <pfasst/contrib/fft.hpp>
-#include "../../finite_element_stuff/fe_manager_fp.hpp"
-//#include "fe_manager_hi.hpp"
+#include "../../../finite_element_stuff/fe_manager_fp.hpp"
 
 
-//using namespace Dune;
 
 namespace pfasst
 {
@@ -56,58 +52,38 @@ namespace pfasst
       {
         static_assert(std::is_same<
                         typename SweeperTrait::encap_t::traits::dim_t,
-                        std::integral_constant<size_t, 1>  //ruth_dim
+                        std::integral_constant<size_t, 1>  //dimension
                       >::value,
                       "Heat_FE Sweeper requires 2D data structures");
 
         public:
-	  int                                             num_solves=0;        
+	  int                                             num_solves=0; //how often the linear system is solved 
+          double                                         newton = 1e-6;	//tollerance         
           using traits = SweeperTrait;
 
           static void init_opts();
-          double                                         newton;
+
         private:
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
           double                                     	 _nu{1.0};
           double                                     	 _n{1.0};
-          //double                                      	 _delta{1.0};
-
-	  
-	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
-          vector<vector<spatial_t>>                      _lap;
-
 
 	  std::shared_ptr<fe_manager> FinEl;
 
-	  
-	  
-	  //________________________________________________________
-	  
-	  
-    
-	  //________________________________________________________
-	  
-
-	  //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType;
-          //typedef Dune::YaspGrid<1> GridType; 
-	  //typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
           std::shared_ptr<GridType> grid;
 
-
-
-          //typedef GridType::LeafGridView GridView;
-	  typedef GridType::LevelGridView GridView;
-
-          using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
-          //std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LeafGridView,SweeperTrait::BASE_ORDER>> basis; 
           std::shared_ptr<BasisFunction> basis;
 
+	  typedef GridType::LevelGridView GridView;
+
+          //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
+
+
+
         protected:
-          /*virtual shared_ptr<typename SweeperTrait::encap_t>
-          evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
-                            const shared_ptr<typename SweeperTrait::encap_t> u) override;*/
+
 
           virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_impl(const typename SweeperTrait::time_t& t,

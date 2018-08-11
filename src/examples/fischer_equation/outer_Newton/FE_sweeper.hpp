@@ -1,16 +1,6 @@
 #ifndef _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 #define _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
 
-#include <dune/common/densematrix.hh>
-
-#include <dune/istl/bvector.hh>
-#include <dune/istl/bcrsmatrix.hh>
-#include <dune/istl/multitypeblockmatrix.hh>
-
-#include <dune/grid/yaspgrid.hh>
-
-#include <dune/functions/functionspacebases/pqknodalbasis.hh>
-
 #include <memory>
 #include <type_traits>
 
@@ -19,20 +9,20 @@ using std::vector;
 
 #include <vector>
 
-#include <pfasst/sweeper/imex.hpp>
+#include <pfasst/sweeper/Newton_FE_impl.hpp> //implicit finite element sweeper
 #include <pfasst/contrib/fft.hpp>
 
-#include "../../finite_element_stuff/fe_manager_fp.hpp"
+//#include "fe_manager.hpp"
 
 
-using namespace Dune;
 
 namespace pfasst
 {
   namespace examples
   {
-    namespace heat_FE
+    namespace FE_sweeper
     {
+        //dune_sweeper_traits must be somewhere else!
         template<
                 class EncapsulationTraits,
                 size_t base_order,
@@ -56,10 +46,11 @@ namespace pfasst
 
       template<
         class SweeperTrait,
+        class BaseFunction,
         typename Enabled = void
       >
       class Heat_FE
-        : public IMEX<SweeperTrait, Enabled>
+        : public IMEX<SweeperTrait, BaseFunction, Enabled>
       {
         static_assert(std::is_same<
                         typename SweeperTrait::encap_t::traits::dim_t,
@@ -71,56 +62,24 @@ namespace pfasst
           using traits = SweeperTrait;
 
           static void init_opts();
-
-        private:
-          using spatial_t = typename traits::spatial_t;
-
-          typename traits::time_t                        _t0{0.0};
-          double                                     	 _nu{1.0};
-	  double                                      	 _delta{1.0};
-	  
-	  pfasst::contrib::FFT<typename traits::encap_t> _fft;
-          vector<vector<spatial_t>>                      _lap;
-
-
-          typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > MatrixType;
+	  int _iterations{0};
           
-	  
-	  typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 
-	  
-	  
-	  std::shared_ptr<fe_manager> FinEl;
-	  
-          Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M_dune;
-          Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > A_dune;
-	  
-	  
-	  //________________________________________________________
-	  
-	  
-    
-	  //________________________________________________________
-	  
-
-	  typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType;
-          //typedef Dune::YaspGrid<1> GridType; 
-	  //typedef Dune::YaspGrid<1,EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
-          //std::shared_ptr<GridType> grid;
-
-
-
-          //typedef GridType::LeafGridView GridView;
-	  typedef GridType::LevelGridView GridView;
-
-          using BasisFunction = Functions::PQkNodalBasis<GridView,1>; //SweeperTrait::BASE_ORDER>;
-          std::shared_ptr<BasisFunction> basis;
 
         protected:
-          virtual shared_ptr<typename SweeperTrait::encap_t>
-          evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
-                            const shared_ptr<typename SweeperTrait::encap_t> u) override;
+            
 
+          using spatial_t = typename traits::spatial_t;
+
+ 
+
+          size_t nlevel;
+	  //std::shared_ptr<fe_manager> FinEl;
+          std::shared_ptr<GridType> grid;
+	  typedef GridType::LevelGridView GridView;
+          std::shared_ptr<BaseFunction> basis;   
+
+          
           virtual shared_ptr<typename SweeperTrait::encap_t>
           evaluate_rhs_impl(const typename SweeperTrait::time_t& t,
                             const shared_ptr<typename SweeperTrait::encap_t> u) override;
@@ -137,21 +96,24 @@ namespace pfasst
           virtual vector<shared_ptr<typename SweeperTrait::encap_t>>
           compute_relative_error(const vector<shared_ptr<typename SweeperTrait::encap_t>>& error,
                                  const typename SweeperTrait::time_t& t);
+	  
 
         public:
           //explicit Heat_FE(const size_t nelements, const size_t basisorder);
-	  explicit Heat_FE(std::shared_ptr<fe_manager>, size_t);
+	  //explicit Heat_FE(std::shared_ptr<Dune::Functions::PQkNodalBasis<GridType::LevelGridView,SweeperTrait::BASE_ORDER>> basis, size_t, std::shared_ptr<GridType> grid);
+	  explicit Heat_FE(std::shared_ptr<BaseFunction> basis, size_t, std::shared_ptr<GridType> grid);
 	  
-          Heat_FE(const Heat_FE<SweeperTrait, Enabled>& other) = default;
-          Heat_FE(Heat_FE<SweeperTrait, Enabled>&& other) = default;
+          
+          
+          Heat_FE(const Heat_FE<SweeperTrait, BaseFunction, Enabled>& other) = default;
+          Heat_FE(Heat_FE<SweeperTrait, BaseFunction, Enabled>&& other) = default;
           virtual ~Heat_FE() = default;
-          Heat_FE<SweeperTrait, Enabled>& operator=(const Heat_FE<SweeperTrait, Enabled>& other) = default;
-          Heat_FE<SweeperTrait, Enabled>& operator=(Heat_FE<SweeperTrait, Enabled>&& other) = default;
+          Heat_FE<SweeperTrait, BaseFunction, Enabled>& operator=(const Heat_FE<SweeperTrait, BaseFunction, Enabled>& other) = default;
+          Heat_FE<SweeperTrait, BaseFunction, Enabled>& operator=(Heat_FE<SweeperTrait, BaseFunction, Enabled>&& other) = default;
 
           virtual void set_options() override;
 
           virtual shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t);
-	  virtual shared_ptr<typename SweeperTrait::encap_t> source(const typename SweeperTrait::time_t& t);
 	  
 	  
           virtual void post_step() override;
@@ -161,14 +123,26 @@ namespace pfasst
 
           size_t get_num_dofs() const;
 
-          //shared_ptr<GridType> get_grid() const;
+          auto get_A_dune() const {
+            return this->A_dune;
+          }
 	  
 	
       };
+      
+      
+      
+     
+      
+      
     }  // ::pfasst::examples::heat_FE
   }  // ::pfasst::examples
 }  // ::pfasst
 
 #include "FE_sweeper_impl.hpp"
+
+
+
+
 
 #endif  // _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_

@@ -10,7 +10,7 @@ using namespace std;
 #include "pfasst/quadrature.hpp"
 #include "pfasst/contrib/fft.hpp"
 
-#include "../../datatypes/dune_vec.hpp"
+#include "../../../datatypes/dune_vec.hpp"
 
 const int dim=1;
 

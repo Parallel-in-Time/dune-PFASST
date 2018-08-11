@@ -16,7 +16,7 @@
 
 #include "FE_sweeper.hpp"
 
-#include "../../datatypes/dune_vec.hpp"
+#include <pfasst/encap/dune_vec.hpp>
 
 //////////////////////////////////////////////////////////////////////////////////////
 //

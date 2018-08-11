@@ -13,13 +13,6 @@
 using std::shared_ptr;
 using std::vector;
 
-//#include <leathers/push>
-//#include <leathers/all>
-#include <boost/math/constants/constants.hpp>
-//#include <leathers/pop>
-using boost::math::constants::pi;
-using boost::math::constants::two_pi;
-using boost::math::constants::pi_sqr;
 
 #include <pfasst/globals.hpp>
 #include <pfasst/util.hpp>
@@ -27,7 +20,8 @@ using boost::math::constants::pi_sqr;
 #include <pfasst/config.hpp>
 
 #include <iostream>
-//#include <c++/4.8/memory>
+
+
 
 namespace pfasst
 {
@@ -39,12 +33,7 @@ namespace pfasst
       void
       Heat_FE<SweeperTrait, Enabled>::init_opts()
       {
-        /*config::options::add_option<size_t>("Heat FE", "num_dofs",
-                                            "number spatial degrees of freedom per dimension on fine level");
-        config::options::add_option<size_t>("Heat FE", "coarse_factor",
-                                            "coarsening factor");
-        config::options::add_option<spatial_t>("Heat FE", "nu",
-                                               "thermal diffusivity");*/
+
       }
 
       
@@ -54,27 +43,7 @@ namespace pfasst
 
       {
       
-	/*Dune::FieldVector<double,SweeperTrait::DIM> hR = {20};
-	Dune::FieldVector<double,SweeperTrait::DIM> hL = {-20};
-        array<int,SweeperTrait::DIM> n;
 
-	std::fill(n.begin(), n.end(), nelements);
-
-        this->grid = std::make_shared<GridType>(hL, hR, n);
-        //grid.globalRefine(0);
-	
-        typedef GridType::LeafGridView GridView;
-        GridType::LeafGridView gridView = grid->leafGridView();
-
-        std::cout << "***** Anzahl der finiten Elemente " << nelements << std::endl;
-        std::cout << "***** Ordnung der Basis " << SweeperTrait::BASE_ORDER << std::endl;
-	
-	
-        this->basis = std::make_shared<BasisFunction>(gridView);
-
-        std::cout << "***** Basis erstellt mit " <<  basis->size() << " Elementen " << std::endl;
-
-        this->encap_factory()->set_size(basis->size());*/
 	this->FinEl = FinEl;
 	basis = FinEl->get_basis(nlevel);
 	    
@@ -94,16 +63,9 @@ namespace pfasst
       Heat_FE<SweeperTrait, Enabled>::set_options()
       {
 
-
-        std::cout << " set_options " <<  std::endl;  
         IMEX<SweeperTrait, Enabled>::set_options();
-
-        //this->_nu = config::get_value<spatial_t>("nu", this->_nu);
-
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
-        //assembleProblem(basis, A_dune, M_dune);
-        std::cout << " set_options " <<  std::endl; 
 
       }
 
@@ -113,117 +75,29 @@ namespace pfasst
       {
         auto result = this->get_encap_factory().create();
 
-        
-        const auto dim = 1; //SweeperTrait::DIM;
 	spatial_t n  = this-> _n;
     	spatial_t l0 = this-> _nu;
 	spatial_t l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
 	spatial_t d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
-	//std::cout << "nu = " << this->_nu << std::endl;
-	//std::cout << "delta = " << this->_delta << std::endl;
-        auto exact_solution = [l0, l1, n, d, t](const Dune::FieldVector<double,dim>&x){ 
+
+        auto exact_solution = [l0, l1, n, d, t](const Dune::FieldVector<double,DIMENSION>&x){ 
 	  return pow((1 + (pow(2, n/2.)-1 )* exp(-(n/2.)*d*(x+2*l1*t)) ), -2./n);
-        };
+        };	
 
-        
-        
-        
-        
-        
-        /*const auto dim = 1; //SweeperTrait::DIM;
-        spatial_t nu = this-> _nu; 
-	spatial_t delta = this->_delta;
-	//std::cout << "nu = " << this->_nu << std::endl;
-	//std::cout << "delta = " << this->_delta << std::endl;
-        auto exact_solution = [t, nu, dim, delta](const Dune::FieldVector<double,dim>&x){
-          double c = 2./delta;  
-	  return 0.5*(1.0-std::tanh((x[0] - c*t*nu)/(delta)));
-        };*/
-
-
-	
-
-        auto N_x = [t](const Dune::FieldVector<double,dim>&x){
+        auto N_x = [t](const Dune::FieldVector<double,DIMENSION>&x){
             return x;
 
         };
 
-        Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
+        Dune::BlockVector<Dune::FieldVector<double,DIMENSION>> x_node;
         interpolate(*basis, x_node, N_x);
 
         interpolate(*basis, result->data(), exact_solution);
 
-	/*for (int i=0; i< result->data().size(); i++){
-	 std::cout << "result = " << result->data()[i] << std::endl;
-	}*/
         return result;
       }
       
-      
-      
-      
-      //______________________________
-      
-      
-      
-      /*template<class SweeperTrait, typename Enabled>
-      shared_ptr<typename SweeperTrait::encap_t>
-      Heat_FE<SweeperTrait, Enabled>::source(const typename SweeperTrait::time_t& t)
-      {
-        auto result = this->get_encap_factory().create();
 
-        const auto dim = 1;
-        spatial_t nu = this-> _nu; // nu je valjda desni rub
-	//std::cout << "nu = " << this->_nu << std::endl;
-        auto exact_solution_source = [t, nu, dim](const Dune::FieldVector<double,dim>&x){
-            double solution=1.0;
-            //for(int i=0; i<SweeperTrait::DIM; i++){solution *=x[i];}    //
-            
-	    std::cout << "PI = " << PI << std::endl;
-	    std::exit(0);
-	    return 2*t + PI*PI*(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1])  - 2*PI*(std::cos(PI*x[0]) + std::cos(PI*x[1])) + pow(std::sin(PI*x[0])*x[0] + std::sin(PI*x[1])*x[1] + t*t, 2) ;
-        };
-
-
-	
-	
-
-        auto N_x = [t](const Dune::FieldVector<double,dim>&x){
-            return x;
-
-        };
-
-        Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
-        interpolate(*basis, x_node, N_x);
-
-        interpolate(*basis, result->data(), exact_solution_source);
-
-
-        return result;
-      }*/
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      //_______________________________
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
       
 
       template<class SweeperTrait, typename Enabled>
@@ -231,13 +105,9 @@ namespace pfasst
       Heat_FE<SweeperTrait, Enabled>::post_step()
       {
         IMEX<SweeperTrait, Enabled>::post_step();
-
         ML_CLOG(INFO, this->get_logger_id(), "number function evaluations:");
-        //ML_CLOG(INFO, this->get_logger_id(), "  expl:        " << this->_num_expl_f_evals);
         ML_CLOG(INFO, this->get_logger_id(), "  impl:        " << this->_num_impl_f_evals);
         ML_CLOG(INFO, this->get_logger_id(), "  impl solves: " << this->_num_impl_solves);
-
-        //this->_num_expl_f_evals = 0;
         this->_num_impl_f_evals = 0;
         this->_num_impl_solves = 0;
       }
@@ -268,16 +138,12 @@ namespace pfasst
                      "  t["<<m<<"]=" <<  (t + dt * nodes[m])
                      << "      |abs residual| = " <<  this->_abs_res_norms[m]
                      << "      |rel residual| = " <<  this->_rel_res_norms[m]
-//                      << "      |abs error| = " << LOG_FLOAT << encap::norm0(error[m])
-//                      << "      |rel error| = " << LOG_FLOAT << encap::norm0(rel_error[m])
                     );
           }
           ML_CLOG(INFO, this->get_logger_id(),
                   "  t["<<num_nodes<<"]=" <<  (t + dt * nodes[num_nodes])
                   << "      |abs residual| = " <<  this->_abs_res_norms[num_nodes]
                   << "      |rel residual| = " <<  this->_rel_res_norms[num_nodes]
-//                   << "      |abs error| = " << LOG_FLOAT << encap::norm0(error[num_nodes])
-//                   << "      |rel error| = " << LOG_FLOAT << encap::norm0(rel_error[num_nodes])
                  );
         }
         return converged;
@@ -297,16 +163,6 @@ namespace pfasst
         return this->get_encap_factory().size();
       }
 
-      //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; //ruth_dim
-     
-     
-      
-      /*template<class SweeperTrait, typename Enabled>
-      shared_ptr<GridType>
-      Heat_FE<SweeperTrait, Enabled>::get_grid() const
-      {
-        return grid;
-      }*/
 
 
       template<class SweeperTrait, typename Enabled> //Fehler der aktuellen Loesung an jedem Quadraturpunkt
@@ -360,25 +216,7 @@ namespace pfasst
         return rel_error;
       }
 
-      /*template<class SweeperTrait, typename Enabled>
-      shared_ptr<typename SweeperTrait::encap_t>
-      Heat_FE<SweeperTrait, Enabled>::evaluate_rhs_expl(const typename SweeperTrait::time_t& t,
-                                                       const shared_ptr<typename SweeperTrait::encap_t> u)
-      {
-        UNUSED(u);
-        ML_CVLOG(4, this->get_logger_id(),  "evaluating EXPLICIT part at t=" << t);
 
-        auto result2 = this->get_encap_factory().create();
-	auto Mresult = this->get_encap_factory().create();
-        result2->zero();
-
-	
-	
-        this->_num_expl_f_evals++;
-	
-        return result2;
-
-      }*/
 
       template<class SweeperTrait, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
@@ -394,7 +232,7 @@ namespace pfasst
         auto u2 = this->get_encap_factory().create();
         double nu =this->_nu;
 
-	//std::cout << "++++++++++++ " << this->_nu << std::endl;
+
 	u2->zero();
 	for (int i=0; i<u->get_data().size(); ++i)
 	    {
@@ -407,14 +245,6 @@ namespace pfasst
 
 	
 
-        //result->data() *= nu;
-	/*std::cout << "evaluate  " << std::endl;
-        for (size_t i = 0; i < u->get_data().size(); i++) {
-
-	  std::cout << "f " << result->data()[i] << std::endl;
-
-         }*/
-        
         return result;
       }
 
@@ -427,66 +257,22 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
 	
-
-
-
-        
-	
         ML_CVLOG(4, this->get_logger_id(),
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
 
-
-
-	
-
-    auto residuum = this->get_encap_factory().create();
-	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs, newton_rhs2 ;
-    newton_rhs.resize(rhs->get_data().size());
-    newton_rhs2.resize(rhs->get_data().size());
+    	auto residuum = this->get_encap_factory().create();
+	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs;
+    	newton_rhs.resize(rhs->get_data().size());
     
-	
-	for (int i=0; i< 200 ;i++){
-	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune); ///////M
+        int newton_max_steps=200;
+	for (int i=0; i< newton_max_steps ;i++){
+	  //compute jacobi-matrix and rhs in every Newton-step
+	  Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > df = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(this->M_dune);
 	  evaluate_f(f, u, dt, rhs);
 	  evaluate_df(df, u, dt);
 	  df.mv(u->data(), newton_rhs);
 	  newton_rhs -= f->data();
-      	  newton_rhs2 = newton_rhs;
 
-	  auto isLeftDirichlet = [] (auto x) {return (x[0] < -20.0 + 1e-8 ) ;};
-	  auto isRightDirichlet = [] (auto x) {return (x[0] > 20.0 - 1e-8 ) ;};
- 
-	
-	
-	  std::vector<double> dirichletLeftNodes;
-	  interpolate(*basis, dirichletLeftNodes, isLeftDirichlet);  
-
-	  std::vector<double> dirichletRightNodes;
-	  interpolate(*basis, dirichletRightNodes, isRightDirichlet);
-	
-	  /*for(int i=0; i<rhs->data().size(); ++i){
-	
-	    if(dirichletLeftNodes[i])
-	    newton_rhs[i] = -dt; // exact(t)->get_data()[i]; //1;//-dt;
-
-	    if(dirichletRightNodes[i])
-	    newton_rhs[i] = 0; //exact(t)->get_data()[i]; //0;
-
-
-	  
-	  }
-	  for (size_t j=0; j<df.N(); j++){
-	    if (dirichletRightNodes[j] || dirichletLeftNodes[j]){
-	      auto cIt = df[j].begin();
-	      auto cEndIt = df[j].end();
-	      for(; cIt!=cEndIt; ++cIt){
-		  *cIt = (j==cIt.index()) ? 1.0 : 0.0;
-	      }
-	    }
-	  }*/
-	  //std::cout << "5"<<std::endl;
-
-  
 	  Dune::MatrixAdapter<MatrixType,VectorType,VectorType> linearOperator(df);
 	  Dune::SeqILU0<MatrixType,VectorType,VectorType> preconditioner(df,1);
 	  Dune::CGSolver<VectorType> cg(linearOperator,
@@ -497,57 +283,28 @@ namespace pfasst
 	  Dune::InverseOperatorResult statistics ;
 	  cg.apply(u->data(), newton_rhs , statistics ); //rhs ist nicht constant!!!!!!!!!
 	  num_solves++;
-	  //df.mv(u->data(), residuum->data());
-      	  //residuum->data() -= newton_rhs2;
-          //std::cout << "residuums norm " << residuum->norm0() << std::endl;
-          //if (residuum->norm0()< _abs_newton_tol){break;}
+
           evaluate_f(f, u, dt, rhs);
-        int my_rank, num_pro;
-        //MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-        //MPI_Comm_size(MPI_COMM_WORLD, &num_pro );
-          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << my_rank << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
+
+          if(f->norm0()<this->newton){ if(!this->is_coarse) std::cout << "***************************************** anzahl iterationen innerer newton " << i+1 << " " << num_solves <<std::endl;   break;}
 	  
-          for (size_t i = 0; i < u->get_data().size(); i++) {
 
-	    //std::cout << "u " << u->data()[i] << std::endl;
-
-          }
-	}
-
-	
-	
-	//std::exit(0);
-	
-        /*for (size_t i = 0; i < u->get_data().size(); i++) {
-
-	  std::cout << "u " << u->data()[i] << std::endl;
-
-        }*/
-	
-	
-	
+	}	
 	
 	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
         M_u.resize(u->get_data().size());
 	this->M_dune.mv(u->get_data(), M_u);
 
-//std::cout << "impl solve "  << std::endl;
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-	  //std::cout << "f " << f->data()[i] << std::endl;
         }
-        //evaluate_rhs_impl(0, u);
-        //evaluate_f(f, u, dt, rhs);
-	//std::cout << "***************************************** das neue f " << f->norm0() << std::endl;
-	//std::exit(0);
-        this->_num_impl_solves++;
-        //if (this->_num_impl_solves==5) std::exit(0);
 
+        this->_num_impl_solves++;
 
       }
       
-            template<class SweeperTrait, typename Enabled>
-      void
+      
+      template<class SweeperTrait, typename Enabled> void
       Heat_FE<SweeperTrait, Enabled>::evaluate_f(shared_ptr<typename SweeperTrait::encap_t> f,
                                                  const shared_ptr<typename SweeperTrait::encap_t> u,
 						 const typename SweeperTrait::time_t& dt,
@@ -555,37 +312,18 @@ namespace pfasst
 						){
           
           
-          f->zero();
-	//std::cout << "-------------- "<< this->_nu << std::endl;
+        f->zero();
 	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
         fneu.resize(u->get_data().size());
 	for (int i=0; i<u->get_data().size(); ++i)
 	{
 	  fneu[i]= (this->_nu*this->_nu) * (pow(u->get_data()[i], _n+1) - u->get_data()[i]);	
 	}
-	//f->data() *= (this->_nu*this->_nu);
 	this->M_dune.mv(fneu, f->data());
 	this->A_dune.mmv(u->get_data(),f->data());
 	f->data() *= dt;
 	this->M_dune.umv(u->get_data(),f->data());
 	f->data() -=rhs->get_data();
-          
-	
-	/*f->zero();
-	
-	Dune::BlockVector<Dune::FieldVector<double,1> > fneu;
-        fneu.resize(u->get_data().size());
-	for (int i=0; i<f->data().size(); ++i)
-	{fneu[i]= -8*this->_nu*this->_nu *u->data()[i]*u->data()[i]*(1.00-u->data()[i])/(this->_delta*this->_delta);
-
-	}
-	
-	this->M_dune.mv(fneu, f->data());
-	
-	this->A_dune.mmv(u->get_data(),f->data());
-	f->data() *= dt;
-	this->M_dune.umv(u->get_data(),f->data());
-	f->data() -=rhs->get_data();*/
 
       }
 
@@ -608,44 +346,6 @@ template<class SweeperTrait, typename Enabled>
             df+=this->M_dune;
       } 
 						
-      /*template<class SweeperTrait, typename Enabled>
-      void
-      Heat_FE<SweeperTrait, Enabled>::evaluate_df(Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > &df,
-                                                 const shared_ptr<typename SweeperTrait::encap_t> u,
-						 const typename SweeperTrait::time_t& dt
- 						){
-          
-          
-          //std::cout << "############### " << this->_nu<< std::endl;
-          
-          
-          for (int i=0; i<df.N(); ++i)
-            {
-            for (int j=0; j<df.M(); ++j)
-                {
-                    if (df.exists(i,j)) 
-                        df[i][j]= -(_n+1) *this->M_dune[i][j] * pow(u->get_data()[j], _n);	
-                }
-            }
-            df += this->M_dune;
-          for (int i=0; i<df.N(); ++i)
-            {
-            for (int j=0; j<df.M(); ++j)
-                {
-                    if (df.exists(i,j)) 
-                        df[i][j]= df[i][j]*(- this->_nu*this->_nu) ;	
-                }
-            }
-	    //df *= (- this->_nu*this->_nu);	
-            df-=this->A_dune;
-            df*=dt;
-            df+=this->M_dune;
-          
-          
-          
-
-
-      } */ 
       
       
     }  // ::pfasst::examples::heat1
