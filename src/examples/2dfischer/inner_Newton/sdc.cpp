@@ -27,6 +27,7 @@ namespace pfasst
   {
     namespace heat_FE
     {
+    
       using sweeper_t = Heat_FE<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>>;
       using pfasst::transfer_traits;
       using pfasst::contrib::SpectralTransfer;

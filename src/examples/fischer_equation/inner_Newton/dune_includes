@@ -1,4 +1,4 @@
-#include <dune/grid/io/file/vtk/vtkwriter.hh>
+//#include <dune/grid/io/file/vtk/vtkwriter.hh>
 #include <dune/grid/yaspgrid.hh>
 #include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
 
@@ -23,7 +23,7 @@
 #include <dune/geometry/quadraturerules.hh>
 
 #include <dune/grid/yaspgrid.hh>
-#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
+//#include <dune/grid/io/file/vtk/subsamplingvtkwriter.hh>
 
 #include <dune/istl/matrix.hh>
 #include <dune/istl/bcrsmatrix.hh>

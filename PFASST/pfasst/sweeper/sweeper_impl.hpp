@@ -549,8 +549,9 @@ namespace pfasst
     this->_abs_res_norms.back() = this->get_residuals().back()->norm0(true, this->comm);//ruth
     this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
 #else
-    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();//ruth
-    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); //ruth
+    std::cout << "ohne mpi" << std::endl;
+    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();     std::cout << "ohne mpi" << this->_abs_res_norms.back() << std::endl;
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); std::cout << "ohne mpi" << this->_rel_res_norms.back() << std::endl;
 #endif        
     //std::cout <<"hier abs res " << this->get_residuals().back()->norm0(true, this->comm) << std::endl;
     //int rank;
@@ -560,6 +561,7 @@ namespace pfasst
     }*/
 
     if (pre_check) {
+       std::cout << "im precheck " << this->_abs_residual_tol << std::endl;
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");
 
@@ -589,12 +591,14 @@ namespace pfasst
 #else
         const auto norm = this->get_residuals()[m]->norm0();
         this->_abs_res_norms[m] = norm;
+        std::cout << m << " " << this->_abs_res_norms[m] << std::endl;
         this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0();
 #endif
       }
 
       this->status()->abs_res_norm() = *(std::max_element(this->_abs_res_norms.cbegin(), this->_abs_res_norms.cend()));
       this->status()->rel_res_norm() = *(std::max_element(this->_rel_res_norms.cbegin(), this->_rel_res_norms.cend()));
+      std::cout << "max norm " << this->status()->abs_res_norm() << std::endl;
 
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "convergence check");

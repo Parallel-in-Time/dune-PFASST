@@ -67,8 +67,10 @@ namespace pfasst
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
-          double                                     	 _nu{1.0};
-          double                                     	 _n{1.0};
+          //double                                     	 _nu{1.0};
+          //double                                     	 _n{1.0};
+          double                                     	 _nu{1.2};
+          double                                     	 _n{2.0};
 
 	  std::shared_ptr<fe_manager> FinEl;
 

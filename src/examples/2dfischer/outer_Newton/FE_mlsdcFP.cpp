@@ -18,10 +18,10 @@ using std::shared_ptr;
 #include <vector>
 
 
-#include "../1d_transfer/fe_manager.hpp"
+#include "fe_manager_fp.hpp"
 #include "fischer_sweeper.hpp"
 #include <pfasst/encap/dune_vec.hpp>
-#include "../1d_transfer/spectral_transfer.hpp"
+#include "../2d_transfer/spectral_transfer.hpp"
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
@@ -55,9 +55,9 @@ using namespace pfasst::examples::fischer_example;
 
         
                 
-        typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
-        typedef GridType::LevelGridView GridView;
-        using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+        //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+        //typedef GridType::LevelGridView GridView;
+        //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
         std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
 
@@ -70,16 +70,20 @@ using namespace pfasst::examples::fischer_example;
         std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
         //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
 
-    
-        Dune::FieldVector<double,DIMENSION> hR = {200};
-        Dune::FieldVector<double,DIMENSION> hL = {-200};
-        array<int,DIMENSION> n;
-        std::fill(n.begin(), n.end(), nelements); 	    
+        Dune::FieldVector<typename GridType::ctype,DIMENSION> L;
+        L[0]=1; L[1]=1;
+        typename std::array<int,DIMENSION> s;
+        std::fill(s.begin(), s.end(), nelements);
+        std::bitset<DIMENSION> periodic;//(true, true);
+        periodic[0]=true; //false;//true; 
+        periodic[1]=true; //false;//true;
+
 #if HAVE_MPI
-        grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
-#else
-        grid = std::make_shared<GridType>(hL, hR, n);
+        grid        = std::make_shared<GridType>(L,s,periodic,0, MPI_COMM_SELF);	
+#else          
+        grid        = std::make_shared<GridType>(L,s,periodic,0);	      
 #endif
+
         for (int i=0; i<n_levels; i++){	      
 	      grid->globalRefine((bool) i);
 	      auto view = grid->levelGridView(i);
@@ -115,6 +119,10 @@ using namespace pfasst::examples::fischer_example;
 			_new_newton_state_coarse[i][j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
 		}
     	}
+    	
+Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_basis[1]->size());    
+Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
+	
 std::cout.precision ( 10 );
 
 for(int time=0; time<(t_end-t_0)/dt; time++){	
@@ -127,7 +135,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
-        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);
+        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid); //0
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
@@ -180,10 +188,13 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
         mlsdc->setup();
 
-
+	if (time==0){
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
-
+	}else{
+	coarse->initial_state()->data() = _new_newton_initial_coarse; 
+	fine->initial_state()->data() = _new_newton_initial_fine; 
+	}
 
 
 	
@@ -287,17 +298,58 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
           std::cout <<  t_0 + (time)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
         }*/
 
-        std::cout << "******************************************* " <<  std::endl ;
+        /*std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << "Fehler: " <<  std::endl ;
         fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_0 + (time+1)*dt));
         std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
         std::cout << "time step " << time << std::endl ;
-        std::cout << "******************************************* " <<  std::endl ;
+        std::cout << "******************************************* " <<  std::endl ;*/
+
+        	GridType::LevelGridView gridView = grid->levelGridView(1);
+        	Dune::VTKWriter<GridView> vtkWriter(gridView);
+        	string name = std::to_string(76);  
+
+        	Dune::VTKWriter<GridView> vtkWriter2(gridView);
+        	string name2 = std::to_string(77);
+
+        	vtkWriter2.addVertexData(fine->get_end_state()->data(), "fe_solution_u");
+        	vtkWriter2.write("fe_2d_nach_solve" + name2);
+
+
 
 	(*_new_newton_state_fine[0][num_nodes]).data() -= fine->new_newton_state()[0][num_nodes]->data();
+	std::cout << "******************************* Newton " << (_new_newton_state_fine[0][num_nodes])->norm0() <<  std::endl ;
 	if((_new_newton_state_fine[0][num_nodes])->norm0()< newton){
+		for(int i=0; i< num_time_steps; i++){	
+		for(int j=0; j<num_nodes +1 ; j++){
+		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    			(*_new_newton_state_coarse[i][j]).data()[k] = coarse->new_newton_state()[i][j]->data()[k];
+			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
+    		}
+		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
+    			(*_new_newton_state_fine[i][j]).data()[k] = fine->new_newton_state()[i][j]->data()[k];
+			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
+		}
+    		}
+		}
+		
+		for(int i=0; i< num_time_steps; i++){	
+		for(int j=0; j<num_nodes +1 ; j++){
+		for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
+    			_new_newton_initial_coarse[k] = coarse->new_newton_state()[i][j]->data()[k];
+			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
+    		}
+		for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
+    			_new_newton_initial_fine[k] = fine->new_newton_state()[i][j]->data()[k];
+			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
+		}
+    		}
+		}
+		
+		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
+	
 		break;}
 
     	for(int i=0; i< num_time_steps; i++){	

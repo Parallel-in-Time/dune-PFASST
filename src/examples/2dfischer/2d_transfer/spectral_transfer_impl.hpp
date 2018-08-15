@@ -55,12 +55,13 @@ namespace pfasst
 	    for (int i=0; i< restrict_matrix.N(); i++){
 	      for (int j=0; j< restrict_matrix.M(); j++){
 		if(restrict_matrix.exists(i,j)){	
-		  if (restrict_matrix[i][j]==0.5 ) restrict_matrix[i][j]=0;
+		  if (restrict_matrix[i][j]==0.5 || restrict_matrix[i][j]==0.25) restrict_matrix[i][j]=0;//std::cout << restrict_matrix[i][j]<< " ";//
 		}
 
 	      }
+	      //std::cout <<  std::endl;
 	    }
-	  
+	  //std::exit(0);
     }
 
 
@@ -108,7 +109,7 @@ namespace pfasst
       } else {
 
 	restrict_matrix.mtv(fine->data(), coarse->data());
-
+	coarse->data() *= 0.25;
       }
     }
     

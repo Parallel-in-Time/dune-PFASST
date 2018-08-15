@@ -55,13 +55,13 @@ int main(int argc, char** argv) {
     double t_end = get_value<double>("tend", 0.1);                      // right point of the time intervall  
     const size_t nnodes = get_value<size_t>("num_nodes", 3);            // time intervall: number of sdc quadrature points
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
-    const size_t niter = get_value<size_t>("num_iters", 200);            // maximal number of sdc iterations
+    const size_t niter = get_value<size_t>("num_iters", 10);            // maximal number of sdc iterations
     const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
     
     
-    typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
-    typedef GridType::LevelGridView GridView;
-    using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+    //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+    //typedef GridType::LevelGridView GridView;
+    //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
     std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
 
@@ -75,15 +75,23 @@ int main(int argc, char** argv) {
     std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
 
     
-    Dune::FieldVector<double,DIMENSION> hR = {200};
-    Dune::FieldVector<double,DIMENSION> hL = {-200};
-    array<int,DIMENSION> n;
-    std::fill(n.begin(), n.end(), nelements); 	    
+        Dune::FieldVector<typename GridType::ctype,DIMENSION> L;
+        L[0]=1; L[1]=1;
+        typename std::array<int,DIMENSION> s;
+        std::fill(s.begin(), s.end(), nelements);
+        std::bitset<DIMENSION> periodic;//(true, true);
+        periodic[0]=true; //false;//true; 
+        periodic[1]=true; //false;//true;
+
 #if HAVE_MPI
-    grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
-#else
-    grid = std::make_shared<GridType>(hL, hR, n);
+        grid        = std::make_shared<GridType>(L,s,periodic,0, MPI_COMM_SELF);	
+#else          
+        grid        = std::make_shared<GridType>(L,s,periodic,0);	      
 #endif
+
+
+
+
     for (int i=0; i<n_levels; i++){	      
 	      grid->globalRefine((bool) i);
 	      auto view = grid->levelGridView(i);
@@ -139,9 +147,13 @@ int main(int argc, char** argv) {
 			_new_newton_state[i][j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
 		}
     	}
+    	
+    	
+    	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(fe_basis[0]->size());
 std::cout.precision ( 10 );
 int num_solves = 0;
 for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
+
     for(int ne=0; ne<10; ne++){	//Newtonschritte
 
 
@@ -159,18 +171,24 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     	sdc->setup();
 	sweeper->num_solves+=num_solves;
 
-	if(time==0 && ne==0) 	//im ersten Newton Lauf Anfangswerte setzen
+	if(time==0 ) {	//im ersten Newton Lauf Anfangswerte setzen
+	if(ne==0)
 	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){
 		//for(int k=0; k< _new_newton_state[i][j]->size(); k++){
     		 (*_new_newton_state[i][j]) = sweeper->exact(sdc->get_status()->get_time())->data();
     		//}
 		}
+	}		
+        sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+
+	}else{
+		/*for(int k=0; k< _new_newton_state[i][j]->size(); k++)
+    			_new_initial_state[k] = sweeper->new_newton_state()[i][j]->data()[k];
+    		}*/
+		sweeper->initial_state()->data() = _new_initial_state; 
 	}
 
-
-        if (ne==0) sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
-        if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//
 
 	for(int i=0; i< num_time_steps; i++){	//last_newton_state
 		for(int j=0; j<num_nodes +1; j++){
@@ -208,12 +226,35 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     	auto naeherung = sweeper->get_end_state()->data();
     	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
     	auto initial   = sweeper->exact(t_0 + time*dt)->data();
-    	for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) std::cout << initial[i] << " result " << naeherung[i] << " " << naeherung[i] << " " << exact[i] << std::endl;
-	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
+    	//for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) {
+    	        //evaluate_f(f, u, dt, rhs);
+        	//auto grid = this->grid;
+		//typedef Dune::YaspGrid<dim> GridType; //ruth_dim
+        	GridType::LevelGridView gridView = grid->levelGridView(0);
+        	Dune::VTKWriter<GridView> vtkWriter(gridView);
+        	string name = std::to_string(76);  
+
+        	Dune::VTKWriter<GridView> vtkWriter2(gridView);
+        	string name2 = std::to_string(77);
+
+        	vtkWriter2.addVertexData(sweeper->get_end_state()->data(), "fe_solution_u");
+        	vtkWriter2.write("fe_2d_nach_solve" + name2);
+
+    		//std::cout << initial[i] << " result " << naeherung[i] << " " << naeherung[i] << " " << exact[i] << std::endl;}
+	//sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
 
 
-        std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
-	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < newton){ break;}//std::exit(0);}
+        //std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
+	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < newton){ 
+	for(int i=0; i< num_time_steps; i++){	
+		for(int j=0; j<num_nodes +1 ; j++){
+		for(int k=0; k< _new_newton_state[i][j]->size(); k++)
+    			_new_initial_state[k] = sweeper->new_newton_state()[i][j]->data()[k];
+    		}
+	}
+	std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
+	
+	break;}//std::exit(0);}
 
 
     	for(int i=0; i< num_time_steps; i++){	
@@ -230,9 +271,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
 
     	
 
-   }
-//std::exit(0);
-}
+   }//Newtonschritte
+
+}//Zeitschritte
     
 
  

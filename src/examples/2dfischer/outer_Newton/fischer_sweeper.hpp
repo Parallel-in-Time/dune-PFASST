@@ -32,18 +32,18 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
-        double                                     	_nu{1.0}; //1.2
-        double                                     	_n{1.0}; //2.0
+        double                                     	_nu{25.0}; //1.2
+        double                                     	_n{2.0}; //2.0
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 
-
+	std::shared_ptr<GridType> grid;
             
         public:
 	int                                             num_solves=0;        
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
                                     : Heat_FE<SweeperTrait, BaseFunction, Enabled>(basis, nlevel, grid){
         
-                
+                this->grid = grid;
                 w = std::make_shared<VectorType>(this->M_dune.M());
         
                 for(int j=0; j<this->M_dune.M(); j++){(*w)[j]=0;}
@@ -66,22 +66,53 @@ namespace pfasst
           virtual ~fischer_sweeper() = default;
             
           shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t)      {
-            auto result = this->get_encap_factory().create();
-            const auto dim = 1; //SweeperTrait::DIM;
-            double n  = this-> _n;
-            double l0 = this-> _nu;
-            double l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
-            double d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
-            auto exact_solution = [l0, l1, n, d, t](const Dune::FieldVector<double,dim>&x){ 
-                return pow((1 + (pow(2, n/2.)-1 )* exp(-(n/2.)*d*(x+2*l1*t)) ), -2./n);
-            };  
-            auto N_x = [t](const Dune::FieldVector<double,dim>&x){
-                return x;
-            };
-            Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
-            interpolate(*this->basis, x_node, N_x);
-            interpolate(*this->basis, result->data(), exact_solution);
-            return result;
+        	auto result = this->get_encap_factory().create();
+        	const auto dim = SweeperTrait::DIM;
+        	double nu = this-> _nu; 
+	
+		auto exact_solution1 = [t,  nu, dim](const Dune::FieldVector<double,dim>&x){
+	  		return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*0.04)) ;
+	  	};
+	
+	 	auto N_x = [t](const Dune::FieldVector<double,dim>&x){
+            		return x;
+        	};
+
+        	Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
+		Dune::BlockVector<Dune::FieldVector<double,1>> pom1, pom2;
+		pom1.resize(this->basis->size());
+		pom2.resize(this->basis->size());
+        
+		interpolate(*this->basis, x_node, N_x);
+
+		interpolate(*this->basis, pom1, exact_solution1);
+		interpolate(*this->basis, result->data(), exact_solution1);
+	
+		for (int i = 0; i< this->basis->size(); ++i)
+		{
+	  		result->data()[i][0] = pom1[i];
+		}
+
+		if(!this->is_coarse){
+        		auto grid = this->grid;
+        		typedef Dune::BlockVector<Dune::FieldVector<double, 2> > VectorType;
+        		typedef Dune::BlockVector<Dune::FieldVector<double, 1> > ColumnType;
+
+        		GridType::LevelGridView gridView = grid->levelGridView(1);
+        		Dune::VTKWriter<GridView> vtkWriter(gridView);
+
+        		string name = "initial";
+        		ColumnType sol_u;
+        		sol_u.resize(result->data().size());
+        		for (int i =0; i< result->data().size(); ++i)
+        		{
+          			sol_u[i] = result->data()[i][0];
+        		}
+        		vtkWriter.addVertexData(sol_u, "fe_solution_u");
+        		vtkWriter.write("fe_2d" + name);
+		}
+
+        	return result;
           }
           
           shared_ptr<typename SweeperTrait::encap_t> evaluate_rhs_impl(const typename SweeperTrait::time_t& m,const shared_ptr<typename SweeperTrait::encap_t> u) {
@@ -232,8 +263,10 @@ namespace pfasst
         cg.apply(u->data(), nv->data() , statistics ); //newton_rhs 
         num_solves++;
 
-        //evaluate_f(f, u, dt, rhs);
-          
+
+	
+
+
 
 
 	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;

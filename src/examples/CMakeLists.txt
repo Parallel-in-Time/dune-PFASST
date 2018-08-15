@@ -1,3 +1,2 @@
-add_subdirectory(fischer_equation)
 
-
+add_subdirectory(2dfischer)

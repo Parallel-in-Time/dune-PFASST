@@ -24,7 +24,6 @@
 #include <dune/geometry/quadraturerules.hh>
 
 #include <dune/functions/functionspacebases/pqknodalbasis.hh>
-//#include <dune/functions/functionspacebases/pq1nodalbasis.hh>
 #include <dune/functions/gridfunctions/discreteglobalbasisfunction.hh>
 #include <dune/functions/functionspacebases/interpolate.hh>
 #include <dune/functions/functionspacebases/taylorhoodbasis.hh>
@@ -37,17 +36,16 @@
 
 
 const int BASE_ORDER=1;
-const int DIMENSION=1;
+const int DIMENSION=2;
 const int NR_COMP=1;
 
 typedef Dune::BCRSMatrix<Dune::FieldMatrix<double,NR_COMP,NR_COMP> > MatrixType;
 typedef Dune::BlockVector<Dune::FieldVector<double,NR_COMP> > VectorType;
 typedef                   Dune::FieldVector<double,NR_COMP>   InVectorType;
-//typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType;
-typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
 
-//typedef GridType::LevelGridView GridView;
-//using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>;// BASE_ORDER>;
+typedef Dune::YaspGrid<DIMENSION> GridType; 
+typedef GridType::LevelGridView GridView;
+using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
 
 
 
