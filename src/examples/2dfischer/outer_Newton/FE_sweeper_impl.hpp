@@ -101,7 +101,7 @@ namespace pfasst
       Heat_FE<SweeperTrait, BasisFunction,  Enabled>::exact(const typename SweeperTrait::time_t& t)
       {
         auto result = this->get_encap_factory().create();
-        std::cout << "need to implement exact " << std::endl;
+        //std::cout << "need to implement exact " << std::endl;
 
         
         return result;

@@ -113,8 +113,11 @@ namespace pfasst
         //std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
 	std::cout << "my_rank: " << my_rank << ", number solutions which this process does: " << fine->num_solves << "" << std::endl;
 
+	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
+	std::cout << "Groesse des Loesungsvektors: " << fine->get_end_state()->data().size() << std::endl ;
 
-        MPI_Barrier(MPI_COMM_WORLD);
+
+
 
       }
     }  // ::pfasst::examples::heat_FE
@@ -146,7 +149,16 @@ int main(int argc, char** argv)
   bool output = get_value<double>("output", 0);
   const size_t niter = get_value<size_t>("num_iters", 10);
 
+
+	MPI_Barrier(MPI_COMM_WORLD);
+    	auto st = MPI_Wtime();
+
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+
+      	auto ut = MPI_Wtime()-st;
+        double time;
+        MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        std::cout << "Zeit ist am ende " << time << std::endl;
 
   pfasst::Status<double>::free_mpi_datatype();
 

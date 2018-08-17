@@ -83,11 +83,11 @@ namespace pfasst
         	}
         }*/
 
-        sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-	std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
+        //sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+	//std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
 	std::cout << "the corresponding linear system were solved " << sweeper->num_solves << " times" << std::endl; 
 	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
-	
+	std::cout << "Groesse des Loesungsvektors: " << sweeper->get_end_state()->data().size() << std::endl ;
 
 	
         return sdc;
@@ -128,7 +128,7 @@ namespace pfasst
     	auto ut = MPI_Wtime()-st;
         double time;
         MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-        std::cout << "Zeit ist am end" << time << std::endl;
+        std::cout << "benoetigte Zeit: " << time << " Sekunden" << std::endl;
     MPI_Finalize();
 
   }

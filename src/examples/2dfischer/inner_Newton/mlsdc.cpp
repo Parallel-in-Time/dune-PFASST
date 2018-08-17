@@ -123,43 +123,17 @@ namespace pfasst
         coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
         fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 
-        std::cout << "Anfangswerte feiner Sweeper: " << fine->get_states().back()->norm0() << std::endl;
-        std::cout << "Anfangswerte feiner Sweeper: " << fine->initial_state()->norm0() << std::endl;
-        std::cout << "Anfangswerte grober Sweeper: " << coarse->get_states().back()->norm0() << std::endl;
-
-        
-        /*for (int i=0; i< fine->initial_state()->data().size(); i++){
-          std::cout << "Anfangswerte feiner Sweeper: " << " " << fine->initial_state()->data()[i] << std::endl;
-        }
-
-        std::cout  <<  std::endl;
-
-        for (int i=0; i< coarse->initial_state()->data().size(); i++){
-          std::cout << "Anfangswerte grober Sweeper: " << " " << coarse->initial_state()->data()[i] <<  std::endl;
-        }*/
-
-
-	std::cout << "********************************************** VOR RUN *******************************************************************" <<  std::endl;
-
-
-
-        //std::cout << "*********************************vor run"<<  std::endl ;
         mlsdc->run();
-        //std::cout << "*********************************nach run"<<  std::endl ;
-	std::cout << "********************************************** NACH RUN *******************************************************************" << std::endl;
+
         mlsdc->post_run();
 
+
+	std::cout << "the corresponding linear system were solved " << fine->num_solves << " times" << std::endl; 
+	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
+	std::cout << "Groesse des Loesungsvektors: " << fine->get_end_state()->data().size() << std::endl ;
+
         //return mlsdc;
-        /*std::cout <<  "fein" << std::endl;
-        auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
-        std::cout <<  "grob" << std::endl;
-        for (int i=0; i< coarse->get_end_state()->data().size(); i++){
-          std::cout << coarse->exact(0)->data()[i] << " " << coarse->get_end_state()->data()[i] << "   " << coarse->exact(t_end)->data()[i] << std::endl;
-        }*/
+
         
         /*std::cout <<  "fein" << std::endl;
         auto naeherung = fine->get_end_state()->data();
@@ -183,45 +157,9 @@ namespace pfasst
         //std::cout << coarse->states()[coarse->get_states().size()-1]->norm0()<<  std::endl ;
 	*/
 
-        /*if(BASIS_ORDER==1) {
-          auto grid = (*fine).get_grid();
-          typedef GridType::LeafGridView GridView;
-          GridType::LeafGridView gridView = grid->leafGridView();
-          VTKWriter <GridView> vtkWriter(gridView);
-          typedef Dune::BlockVector <Dune::FieldVector<double, 1>> VectorType;
-          VectorType x = fine->get_end_state()->data();
-          VectorType y = fine->exact(t_end)->data();
-          VectorType z = fine->initial_state()->data();
-          vtkWriter.addVertexData(x, "fe_solution");
-          vtkWriter.addVertexData(y, "exact_solution");
-          vtkWriter.addVertexData(z, "initial_data");
-
-          vtkWriter.write("heat_result");
-          //std::cout << nelements << "   " << x.size() <<  std::endl ;
-        }*/
 
 
-	
-        /*ofstream f;
-        stringstream ss;
-        ss << nelements;
-        string s = "solution_mlsdc/" + ss.str() + ".dat";
-        f.open(s, ios::app | std::ios::out );
-        f << nelements << " " << dt << " "<< fine->states()[fine->get_states().size()-1]->norm0() << endl;
-        f.close();
 
-        ofstream ff;
-        stringstream sss;
-        sss << nelements << "_iter";
-        string st = "solution_mlsdc/" + sss.str() + ".dat";
-        ff.open(st, ios::app | std::ios::out );
-        auto iter = mlsdc->_it_per_step;
-        for (const auto &line : iter) {
-          ff << dt <<"  " << line << std::endl;
-        }
-
-        ff.close();*/
-        //std::cout << "test"<<  std::endl ;
 
       }
 
@@ -278,7 +216,7 @@ int main(int argc, char** argv)
       	auto ut = MPI_Wtime()-st;
         double time;
         MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-        std::cout << "Zeit ist am end" << time << std::endl;
+        std::cout << "Zeit ist am ende " << time << std::endl;
     MPI_Finalize();
 }
 #endif 

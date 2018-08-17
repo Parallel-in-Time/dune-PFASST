@@ -225,8 +225,8 @@ namespace pfasst
          newton_rhs2.resize(rhs->get_data().size());
     
 
-	for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
-    		u->data()[k] = this->last_newton_state()[0][m]->data()[k];
+	for(int k=0; k< this->last_newton_state()[m]->data().size(); k++){
+    		u->data()[k] = this->last_newton_state()[m]->data()[k];
 	}
 
 

@@ -411,12 +411,12 @@ namespace pfasst
     ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
 
     assert(this->get_initial_state() != nullptr);
-    std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
+    //std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
       this->states()[m]->data() = value; //this->get_initial_state()->get_data();
     }
-    std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
+    //std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -427,18 +427,18 @@ namespace pfasst
 
     assert(this->get_initial_state() != nullptr);
     //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
-    std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
-    int i= 0; //(this->get_status()->get_time()/this->get_status()->get_dt()); 	
+    //std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
+
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
       //std::cout << i << " " << this->last_newton_state()[i][m]->data()  << " " << i << std::endl;
-      this->states()[m]->data() = this->last_newton_state()[i][m]->data();
+      this->states()[m]->data() = this->last_newton_state()[m]->data();
     }
-    std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
+    //std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::last_newton_state()
   {
     return this->_last_newton_state;
@@ -446,7 +446,7 @@ namespace pfasst
   
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  const vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::get_last_newton_state() const
   {
     return this->_last_newton_state;
@@ -454,7 +454,7 @@ namespace pfasst
 
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::new_newton_state()
   {
     return this->_new_newton_state;
@@ -462,7 +462,7 @@ namespace pfasst
   
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  const vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::get_new_newton_state() const
   {
     return this->_new_newton_state;
@@ -591,7 +591,7 @@ namespace pfasst
 #else
         const auto norm = this->get_residuals()[m]->norm0();
         this->_abs_res_norms[m] = norm;
-        std::cout << m << " " << this->_abs_res_norms[m] << std::endl;
+        //std::cout << m << " " << this->_abs_res_norms[m] << std::endl;
         this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0();
 #endif
       }

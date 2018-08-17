@@ -188,7 +188,7 @@ namespace pfasst
     {
     
       //return this->norm0();
-      std::cout << "in norm0 mpi";
+      //std::cout << "in norm0 mpi";
       /*int my_rank, num_pro;
       MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
       MPI_Comm_size(MPI_COMM_WORLD, &num_pro );

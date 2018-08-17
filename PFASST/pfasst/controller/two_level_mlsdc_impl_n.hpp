@@ -188,7 +188,7 @@ namespace pfasst
           this->sweep_coarse();
           this->cycle_up();
           this->sweep_fine();
-
+          ML_CLOG(INFO, this->get_logger_id(), "Iteration 0 (MLSDC Prediction) was done");
 
         } else {
           ML_CLOG(INFO, this->get_logger_id(), "");

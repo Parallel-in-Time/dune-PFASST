@@ -35,22 +35,22 @@ namespace pfasst
 
     const auto num_time_steps = 1;
 		
-    this->last_newton_state().resize(num_time_steps);
-    this->new_newton_state().resize(num_time_steps);
+    //this->last_newton_state().resize(num_time_steps);
+    //this->new_newton_state().resize(num_time_steps);
     this->coarse_rhs().resize(num_time_steps);
     this->df_dune.resize(num_time_steps);
 
 
-    for(int i=0; i< num_time_steps; i++){	
-	this->last_newton_state()[i].resize(num_nodes + 1);
-	this->new_newton_state()[i].resize(num_nodes+1);
-	this->coarse_rhs()[i].resize(num_nodes+1);
-	this->df_dune[i].resize(num_nodes+1);
+    //for(int i=0; i< num_time_steps; i++){	
+	this->last_newton_state().resize(num_nodes + 1);
+	this->new_newton_state().resize(num_nodes+1);
+	this->coarse_rhs()[0].resize(num_nodes+1);
+	this->df_dune[0].resize(num_nodes+1);
     	auto& factory = this->get_encap_factory();  auto& factory2 = this->get_encap_factory(); auto& factory3 = this->get_encap_factory();
-    	std::generate(this->last_newton_state()[i].begin(), this->last_newton_state()[i].end(), [&factory](){ return factory.create(); });
-	std::generate(this->new_newton_state()[i].begin(), this->new_newton_state()[i].end(), [&factory2](){ return factory2.create(); });
-	std::generate(this->coarse_rhs()[i].begin(), this->coarse_rhs()[i].end(), [&factory2](){ return factory2.create(); });
-    }
+    	std::generate(this->last_newton_state().begin(), this->last_newton_state().end(), [&factory](){ return factory.create(); });
+	std::generate(this->new_newton_state().begin(), this->new_newton_state().end(), [&factory2](){ return factory2.create(); });
+	std::generate(this->coarse_rhs()[0].begin(), this->coarse_rhs()[0].end(), [&factory2](){ return factory2.create(); });
+    //}
 
     this->_q_integrals.resize(num_nodes + 1);
     std::generate(this->_q_integrals.begin(), this->_q_integrals.end(),
@@ -123,7 +123,7 @@ namespace pfasst
     typename traits::time_t tm = t;
 
     for (size_t m = 0; m < num_nodes; ++m) {
-      this->states()[m + 1]->data() = this->last_newton_state()[0][m+1]->data(); //this->states()[m]->data();
+      this->states()[m + 1]->data() = this->last_newton_state()[m+1]->data(); //this->states()[m]->data();
       this->_impl_rhs[m + 1] = this->evaluate_rhs_impl(m + 1, this->states()[m + 1]);//this->last_newton_state()[0][m+1]); //this->evaluate_rhs_impl(m, this->get_states()[m + 1]);
       tm += dt *  (nodes[m+1] - nodes[m]);
 
@@ -265,7 +265,7 @@ namespace pfasst
       this->implicit_solve(this->_impl_rhs[m + 1], this->states()[m + 1], m+1 , dt * this->_q_delta_impl(m+1, m+1), rhs); //tm
 
       for(int p=0; p<this->states()[m + 1]->data().size(); p++)
-      this->new_newton_state()[0][m + 1]->data()[p] = this->states()[m + 1]->data()[p];	
+      this->new_newton_state()[m + 1]->data()[p] = this->states()[m + 1]->data()[p];	
 
 
       	/*std::cout <<  "sweeper nach imp solve " << std::endl;

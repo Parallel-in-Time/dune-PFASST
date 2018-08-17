@@ -66,12 +66,12 @@ namespace pfasst
                   "Encapsulation type must be destructible");*/
 
 
-      vector<vector<shared_ptr<typename traits::encap_t>>>        _last_newton_state;  
-      virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& last_newton_state();
-      virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_last_newton_state() const; 
-      vector<vector<shared_ptr<typename traits::encap_t>>>        _new_newton_state;  
-      virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& new_newton_state();
-      virtual const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& get_new_newton_state() const; 
+      vector<shared_ptr<typename traits::encap_t>>       _last_newton_state;  
+      virtual       vector<shared_ptr<typename SweeperTrait::encap_t>>& last_newton_state();
+      virtual const vector<shared_ptr<typename SweeperTrait::encap_t>>& get_last_newton_state() const; 
+      vector<shared_ptr<typename traits::encap_t>>        _new_newton_state;  
+      virtual       vector<shared_ptr<typename SweeperTrait::encap_t>>& new_newton_state();
+      virtual const vector<shared_ptr<typename SweeperTrait::encap_t>>& get_new_newton_state() const; 
 
       vector<vector<shared_ptr<typename traits::encap_t>>>    _coarse_rhs;
       virtual       vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>& coarse_rhs();
