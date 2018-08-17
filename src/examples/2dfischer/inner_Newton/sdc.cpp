@@ -54,7 +54,8 @@ namespace pfasst
         sdc->add_sweeper(sweeper);
 
         sdc->set_options();
-
+	sweeper->output = output;
+	sweeper->output_level = 0;
         sdc->status()->time() = t_0;
         sdc->status()->dt() = dt;
         sdc->status()->t_end() = t_end;
@@ -73,14 +74,14 @@ namespace pfasst
 
 
 
-	if(output){
+	/*if(output){
         	auto naeherung = sweeper->get_end_state()->data();
         	auto exact     = sweeper->exact(t_end)->data();
 
         	for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           		std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
         	}
-        }
+        }*/
 
         sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
 	std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
@@ -118,7 +119,17 @@ namespace pfasst
     const size_t niter = get_value<size_t>("num_iters", 4);
     const double tol = get_value<double>("abs_res_tol", 1e-12);
 
-    pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output, tol);
+    MPI_Init(&argc, &argv);
+	MPI_Barrier(MPI_COMM_WORLD);
+    	auto st = MPI_Wtime();
+
+    	pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output, tol);
+    	
+    	auto ut = MPI_Wtime()-st;
+        double time;
+        MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        std::cout << "Zeit ist am end" << time << std::endl;
+    MPI_Finalize();
 
   }
 

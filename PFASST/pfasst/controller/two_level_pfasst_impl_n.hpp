@@ -141,12 +141,12 @@ namespace pfasst
     	  //this->get_coarse()->predict();
           this->get_fine()->predict();
 
-        int my_rank;
+        /*int my_rank;
         MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
 	  for(int i = 0; i < this->get_fine()->get_end_state()->data().size(); i++){
 		//this->get_fine()->states()[0]->data() = this->get_fine()->exact(0)->data();
 		if(my_rank==1)  std::cout << this->get_fine()->states()[0]->data()[i] << std::endl;
-	  }
+	  }*/
 
 
 

@@ -93,7 +93,7 @@ namespace pfasst
 	  		result->data()[i][0] = pom1[i];
 		}
 
-		if(!this->is_coarse){
+		/*if(!this->is_coarse){
         		auto grid = this->grid;
         		typedef Dune::BlockVector<Dune::FieldVector<double, 2> > VectorType;
         		typedef Dune::BlockVector<Dune::FieldVector<double, 1> > ColumnType;
@@ -110,7 +110,7 @@ namespace pfasst
         		}
         		vtkWriter.addVertexData(sol_u, "fe_solution_u");
         		vtkWriter.write("fe_2d" + name);
-		}
+		}*/
 
         	return result;
           }

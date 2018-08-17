@@ -47,7 +47,7 @@ using namespace pfasst::examples::fischer_example;
       void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t DIM, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
-                                           const size_t niter, double newton) {
+                                           const size_t niter, double newton, bool output) {
 
 
 
@@ -307,16 +307,17 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         std::cout << "time step " << time << std::endl ;
         std::cout << "******************************************* " <<  std::endl ;*/
 
+	if(output){
         	GridType::LevelGridView gridView = grid->levelGridView(1);
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
-        	string name = std::to_string(76);  
+
 
         	Dune::VTKWriter<GridView> vtkWriter2(gridView);
-        	string name2 = std::to_string(77);
+        	string name2 = std::to_string(time);
 
         	vtkWriter2.addVertexData(fine->get_end_state()->data(), "fe_solution_u");
         	vtkWriter2.write("fe_2d_nach_solve" + name2);
-
+	}
 
 
 	(*_new_newton_state_fine[0][num_nodes]).data() -= fine->new_newton_state()[0][num_nodes]->data();
@@ -402,7 +403,9 @@ int main(int argc, char** argv)
   const double dt = get_value<double>("dt", 0.1);
   double t_end = get_value<double>("tend", 0.1);
   size_t nsteps = get_value<size_t>("num_steps", 0);
-    const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
+  const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
+  bool output = get_value<double>("output", 0);                    // size of timesteping 
+    
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -418,6 +421,6 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
 
-  run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+  run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
 }
 #endif 

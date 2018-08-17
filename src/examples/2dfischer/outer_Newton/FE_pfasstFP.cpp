@@ -156,15 +156,15 @@ Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_ba
 Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
 
 
-std::cout << "num_pro " << num_pro << std::endl;
+//std::cout << "num_pro " << num_pro << std::endl;
 int num_solves=0;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
     MPI_Barrier(MPI_COMM_WORLD);
-    std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
+    //std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
     for(int ne=0; ne<12; ne++){
 
     MPI_Barrier(MPI_COMM_WORLD);
-    std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  im neuen schritt " << time << " " << std::endl;	
+    //std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  im neuen schritt " << time << " " << std::endl;	
         MPI_Barrier(MPI_COMM_WORLD);
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
@@ -173,7 +173,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-    std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  etwas weiter " << time << " " << std::endl;	
+    	//std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  etwas weiter " << time << " " << std::endl;	
         coarse->is_coarse=true;
         fine->is_coarse=false;
 
@@ -334,7 +334,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         pfasst.post_run();
 
         
-	std::cout << my_rank << " nach dem run " << std::endl;
+	//std::cout << my_rank << " nach dem run " << std::endl;
         MPI_Barrier(MPI_COMM_WORLD);
 
         
@@ -350,22 +350,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 
 
-
-
-	
-
-	//for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
-	//fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_time_steps-1][num_nodes]); // RUTH 
-        std::cout << my_rank << " NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-	std::cout << my_rank << " num_solves  " << fine->num_solves <<  std::endl;
-        MPI_Barrier(MPI_COMM_WORLD);
-
-	int local=0, global=0;
-	//if (fine->get_end_state()->norm0()<newton) local=1;	
-	//MPI_Reduce(&local, &global, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-	//MPI_Bcast(&global, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-	//if(my_rank==num_pro-1){
+	if(my_rank==num_pro-1){
         	GridType::LevelGridView gridView = grid->levelGridView(1);
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
         	string name = std::to_string(76);  
@@ -375,10 +360,24 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
         	vtkWriter2.addVertexData(fine->get_end_state()->data(), "fe_solution_u");
         	vtkWriter2.write("fe_2d_nach_solve" + name2);
-        //}
+        }
+
+	
+
+	//for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
+	fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[0][num_nodes]); // RUTH 
+        std::cout << my_rank << " NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
+	std::cout << my_rank << " num_solves  " << fine->num_solves <<  std::endl;
+
+	int local=0, global=0;
+	if(my_rank==num_pro-1){ if (fine->get_end_state()->norm0()<newton) global=1;}	
+	//MPI_Reduce(&local, &global, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+	MPI_Bcast(&global, 1, MPI_INT, num_pro-1, MPI_COMM_WORLD);
+
+
 	std::cout << my_rank << " vtk geschrieben  " << fine->num_solves <<  std::endl;
-	std::cout << my_rank << " vtk geschrieben  ne ist " << ne <<  std::endl;
-	if(global>0 || ne==2) {
+	//std::cout << my_rank << " vtk geschrieben  ne ist " << ne <<  std::endl;
+	if(global>0 ) {
 		//if (my_rank == num_pro-1){for (int i=0; i< fine->get_end_state()->data().size(); i++) _new_initial_fine->data()[i] = _copy_end_state->data()[i];}
 		//MPI_Bcast(&(_new_initial_fine->data()[0]),_new_initial_fine->data().size(), MPI_DOUBLE, num_pro-1,MPI_COMM_WORLD);
 
@@ -405,7 +404,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		
 	//fine->new_newton_state()[0][num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
        	//std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[0][num_nodes]->norm0() << " " << std::endl;
-		std::cout << my_rank << " if betreten " << ne <<  std::endl;
+		//std::cout << my_rank << " if betreten " << ne <<  std::endl;
 		MPI_Barrier(MPI_COMM_WORLD);       	       	
 		if(my_rank==num_pro-1){       	       	
 		//for(int i=0; i< num_time_steps; i++){	
@@ -420,7 +419,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		}
     		}
 		//}
-		       	       	std::cout << my_rank << " gesetzt : "  << std::endl;		
+		//std::cout << my_rank << " gesetzt : "  << std::endl;		
 		//for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
 		for(int k=0; k< _new_newton_state_coarse[0][j]->data().size(); k++){
@@ -435,23 +434,23 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		}
 		//}
 		
-		std::cout << my_rank << " vor dem ersten b : "  << std::endl;		
+		//std::cout << my_rank << " vor dem ersten b : "  << std::endl;		
 
        		MPI_Bcast(&(_new_newton_initial_coarse[0][0]), _new_newton_initial_coarse.size(), MPI_DOUBLE, num_pro-1, MPI_COMM_WORLD);
        		MPI_Bcast(&(_new_newton_initial_fine[0][0]),_new_newton_initial_fine.size(), MPI_DOUBLE, num_pro-1, MPI_COMM_WORLD);
 
        		
-       	       	std::cout << my_rank << " nach dem ersten b : "  << std::endl;	
+       	       	//std::cout << my_rank << " nach dem ersten b : "  << std::endl;	
        	        //for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1; j++){ //num_nodes+1?????
-		std::cout << my_rank << " " << j <<std::endl;	
+		//std::cout << my_rank << " " << j <<std::endl;	
 		MPI_Barrier(MPI_COMM_WORLD);
 		for(int k=0; k<_new_newton_state_coarse[0][j]->data().size(); k++){ //num_nodes+1?????
        	       	MPI_Bcast(&((_new_newton_state_fine[0][j]->data()[k])), 1, MPI_DOUBLE, num_pro-1, MPI_COMM_WORLD);
        	       	MPI_Bcast(&((_new_newton_state_coarse[0][j]->data()[k])), 1, MPI_DOUBLE, num_pro-1, MPI_COMM_WORLD);
        	       	}
 		}//}
-		std::cout << my_rank << " nach dem zweiten b : "  << std::endl;	
+		//std::cout << my_rank << " nach dem zweiten b : "  << std::endl;	
 		
 		
 		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
@@ -465,7 +464,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	num_solves = fine->num_solves;
         MPI_Barrier(MPI_COMM_WORLD);
 
-	std::cout << "rank " << my_rank<< std::endl;
+	//std::cout << "rank " << my_rank<< std::endl;
 
     	//for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){

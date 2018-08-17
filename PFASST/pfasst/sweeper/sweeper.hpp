@@ -183,7 +183,7 @@ namespace pfasst
       //! @{
       
 #if HAVE_MPI      
-      MPI_Comm comm=MPI_COMM_WORLD;
+      MPI_Comm comm=MPI_COMM_SELF;
 #endif      
       explicit Sweeper();
       Sweeper(const Sweeper<SweeperTrait, BaseFunction, Enabled>& other) = default;

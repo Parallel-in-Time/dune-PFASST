@@ -92,6 +92,7 @@ const size_t GRID_LEVEL=1;
         periodic[0]=true; //false;//true; 
         periodic[1]=true; //false;//true;
 
+
         grid        = std::make_shared<GridType>(L,s,periodic,0);
 
 	    

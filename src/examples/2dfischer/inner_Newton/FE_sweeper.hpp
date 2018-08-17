@@ -62,8 +62,11 @@ namespace pfasst
           using traits = SweeperTrait;
 
           static void init_opts();
-
+          int output_level;
+          int output=0;
         private:
+        
+
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};

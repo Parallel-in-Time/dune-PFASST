@@ -43,7 +43,7 @@ namespace pfasst
 
       {
       
-
+	//_level=nlevel;
 	this->FinEl = FinEl;
 	basis = FinEl->get_basis(nlevel);
 	    
@@ -160,13 +160,13 @@ namespace pfasst
 	  
 	}
 
-	if(!this->is_coarse){
+	if(output && !this->is_coarse){
         auto grid = this->FinEl->get_grid();
         typedef Dune::BlockVector<Dune::FieldVector<double, 2> > VectorType;
         typedef Dune::BlockVector<Dune::FieldVector<double, 1> > ColumnType;
  
         
-        GridType::LevelGridView gridView = grid->levelGridView(1);
+        GridType::LevelGridView gridView = grid->levelGridView(output_level);
         Dune::VTKWriter<GridView> vtkWriter(gridView);
 
 
@@ -362,14 +362,9 @@ namespace pfasst
         ML_CVLOG(4, this->get_logger_id(),
                  "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
                  
-	auto grid = this->FinEl->get_grid();
-	//typedef Dune::YaspGrid<dim> GridType; //ruth_dim
-        GridType::LevelGridView gridView = grid->levelGridView(1);
-        Dune::VTKWriter<GridView> vtkWriter(gridView);
-        string name = std::to_string(t);
 
-        //vtkWriter.addVertexData(u->data(), "fe_solution_u");
-        //vtkWriter.write("fe_2d_vorsolve" + name);
+
+
 	
 
         
@@ -408,13 +403,14 @@ namespace pfasst
 
 	}	
 	
-	//auto grid = this->FinEl->get_grid();
+	if(output && !this->is_coarse ){
+	auto grid = this->FinEl->get_grid();
 	//typedef Dune::YaspGrid<dim> GridType; //ruth_dim
-        //typedef GridType::LevelGridView GridView;
-        //GridType::LevelGridView gridView = grid->levelGridView(0);
-        //Dune::VTKWriter<GridView> vtkWriter(gridView);
+        GridType::LevelGridView gridView = grid->levelGridView(output_level);
+        Dune::VTKWriter<GridView> vtkWriter(gridView);
+        string name = std::to_string(t);
 
-	if(!this->is_coarse && num_solves%12==0){
+
         Dune::VTKWriter<GridView> vtkWriter2(gridView);
         string name2 = std::to_string(num_solves);
 
@@ -422,20 +418,18 @@ namespace pfasst
         vtkWriter2.write("fe_2d_nach_solve" + name2);
 	}
 	
-	//std::exit(0);
 	
 	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;
         M_u.resize(u->get_data().size());
 	this->M_dune.mv(u->get_data(), M_u);
 
-        //evaluate_rhs_impl(0,u);
+
         for (size_t i = 0; i < u->get_data().size(); i++) {
           f->data()[i] = (M_u[i] - rhs->get_data()[i]) / (dt);
-          //std::cout << i << "impl solve " << f->data()[i] << std::endl;
         }
 
         this->_num_impl_solves++;
-        //if(this->_num_impl_solves==3) std::exit(0);
+
 
       }
       

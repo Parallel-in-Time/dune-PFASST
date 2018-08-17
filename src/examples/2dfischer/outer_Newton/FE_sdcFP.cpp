@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
     const size_t niter = get_value<size_t>("num_iters", 10);            // maximal number of sdc iterations
     const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
-    
+    bool output = get_value<double>("output", 0);                    // size of timesteping
     
     //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
     //typedef GridType::LevelGridView GridView;
@@ -226,23 +226,24 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     	auto naeherung = sweeper->get_end_state()->data();
     	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
     	auto initial   = sweeper->exact(t_0 + time*dt)->data();
+    	if(output){
     	//for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) {
     	        //evaluate_f(f, u, dt, rhs);
         	//auto grid = this->grid;
 		//typedef Dune::YaspGrid<dim> GridType; //ruth_dim
         	GridType::LevelGridView gridView = grid->levelGridView(0);
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
-        	string name = std::to_string(76);  
+
 
         	Dune::VTKWriter<GridView> vtkWriter2(gridView);
-        	string name2 = std::to_string(77);
+        	string name2 = std::to_string(time);
 
         	vtkWriter2.addVertexData(sweeper->get_end_state()->data(), "fe_solution_u");
         	vtkWriter2.write("fe_2d_nach_solve" + name2);
 
     		//std::cout << initial[i] << " result " << naeherung[i] << " " << naeherung[i] << " " << exact[i] << std::endl;}
 	//sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
-
+	}
 
         //std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
 	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < newton){ 

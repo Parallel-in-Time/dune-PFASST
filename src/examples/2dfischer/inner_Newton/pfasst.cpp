@@ -71,7 +71,9 @@ namespace pfasst
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
-
+        fine->output=output;
+        fine->output_level=1;
+        
         pfasst.add_transfer(transfer);
 	pfasst.add_sweeper(coarse, true);
 	pfasst.add_sweeper(fine);
@@ -96,19 +98,19 @@ namespace pfasst
 	MPI_Reduce(&(fine->num_solves), &global_num, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
 
-        if(output && my_rank==num_pro-1) {
+        /*if(output && my_rank==num_pro-1) {
           auto naeherung = fine->get_end_state()->data();
-          auto exact = fine->exact(t_end)->data();
+          //auto exact = fine->exact(t_end)->data();
           for (int i = 0; i < fine->get_end_state()->data().size(); i++) {
-            std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+            std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " <<  std::endl;
           }
           std::cout << "******************************************* " << std::endl;
           std::cout << " " << std::endl;
           std::cout << " " << std::endl;
-        }
-        std::cout << "ERROR (infinity norm): " << std::endl;
-        fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
-        std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
+        }*/
+        //std::cout << "ERROR (infinity norm): " << std::endl;
+        //fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
+        //std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
 	std::cout << "my_rank: " << my_rank << ", number solutions which this process does: " << fine->num_solves << "" << std::endl;
 
 
@@ -142,7 +144,7 @@ int main(int argc, char** argv)
   size_t nsteps = get_value<size_t>("num_steps", 0);
   double newton = get_value<double>("newton", 1e-2);
   bool output = get_value<double>("output", 0);
-  const size_t niter = get_value<size_t>("num_iters", 1000);
+  const size_t niter = get_value<size_t>("num_iters", 10);
 
   pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
 

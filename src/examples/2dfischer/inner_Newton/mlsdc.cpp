@@ -64,7 +64,7 @@ namespace pfasst
       void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
-                                           const size_t niter, const double newton) {
+                                           const size_t niter, const double newton, bool output) {
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
         auto FinEl = make_shared<fe_manager>(nelements, 2);
@@ -82,6 +82,8 @@ namespace pfasst
         coarse->newton=newton;
         fine->is_coarse=false;
         fine->newton=newton;
+        fine->output=output;
+        fine->output_level=1;
         //coarse->is_coarse=true;
         //fine->is_coarse=false;
         
@@ -93,8 +95,8 @@ namespace pfasst
         //mlsdc->add_sweeper(fine, false);
 
     
-               fine->set_abs_residual_tol(1e-12);
-           coarse->set_abs_residual_tol(1e-12);
+           //fine->set_abs_residual_tol(1e-12);
+           //coarse->set_abs_residual_tol(1e-12);
     
     
            
@@ -252,6 +254,7 @@ int main(int argc, char** argv)
   double t_end = get_value<double>("tend", 0.1);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   double newton = get_value<size_t>("newton", 1e-6);
+  bool output = get_value<double>("output", 0);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -266,7 +269,16 @@ int main(int argc, char** argv)
     t_end = t_0 + dt * nsteps;
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
-
-  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+  
+    MPI_Init(&argc, &argv);
+	MPI_Barrier(MPI_COMM_WORLD);
+    	auto st = MPI_Wtime();
+  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+  
+      	auto ut = MPI_Wtime()-st;
+        double time;
+        MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        std::cout << "Zeit ist am end" << time << std::endl;
+    MPI_Finalize();
 }
 #endif 

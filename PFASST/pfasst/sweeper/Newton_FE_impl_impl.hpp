@@ -30,7 +30,6 @@ namespace pfasst
   IMEX<SweeperTrait, BaseFunction, Enabled>::initialize()
   {
     pfasst::Sweeper<SweeperTrait, BaseFunction, Enabled>::initialize();
-	std::cout << "im initialize "<< std::endl;
     const auto num_nodes = this->get_quadrature()->get_num_nodes();
     assert(this->get_states().size() == num_nodes + 1);
 
@@ -456,10 +455,10 @@ namespace pfasst
       
       this->residuals().back()->scaled_add(1.0, this->get_tau().back());
       for (size_t n = 0; n < cols; ++n) {
-	std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
+	//std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
         //this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_expl_rhs[n]);
         this->residuals().back()->scaled_add(dt * this->get_quadrature()->get_q_mat()(rows - 1, n), this->_impl_rhs[n]);
-	std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
+	//std::cout << "only_last " << this->residuals().back()->norm0() << std::endl;
       }
     } else {
       for (size_t m = 0; m < num_nodes; ++m) {

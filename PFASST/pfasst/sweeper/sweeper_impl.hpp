@@ -549,19 +549,19 @@ namespace pfasst
     this->_abs_res_norms.back() = this->get_residuals().back()->norm0(true, this->comm);//ruth
     this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
 #else
-    std::cout << "ohne mpi" << std::endl;
-    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();     std::cout << "ohne mpi" << this->_abs_res_norms.back() << std::endl;
-    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); std::cout << "ohne mpi" << this->_rel_res_norms.back() << std::endl;
+    //std::cout << "ohne mpi" << std::endl;
+    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();  //   std::cout << "ohne mpi" << this->_abs_res_norms.back() << std::endl;
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); // std::cout << "ohne mpi" << this->_rel_res_norms.back() << std::endl;
 #endif        
     //std::cout <<"hier abs res " << this->get_residuals().back()->norm0(true, this->comm) << std::endl;
-    //int rank;
-    //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    /*for(int i=0; i< this->get_residuals().back()->get_data().size(); i++){
+    /*int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    for(int i=0; i< this->get_residuals().back()->get_data().size(); i++){
     	if(rank==0) std::cout << this->get_residuals().back()->get_data()[i] << std::endl;
     }*/
 
     if (pre_check) {
-       std::cout << "im precheck " << this->_abs_residual_tol << std::endl;
+      // std::cout << "im precheck " << this->_abs_residual_tol << std::endl;
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");
 
@@ -598,7 +598,7 @@ namespace pfasst
 
       this->status()->abs_res_norm() = *(std::max_element(this->_abs_res_norms.cbegin(), this->_abs_res_norms.cend()));
       this->status()->rel_res_norm() = *(std::max_element(this->_rel_res_norms.cbegin(), this->_rel_res_norms.cend()));
-      std::cout << "max norm " << this->status()->abs_res_norm() << std::endl;
+      //std::cout << "max norm " << this->status()->abs_res_norm() << std::endl;
 
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "convergence check");
