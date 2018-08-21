@@ -38,8 +38,8 @@ namespace pfasst
 
             
         public:
-        double                                     	_nu{1.2}; //1.2
-        double                                     	_n{2.0}; //2.0        
+        double                                     	_nu{1.0}; //1.2
+        double                                     	_n{1.0}; //2.0        
         
 	int                                             num_solves=0;        
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
@@ -313,7 +313,7 @@ namespace pfasst
           double _n=this->_n;
 
           f->zero();
-          Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > fneu(this->M_dune);
+          //Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > fneu(this->M_dune);
           Dune::BlockVector<Dune::FieldVector<double,1> > fneu2;
           fneu2.resize(u->get_data().size());
 

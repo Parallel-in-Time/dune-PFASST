@@ -369,8 +369,8 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 			}
         	
 		}*/
-	fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
-       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
+		fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
+       		std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
 
 		std::cout << " vor dem break " << std::endl; break;
 	}
