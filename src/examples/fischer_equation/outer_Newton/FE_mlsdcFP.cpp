@@ -49,10 +49,6 @@ using namespace pfasst::examples::fischer_example;
                                            const double& t_0, const double& dt, const double& t_end,
                                            const size_t niter, double newton, double tol) {
 
-
-
-//         auto FinEl = make_shared<fe_manager>(nelements, 2);
-
         
                 
         typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
@@ -68,7 +64,6 @@ using namespace pfasst::examples::fischer_example;
         int n_levels=2;
 
         std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
-        //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
 
     
         Dune::FieldVector<double,DIMENSION> hR = {200};
@@ -81,10 +76,9 @@ using namespace pfasst::examples::fischer_example;
         grid = std::make_shared<GridType>(hL, hR, n);
 #endif
         for (int i=0; i<n_levels; i++){	      
-	      grid->globalRefine((bool) i);
+	      grid->globalRefine(0);//((bool) i);
 	      auto view = grid->levelGridView(i);
-              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
-	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
+              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(0));//grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
         } 
         
         
@@ -99,7 +93,7 @@ using namespace pfasst::examples::fischer_example;
 
     
 	const auto num_nodes = nnodes;	
-    	const auto num_time_steps = 1; //t_end/dt;
+
 
 	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_coarse;
 	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_fine;	
@@ -189,14 +183,14 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 	
 
-	if(time==0 && ne==0) 	
+	if(time==0 && ne==0) {	
 		for(int j=0; j<num_nodes +1; j++){
     		 	(*_new_newton_state_coarse[j]) = coarse->exact(mlsdc->get_status()->get_time())->data(); 
     		 	(*_new_newton_state_fine[j]) = fine->exact(mlsdc->get_status()->get_time())->data(); 
 
 		}
 
-
+	}
 
 	for(int j=0; j<num_nodes +1; j++){
 			for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
@@ -212,7 +206,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 
 
-           
+  
 
 
 	    for(int m=0; m< num_nodes +1; m++){
@@ -260,6 +254,10 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact( t_0 + (time+1)*dt)->data();
+        
+        for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        }
 
 
         std::cout << "******************************************* " <<  std::endl ;
@@ -273,9 +271,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 	std::cout << "groesse loesungsvektor " << fine->get_end_state()->data().size() << std::endl ;
 	std::cout << "Parameter " << fine->_n << " " << fine->_nu << std::endl ;
 
-	(*_new_newton_state_fine[num_nodes]).data() -= fine->new_newton_state()[num_nodes]->data();
+	//(*_new_newton_state_fine[num_nodes]).data() -= fine->new_newton_state()[num_nodes]->data();
 	
-	//(*_new_newton_state_fine[num_nodes]).data() -= fine->get_end_state()->data();
+	(*_new_newton_state_fine[num_nodes]).data() -= fine->get_end_state()->data();
 	
 	
 	
@@ -309,19 +307,18 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 		
 		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
 	
-		break;}
+		break;
+	}
 
 
-		for(int j=0; j<num_nodes +1 ; j++){
+	for(int j=0; j<num_nodes +1 ; j++){
 		for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
     			(*_new_newton_state_coarse[j]).data()[k] = coarse->new_newton_state()[j]->data()[k];
-			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
     		}
 		for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
     			(*_new_newton_state_fine[j]).data()[k] = fine->new_newton_state()[j]->data()[k];
-			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
 		}
-    		}
+    	}
 	
 	
 	}//newton
