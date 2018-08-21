@@ -1,6 +1,6 @@
 #include "FE_sweeper.hpp"
 
-#include "assemble.hpp"
+#include "../2d_transfer/assemble.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -79,6 +79,7 @@ namespace pfasst
         int num_nodes = this->get_quadrature()->get_num_nodes();
 
 
+
       }
 
       /*template<class SweeperTrait, typename Enabled>
@@ -118,9 +119,10 @@ namespace pfasst
 
         const auto dim = SweeperTrait::DIM;
         spatial_t nu = this-> _nu; 
+        double eps= this->_eps;
 	
 	
-	auto exact_solution1 = [t,  nu, dim](const Dune::FieldVector<double,dim>&x){
+	auto exact_solution1 = [t,  nu, dim, eps](const Dune::FieldVector<double,dim>&x){
              
 	  //double solution=1.0;
           //for(int i=0; i<dim; i++){solution *= pow(std::sin(PI * x[i]/1),1);}
@@ -130,7 +132,7 @@ namespace pfasst
 	  //if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
 	  //  return 0.5;
 	  //  return 1.0;
-	  return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*0.04)) ;
+	  return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*eps)) ;
             
         };
 

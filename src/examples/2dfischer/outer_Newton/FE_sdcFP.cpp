@@ -7,6 +7,7 @@
 #include <pfasst/contrib/spectral_transfer.hpp>
 
 #include <pfasst/encap/dune_vec.hpp>
+//#include "assemble.hpp"
 #include "fischer_sweeper.hpp"
 
 
@@ -24,6 +25,10 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 
 
 using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+
+
+
+
 using sweeper_t = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
 
 using pfasst::transfer_traits;
@@ -38,6 +43,10 @@ using pfasst::quadrature::quadrature_factory;
 
 using pfasst::examples::fischer_example::fischer_sweeper;
 
+/////////////////////
+
+//using sweeper_predict = Heat_FE<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>>;
+//using heat_FE_sdc_t = SDC<SpectralTransfer<transfer_traits<sweeper_t, sweeper_t, 1>>>;
 
 
 
@@ -48,15 +57,15 @@ int main(int argc, char** argv) {
     
     	pfasst::init(argc, argv, sweeper_t::init_opts);
 
-    	const size_t nelements = get_value<size_t>("num_elements", 16);    // spacial dimension: number of grid points per dimension on the coase level    
+    	const size_t nelements = get_value<size_t>("num_elements", 16);     // spacial dimension: number of grid points per dimension on the coase level    
     	const double t_0 = 0.0;                                             // left point of the time intervall is zero 
-    	const double dt = get_value<double>("dt", 0.1);                    // size of timesteping
+    	const double dt = get_value<double>("dt", 0.1);                     // size of timesteping
     	double t_end = get_value<double>("tend", 0.1);                      // right point of the time intervall  
     	const size_t nnodes = get_value<size_t>("num_nodes", 3);            // time intervall: number of sdc quadrature points
     	const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
     	const size_t niter = get_value<size_t>("num_iters", 10);            // maximal number of sdc iterations
-    	const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
-    	bool output = get_value<double>("output", 0);                    // size of timesteping
+    	const double newton = get_value<double>("newton", 0.1);             // size of timesteping
+    	bool output = get_value<double>("output", 0);                       // size of timesteping
     
 
 	//start solving procedure und stop time
@@ -90,21 +99,26 @@ int main(int argc, char** argv) {
 	const auto num_nodes = nnodes;	
 
 	
-	vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>  _new_newton_state; //
+	vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>  _new_newton_state; 
 
 	_new_newton_state.resize(num_nodes + 1);
+	
+	//std::cout << " basis groessen " << fe_basis[0]->size() << " " << fe_basis[1]->size()<< std::endl;
+	
 	for(int j=0; j<num_nodes +1 ; j++){
-		_new_newton_state[j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
+		_new_newton_state[j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
 	}
 
     	
-    	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(fe_basis[0]->size());
+    	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(fe_basis[1]->size());
 
+	/*Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > A;
+	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M;
+	assembleProblem(fe_basis[0], A, M);*/
 
 	int num_solves = 0;
-
+	
 	for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
-
 
 		
     		for(int ne=0; ne<10; ne++){	//Newtonschritte
@@ -203,9 +217,9 @@ int main(int argc, char** argv) {
 
     	
 
-   }//Newtonschritte
+   		}//Newtonschritte
 
-}//Zeitschritte
+	}//Zeitschritte
     
       	auto ut = MPI_Wtime()-st;
         double time;

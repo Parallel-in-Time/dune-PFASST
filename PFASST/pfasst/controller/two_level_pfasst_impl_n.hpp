@@ -114,41 +114,8 @@ namespace pfasst
       int number=0;
       do {
         if (this->get_status()->get_primary_state() == (+PrimaryState::PREDICTING)) {
-          //this->predictor();
-          //this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
 
-          //this->get_coarse()->spread_Newton(); 
-	  //this->get_fine()->spread_Newton();
-
-          //this->recv_coarse();
-
-	  //this->predict_coarse();
-
-          //this->send_coarse(); 
-
-    	  //this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true);
-
-    	  //this->recv_fine();
-    	  //this->get_fine()->spread_Newton();
-    	  //this->get_fine()->save();
-
-
-
-    	  //this->sweep_fine();
-
-          //this->send_fine();
-
-    	  //this->get_coarse()->predict();
           this->get_fine()->predict();
-
-        /*int my_rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &my_rank );
-	  for(int i = 0; i < this->get_fine()->get_end_state()->data().size(); i++){
-		//this->get_fine()->states()[0]->data() = this->get_fine()->exact(0)->data();
-		if(my_rank==1)  std::cout << this->get_fine()->states()[0]->data()[i] << std::endl;
-	  }*/
-
-
 
 
           this->cycle_down();
@@ -164,67 +131,7 @@ namespace pfasst
           this->send_fine();
 	  this->get_fine()->save();
 
-      	  /*for(int p=0; p<this->get_fine()->states()[m + 1]->data().size(); p++){
-      		this->get_coarse()->new_newton_state()[0][m + 1]->data()[p] = this->get_coarse()->last_newton_state()[0][m + 1]->data()[p];
-		this->get_fine()->new_newton_state()[0][m + 1]->data()[p] = this->get_fine()->last_newton_state()[0][m + 1]->data()[p];
-	  }*/
 
-          //this->get_coarse()->save();this->get_fine()->save();
-          /*this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
-	  this->get_coarse()->spread_Newton();
-          this->get_coarse()->save();
-
-
-          ML_CVLOG(1, this->get_logger_id(), "cycle up onto fine level");
-          this->get_transfer()->interpolate(this->get_coarse(), this->get_fine(), true);
-          this->sweep_fine();
-
-          this->send_fine();
-
-          // finalize prediction step
-          this->get_coarse()->save();
-          this->get_fine()->save();*/
-
-          // ... and spread it to all nodes on the coarse level
-	  //std::cout << "vor get coarse spread" <<std::endl;
-          //this->get_coarse()->spread_Newton(); 
-	  //this->get_fine()->spread_Newton();
-	  //std::cout << "vor get coarse save" <<std::endl;
-          //this->get_coarse()->save(); this->get_fine()->save();
-
-
-          //this->sweep_fine();
-	  //this->send_fine();
-	  //this->predict_fine();
- 	  //this->predict_coarse();
-          //this->get_coarse()->save(); 
-	  //this->get_fine()->save();
-          //this->send_fine();
-	  //std::cout << "vor get coarse save" <<std::endl;
-    	  //this->send_fine();
-
-	  //last_predict=true;    
-      	  /*for(int m=0; m<this->get_coarse()->get_quadrature()->get_num_nodes(); m++){
-      	  for(int p=0; p<this->get_coarse()->states()[m + 1]->data().size(); p++){
-      		this->get_coarse()->new_newton_state()[0][m + 1]->data()[p] = this->get_coarse()->last_newton_state()[0][m + 1]->data()[p];
-		this->get_fine()->new_newton_state()[0][m + 1]->data()[p] = this->get_fine()->last_newton_state()[0][m + 1]->data()[p];
-	  }}*/	
-
- 	  /*this->cycle_down();
-
-          this->recv_coarse();
-
-          this->sweep_coarse();
-          this->send_coarse();
-
-          this->cycle_up();
-
-	  //}last_predict=false;
-
-          this->sweep_fine();
-          this->send_fine();
-          this->get_coarse()->save(); 
-	  this->get_fine()->save();*/
 
         } else if (this->get_status()->get_primary_state() == (+PrimaryState::ITERATING)) {
           ML_CLOG(INFO, this->get_logger_id(), "");
@@ -245,6 +152,7 @@ namespace pfasst
 
           this->sweep_fine();
           this->send_fine();
+          
 	  number+=1;
 
 

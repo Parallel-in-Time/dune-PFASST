@@ -1,5 +1,5 @@
-#ifndef _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
-#define _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP_
+#ifndef _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP2_
+#define _PFASST__EXAMPLES__HEAD2D__HEAD2D_SWEEPER_HPP2_
 
 #include <memory>
 #include <type_traits>
@@ -12,7 +12,7 @@ using std::vector;
 #include <pfasst/sweeper/FE_impl.hpp>
 
 #include <pfasst/contrib/fft.hpp>
-#include "fe_manager_fp.hpp"
+#include "../2d_transfer/fe_manager_fp.hpp"
 
 
 
@@ -71,6 +71,7 @@ namespace pfasst
 
           typename traits::time_t                        _t0{0.0};
           double                                     	 _nu{25};
+          double                                         _eps{0.4};
           double                                     	 _n{2.0};
           std::shared_ptr<VectorType> w;
 

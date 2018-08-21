@@ -1,6 +1,6 @@
 #include "FE_sweeper.hpp"
 
-#include "assemble.hpp"
+#include "../2d_transfer/assemble.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -38,47 +38,13 @@ namespace pfasst
       template<class SweeperTrait, class BasisFunction, typename Enabled>
       Heat_FE<SweeperTrait, BasisFunction, Enabled>::Heat_FE(std::shared_ptr<BasisFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid) : IMEX<SweeperTrait, BasisFunction, Enabled>()
 
-      {
-        //std::cout << "fe"<< std::endl;
-  
-      
-	//this->nlevel = nlevel;    
+      {   
 	    
 	this->basis = basis;
-
-        //this->grid = grid;
 	
         
         assembleProblem(basis, (this->A_dune), (this->M_dune));
-	     // std::cout<< "M"<< std::endl;
-        
-         /*for (int i=0; i< this->M_dune.N(); i++){
-	      for (int j=0; j< this->M_dune.M(); j++){
-            if(this->M_dune.exists(i,j)){	
-                std::cout<< this->M_dune[i][j] << " " ;
-            }else{
-                std::cout<< 0 << " " ;
-            }
 
-	      }
-	      std::cout<< ""<< std::endl;
-        }
-	      std::cout<< ""<< std::endl;*/
-        
-        
-        //for(int i =0; i< this->A_dune.N(); i++)
-        //for(int j =0; j< this->A_dune.N(); j++)            
-        //if (this->A_dune.exists(i,j)) std::cout << this->M_dune[i][j] << " "<< mass[i][j]<<  std::endl;
-        //this->A_dune = std::make_shared<MatrixType>(stiffness);
-        //this->M_dune = std::make_shared<MatrixType>(mass);
-        
-        /*std::cout << "vor schleife" <<  std::endl; 
-        for(int i =0; i< this->A_dune->N(); i++)
-        for(int j =0; j< this->A_dune->N(); j++)            
-        //if (this->M_dune->exists(i,j)) std::cout << (*this->M_dune)[i][j] << " "<< mass[i][j] <<std::endl;        
-        std::cout << "nach schleife" <<  std::endl; 
-        */
-        //std::exit(0);
         
         const auto bs = basis->size();
         std::cout << "Finite Element basis of level " << nlevel << " consists of " <<  basis->size() << " elements " << std::endl;

@@ -36,7 +36,7 @@ namespace pfasst
 
       shared_ptr<heat_FE_sdc_t> run_sdc(const size_t nelements, const size_t basisorder, const size_t dim, const size_t nnodes,
                                        const QuadratureType& quad_type, const double& t_0,
-                                       const double& dt, const double& t_end, const size_t niter, double newton, bool output)
+                                       const double& dt, const double& t_end, const size_t niter, double newton, bool output, double tol)
       {
         using pfasst::quadrature::quadrature_factory;
 
@@ -48,7 +48,7 @@ namespace pfasst
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton; //genauigkeit fuer den inneren Newton Loeser
-
+        sweeper->set_abs_residual_tol(tol);
 
         sdc->add_sweeper(sweeper);
 
@@ -83,7 +83,8 @@ namespace pfasst
 	std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
 	std::cout << "the corresponding linear system were solved " << sweeper->num_solves << " times" << std::endl; 
 	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
-	
+	std::cout << "groesse loesungsvektor " << sweeper->get_end_state()->data().size() << std::endl ;
+	std::cout << "Parameter " << sweeper->_n << " " << sweeper->_nu << std::endl ;
 
 	
         return sdc;
@@ -113,8 +114,9 @@ namespace pfasst
     double newton = get_value<double>("newton", 0.1);
     bool output = get_value<double>("output", 0);
     const size_t niter = get_value<size_t>("num_iters", 10);
+    double tol = get_value<double>("abs_res_tol", 1e-12);
 
-    pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+    pfasst::examples::heat_FE::run_sdc(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output, tol);
 
   }
 

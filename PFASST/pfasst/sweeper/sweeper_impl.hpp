@@ -194,8 +194,8 @@ namespace pfasst
   Sweeper<SweeperTrait, BaseFunction, Enabled>::set_options()
   {
     ML_CVLOG(3, this->get_logger_id(), "setting options from runtime parameters (if available)");
-    this->_abs_residual_tol = config::get_value<typename traits::spatial_t>("abs_res_tol", this->_abs_residual_tol);
-    this->_rel_residual_tol = config::get_value<typename traits::spatial_t>("rel_res_tol", this->_rel_residual_tol);
+    //this->_abs_residual_tol = config::get_value<typename traits::spatial_t>("abs_res_tol", this->_abs_residual_tol);
+    //this->_rel_residual_tol = config::get_value<typename traits::spatial_t>("rel_res_tol", this->_rel_residual_tol);
     ML_CVLOG(3, this->get_logger_id(), "  absolute residual tolerance: " << this->_abs_residual_tol);
     ML_CVLOG(3, this->get_logger_id(), "  relative residual tolerance: " << this->_rel_residual_tol);
   }

@@ -19,7 +19,7 @@ using std::shared_ptr;
 #include <vector>
 
 
-#include "fe_manager_fp.hpp"
+#include "../2d_transfer/fe_manager_fp.hpp"
 #include "fischer_sweeper.hpp"
 #include <pfasst/encap/dune_vec.hpp>
 #include "../2d_transfer/spectral_transfer.hpp"
@@ -361,13 +361,13 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
     		}
 	
 	
-	}
+	}//newton
 
 
 
        
 
-      }
+      }//time
 
 }
 

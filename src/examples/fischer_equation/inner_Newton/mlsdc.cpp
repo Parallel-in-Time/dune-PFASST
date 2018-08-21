@@ -64,7 +64,7 @@ namespace pfasst
       void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
-                                           const size_t niter, const double newton) {
+                                           const size_t niter, const double newton, bool output, double tol) {
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
         auto FinEl = make_shared<fe_manager>(nelements, 2);
@@ -93,8 +93,8 @@ namespace pfasst
         //mlsdc->add_sweeper(fine, false);
 
     
-               fine->set_abs_residual_tol(1e-12);
-           coarse->set_abs_residual_tol(1e-12);
+        fine->set_abs_residual_tol(tol);
+        coarse->set_abs_residual_tol(tol);
     
     
            
@@ -159,21 +159,23 @@ namespace pfasst
           std::cout << coarse->exact(0)->data()[i] << " " << coarse->get_end_state()->data()[i] << "   " << coarse->exact(t_end)->data()[i] << std::endl;
         }*/
         
-                std::cout <<  "fein" << std::endl;
-        auto naeherung = fine->get_end_state()->data();
-        auto exact     = fine->exact(t_end)->data();
-        for (int i=0; i< fine->get_end_state()->data().size(); i++){
-          std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
-        }
+	if(output){
+       		auto naeherung = fine->get_end_state()->data();
+        	auto exact     = fine->exact(t_end)->data();
+        	for (int i=0; i< fine->get_end_state()->data().size(); i++){
+          		std::cout << fine->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
+        	}
+	}
 
         std::cout << "******************************************* " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << " " <<  std::endl ;
         std::cout << "Fehler: " <<  std::endl ;
-        //auto norm =  fine->exact(t_end))->data();
+
         fine->states()[fine->get_states().size()-1]->scaled_add(-1.0 , fine->exact(t_end));
-        std::cout << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
-        std::cout << "number states " << fine->get_states().size() << std::endl ;
+        std::cout << "error in infinity norm: " << fine->states()[fine->get_states().size()-1]->norm0()<<  std::endl ;
+        std::cout << "groesse loesungsvektor " << fine->get_end_state()->data().size() << std::endl ;
+        std::cout << "the corresponding linear system were solved " << fine->num_solves << " times" << std::endl; 
         std::cout << "******************************************* " <<  std::endl ;
 
         //std::cout << "Fehler: " <<  std::endl ;
@@ -266,7 +268,9 @@ int main(int argc, char** argv)
     t_end = t_0 + dt * nsteps;
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
+  double tol = get_value<double>("abs_res_tol", 1e-12);
+  bool output = get_value<double>("output", 0);
 
-  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton,output, tol);
 }
 #endif 

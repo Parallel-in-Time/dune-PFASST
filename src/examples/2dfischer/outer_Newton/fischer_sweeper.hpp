@@ -32,7 +32,8 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
-        double                                     	_nu{25.0}; //1.2
+        double                                     	_nu{25}; //1.2
+        double                                          _eps{0.4};
         double                                     	_n{2.0}; //2.0
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 
@@ -68,10 +69,10 @@ namespace pfasst
           shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t)      {
         	auto result = this->get_encap_factory().create();
         	const auto dim = SweeperTrait::DIM;
-        	double nu = this-> _nu; 
-	
-		auto exact_solution1 = [t,  nu, dim](const Dune::FieldVector<double,dim>&x){
-	  		return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*0.04)) ;
+        	double nu = this->_nu; 
+		double eps = this->_eps;
+		auto exact_solution1 = [t,  nu, dim, eps](const Dune::FieldVector<double,dim>&x){
+	  		return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*eps)) ;
 	  	};
 	
 	 	auto N_x = [t](const Dune::FieldVector<double,dim>&x){

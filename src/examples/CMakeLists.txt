@@ -1,2 +1,5 @@
-
-add_subdirectory(2dfischer)
+add_subdirectory(fischer_equation)
+#add_subdirectory(hi2dfischer)
+#add_subdirectory(FE_hi_heat)
+#add_subdirectory(FE_heat)
+#add_subdirectory(2dfischer)

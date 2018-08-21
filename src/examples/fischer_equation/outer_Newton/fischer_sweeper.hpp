@@ -32,13 +32,15 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
-        double                                     	_nu{1.0}; //1.2
-        double                                     	_n{1.0}; //2.0
+
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 
 
             
         public:
+        double                                     	_nu{1.2}; //1.2
+        double                                     	_n{2.0}; //2.0        
+        
 	int                                             num_solves=0;        
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
                                     : Heat_FE<SweeperTrait, BaseFunction, Enabled>(basis, nlevel, grid){
@@ -194,8 +196,8 @@ namespace pfasst
          newton_rhs2.resize(rhs->get_data().size());
     
 
-	for(int k=0; k< this->last_newton_state()[0][m]->data().size(); k++){
-    		u->data()[k] = this->last_newton_state()[0][m]->data()[k];
+	for(int k=0; k< this->last_newton_state()[m]->data().size(); k++){
+    		u->data()[k] = this->last_newton_state()[m]->data()[k];
 	}
 
 

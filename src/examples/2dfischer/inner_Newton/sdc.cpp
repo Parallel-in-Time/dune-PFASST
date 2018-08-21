@@ -43,9 +43,9 @@ namespace pfasst
 
         auto sdc = std::make_shared<heat_FE_sdc_t>();
 
-	auto FinEl   = make_shared<fe_manager>(nelements,1); //das Gitter soll ein mal vergroebert werden
+	auto FinEl   = make_shared<fe_manager>(nelements,2); //das Gitter soll ein mal vergroebert werden
 
-        auto sweeper = std::make_shared<sweeper_t>(FinEl, 0); //sdc soll auf dem verfeinerten Gitter laufen (level 0)
+        auto sweeper = std::make_shared<sweeper_t>(FinEl, 1); //sdc soll auf dem verfeinerten Gitter laufen (level 0)
 
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton; //genauigkeit fuer den inneren Newton Loeser
@@ -116,7 +116,7 @@ namespace pfasst
     double t_end = get_value<double>("tend", 0.1);
     double newton = get_value<double>("newton", 1e-8);
     bool output = get_value<double>("output", 0);
-    const size_t niter = get_value<size_t>("num_iters", 4);
+    const size_t niter = get_value<size_t>("num_iters", 10);
     const double tol = get_value<double>("abs_res_tol", 1e-12);
 
     MPI_Init(&argc, &argv);

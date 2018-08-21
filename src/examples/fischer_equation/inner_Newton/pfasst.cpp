@@ -50,7 +50,7 @@ namespace pfasst
     namespace heat_FE
     {
       void run_pfasst(const size_t nelements, const size_t basisorder, const size_t dim, const size_t& nnodes, const pfasst::quadrature::QuadratureType& quad_type,
-                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton, bool output)
+                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton, bool output, double tol)
       {
 
 
@@ -88,6 +88,8 @@ namespace pfasst
         fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 	fine->newton=newton;
 	coarse->newton=newton;
+	fine->set_abs_residual_tol(tol);
+        coarse->set_abs_residual_tol(tol);
 
         pfasst.run();
         pfasst.post_run();
@@ -110,6 +112,7 @@ namespace pfasst
         fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
         std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
 	std::cout << "my_rank: " << my_rank << ", number solutions which this process does: " << fine->num_solves << "" << std::endl;
+	std::cout << "groesse loesungsvektor " << fine->get_end_state()->data().size() << std::endl ;
 
 
         MPI_Barrier(MPI_COMM_WORLD);
@@ -143,8 +146,9 @@ int main(int argc, char** argv)
   double newton = get_value<double>("newton", 1e-2);
   bool output = get_value<double>("output", 0);
   const size_t niter = get_value<size_t>("num_iters", 1000);
+  double tol = get_value<double>("abs_res_tol", 1e-12);
 
-  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output, tol);
 
   pfasst::Status<double>::free_mpi_datatype();
 
