@@ -194,8 +194,8 @@ namespace pfasst
   Sweeper<SweeperTrait, BaseFunction, Enabled>::set_options()
   {
     ML_CVLOG(3, this->get_logger_id(), "setting options from runtime parameters (if available)");
-    this->_abs_residual_tol = config::get_value<typename traits::spatial_t>("abs_res_tol", this->_abs_residual_tol);
-    this->_rel_residual_tol = config::get_value<typename traits::spatial_t>("rel_res_tol", this->_rel_residual_tol);
+    //this->_abs_residual_tol = config::get_value<typename traits::spatial_t>("abs_res_tol", this->_abs_residual_tol);
+    //this->_rel_residual_tol = config::get_value<typename traits::spatial_t>("rel_res_tol", this->_rel_residual_tol);
     ML_CVLOG(3, this->get_logger_id(), "  absolute residual tolerance: " << this->_abs_residual_tol);
     ML_CVLOG(3, this->get_logger_id(), "  relative residual tolerance: " << this->_rel_residual_tol);
   }
@@ -411,12 +411,12 @@ namespace pfasst
     ML_CVLOG(4, this->get_logger_id(), "spreading initial value to all states");
 
     assert(this->get_initial_state() != nullptr);
-    std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
+    //std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
       this->states()[m]->data() = value; //this->get_initial_state()->get_data();
     }
-    std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
+    //std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
@@ -427,18 +427,18 @@ namespace pfasst
 
     assert(this->get_initial_state() != nullptr);
     //std::cout << "anzahl der states "<< this->get_states().size() << std::endl; std::exit(0);	
-    std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
-    int i= 0; //(this->get_status()->get_time()/this->get_status()->get_dt()); 	
+    //std::cout << "vor der schleife "<< this->get_states().size() << std::endl; 	
+
     for(size_t m = 1; m < this->get_states().size(); ++m) {
       assert(this->states()[m] != nullptr);
       //std::cout << i << " " << this->last_newton_state()[i][m]->data()  << " " << i << std::endl;
-      this->states()[m]->data() = this->last_newton_state()[i][m]->data();
+      this->states()[m]->data() = this->last_newton_state()[m]->data();
     }
-    std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
+    //std::cout << "nach der schleife "<< this->get_states().size() << std::endl; 	
   }
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::last_newton_state()
   {
     return this->_last_newton_state;
@@ -446,7 +446,7 @@ namespace pfasst
   
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  const vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::get_last_newton_state() const
   {
     return this->_last_newton_state;
@@ -454,7 +454,7 @@ namespace pfasst
 
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::new_newton_state()
   {
     return this->_new_newton_state;
@@ -462,7 +462,7 @@ namespace pfasst
   
 
   template<class SweeperTrait, class BaseFunction, typename Enabled>
-  const vector<vector<shared_ptr<typename SweeperTrait::encap_t>>>&
+  const vector<shared_ptr<typename SweeperTrait::encap_t>>&
   Sweeper<SweeperTrait, BaseFunction, Enabled>::get_new_newton_state() const
   {
     return this->_new_newton_state;
@@ -549,17 +549,19 @@ namespace pfasst
     this->_abs_res_norms.back() = this->get_residuals().back()->norm0(true, this->comm);//ruth
     this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(true, this->comm); //ruth
 #else
-    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();//ruth
-    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); //ruth
+    //std::cout << "ohne mpi" << std::endl;
+    this->_abs_res_norms.back() = this->get_residuals().back()->norm0();  //   std::cout << "ohne mpi" << this->_abs_res_norms.back() << std::endl;
+    this->_rel_res_norms.back() = this->_abs_res_norms.back() / this->get_states().back()->norm0(); // std::cout << "ohne mpi" << this->_rel_res_norms.back() << std::endl;
 #endif        
     //std::cout <<"hier abs res " << this->get_residuals().back()->norm0(true, this->comm) << std::endl;
-    //int rank;
-    //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    /*for(int i=0; i< this->get_residuals().back()->get_data().size(); i++){
+    /*int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    for(int i=0; i< this->get_residuals().back()->get_data().size(); i++){
     	if(rank==0) std::cout << this->get_residuals().back()->get_data()[i] << std::endl;
     }*/
 
     if (pre_check) {
+      // std::cout << "im precheck " << this->_abs_residual_tol << std::endl;
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "preliminary convergence check");
 
@@ -589,12 +591,14 @@ namespace pfasst
 #else
         const auto norm = this->get_residuals()[m]->norm0();
         this->_abs_res_norms[m] = norm;
+        //std::cout << m << " " << this->_abs_res_norms[m] << std::endl;
         this->_rel_res_norms[m] = this->_abs_res_norms[m] / this->get_states()[m]->norm0();
 #endif
       }
 
       this->status()->abs_res_norm() = *(std::max_element(this->_abs_res_norms.cbegin(), this->_abs_res_norms.cend()));
       this->status()->rel_res_norm() = *(std::max_element(this->_rel_res_norms.cbegin(), this->_rel_res_norms.cend()));
+      //std::cout << "max norm " << this->status()->abs_res_norm() << std::endl;
 
       if (this->_abs_residual_tol > 0.0 || this->_rel_residual_tol > 0.0) {
         ML_CVLOG(4, this->get_logger_id(), "convergence check");

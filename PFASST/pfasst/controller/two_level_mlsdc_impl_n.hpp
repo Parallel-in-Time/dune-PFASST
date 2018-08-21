@@ -173,16 +173,16 @@ namespace pfasst
 
           assert(this->get_status()->get_iteration() == 0);
 
-          // restrict fine initial condition ...
-          this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
+
+          //this->get_transfer()->restrict_initial(this->get_fine(), this->get_coarse());
 
 
-	  //std::cout << "#########################################  im predict mlsdc "  << std::endl;std::exit(0);
-          // ... and spread it to all nodes on the coarse level
-          this->get_coarse()->spread_Newton(); 
-	  this->get_fine()->spread_Newton();
-          this->get_coarse()->save(); this->get_fine()->save();
-	  //last_predict=true;
+
+          //this->get_coarse()->spread_Newton(); 
+	  //this->get_fine()->spread_Newton();
+          //this->get_coarse()->save(); this->get_fine()->save();
+
+          this->get_fine()->predict();
 
           this->cycle_down();
           this->sweep_coarse();
@@ -268,9 +268,9 @@ namespace pfasst
   TwoLevelMLSDC<TransferT, CommT>::advance_iteration() //hier jetzt mit alternativem residuumscheck...
   {
     this->status()->set_secondary_state(SecondaryState::CONV_CHECK);
-
+    std::cout << "check if converged" << std::endl;
     this->get_coarse()->converged(false);
-
+    std::cout << "check if converged1" << std::endl;
     if (this->get_fine()->converged(false)) {
       ML_CLOG(INFO, this->get_logger_id(), "FINE sweeper has converged.");
       this->status()->set_primary_state(PrimaryState::CONVERGED);
@@ -288,6 +288,7 @@ namespace pfasst
       this->status()->set_primary_state(PrimaryState::FAILED);
       return false;
     }
+        std::cout << "check if converged done" << std::endl;
   }
 
 

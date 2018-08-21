@@ -1,0 +1,176 @@
+ {
+
+
+    		/*auto fineIgnore = std::make_shared< BitSetVector<1> >(dirichletNodes.size());
+    		for (std::size_t i = 0; i < dirichletNodes.size(); ++i)
+      			(*fineIgnore)[i] = dirichletNodes[i];
+    		auto fineIgnore2 = std::make_shared< BitSetVector<1> >(*fineIgnore);
+    		mgSetup.ignore(fineIgnore);*/
+
+    		
+
+		///////////////////////////
+		
+    		/*for (int l = maxLevel - 1; l >= 0; --l) {
+      			std::cout << "I: ignore[" << l << "].count() == " << ignore[l]->count()
+                	<< " out of " << ignore[l]->size() << "\n";
+
+      			levelOp[l].apply = operatorFromMatrix<VectorType>(*matrices[l]);
+
+      			levelOp[l+1].restrict = restrictFromMultigridTransfer<VectorType>(Dune::stackobject_to_shared_ptr(transfer[l]));
+      			levelOp[l+1].prolong = prolongFromMultigridTransfer<VectorType>(Dune::stackobject_to_shared_ptr(transfer[l]));
+    		}*/
+
+
+    		/*for (int level = maxLevel; level >= 0; --level) {
+      			auto& ignore_l = *ignore[level];
+      			const auto& dofMasters_l = dofMasters[level];
+      			assert(ignore_l.size() == dofMasters_l.size());
+
+      			levelOp[level].clearIgnored = [=](VectorType& v) {
+       			 for (std::size_t i = 0; i < v.size(); ++i) {
+          			if (ignore_l[i][0])
+            			v[i] = 0;
+        		}
+      			}	;
+
+
+      			for (std::size_t i = 0; i < ignore_l.size(); ++i) {
+        			if (not dofMasters_l[i])
+          				ignore_l[i] = true;
+      			}
+
+	    	}*/
+
+
+    		/*if (enableCoarseCorrection)
+      			redistMatrix.redistribute(*matrices.front(), coarseGlobalDof);*/
+      			
+      			
+
+
+    		
+
+    		/*if (not enableCoarseCorrection)
+    			mg.coarseSolver([&](auto& x, const auto& b) {
+        		x.resize(b.size());
+        		x = 0;
+      		});
+
+
+    		auto fullRhs = rhs;
+    		levelOp.back().maybeRestrictToMaster(fullRhs);
+
+    		VectorType dirichletRhsContribution(dirichletVector.size());
+    		levelOp.back().apply(dirichletRhsContribution, dirichletVector);
+    		rhs -= dirichletRhsContribution;
+    		levelOp.back().maybeRestrictToMaster(rhs);
+
+    		for (std::size_t i = 0; i < rhs.size(); ++i) {
+      			if (dirichletNodes[i])
+        		rhs[i] = 0;
+    		}
+
+    		for (std::size_t i = 0; i < x.size(); ++i) {
+      			if (dirichletNodes[i]) {
+
+      			}
+    		}*/
+
+    		// x = 0;
+    		//levelOp.back().maybeAccumulate(x);
+
+    		// END: Set RHS and Dirichlet data
+    		// Dune::ParMG::collect(rhs, dofmap, master);
+
+    		using ProjGS = Dune::ParMG::ParallelProjectedGS<MatrixType, VectorType>;
+
+    		/*ProjGS::Constraints constraints(x.size());
+    		VectorType obstacle(feBasis.size());
+    		Dune::Functions::interpolate(feBasis, Dune::TypeTree::hybridTreePath(), obstacle, [l](const FieldVector<double, dim>& x) {
+      		auto d = l;
+      		d *= 0.5;
+      		d -= x;
+      		if (d.two_norm() < 0.25)
+        		return 0.25;
+      		else
+        		return std::numeric_limits<double>::infinity();
+      		});
+    		for (std::size_t i = 0; i < constraints.size(); ++i) {
+      			constraints[i].lower(0) = -std::numeric_limits<double>::infinity();
+      			constraints[i].upper(0) = obstacle[i];
+    		}*/
+
+    /*//ProjGS projGs(fineMatrix.get(), &constraints, fineIgnore2.get());
+    ProjGS projGs(fineMatrix.get(), &constraints, ignore.back().get());
+    projGs.accumulate([&](VectorType& x) {
+        //levelOp.back().restrictToMaster(x);
+        //levelOp.back().accumulate(x);
+        //levelOp.back().restrictToMaster(x);
+        levelOp.back().maybeCopyFromMaster(x);
+      });
+    projGs.dampening(dampening);
+
+    std::function<void(VectorType&)> collect = Dune::ParMG::makeCollect<VectorType>(*comms.back());
+    std::function<void(VectorType&)> restrictToMaster = [op=levelOp.back()](VectorType& x) { op.maybeRestrictToMaster(x); };
+
+    auto energyFunctional = Dune::ParMG::makeParallelEnergyFunctional(
+      //*fullStiffnessMatrix,
+      *accumulatedMatrix,
+      //*mgSetup.matrices_.back(),
+      fullRhs,
+      gridView.grid().comm(),
+      //collect
+      restrictToMaster
+      );
+      // matrix, b, dofmap, master);
+
+    auto energyNorm = Dune::ParMG::parallelEnergyNorm<VectorType>(*fullStiffnessMatrix, restrictToMaster, gridView.grid().comm());
+
+    levelOp.back().maybeCopyFromMaster(x);
+    auto dx = x;
+
+    VTKSequenceWriter<GridView> vtkWriter(gridView, "poisson-pq2", "", "");
+    auto xFunction = Dune::Functions::makeDiscreteGlobalBasisFunction<double>(feBasis, x);
+    auto bFunction = Dune::Functions::makeDiscreteGlobalBasisFunction<double>(feBasis, b);
+    auto dxFunction = Dune::Functions::makeDiscreteGlobalBasisFunction<double>(feBasis, dx);
+    vtkWriter.vtkWriter()->addVertexData(xFunction, VTK::FieldInfo("x", VTK::FieldInfo::Type::scalar, 1));
+    vtkWriter.vtkWriter()->addVertexData(bFunction, VTK::FieldInfo("b", VTK::FieldInfo::Type::scalar, 1));
+    vtkWriter.vtkWriter()->addVertexData(dxFunction, VTK::FieldInfo("dx", VTK::FieldInfo::Type::scalar, 1));
+
+    double tol = 1e-14;
+
+    // VectorType b;
+    double J = 0.0;
+    unsigned step = 0;
+    int activeObstacles;
+    auto xold = x;
+    MPI_Barrier(grid.comm());
+    Dune::Timer timer_solver;
+    auto realIterationStep = [&](VectorType& x) {
+      // x = xold;
+      MPI_Barrier(grid.comm());
+      Dune::Timer timer;
+
+      dx = x;
+
+      auto& project = projGs.project_;
+      projGs.apply(x, rhs);
+      xold = x;
+
+      // prepare truncation
+      auto currentIgnore = std::make_shared< BitSetVector<1> >(*fineIgnore);
+      auto extraIgnore = std::make_shared< BitSetVector<1> >(fineIgnore->size(), false);
+      project.ignoreActive(x, *currentIgnore);
+      project.ignoreActive(x, *extraIgnore);
+      mgSetup.ignore(currentIgnore);
+      assert(currentIgnore->count() - fineIgnore->count() == extraIgnore->count());
+      activeObstacles = extraIgnore->count();*/
+
+
+      VectorType b = rhs;
+      VectorType x(u.size());
+
+      mg.apply(x, b);
+
+	}

@@ -60,6 +60,8 @@ namespace pfasst
 	  int                                             num_solves=0; //how often the linear system is solved 
           double                                         newton = 1e-6;	//tollerance         
           using traits = SweeperTrait;
+          double                                     	 _nu{1.2};
+          double                                     	 _n{2.0};
 
           static void init_opts();
 
@@ -67,8 +69,9 @@ namespace pfasst
           using spatial_t = typename traits::spatial_t;
 
           typename traits::time_t                        _t0{0.0};
-          double                                     	 _nu{1.0};
-          double                                     	 _n{1.0};
+          //double                                     	 _nu{1.0};
+          //double                                     	 _n{1.0};
+
 
 	  std::shared_ptr<fe_manager> FinEl;
 

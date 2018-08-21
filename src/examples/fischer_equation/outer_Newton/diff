@@ -1,0 +1,571 @@
+1a2,8
+> 
+> #include <fenv.h>
+> 
+> #include <memory>
+> #include <stdexcept>
+> using std::shared_ptr;
+> 
+6,7c13
+< #include <pfasst/controller/sdc_n.hpp>
+< #include <pfasst/contrib/spectral_transfer.hpp>
+---
+> #include <pfasst/controller/two_level_mlsdc_n.hpp>
+9,10d14
+< #include <pfasst/encap/dune_vec.hpp>
+< #include "fischer_sweeper.hpp"
+14,16c18
+< #include <dune/fufem/functionspacebases/p1nodalbasis.hh>
+< #include <dune/fufem/assemblers/operatorassembler.hh>
+< #include <dune/fufem/assemblers/functionalassembler.hh>
+---
+> #include <vector>
+19c21,24
+< using namespace pfasst::examples::fischer_example;
+---
+> #include "../1d_transfer/fe_manager.hpp"
+> #include "fischer_sweeper.hpp"
+> #include <pfasst/encap/dune_vec.hpp>
+> #include "../1d_transfer/spectral_transfer.hpp"
+21d25
+< using std::shared_ptr;
+23c27
+< using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>; 
+---
+> using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
+24a29
+> using namespace pfasst::examples::fischer_example;
+26,27d30
+< using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+< using sweeper_t = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+29,33d31
+< using pfasst::transfer_traits;
+< using pfasst::contrib::SpectralTransfer;
+< using pfasst::SDC;
+< using pfasst::quadrature::QuadratureType;
+< using heat_FE_sdc_t = SDC<SpectralTransfer<transfer_traits<sweeper_t, sweeper_t, 1>>>;
+35,37d32
+< using pfasst::config::get_value;
+< using pfasst::quadrature::QuadratureType;
+< using pfasst::quadrature::quadrature_factory;
+39c34,37
+< using pfasst::examples::fischer_example::fischer_sweeper;
+---
+>       using pfasst::transfer_traits;
+>       using pfasst::contrib::SpectralTransfer;
+>       using pfasst::TwoLevelMLSDC;
+>       using pfasst::quadrature::QuadratureType;
+40a39,44
+>       
+>       using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+>       using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+>       using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_coarse, 1>;
+>       using transfer_t = SpectralTransfer<transfer_traits_t>;
+>       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
+42a47,50
+>       void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t DIM, const size_t coarse_factor,
+>                                            const size_t nnodes, const QuadratureType& quad_type,
+>                                            const double& t_0, const double& dt, const double& t_end,
+>                                            const size_t niter, double newton, double tol) {
+45,49d52
+< int main(int argc, char** argv) {
+<       
+<     Dune::MPIHelper::instance(argc, argv);
+<     
+<     pfasst::init(argc, argv, sweeper_t::init_opts);
+51,64c54,60
+<     const size_t nelements = get_value<size_t>("num_elements", 16);    // spacial dimension: number of grid points per dimension on the coase level
+<     
+<     const double t_0 = 0.0;                                             // left point of the time intervall is zero 
+<     const double dt = get_value<double>("dt", 0.1);                    // size of timesteping
+<     double t_end = get_value<double>("tend", 0.1);                      // right point of the time intervall  
+<     const size_t nnodes = get_value<size_t>("num_nodes", 3);            // time intervall: number of sdc quadrature points
+<     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
+<     const size_t niter = get_value<size_t>("num_iters", 200);            // maximal number of sdc iterations
+<     const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
+<     const double tol = get_value<double>("abs_res_tol", 1e-12);
+<     
+<     typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+<     typedef GridType::LevelGridView GridView;
+<     using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+---
+> //         auto FinEl = make_shared<fe_manager>(nelements, 2);
+> 
+>         
+>                 
+>         typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+>         typedef GridType::LevelGridView GridView;
+>         using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+66c62
+<     std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
+---
+>         std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
+68c64
+<     std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
+---
+>         std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
+70,71c66
+<     std::shared_ptr<GridType> grid;
+<     
+---
+>         std::shared_ptr<GridType> grid;
+73c68
+<     int n_levels=2;
+---
+>         int n_levels=2;
+75c70,71
+<     std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
+---
+>         std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
+>         //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
+78,81c74,77
+<     Dune::FieldVector<double,DIMENSION> hR = {200};
+<     Dune::FieldVector<double,DIMENSION> hL = {-200};
+<     array<int,DIMENSION> n;
+<     std::fill(n.begin(), n.end(), nelements); 	    
+---
+>         Dune::FieldVector<double,DIMENSION> hR = {200};
+>         Dune::FieldVector<double,DIMENSION> hL = {-200};
+>         array<int,DIMENSION> n;
+>         std::fill(n.begin(), n.end(), nelements); 	    
+83c79
+<     grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
+---
+>         grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
+85c81
+<     grid = std::make_shared<GridType>(hL, hR, n);
+---
+>         grid = std::make_shared<GridType>(hL, hR, n);
+87c83
+<     for (int i=0; i<n_levels; i++){	      
+---
+>         for (int i=0; i<n_levels; i++){	      
+91,94c87,92
+<     } 
+<     
+<     /*auto sdc = std::make_shared<heat_FE_sdc_t>();
+< 	
+---
+> 	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
+>         } 
+>         
+>         
+>         
+>         using pfasst::quadrature::quadrature_factory;
+96,98d93
+<     
+<     MatrixType mass;
+<     MatrixType stiffness;
+100,109c95
+<     auto sweeper = std::make_shared<sweeper_t>(fe_basis[0] , 0, grid); // mass and stiff are just dummies
+<     sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+<     
+<     sdc->add_sweeper(sweeper);
+<     sdc->set_options();
+<     sdc->status()->time() = t_0;
+<     sdc->status()->dt() = dt;
+<     sdc->status()->t_end() = t_end;
+<     sdc->status()->max_iterations() = niter;
+<     sdc->setup();
+---
+> 	auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid);
+111c97
+<     sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+---
+>         auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);    //[0]
+113d98
+<     //for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << sweeper->initial_state()->data()[i] << std::endl;
+115,116d99
+<     sdc->run();
+<     
+118,119c101,102
+<     //do not need a post run for GaussRadau nodes not sure about that should ask robert
+<     //sdc->post_run();
+---
+> 	const auto num_nodes = nnodes;	
+>     	const auto num_time_steps = 1; //t_end/dt;
+121,124c104,105
+<     auto naeherung = sweeper->get_end_state()->data();
+<     auto exact     = sweeper->exact(t_end)->data();
+<     auto initial   = sweeper->exact(0)->data();
+<     for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << initial[i] << " " << naeherung[i] << " " << exact[i] << std::endl;
+---
+> 	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_coarse;
+> 	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_fine;	
+126,127d106
+<     sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+<     std::cout << "error in infinity norm: " << sweeper->get_end_state()->norm0()<<  std::endl ;*/
+130,133c109,119
+< 	const auto num_nodes = nnodes;	
+<     	const auto num_time_steps = 1; //t_end/dt;
+< 	
+< 	vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>  _new_newton_state;
+---
+> 	_new_newton_state_fine.resize(num_nodes + 1);
+> 	_new_newton_state_coarse.resize(num_nodes + 1);
+> 	for(int j=0; j<num_nodes +1 ; j++){
+> 			_new_newton_state_fine[j] =  fine->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
+> 			_new_newton_state_coarse[j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
+> 	}
+>    
+> 	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_basis[1]->size());    
+> 	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size()); 
+>     	
+> 	std::cout.precision ( 10 );
+134a121
+> for(int time=0; time<(t_end-t_0)/dt; time++){	
+135a123
+>     for(int ne=0; ne<10; ne++){
+137,162c125
+< 		_new_newton_state.resize(num_nodes + 1);
+< 		for(int j=0; j<num_nodes +1 ; j++){
+< 			_new_newton_state[j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
+< 		}
+<     	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(fe_basis[0]->size());
+<     	
+< std::cout.precision ( 10 );
+< int num_solves = 0;
+< for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
+<     for(int ne=0; ne<10; ne++){	//Newtonschritte
+< 
+< 
+< 	auto sweeper = std::make_shared<sweeper_t>(fe_basis[1] , 0, grid); 
+< 	sweeper->is_coarse = false;
+<     	sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+<     	auto sdc = std::make_shared<heat_FE_sdc_t>();    
+<     	sdc->add_sweeper(sweeper);
+<     	sdc->set_options();
+<     	sdc->status()->time() = t_0 + time*dt;
+<     	sdc->status()->dt() = dt;
+<     	sdc->status()->t_end() = t_0 + (time+1)*dt;
+< 	std::cout << t_0 << " "<< t_0 + time*dt <<" "<< t_0 + (time+1)*dt<< " " << t_end<< std::endl;
+<     	sdc->status()->max_iterations() = niter;
+<     	sdc->setup();
+< 	sweeper->num_solves+=num_solves;
+<         sweeper->set_abs_residual_tol(tol);
+---
+>         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
+164,165c127,166
+< 	if(time==0 ) {	//im ersten Newton Lauf Anfangswerte setzen
+< 	if(ne==0)
+---
+>         auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid);
+>         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+> 
+> 
+>         auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);
+>         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+> 
+> 
+>         coarse->is_coarse=true;
+>         fine->is_coarse=false;
+>         
+>         
+>         fine->set_abs_residual_tol(tol);
+>         coarse->set_abs_residual_tol(tol);
+> 
+>         std::cout << "erstelle tranfer" << std::endl;
+>         
+>         dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
+> 	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
+> 	for (int i=0; i< n_levels-1; i++){
+> 	      transferMatrix->push_back(new MatrixType()); 
+> 	}
+> 	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
+> 	    
+> 	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
+> 
+> 
+>         
+>         auto transfer = std::make_shared<transfer_t>();
+>         transfer->create(vecvec);
+>            
+>         std::cout << "nach erstelle tranfer" << std::endl;
+>         
+>         mlsdc->add_sweeper(coarse, true);
+> 	mlsdc->add_sweeper(fine);
+> 
+>         mlsdc->add_transfer(transfer);
+> 
+> 
+>         mlsdc->set_options();
+167,173d167
+< 		for(int j=0; j<num_nodes +1; j++){
+< 		//for(int k=0; k< _new_newton_state[i][j]->size(); k++){
+<     		 (*_new_newton_state[j]) = sweeper->exact(sdc->get_status()->get_time())->data();
+<     		//}
+< 		}
+< 			
+<         sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+174a169,181
+> 
+>         mlsdc->status()->time() = t_0 + time*dt;
+>         mlsdc->status()->dt() = dt;
+>         mlsdc->status()->t_end() = t_0 + (time+1)*dt; 
+>         mlsdc->status()->max_iterations() = niter;
+> 
+> 
+> 
+>         mlsdc->setup();
+>         
+>         if (time==0){
+>         	coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
+>         	fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
+176,179c183,184
+< 		/*for(int k=0; k< _new_newton_state[i][j]->size(); k++)
+<     			_new_initial_state[k] = sweeper->new_newton_state()[i][j]->data()[k];
+<     		}*/
+< 		sweeper->initial_state()->data() = _new_initial_state; 
+---
+> 		coarse->initial_state()->data() = _new_newton_initial_coarse; 
+> 		fine->initial_state()->data() = _new_newton_initial_fine; 
+183,184d187
+<         //if (ne==0) sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+<         //if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//*_new_newton_state[num_time_steps-1][num_nodes]; //sweeper->exact(sdc->get_status()->get_time())->data();//
+186a190,192
+> 	
+> 
+> 	if(time==0 && ne==0) 	
+188,189c194,203
+< 			for(int k=0; k< _new_newton_state[j]->size(); k++){
+<     				sweeper->last_newton_state()[j]->data()[k] = (*_new_newton_state[j])[k]  ;
+---
+>     		 	(*_new_newton_state_coarse[j]) = coarse->exact(mlsdc->get_status()->get_time())->data(); 
+>     		 	(*_new_newton_state_fine[j]) = fine->exact(mlsdc->get_status()->get_time())->data(); 
+> 
+> 		}
+> 
+> 
+> 
+> 	for(int j=0; j<num_nodes +1; j++){
+> 			for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
+>     				coarse->last_newton_state()[j]->data()[k] = _new_newton_state_coarse[j]->data()[k]  ;
+191c205,210
+<     		}
+---
+> 
+> 
+> 			for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
+>     				fine->last_newton_state()[j]->data()[k] = _new_newton_state_fine[j]->data()[k]  ;
+> 			}
+>     	}
+195,198c214,226
+< 	for(int m=0; m< num_nodes +1; m++){
+< 	    	sweeper->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(sweeper->M_dune); 
+<             	sweeper->evaluate_df2(*sweeper->df_dune[0][m], sweeper->last_newton_state()[m]);
+< 		auto result = sweeper->get_encap_factory().create();
+---
+> 
+>            
+> 
+> 
+> 	    for(int m=0; m< num_nodes +1; m++){
+> 	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
+>             	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[m]);
+> 
+> 	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
+>             	coarse->evaluate_df2(*coarse->df_dune[0][m], coarse->last_newton_state()[m]);	    	
+> 
+> 
+> 		auto result = fine->get_encap_factory().create();
+200,201d227
+<                 sweeper->evaluate_f2(result, sweeper->last_newton_state()[m]);
+< 		sweeper->df_dune[0][m]->mmv(sweeper->last_newton_state()[m]->data(), result->data());
+203,204c229,241
+< 	    	sweeper->coarse_rhs()[0][m]->data() =result->data();  
+< 		//sweeper->coarse_rhs()[0][m]->data() *= sweeper->get_status()->get_dt() *  sweeper->_q_delta_impl(m, m);
+---
+>                 fine->evaluate_f2(result, fine->last_newton_state()[m]);
+> 		fine->df_dune[0][m]->mmv(fine->last_newton_state()[m]->data(), result->data());
+> 
+> 	    	fine->coarse_rhs()[0][m]->data() =result->data();
+> 		
+> 
+> 		auto resultc = coarse->get_encap_factory().create();
+>             	resultc->zero();
+> 
+>                 coarse->evaluate_f2(resultc, coarse->last_newton_state()[m]);
+> 		coarse->df_dune[0][m]->mmv(coarse->last_newton_state()[m]->data(), resultc->data());
+> 
+> 	    	coarse->coarse_rhs()[0][m]->data() =resultc->data();
+206d242
+< 	}
+209,211c245
+<     	sdc->run();   
+< 	sdc->post_run();
+< 	num_solves = sweeper->num_solves;
+---
+> 	    }
+213d246
+< 	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;//
+215,216d247
+< 	(*_new_newton_state[num_nodes]) -= sweeper->get_end_state()->data();
+<         std::cout << "NEWTON *****************************************      Fehler: "  << (*_new_newton_state[num_nodes]).infinity_norm() << " " << std::endl;
+219,224c250
+<     	auto naeherung = sweeper->get_end_state()->data();
+<     	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
+<     	auto initial1   = sweeper->exact(t_0 + time*dt)->data();
+<     	auto initial0   = sweeper->exact(0)->data();
+<     	for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) std::cout << initial0[i] << " " << initial1[i] << " " << naeherung[i] << " " << exact[i] << " " <<  std::endl;
+< 	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
+---
+>         std::cout << "starting run" << std::endl;
+225a252,253
+>         
+>         
+227,229c255,278
+<         std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<<sdc->status()->t_end() <<" " << sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
+<         std::cout << "groesse loesungsvektor " << sweeper->get_end_state()->data().size() << std::endl ;
+< 	std::cout << "Parameter " << sweeper->_n << " " << sweeper->_nu << std::endl ;
+---
+> 
+>         mlsdc->run();
+>         
+>         mlsdc->post_run();
+> 
+>         auto anfang    = fine->exact(0)->data();
+>         auto naeherung = fine->get_end_state()->data();
+>         auto exact     = fine->exact( t_0 + (time+1)*dt)->data();
+> 
+> 
+>         std::cout << "******************************************* " <<  std::endl ;
+>         std::cout << " " <<  std::endl ;
+>         std::cout << " " <<  std::endl ;
+>         std::cout << "Fehler zur Zeit  " << t_0 + (time+1)*dt << std::endl ;
+>         fine->get_end_state()->scaled_add(-1.0 , fine->exact(t_0 + (time+1)*dt));
+>         std::cout << fine->get_end_state()->norm0()<<  std::endl ;
+>         std::cout << "time step " << time << std::endl ;
+>         std::cout << "******************************************* " <<  std::endl ;
+> 	std::cout << "groesse loesungsvektor " << fine->get_end_state()->data().size() << std::endl ;
+> 	std::cout << "Parameter " << fine->_n << " " << fine->_nu << std::endl ;
+> 
+> 	(*_new_newton_state_fine[num_nodes]).data() -= fine->new_newton_state()[num_nodes]->data();
+> 	
+> 	//(*_new_newton_state_fine[num_nodes]).data() -= fine->get_end_state()->data();
+231c280,284
+< 	if((*_new_newton_state[num_nodes]).infinity_norm() < newton){ 
+---
+> 	
+> 	
+> 	
+> 	std::cout << "******************************* Newton " << (_new_newton_state_fine[num_nodes])->norm0() <<  std::endl ;
+> 	if((_new_newton_state_fine[num_nodes])->norm0()< newton){
+234,235c287,289
+< 		for(int k=0; k< _new_newton_state[j]->size(); k++)
+<     			_new_initial_state[k] = sweeper->new_newton_state()[j]->data()[k];
+---
+> 		for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
+>     			(*_new_newton_state_coarse[j]).data()[k] = coarse->new_newton_state()[j]->data()[k];
+> 			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
+237,239c291,312
+< 					
+< 	break;}//std::exit(0);}
+< 
+---
+> 		for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
+>     			(*_new_newton_state_fine[j]).data()[k] = fine->new_newton_state()[j]->data()[k];
+> 			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
+> 		}
+>     		}
+> 		
+> 		
+> 		for(int j=0; j<num_nodes +1 ; j++){
+> 		for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
+>     			_new_newton_initial_coarse[k] = coarse->new_newton_state()[j]->data()[k];
+> 			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
+>     		}
+> 		for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
+>     			_new_newton_initial_fine[k] = fine->new_newton_state()[j]->data()[k];
+> 			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
+> 		}
+>     		}
+> 		
+> 		
+> 		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
+> 	
+> 		break;}
+243,244c316,323
+< 		for(int k=0; k< _new_newton_state[j]->size(); k++)
+<     		(*_new_newton_state[j])[k] = sweeper->new_newton_state()[j]->data()[k];
+---
+> 		for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
+>     			(*_new_newton_state_coarse[j]).data()[k] = coarse->new_newton_state()[j]->data()[k];
+> 			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
+>     		}
+> 		for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
+>     			(*_new_newton_state_fine[j]).data()[k] = fine->new_newton_state()[j]->data()[k];
+> 			//std::cout << "fine newton solution " << fine->new_newton_state()[i][j]->data()[k] << std::endl;//
+> 		}
+246a326,327
+> 	
+> 	}//newton
+249d329
+< 	//for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
+251d330
+< 	//std::cout << "################################################################################# this i want to copy " << sweeper->last_newton_state()[num_time_steps-1][num_nodes]->data()[5] << std::endl;
+253c332,334
+<     	
+---
+> 	
+> 	
+> 	}//time
+255,258d335
+<    }
+< //std::exit(0);
+< }
+<     
+260c337,341
+<  
+---
+> 
+>        
+> 
+>       
+> 
+263a345,390
+> #ifndef PFASST_UNIT_TESTING
+> int main(int argc, char** argv)
+> {
+>    
+>       Dune::MPIHelper::instance(argc, argv);  
+>   feenableexcept(FE_INVALID | FE_OVERFLOW);
+> 
+>   using pfasst::config::get_value;
+>   using pfasst::quadrature::QuadratureType;
+>   //using sweeper_t      = pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<encap_traits_t,1,1>>;
+>   //using sweeper_t_fine = pfasst::examples::heat_FE::Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
+>   using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+>   using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+>   
+>   pfasst::init(argc, argv, sweeper_t_fine::init_opts);
+> 
+>   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
+>   const size_t nnodes = get_value<size_t>("num_nodes", 2);
+>   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
+>   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
+>   //const size_t nnodes = get_value<size_t>("num_nodes", 3);
+>   const QuadratureType quad_type = QuadratureType::GaussRadau;
+>   const double t_0 = 0.0;
+>   const double dt = get_value<double>("dt", 0.1);
+>   double t_end = get_value<double>("tend", 0.1);
+>   size_t nsteps = get_value<size_t>("num_steps", 0);
+>   const double newton = get_value<double>("newton", 0.1);  
+>   const double tol = get_value<double>("abs_res_tol", 1e-12);                    // size of timesteping
+>   if (t_end == -1 && nsteps == 0) {
+>     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
+>     throw std::runtime_error("either t_end or num_steps must be specified");
+>   } else if (t_end != -1 && nsteps != 0) {
+>     if (!pfasst::almost_equal(t_0 + nsteps * dt, t_end)) {
+>       ML_CLOG(ERROR, "USER", "t_0 + nsteps * dt != t_end ("
+>                           << t_0 << " + " << nsteps << " * " << dt << " = " << (t_0 + nsteps * dt)
+>                           << " != " << t_end << ")");
+>       throw std::runtime_error("t_0 + nsteps * dt != t_end");
+>     }
+>   } else if (nsteps != 0) {
+>     t_end = t_0 + dt * nsteps;
+>   }
+>   const size_t niter = get_value<size_t>("num_iters", 10);
+> 
+>   run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, tol);
+> }
+> #endif 

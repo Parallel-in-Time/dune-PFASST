@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
     const QuadratureType quad_type = QuadratureType::GaussRadau;        // quadrature type
     const size_t niter = get_value<size_t>("num_iters", 200);            // maximal number of sdc iterations
     const double newton = get_value<double>("newton", 0.1);                    // size of timesteping
-    
+    const double tol = get_value<double>("abs_res_tol", 1e-12);
     
     typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
     typedef GridType::LevelGridView GridView;
@@ -130,15 +130,16 @@ int main(int argc, char** argv) {
 	const auto num_nodes = nnodes;	
     	const auto num_time_steps = 1; //t_end/dt;
 	
-	vector<vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>>  _new_newton_state;
-    	_new_newton_state.resize(num_time_steps);
+	vector<shared_ptr<Dune::BlockVector<Dune::FieldVector<double, 1>>>>  _new_newton_state;
 
-    	for(int i=0; i< num_time_steps; i++){	
-		_new_newton_state[i].resize(num_nodes + 1);
+
+
+		_new_newton_state.resize(num_nodes + 1);
 		for(int j=0; j<num_nodes +1 ; j++){
-			_new_newton_state[i][j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
+			_new_newton_state[j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
 		}
-    	}
+    	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(fe_basis[0]->size());
+    	
 std::cout.precision ( 10 );
 int num_solves = 0;
 for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
@@ -158,36 +159,46 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
     	sdc->status()->max_iterations() = niter;
     	sdc->setup();
 	sweeper->num_solves+=num_solves;
+        sweeper->set_abs_residual_tol(tol);
 
-	if(time==0 && ne==0) 	//im ersten Newton Lauf Anfangswerte setzen
-	for(int i=0; i< num_time_steps; i++){	
+	if(time==0 ) {	//im ersten Newton Lauf Anfangswerte setzen
+	if(ne==0)
+
 		for(int j=0; j<num_nodes +1; j++){
 		//for(int k=0; k< _new_newton_state[i][j]->size(); k++){
-    		 (*_new_newton_state[i][j]) = sweeper->exact(sdc->get_status()->get_time())->data();
+    		 (*_new_newton_state[j]) = sweeper->exact(sdc->get_status()->get_time())->data();
     		//}
 		}
+			
+        sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+
+	}else{
+		/*for(int k=0; k< _new_newton_state[i][j]->size(); k++)
+    			_new_initial_state[k] = sweeper->new_newton_state()[i][j]->data()[k];
+    		}*/
+		sweeper->initial_state()->data() = _new_initial_state; 
 	}
 
 
-        if (ne==0) sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
-        if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//
+        //if (ne==0) sweeper->initial_state() = sweeper->exact(sdc->get_status()->get_time());
+        //if (ne!=0) sweeper->initial_state()->data() = sweeper->exact(sdc->get_status()->get_time())->data();//*_new_newton_state[num_time_steps-1][num_nodes]; //sweeper->exact(sdc->get_status()->get_time())->data();//
 
-	for(int i=0; i< num_time_steps; i++){	//last_newton_state
+
 		for(int j=0; j<num_nodes +1; j++){
-			for(int k=0; k< _new_newton_state[i][j]->size(); k++){
-    				sweeper->last_newton_state()[i][j]->data()[k] = (*_new_newton_state[i][j])[k]  ;
+			for(int k=0; k< _new_newton_state[j]->size(); k++){
+    				sweeper->last_newton_state()[j]->data()[k] = (*_new_newton_state[j])[k]  ;
 			}
     		}
-	}
+	
 
 
 	for(int m=0; m< num_nodes +1; m++){
 	    	sweeper->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(sweeper->M_dune); 
-            	sweeper->evaluate_df2(*sweeper->df_dune[0][m], sweeper->last_newton_state()[0][m]);
+            	sweeper->evaluate_df2(*sweeper->df_dune[0][m], sweeper->last_newton_state()[m]);
 		auto result = sweeper->get_encap_factory().create();
             	result->zero();
-                sweeper->evaluate_f2(result, sweeper->last_newton_state()[0][m]);
-		sweeper->df_dune[0][m]->mmv(sweeper->last_newton_state()[0][m]->data(), result->data());
+                sweeper->evaluate_f2(result, sweeper->last_newton_state()[m]);
+		sweeper->df_dune[0][m]->mmv(sweeper->last_newton_state()[m]->data(), result->data());
 
 	    	sweeper->coarse_rhs()[0][m]->data() =result->data();  
 		//sweeper->coarse_rhs()[0][m]->data() *= sweeper->get_status()->get_dt() *  sweeper->_q_delta_impl(m, m);
@@ -201,27 +212,38 @@ for(int time=0; time<(t_end-t_0)/dt; time++){	//Zeitschritte
 
 	//for(int i=0; i< sweeper->get_end_state()->data().size(); i++) std::cout << "+++++++++++++++ new start value " <<sweeper->last_newton_state()[num_time_steps-1][num_nodes ]->data()[i] << " " << (*_new_newton_state[num_time_steps-1][num_nodes])[i]<< " " << sweeper->get_end_state()->data()[i]<< " " << sweeper->states()[num_nodes]->get_data()[i] <<  std::endl;//
 
-	(*_new_newton_state[num_time_steps-1][num_nodes]) -= sweeper->get_end_state()->data();
-        std::cout << "NEWTON *****************************************      Fehler: "  << (*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() << " " << std::endl;
+	(*_new_newton_state[num_nodes]) -= sweeper->get_end_state()->data();
+        std::cout << "NEWTON *****************************************      Fehler: "  << (*_new_newton_state[num_nodes]).infinity_norm() << " " << std::endl;
 
 
     	auto naeherung = sweeper->get_end_state()->data();
     	auto exact     = sweeper->exact(sdc->status()->t_end())->data();
-    	auto initial   = sweeper->exact(t_0 + time*dt)->data();
-    	for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) std::cout << initial[i] << " result " << naeherung[i] << " " << naeherung[i] << " " << exact[i] << std::endl;
+    	auto initial1   = sweeper->exact(t_0 + time*dt)->data();
+    	auto initial0   = sweeper->exact(0)->data();
+    	for(int i=0; i<sweeper->get_end_state()->data().size() ; i++) std::cout << initial0[i] << " " << initial1[i] << " " << naeherung[i] << " " << exact[i] << " " <<  std::endl;
 	sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(sdc->status()->t_end()));
 
 
-        std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<< sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
-	if((*_new_newton_state[num_time_steps-1][num_nodes]).infinity_norm() < newton){ break;}//std::exit(0);}
+        std::cout << ne << " ***************************************    error in infinity norm: " << time << " "<<sdc->status()->t_end() <<" " << sweeper->get_end_state()->norm0()<<  " solves number " <<  num_solves << std::endl ;
+        std::cout << "groesse loesungsvektor " << sweeper->get_end_state()->data().size() << std::endl ;
+	std::cout << "Parameter " << sweeper->_n << " " << sweeper->_nu << std::endl ;
+	
+	if((*_new_newton_state[num_nodes]).infinity_norm() < newton){ 
 
-
-    	for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
-		for(int k=0; k< _new_newton_state[i][j]->size(); k++)
-    		(*_new_newton_state[i][j])[k] = sweeper->new_newton_state()[i][j]->data()[k];
+		for(int k=0; k< _new_newton_state[j]->size(); k++)
+    			_new_initial_state[k] = sweeper->new_newton_state()[j]->data()[k];
     		}
-	}	
+					
+	break;}//std::exit(0);}
+
+
+
+		for(int j=0; j<num_nodes +1 ; j++){
+		for(int k=0; k< _new_newton_state[j]->size(); k++)
+    		(*_new_newton_state[j])[k] = sweeper->new_newton_state()[j]->data()[k];
+    		}
+	
 
 
 	//for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
