@@ -359,7 +359,7 @@ int main(int argc, char** argv)
   pfasst::init(argc, argv, sweeper_t_fine::init_opts);
 
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
-  const size_t nnodes = get_value<size_t>("num_nodes", 2);
+  const size_t nnodes = get_value<size_t>("num_nodes", 3);
   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
   //const size_t nnodes = get_value<size_t>("num_nodes", 3);
