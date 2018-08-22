@@ -16,18 +16,24 @@ using std::shared_ptr;
 #include <pfasst/controller/two_level_pfasst_n.hpp>
 
 
-#include "../1d_transfer/fe_manager.hpp"
+//#include "../1d_transfer/fe_manager.hpp"
+#include "../2d_transfer/fe_manager_fp.hpp"
 #include "fischer_sweeper.hpp"
 #include <pfasst/encap/dune_vec.hpp>
-#include "../1d_transfer/spectral_transfer.hpp"
+#include "../2d_transfer/spectral_transfer.hpp"
 
 #include <vector>
 
+#include <pfasst/controller/sdc.hpp>
 
-using namespace pfasst::examples::fischer_example;
+#include "../inner_Newton/FE_sweeper.hpp"
+
+//using namespace pfasst::examples::fischer_example;
 
 
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
+
+
 using pfasst::encap::DuneEncapsulation;
 
 using pfasst::quadrature::quadrature_factory;
@@ -41,16 +47,22 @@ typedef DuneEncapsulation<double, double, 1>                     EncapType;
 
 
 using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-using SweeperType = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+using SweeperType = pfasst::examples::fischer_example::fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
 
 
 typedef pfasst::transfer_traits<SweeperType, SweeperType, 1>       TransferTraits;
 typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
+using sweeper_t = pfasst::examples::heat_FE::Heat_FE<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>>; //nichtlinearer sweeper als vorkonditionierer
+using pfasst::SDC;
+using pfasst::transfer_traits;
+using pfasst::contrib::SpectralTransfer;
+using heat_FE_sdc_t = SDC<SpectralTransfer<transfer_traits<sweeper_t, sweeper_t, 1>>>; 
+
 
       void run_pfasst(const size_t nelements, const size_t basisorder, const size_t dim, const size_t& nnodes, const pfasst::quadrature::QuadratureType& quad_type,
-                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton, double tol)
+                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton)
       {
 
 
@@ -60,9 +72,9 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         
 
                  
-        typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
-        typedef GridType::LevelGridView GridView;
-        using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
+        //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
+        //typedef GridType::LevelGridView GridView;
+        //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
         std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
 
@@ -75,15 +87,20 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
 
     
-        Dune::FieldVector<double,DIMENSION> hR = {200};
-        Dune::FieldVector<double,DIMENSION> hL = {-200};
-        array<int,DIMENSION> n;
-        std::fill(n.begin(), n.end(), nelements); 	    
+        Dune::FieldVector<typename GridType::ctype,DIMENSION> L;
+        L[0]=1; L[1]=1;
+        typename std::array<int,DIMENSION> s;
+        std::fill(s.begin(), s.end(), nelements);
+        std::bitset<DIMENSION> periodic;//(true, true);
+        periodic[0]=true; //false;//true; 
+        periodic[1]=true; //false;//true;
+
 #if HAVE_MPI
-        grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF);
-#else
-        grid = std::make_shared<GridType>(hL, hR, n);
+        grid        = std::make_shared<GridType>(L,s,periodic,0, MPI_COMM_SELF);	
+#else          
+        grid        = std::make_shared<GridType>(L,s,periodic,0);	      
 #endif
+
         for (int i=0; i<n_levels; i++){	      
 	      grid->globalRefine((bool) i);
 	      auto view = grid->levelGridView(i);
@@ -112,13 +129,14 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
 
+
 		_new_newton_state_fine.resize(num_nodes + 1);
 		_new_newton_state_coarse.resize(num_nodes + 1);
 		for(int j=0; j<num_nodes +1 ; j++){
 			_new_newton_state_fine[j] =  fine->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
 			_new_newton_state_coarse[j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
 		}
-    	
+
 
 
 
@@ -148,31 +166,74 @@ Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_ba
 Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
 
 
-std::cout << "num_pro " << num_pro << std::endl;
+//std::cout << "num_pro " << num_pro << std::endl;
 int num_solves=0;
 for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){	
+  
+    
+    	auto sdc = std::make_shared<heat_FE_sdc_t>();
 
-    std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
+ 	auto sdc_FinEl   = make_shared<fe_manager>(nelements,2); //das Gitter soll ein mal vergroebert werden
+
+        auto sweeper = std::make_shared<sweeper_t>(sdc_FinEl, 1); //sdc soll auf dem groben Gitter laufen (level 1)
+
+        sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
+	sweeper->newton=1e-6; //genauigkeit fuer den inneren Newton Loeser
+        sweeper->set_abs_residual_tol(1e-8);
+        sweeper->is_coarse = false;
+        
+        sdc->add_sweeper(sweeper);
+
+        sdc->set_options();
+	//sweeper->output = output;
+	//sweeper->output_level = 0;
+        sdc->status()->time() = time*dt;
+        sdc->status()->dt() = dt;
+        sdc->status()->t_end() = (time+my_rank+1)*dt;
+        sdc->status()->max_iterations() = 10;
+
+        sdc->setup();
+        
+        sweeper->initial_state() = sweeper->exact(0);
+
+
+	
+        sdc->run();
+
+        sdc->post_run();
+    
+        //std::exit(0);
+    	//_new_newton_initial_coarse=->data(); 
+	
+		
+	for(int j=0; j<num_nodes +1; j++){
+		(_new_newton_state_coarse[j])  = sweeper->states()[j];//get_end_state(); //fine->exact( pfasst.status()->time());
+		sdc_FinEl->get_transfer()->at(0)->mv(sweeper->states()[j]->data(), _new_newton_state_fine[j]->data());
+	}
+	//(_new_newton_state_fine)  = _new_newton_initial_fine;
+	//(_new_newton_state_coarse) = _new_newton_initial_coarse;
+    //std::cout << "-------------------------------------------------------------------------------------------------------  time " << time << " " << std::endl;	
     for(int ne=0; ne<12; ne++){
 
+    MPI_Barrier(MPI_COMM_WORLD);
+    //std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  im neuen schritt " << time << " " << std::endl;	
+        MPI_Barrier(MPI_COMM_WORLD);
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
 
         auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
-	auto coarse_helper = std::make_shared<SweeperType>(fe_basis[1], 1,  grid); 
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        coarse_helper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
         auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-
+    	//std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  etwas weiter " << time << " " << std::endl;	
         coarse->is_coarse=true;
-	coarse_helper->is_coarse=true;
         fine->is_coarse=false;
-        coarse->set_abs_residual_tol(tol);
-        fine->set_abs_residual_tol(tol);
+        
+        
+        coarse->set_abs_residual_tol(1);
+        fine->set_abs_residual_tol(1);
 
         coarse->comm=MPI_COMM_SELF;
-	coarse_helper->comm=MPI_COMM_SELF;
         fine->comm=MPI_COMM_SELF;
         
         dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
@@ -206,44 +267,31 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
         pfasst.setup();
 
-	//if(time==0){
-   
-	//}else {
-	//	for (int i=0; i< fine->initial_state()->data().size(); i++) fine->initial_state()->data()[i] = _new_initial_fine->data()[i];   
-	//}
-
 
 	if(time==0 && ne==0){ 	
 		//for(int i=0; i< num_time_steps; i++){	
 			for(int j=0; j<num_nodes +1; j++){
-				/*for(int k=0; k<(_new_newton_state_coarse[i][j])->data().size(); k++){
-					(_new_newton_state_coarse[i][j])->data()[k] = fine->exact( pfasst.status()->time()); //0;
-				}
-				for(int k=0; k<(_new_newton_state_fine[i][j])->get_data().size(); k++){
-					(_new_newton_state_fine[i][j])->data()[k] = coarse->exact( pfasst.status()->time());
-				}*/
-				//(*_new_newton_state_fine[j]) = fine->exact(pfasst.get_status()->get_time())->data(); 
-				(_new_newton_state_fine[j])  = fine->exact( pfasst.status()->time());
-				//(*_new_newton_state_coarse[j]) = coarse->exact( pfasst.status()->time())->data();				
+				(_new_newton_state_fine[j]) = fine->exact( pfasst.status()->time());
 				(_new_newton_state_coarse[j]) = coarse->exact( pfasst.status()->time());
-				/*for(int k=0; k<(_new_newton_state_fine[j])->data().size(); k++){
-					if(my_rank==0) std::cout << "start fine" <<  (_new_newton_state_fine[j])->data()[k] << std::endl;
-				}*/
+			
+				(_new_newton_state_fine[j])->data()  *= 1; //fine->exact( pfasst.status()->time());
+				(_new_newton_state_coarse[j])->data() *= 1;// coarse->exact( pfasst.status()->time());
 			}
 
 		//}
 	}
 
 	if (time==0){
-        coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
-        fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
+        	coarse->initial_state() = coarse->exact(pfasst.get_status()->get_time());
+        	fine->initial_state() = fine->exact(pfasst.get_status()->get_time());
 	}else{
-	coarse->initial_state()->data() = _new_newton_initial_coarse; 
-	fine->initial_state()->data() = _new_newton_initial_fine; 
+		coarse->initial_state()->data() = _new_newton_initial_coarse; 
+		fine->initial_state()->data() = _new_newton_initial_fine; 
 	}
 	
-        //fine->initial_state() = (_new_newton_state_fine[0]);     
-        //coarse->initial_state() = (_new_newton_state_coarse[0]);  
+        //fine->initial_state() = (_new_newton_state_fine[0][0]);     
+        //coarse->initial_state() = (_new_newton_state_coarse[0][0]);  
+	
 	//MPI_Bcast(&fine->initial_state()->data()[0], fine->initial_state()->data().size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
 	//MPI_Bcast(&coarse->initial_state()->data()[0], coarse->initial_state()->data().size(), MPI_FLOAT, 0, MPI_COMM_WORLD);
 
@@ -273,10 +321,10 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 			for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
     				fine->last_newton_state()[j]->data()[k] = _new_newton_state_fine[j]->data()[k]  ;
     				fine->new_newton_state()[j]->data()[k] = _new_newton_state_fine[j]->data()[k]  ;
-    				//coarse->last_newton_state()[i][j]->data()[k] = _new_newton_state_coarse[i][j]->data()[k]  ;
+    				//fine->last_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
 			}
 			for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
-    				//fine->last_newton_state()[i][j]->data()[k] = _new_newton_state_fine[i][j]->data()[k]  ;
+    				//->last_newton_state()[0][j]->data()[k] = _new_newton_state_fine[0][j]->data()[k]  ;
     				coarse->last_newton_state()[j]->data()[k] = _new_newton_state_coarse[j]->data()[k]  ;
     				coarse->new_newton_state()[j]->data()[k] = _new_newton_state_coarse[j]->data()[k]  ;
 			}
@@ -287,34 +335,29 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 
 
-
-
-
-
-
-
-
-
-
-	    for(int m=0; m< num_nodes +1; m++){
-	    	/*fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
-            	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[m]);
+	    /*for(int m=0; m< num_nodes +1; m++){
+	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
+            	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[0][m]);
 
 	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
 	    	transfer->restrict_dune_matrix(*fine->df_dune[0][m], *coarse->df_dune[0][m]);
 		
 		auto result = fine->get_encap_factory().create();
             	result->zero();
-                fine->evaluate_f2(result, fine->last_newton_state()[m]);
-		fine->df_dune[0][m]->mmv(fine->last_newton_state()[m]->data(), result->data());
+                fine->evaluate_f2(result, fine->last_newton_state()[0][m]);
+		fine->df_dune[0][m]->mmv(fine->last_newton_state()[0][m]->data(), result->data());
 		//fine->evaluate_f3(result, fine->last_newton_state()[0][m]);	    	
 		//auto mat = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
 		//fine->evaluate_df3(*mat, fine->last_newton_state()[0][m]);
 		//mat->mv(fine->last_newton_state()[0][m], result->data());
 
 		fine->coarse_rhs()[0][m]->data() =result->data();
-		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);*/
-		fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
+		transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
+	    }*/
+
+
+	    for(int m=0; m< num_nodes +1; m++){
+	    	fine->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(fine->M_dune); 
             	fine->evaluate_df2(*fine->df_dune[0][m], fine->last_newton_state()[m]);
 
 	    	coarse->df_dune[0][m] = std::make_shared<Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1>>>(coarse->M_dune); 
@@ -337,59 +380,92 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		coarse->df_dune[0][m]->mmv(coarse->last_newton_state()[m]->data(), resultc->data());
 
 	    	coarse->coarse_rhs()[0][m]->data() =resultc->data();
-		
+
+
+		//transfer->restrict_data(fine->coarse_rhs()[0][m], coarse->coarse_rhs()[0][m]);
+                
+	    	//Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > vgl_M = Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> >(coarse->M_dune); ///////M
+		//transfer->restrict_dune_matrix(*fine->df_dune[0][m], vgl_M);
+
+
 	    }
-
-
-        //if(ne ==3) fine->set_abs_residual_tol(1e-1);
-        //if(ne ==3) coarse->set_abs_residual_tol(1e-1);
-
         pfasst.run();
         pfasst.post_run();
 
         
-	std::cout << my_rank << " nach dem run " << std::endl;
-        MPI_Barrier(MPI_COMM_WORLD);
+	num_solves = fine->num_solves;
+
 
         
-
+        /*if(my_rank==num_pro-1) {
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact( t_0 + (time+num_pro)*dt)->data();
         auto exact2     = fine->exact( t_0 + (time+1)*dt)->data();
-        if(my_rank==num_pro-1) {        
         for (int i=0; i< fine->get_end_state()->data().size(); i++){
           std::cout <<  t_0 + (time+num_pro)*dt << anfang[i] << " " << naeherung[i] << "   " << exact[i] << " "  <<  std::endl;
         }
-	}
+	}*/
 
-	naeherung -= exact;
+
+
+	/*if(my_rank==num_pro-1){
+        	GridType::LevelGridView gridView = grid->levelGridView(1);
+        	Dune::VTKWriter<GridView> vtkWriter(gridView);
+        	string name = std::to_string(76);  
+
+        	Dune::VTKWriter<GridView> vtkWriter2(gridView);
+        	string name2 = std::to_string((time+num_pro-1)*dt+dt*my_rank);
+
+        	vtkWriter2.addVertexData(fine->get_end_state()->data(), "fe_solution_u");
+        	vtkWriter2.write("fe_2d_nach_solve" + name2);
+        }*/
+
 	
-	
 
 
-
-	
-
-	//for (int i=0; i< fine->get_end_state()->data().size(); i++) _copy_end_state->data()[i] = fine->get_end_state()->data()[i];
-	
-	//fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_nodes]); 
-	fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_nodes]);
+	fine->get_end_state()->scaled_add(-1.0, _new_newton_state_fine[num_nodes]); 
         std::cout << my_rank << " NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;
-	std::cout << my_rank << " num_solves  " << fine->num_solves <<  std::endl;
-        MPI_Barrier(MPI_COMM_WORLD);
-
-	/*int local=0, global=0;
-	if (fine->get_end_state()->norm0()<newton) local=1;	
-	MPI_Reduce(&local, &global, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-	MPI_Bcast(&global, 1, MPI_INT, 0, MPI_COMM_WORLD);*/
+	std::cout << my_rank << " #####################################################################   num_solves  " << fine->num_solves <<  std::endl;
+	std::cout << "################################################################  Groesse  " << fine->get_end_state()->data().size() <<  std::endl;
+	
+	
 	int local=0, global=0;
 	if(my_rank==num_pro-1){ if (fine->get_end_state()->norm0()<newton) global=1;}	
 	MPI_Bcast(&global, 1, MPI_INT, num_pro-1, MPI_COMM_WORLD);
 
 
 
+
 	if(global>0 ) {
+		//if (my_rank == num_pro-1){for (int i=0; i< fine->get_end_state()->data().size(); i++) _new_initial_fine->data()[i] = _copy_end_state->data()[i];}
+		//MPI_Bcast(&(_new_initial_fine->data()[0]),_new_initial_fine->data().size(), MPI_DOUBLE, num_pro-1,MPI_COMM_WORLD);
+
+
+
+		/*if(t_0 + (time+num_pro)*dt == t_end){	
+			int final_solves=0;				
+			MPI_Reduce(&fine->num_solves, &final_solves, 1, MPI_INT, MPI_SUM, num_pro-1, MPI_COMM_WORLD);
+        		if (my_rank == num_pro-1){ std::cout << "NEWTON *****************************************      Fehler: "  << fine->get_end_state()->norm0() << " " << std::endl;         	std::cout << "Fehler am Ender : "  << _copy_end_state->norm0() << " " << std::endl;
+        			ofstream f;
+        			stringstream ss;
+        			ss << nelements;
+        			string s = "solution_pfasst12/" + ss.str() + ".dat";
+        			f.open(s, ios::app | std::ios::out );
+        			f << nelements << " " << dt << " "<< _copy_end_state->norm0() << " number solves " << final_solves << endl;
+        			f.close();
+        			std::cout << "******************************************* " << std::endl;
+			}
+        	
+		}*/
+		
+		
+		
+		
+	//fine->new_newton_state()[0][num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
+       	//std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[0][num_nodes]->norm0() << " " << std::endl;
+		//std::cout << my_rank << " if betreten " << ne <<  std::endl;
+
 		if(my_rank==num_pro-1){       	       	
 		//for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
@@ -440,21 +516,17 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
 	
 		//std::cout << " vor dem break " << std::endl; std::exit(0); 
-		//break;
-	fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (time+1+my_rank)*dt));
-       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
+		break;
+	}//if break
 
 
-	std::cout << " vor dem break " << std::endl; break;
-	}
-
-	fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (time+1+my_rank)*dt));
-       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
 
 
-	num_solves = fine->num_solves;
-        MPI_Barrier(MPI_COMM_WORLD);
 
+
+	//std::cout << "rank " << my_rank<< std::endl;
+
+    	//for(int i=0; i< num_time_steps; i++){	
 		for(int j=0; j<num_nodes +1 ; j++){
 			for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++)
     				(_new_newton_state_coarse[j])->data()[k] = coarse->states()[j]->data()[k]; //coarse->new_newton_state()[0][j]->data()[k];
@@ -462,35 +534,24 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 			for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++)
     				(_new_newton_state_fine[j])->data()[k] = fine->states()[j]->data()[k]; //new_newton_state()[0][j]->data()[k];
     		}
-
-	//std::cout << "rank " << my_rank<< std::endl;
-
-    	//for(int i=0; i< num_time_steps; i++){	
-		/*for(int j=0; j<num_nodes +1 ; j++){
-			for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++)
-    				(_new_newton_state_coarse[j])->data()[k] = coarse->states()[j]->data()[k]; //coarse->new_newton_state()[0][j]->data()[k];
-    		
-			for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++)
-    				(_new_newton_state_fine[j])->data()[k] = fine->states()[j]->data()[k]; //new_newton_state()[0][j]->data()[k];
-    		}*/
 	//}
 	
 
-	//fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
-       	//std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
+	//fine->new_newton_state()[0][num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (1+my_rank)*dt));
+       	//std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[0][num_nodes]->norm0() << " " << std::endl;
 
 
         //MPI_Barrier(MPI_COMM_WORLD);
 	//std::cout << "after last barrier rank " << my_rank<< std::endl;
 
 
-}
+}//ende newton
 
-std::cout << "-------------------------------------------------------------------------------------------------------  beginn weiterer zeitschritt" << time << " " << std::endl;
-}
+std::cout << "-------------------------------------------------------------------------------------------------------  beginn weiterer zeitschritt" <<  " " << std::endl;
+}//ende zeitschritt
 
 
-      }
+      }//ende methode
 
 
 
@@ -519,7 +580,6 @@ int main(int argc, char** argv)
   double t_end = get_value<double>("tend", 0.2);
   size_t nsteps = get_value<size_t>("num_steps", 0);
   double newton = get_value<double>("newton", 0);
-  double tol = get_value<double>("abs_res_tol", 1e-12);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -535,11 +595,18 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 50);
 
-  run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, tol);
+	MPI_Barrier(MPI_COMM_WORLD);
+    	auto st = MPI_Wtime();
+    	
+  run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+    	auto ut = MPI_Wtime()-st;
+        double time;
+        MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        std::cout << "benoetigte Zeit: " << time << " Sekunden" << std::endl;
 
   pfasst::Status<double>::free_mpi_datatype();
 
-  MPI_Barrier(MPI_COMM_WORLD);
+
 
 
 
