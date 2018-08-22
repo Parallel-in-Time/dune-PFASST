@@ -38,8 +38,8 @@ namespace pfasst
 
             
         public:
-        double                                     	_nu{1.0}; //1.2
-        double                                     	_n{1.0}; //2.0        
+        double                                     	_nu{1.2}; //1.2
+        double                                     	_n{2.0}; //2.0        
         
 	int                                             num_solves=0;        
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)

@@ -112,40 +112,19 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
 
-		_new_newton_state_fine.resize(num_nodes + 1);
-		_new_newton_state_coarse.resize(num_nodes + 1);
-		for(int j=0; j<num_nodes +1 ; j++){
-			_new_newton_state_fine[j] =  fine->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
-			_new_newton_state_coarse[j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
-		}
+	_new_newton_state_fine.resize(num_nodes + 1);
+	_new_newton_state_coarse.resize(num_nodes + 1);
+	for(int j=0; j<num_nodes +1 ; j++){
+		_new_newton_state_fine[j] =  fine->get_encap_factory().create(); 
+		_new_newton_state_coarse[j] = coarse->get_encap_factory().create(); 
+	}
     	
 
 
 
 
-	/*auto coarse_initial = std::make_shared<SweeperType>(fe_basis[1], 1,  grid); 
-	coarse_initial->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-	auto sweeper = std::make_shared<sweeper_t>(fe_basis[1] , 1, grid); 
-    	auto sdc = std::make_shared<heat_FE_sdc_t>();    
-	sweeper->is_coarse = false;
-    	sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-    	sdc->add_sweeper(sweeper);
-    	sdc->set_options();
-    	if (my_rank==0){ sdc->status()->time() = 0;}else{sdc->status()->time() = 0.5;}
-    	sdc->status()->dt() = 0.5;
-    	if (my_rank==0){sdc->status()->t_end() = 0.5;}else{sdc->status()->t_end() = 1;}
-    	sdc->status()->max_iterations() = 2;
-    	sdc->setup();
-        if (my_rank==0){ 
-	sweeper->initial_state() = sweeper->exact(0);
-	
-        sdc->run();
-        sdc->post_run();
-	}
-	MPI_Barrier(MPI_COMM_WORLD);*/
-
-Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_basis[1]->size());    
-Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
+	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_basis[1]->size());    
+	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
 
 
 std::cout << "num_pro " << num_pro << std::endl;
@@ -442,14 +421,15 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 		//std::cout << " vor dem break " << std::endl; std::exit(0); 
 		//break;
 	fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (time+1+my_rank)*dt));
-       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
+       	std::cout << my_rank << " Zeit "<<   t_0 + (time+1+my_rank)*dt << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
+       	
 
 
-	std::cout << " vor dem break " << std::endl; break;
+	std::cout << " Groesse Vektor " << fine->new_newton_state()[num_nodes]->data().size() << std::endl; break;
 	}
 
 	fine->new_newton_state()[num_nodes]->scaled_add(-1.0, fine->exact( t_0 + (time+1+my_rank)*dt));
-       	std::cout << my_rank << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
+       	std::cout << my_rank << " Zeit " << t_0 + (time+1+my_rank)*dt << " Fehler am Ender : "  << fine->new_newton_state()[num_nodes]->norm0() << " " << std::endl;
 
 
 	num_solves = fine->num_solves;

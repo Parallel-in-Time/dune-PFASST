@@ -92,7 +92,7 @@ using namespace pfasst::examples::fischer_example;
         using pfasst::quadrature::quadrature_factory;
 
 
-	auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[0], 0,  grid); //ruth 11 
+	auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid); //ruth 11 
 
         auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);    //[0]
 
@@ -118,13 +118,14 @@ using namespace pfasst::examples::fischer_example;
     	
 	std::cout.precision ( 10 );
 
+int num_solves = 0;
 for(int time=0; time<(t_end-t_0)/dt; time++){	
 
     for(int ne=0; ne<10; ne++){
 
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
-        auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[0], 0,  grid); //ruth
+        auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid); //ruth
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
@@ -134,8 +135,8 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
-        
-        
+
+        fine->num_solves+=num_solves;
         fine->set_abs_residual_tol(tol);
         coarse->set_abs_residual_tol(tol);
 
@@ -259,6 +260,10 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         
         mlsdc->post_run();
 
+
+        num_solves = fine->num_solves;
+        
+        
         auto anfang    = fine->exact(0)->data();
         auto naeherung = fine->get_end_state()->data();
         auto exact     = fine->exact( t_0 + (time+1)*dt)->data();
@@ -281,11 +286,11 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 	
 	
 	
-	
+	std::cout <<  " solves number " <<  num_solves << std::endl ;
 	std::cout << "******************************* Newton " << (_new_newton_state_fine[num_nodes])->norm0() <<  std::endl ;
 	if((_new_newton_state_fine[num_nodes])->norm0()< newton){
 
-		/*for(int j=0; j<num_nodes +1 ; j++){
+		for(int j=0; j<num_nodes +1 ; j++){
 		for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
     			(*_new_newton_state_coarse[j]).data()[k] = coarse->new_newton_state()[j]->data()[k];
 			//std::cout << "coarse newton solution " << coarse->new_newton_state()[i][j]->data()[k] << std::endl;
@@ -309,7 +314,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
     		}
 		
 		
-		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;*/
+		std::cout << "************************************* STARTING NEW TIMESTEP "<< time << std::endl;
 	
 		break;}
 
