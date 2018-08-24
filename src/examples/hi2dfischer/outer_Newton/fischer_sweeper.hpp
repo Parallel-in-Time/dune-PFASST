@@ -32,13 +32,17 @@ namespace pfasst
         : public Heat_FE<SweeperTrait, BaseFunction, Enabled>{
             
         std::shared_ptr<VectorType>                     w; 
+#if DIMENSION==1
+	  double                                         _nu{1.2};
+	  double                                         _n{2.0};	   
+#else
         double                                     	_nu{25}; //1.2
         double                                          _eps{0.4};
         double                                     	_n{2.0}; //2.0
         double                                      	_delta{1.0};
         double                                          _abs_newton_tol=1e-10; 
 	std::shared_ptr<GridType> grid;
-            
+#endif            
         public:
 	int                                             num_solves=0;        
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
@@ -66,33 +70,74 @@ namespace pfasst
           fischer_sweeper(fischer_sweeper<SweeperTrait, BaseFunction, Enabled>&& other) = default;
           virtual ~fischer_sweeper() = default;
             
-          shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t)      {
+          	shared_ptr<typename SweeperTrait::encap_t> exact(const typename SweeperTrait::time_t& t)      {
         	auto result = this->get_encap_factory().create();
         	const auto dim = SweeperTrait::DIM;
-        	double nu = this->_nu; 
-		double eps = this->_eps;
+        	
+        	
+#if DIMENSION==1
+
+
+		int n  = this-> _n;
+    		double l0 = this-> _nu;
+		double l1 = l0/2. *(pow((1+n/2.), 1/2.) + pow((1+ n/2.), -1/2.) );
+		double d = l1 - pow(pow(l1,2) - pow(l0,2), 1/2.);
+
+        	auto exact_solution = [l0, l1, n, d, t](const Dune::FieldVector<double,DIMENSION>&x){ 
+	  		return pow((1 + (pow(2, n/2.)-1 )* exp(-(n/2.)*d*(x+2*l1*t)) ), -2./n);
+        	};	
+
+        	auto N_x = [t](const Dune::FieldVector<double,DIMENSION>&x){
+            		return x;
+
+        	};
+
+        	Dune::BlockVector<Dune::FieldVector<double,DIMENSION>> x_node;
+        	interpolate(*this->basis, x_node, N_x);
+
+        	interpolate(*this->basis, result->data(), exact_solution);
+
+#else 
+
+
+		double nu = this-> _nu; 
+        	double eps= this->_eps;
+	
 		auto exact_solution1 = [t,  nu, dim, eps](const Dune::FieldVector<double,dim>&x){
+             
+
 	  		return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*eps)) ;
-	  	};
+            
+        	};
+
+
 	
 	 	auto N_x = [t](const Dune::FieldVector<double,dim>&x){
             		return x;
+
         	};
 
         	Dune::BlockVector<Dune::FieldVector<double,dim>> x_node;
 		Dune::BlockVector<Dune::FieldVector<double,1>> pom1, pom2;
-		pom1.resize(this->basis->size());
-		pom2.resize(this->basis->size());
+		pom1.resize(result->data().size());
+		pom2.resize(result->data().size());
         
 		interpolate(*this->basis, x_node, N_x);
 
 		interpolate(*this->basis, pom1, exact_solution1);
 		interpolate(*this->basis, result->data(), exact_solution1);
 	
-		for (int i = 0; i< this->basis->size(); ++i)
+	
+	
+		for (int i = 0; i< result->data().size(); ++i)
 		{
 	  		result->data()[i][0] = pom1[i];
+	  
+	  
 		}
+#endif
+        	
+
 
 		/*if(!this->is_coarse){
         		auto grid = this->grid;

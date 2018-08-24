@@ -48,7 +48,7 @@
 #include <dune/functions/gridfunctions/gridviewfunction.hh> 
 
 
-#define DIMENSION 1
+#define DIMENSION 2
 
 
 const int NR_COMP=1;

@@ -1,4 +1,4 @@
-#include <config.h>
+//#include <config.h>
 #include "../2d_transfer/dune_includes"
 
 #include <pfasst.hpp>
@@ -61,9 +61,10 @@ int main(int argc, char** argv) {
     	const size_t niter = get_value<size_t>("num_iters", 10);            // maximal number of sdc iterations
     	const double newton = get_value<double>("newton", 0.1);             // size of timesteping
     	bool output = get_value<double>("output", 0);                       // size of timesteping
-    
+        const double tol = get_value<double>("abs_res_tol", 1e-12);
 
 	//start solving procedure und stop time
+  	MPI_Init(&argc, &argv);
 	MPI_Barrier(MPI_COMM_WORLD);
     	auto st = MPI_Wtime();
     	
@@ -141,6 +142,7 @@ int main(int argc, char** argv) {
     			sdc->status()->max_iterations() = niter;
     			sdc->setup();
 			sweeper->num_solves+=num_solves;
+			sweeper->set_abs_residual_tol(tol);
 			
 
 			if(time==0 ) {	//im ersten Newton Lauf Anfangswerte setzen
@@ -189,15 +191,17 @@ int main(int argc, char** argv) {
 			//does Newton already converge? check residuum:
 			(*_new_newton_state[num_nodes]) -= sweeper->get_end_state()->data();
 			
-			
+			sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+			std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
+        		
         		std::cout << "NEWTON *****************************************      Residuum: "  << (*_new_newton_state[num_nodes]).infinity_norm() << " " << std::endl;
 			std::cout << "################################################################  num_solves  " << sweeper->num_solves <<  std::endl;
 			std::cout << "################################################################  Groesse  " << sweeper->get_end_state()->data().size() <<  std::endl;
 
 
-#if DIMENSION!=1
+#if DIMENSION==3
     			if(output){
-        			GridType::LevelGridView gridView = grid->levelGridView(0);
+        			GridType::LevelGridView gridView = FinEl->get_grid()->levelGridView(0);
         			Dune::VTKWriter<GridView> vtkWriter(gridView);
         			Dune::VTKWriter<GridView> vtkWriter2(gridView);
         			string name2 = std::to_string(time);
@@ -233,7 +237,7 @@ int main(int argc, char** argv) {
         double time;
         MPI_Allreduce(&ut, &time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
         std::cout << "Zeit ist am ende " << time << std::endl;
-
+	MPI_Finalize();
  
 }
 
