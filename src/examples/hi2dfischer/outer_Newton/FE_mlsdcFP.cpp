@@ -1,13 +1,12 @@
 
 #include <config.h>
-
+#include "../2d_transfer/dune_includes"
 #include <fenv.h>
 
 #include <memory>
 #include <stdexcept>
 using std::shared_ptr;
 
-#include "dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -19,7 +18,7 @@ using std::shared_ptr;
 #include <vector>
 
 
-#include "../2d_transfer/fe_manager_fp.hpp"
+#include "../2d_transfer/fe_manager_fp_hi.hpp"
 #include "fischer_sweeper.hpp"
 #include <pfasst/encap/dune_vec.hpp>
 #include "../2d_transfer/spectral_transfer.hpp"
@@ -38,9 +37,12 @@ using namespace pfasst::examples::fischer_example;
       using pfasst::quadrature::QuadratureType;
 
       
-      using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-      using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
-      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_coarse, 1>;
+      //using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+      using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>,   BasisFunction >;
+      //using sweeper_t      = fischer_sweeper<dune_sweeper_traits<encap_traits_t,   BASE_ORDER, DIMENSION>,   BasisFunction >;
+      using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   coarseBasisFunction >;
+      
+      using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
 
@@ -64,9 +66,9 @@ using namespace pfasst::examples::fischer_example;
 
         std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 
-        std::shared_ptr<GridType> grid;
+        //std::shared_ptr<GridType> grid;
 
-        int n_levels=2;
+/*        int n_levels=2;
 
         std::vector<std::shared_ptr<BasisFunction> > fe_basis(n_levels); ; 
         //std::vector<std::shared_ptr<BasisFunction> > fe_basis_p;
@@ -90,16 +92,17 @@ using namespace pfasst::examples::fischer_example;
 	      auto view = grid->levelGridView(i);
               fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); //grid->levelGridView(i));//gridView);
 	      //n_dof[n_levels-i-1]    = fe_basis[n_levels-i-1]->size();
-        } 
+        } */
         
-        
+        auto FinEl   = make_shared<fe_manager>(nelements,2);
         
         using pfasst::quadrature::quadrature_factory;
 
 
-	auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid);
-
-        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid);    //[0]
+	auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis2(), 1,  FinEl->get_grid());
+        //auto coarse = std::make_shared<sweeper_t_coarse>(FinEl, 1);
+	//auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2() , 0, FinEl->get_grid()); 
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis1() , 0, FinEl->get_grid());    //[0]
 
 
 	const auto num_nodes = nnodes;	
@@ -117,8 +120,8 @@ using namespace pfasst::examples::fischer_example;
 		}
     	
     	
-Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_basis[1]->size());    
-Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
+Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(FinEl->get_basis1()->size());    
+Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(FinEl->get_basis2()->size());    
 	
 std::cout.precision ( 10 );
 
@@ -128,11 +131,11 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
-        auto coarse = std::make_shared<sweeper_t_coarse>(fe_basis[1], 1,  grid);
+        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis2(), 1,  FinEl->get_grid());
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
-        auto fine = std::make_shared<sweeper_t_coarse>(fe_basis[0] , 0, grid); //0
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis1() , 0, FinEl->get_grid()); //0
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
@@ -144,10 +147,10 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
         std::cout << "erstelle tranfer" << std::endl;
         
-        dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
+        /*dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
 	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	for (int i=0; i< n_levels-1; i++){
-	      transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
+		transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
 	}
 	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
 	    
@@ -159,10 +162,10 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 		  //std::cout << ((*vecvec->at(0))[i][j]) << std::endl;
 		}
 	      }
-        }
+        }*/
         
         auto transfer = std::make_shared<transfer_t>();
-        transfer->create(vecvec);
+        transfer->create(FinEl);
            
         std::cout << "nach erstelle tranfer" << std::endl;
         
@@ -303,6 +306,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         std::cout << "time step " << time << std::endl ;
         std::cout << "******************************************* " <<  std::endl ;*/
 
+#if DIMENSION==2
 	if(true){
         	GridType::LevelGridView gridView = grid->levelGridView(1);
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
@@ -314,7 +318,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         	vtkWriter2.addVertexData(fine->get_end_state()->data(), "fe_solution_u");
         	vtkWriter2.write("fe_2d_nach_solve" + name2);
 	}
-
+#endif
 
 	(*_new_newton_state_fine[num_nodes]).data() -= fine->new_newton_state()[num_nodes]->data();
 	std::cout << "******************************* Newton " << (_new_newton_state_fine[num_nodes])->norm0() <<  std::endl ;

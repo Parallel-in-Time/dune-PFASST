@@ -1,5 +1,5 @@
 #include "FE_sweeper.hpp"
-
+#include "../2d_transfer/fe_manager_fp_hi.hpp"
 
 //this is a specified sweeper for the generalized Fisher equation
 //it inherits from the implicit Finite Element sweeper

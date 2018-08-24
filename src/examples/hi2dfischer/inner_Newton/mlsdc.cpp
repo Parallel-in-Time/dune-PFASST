@@ -5,7 +5,7 @@
 #include <stdexcept>
 using std::shared_ptr;
 
-#include "dune_includes"
+#include "../2d_transfer/dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -32,12 +32,12 @@ using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>;
 //
 //////////////////////////////////////////////////////////////////////////////////////
 
-const size_t DIM = 1;            //R??umliche Dimension des Rechengebiets ruth_dim
+//const size_t DIM = 1;            //R??umliche Dimension des Rechengebiets ruth_dim
 
-const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
+//const size_t BASIS_ORDER = 1;    //maximale Ordnung der Lagrange Basisfunktionen
 
 //////////////////////////////////////////////////////////////////////////////////////
-const size_t nelements = 100;
+//const size_t nelements = 100;
 
 
 
@@ -61,10 +61,10 @@ namespace pfasst
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
 
 
-      void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t coarse_factor,
+      void run_mlsdc(const size_t nelements, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
-                                           const size_t niter, const double newton, bool output) {
+                                           const size_t niter, const double newton, bool output, double tol) {
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
         auto FinEl = make_shared<fe_manager>(nelements, 2);
@@ -95,8 +95,8 @@ namespace pfasst
         //mlsdc->add_sweeper(fine, false);
 
     
-           //fine->set_abs_residual_tol(1e-12);
-           //coarse->set_abs_residual_tol(1e-12);
+        fine->set_abs_residual_tol(tol);
+        coarse->set_abs_residual_tol(tol);
     
     
            
@@ -127,7 +127,8 @@ namespace pfasst
 
         mlsdc->post_run();
 
-
+        fine->get_end_state()->scaled_add(-1.0 , fine->exact(t_end));
+	std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << fine->get_end_state()->norm0()<< std::endl;
 	std::cout << "the corresponding linear system were solved " << fine->num_solves << " times" << std::endl; 
 	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
 	std::cout << "Groesse des Loesungsvektors: " << fine->get_end_state()->data().size() << std::endl ;
@@ -193,6 +194,7 @@ int main(int argc, char** argv)
   size_t nsteps = get_value<size_t>("num_steps", 0);
   double newton = get_value<size_t>("newton", 1e-6);
   bool output = get_value<double>("output", 0);
+  double tol = get_value<double>("abs_res_tol", 1e-8);
   if (t_end == -1 && nsteps == 0) {
     ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
     throw std::runtime_error("either t_end or num_steps must be specified");
@@ -211,7 +213,7 @@ int main(int argc, char** argv)
     MPI_Init(&argc, &argv);
 	MPI_Barrier(MPI_COMM_WORLD);
     	auto st = MPI_Wtime();
-  pfasst::examples::heat_FE::run_mlsdc(nelements, BASIS_ORDER, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+  pfasst::examples::heat_FE::run_mlsdc(nelements, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, output, tol);
   
       	auto ut = MPI_Wtime()-st;
         double time;

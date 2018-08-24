@@ -50,7 +50,7 @@ typedef Dune::BlockVector<Dune::FieldVector<double,1> > VectorType;
 	  size_t* n_dof;
 	  size_t n_levels;
 
-	  typedef Dune::YaspGrid<2> GridType; 
+      typedef Dune::YaspGrid<2> GridType; 
       typedef GridType::LeafGridView GridView;
 	  //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView,1>;
       

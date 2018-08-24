@@ -84,11 +84,20 @@ namespace pfasst
 
       }
 
-      /*template<class SweeperTrait, typename Enabled>
+      
+ 
+      template<class SweeperTrait, typename Enabled>
       shared_ptr<typename SweeperTrait::encap_t>
       Heat_FE<SweeperTrait, Enabled>::exact(const typename SweeperTrait::time_t& t)
       {
         auto result = this->get_encap_factory().create();
+
+        const auto dim = SweeperTrait::DIM;
+
+
+
+#if DIMENSION==1
+
 
 	spatial_t n  = this-> _n;
     	spatial_t l0 = this-> _nu;
@@ -105,35 +114,19 @@ namespace pfasst
         };
 
         Dune::BlockVector<Dune::FieldVector<double,DIMENSION>> x_node;
-        interpolate(*basis, x_node, N_x);
+        interpolate(*_basis, x_node, N_x);
 
-        interpolate(*basis, result->data(), exact_solution);
+        interpolate(*_basis, result->data(), exact_solution);
 
-        return result;
-      }*/
-      
- 
-      template<class SweeperTrait, typename Enabled>
-      shared_ptr<typename SweeperTrait::encap_t>
-      Heat_FE<SweeperTrait, Enabled>::exact(const typename SweeperTrait::time_t& t)
-      {
-        auto result = this->get_encap_factory().create();
+#else 
 
-        const auto dim = SweeperTrait::DIM;
-        spatial_t nu = this-> _nu; 
+
+	spatial_t nu = this-> _nu; 
         double eps= this->_eps;
-	
 	
 	auto exact_solution1 = [t,  nu, dim, eps](const Dune::FieldVector<double,dim>&x){
              
-	  //double solution=1.0;
-          //for(int i=0; i<dim; i++){solution *= pow(std::sin(PI * x[i]/1),1);}
-          //return solution * std::exp(-t * dim * PI*PI * nu)*(-0.5) +1;
 
-	  //return 1 - 0.5 * pow(sin(PI * x[0] / 10)*sin(PI * x[1] / 1), 1);
-	  //if( (x[0]-0.5)*(x[0]-0.5) + (x[1]-0.5)*(x[1]-0.5) < 0.0025)
-	  //  return 0.5;
-	  //  return 1.0;
 	  return tanh((0.25 -sqrt(pow(x[0]-0.5,2) + pow(x[1]-0.5,2)))/(sqrt(2.)*eps)) ;
             
         };
@@ -163,6 +156,7 @@ namespace pfasst
 	  
 	  
 	}
+#endif
 
 	/*if(output && !this->is_coarse){
         auto grid = this->FinEl->get_grid();
@@ -365,15 +359,10 @@ namespace pfasst
                                                     const shared_ptr<typename SweeperTrait::encap_t> rhs)
       {
 	
-        ML_CVLOG(4, this->get_logger_id(),
-                 "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
+        ML_CVLOG(4, this->get_logger_id(), "IMPLICIT spatial SOLVE at t=" << t << " with dt=" << dt);
                  
 
-
-
-	
-
-        
+       
     	auto residuum = this->get_encap_factory().create();
 	Dune::BlockVector<Dune::FieldVector<double,1> > newton_rhs;
     	newton_rhs.resize(rhs->get_data().size());
@@ -408,21 +397,6 @@ namespace pfasst
 	  
 
 	}	
-	
-	/*if(output && !this->is_coarse ){
-	auto grid = this->FinEl->get_grid();
-	//typedef Dune::YaspGrid<dim> GridType; //ruth_dim
-        GridType::LevelGridView gridView = grid->levelGridView(output_level);
-        Dune::VTKWriter<GridView> vtkWriter(gridView);
-        string name = std::to_string(t);
-
-
-        Dune::VTKWriter<GridView> vtkWriter2(gridView);
-        string name2 = std::to_string(num_solves);
-
-        vtkWriter2.addVertexData(u->data(), "fe_solution_u");
-        vtkWriter2.write("fe_2d_nach_solve" + name2);
-	}*/
 	
 	
 	Dune::BlockVector<Dune::FieldVector<double,1> > M_u;

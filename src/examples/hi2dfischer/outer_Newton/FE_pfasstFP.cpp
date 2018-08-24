@@ -6,7 +6,7 @@ using std::shared_ptr;
 
 #include <mpi.h>
 
-#include "dune_includes"
+#include "../2d_transfer/dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -17,7 +17,7 @@ using std::shared_ptr;
 
 
 //#include "../1d_transfer/fe_manager.hpp"
-#include "../2d_transfer/fe_manager_fp.hpp"
+#include "../2d_transfer/fe_manager_fp_hi.hpp"
 #include "fischer_sweeper.hpp"
 #include <pfasst/encap/dune_vec.hpp>
 #include "../2d_transfer/spectral_transfer.hpp"
@@ -42,10 +42,11 @@ typedef DuneEncapsulation<double, double, 1>                     EncapType;
 
 
 using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-using SweeperType = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+//using SweeperType      = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>,   BasisFunction >;
+using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   coarseBasisFunction >;
 
-
-typedef pfasst::transfer_traits<SweeperType, SweeperType, 1>       TransferTraits;
+typedef pfasst::transfer_traits<sweeper_t_fine, sweeper_t_coarse, 1>       TransferTraits;
 typedef SpectralTransfer<TransferTraits>                           TransferType;
 
 
@@ -65,7 +66,7 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
         //typedef GridType::LevelGridView GridView;
         //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
-        std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
+        /*std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
 
         std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 
@@ -95,13 +96,16 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	      auto view = grid->levelGridView(i);
               fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); 
 
-        } 
+        } */
 
+        auto FinEl   = make_shared<fe_manager>(nelements,2);
 
-	auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
+	auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1,  FinEl->get_grid());
+	//auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
 
-
-        auto fine = std::make_shared<SweeperType>(fe_basis[0] , 0, grid);	const auto num_nodes = nnodes;	
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2() , 0, FinEl->get_grid());    //[0]
+        //auto fine = std::make_shared<SweeperType>(fe_basis[0] , 0, grid);	
+        const auto num_nodes = nnodes;	
     	const auto num_time_steps = 1;//t_end/dt;
 
 	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_coarse;
@@ -151,8 +155,8 @@ typedef SpectralTransfer<TransferTraits>                           TransferType;
 	}
 	MPI_Barrier(MPI_COMM_WORLD);*/
 
-Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(fe_basis[1]->size());    
-Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(fe_basis[0]->size());    
+Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_coarse(FinEl->get_basis1()->size());    
+Dune::BlockVector<Dune::FieldVector<double, 1>> _new_newton_initial_fine(FinEl->get_basis2()->size());    
 
 
 //std::cout << "num_pro " << num_pro << std::endl;
@@ -168,9 +172,11 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	TwoLevelPfasst<TransferType, CommunicatorType> pfasst;
         pfasst.communicator() = std::make_shared<CommunicatorType>(MPI_COMM_WORLD);
 
-        auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
+	auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1,  FinEl->get_grid());
+        //auto coarse = std::make_shared<SweeperType>(fe_basis[1], 1,  grid);
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
-        auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
+        //auto fine = std::make_shared<SweeperType>(fe_basis[0], 0,  grid);
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2() , 0, FinEl->get_grid());    //[0]
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
     	//std::cout << my_rank << "-------------------------------------------------------------------------------------------------------  etwas weiter " << time << " " << std::endl;	
         coarse->is_coarse=true;
@@ -179,19 +185,19 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         coarse->comm=MPI_COMM_SELF;
         fine->comm=MPI_COMM_SELF;
         
-        dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
+        /*dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
 	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	for (int i=0; i< n_levels-1; i++){
 	      transferMatrix->push_back(new MatrixType()); 
 	}
 	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
 	    
-	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
+	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;*/
 
         
        
         auto transfer = std::make_shared<TransferType>();
-	transfer->create(vecvec);
+	transfer->create(FinEl);
 
 	fine->num_solves+=num_solves;
 
@@ -348,7 +354,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 	}*/
 
 
-
+#if DIMENSION==2
 	if(my_rank==num_pro-1){
         	GridType::LevelGridView gridView = grid->levelGridView(1);
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
@@ -360,7 +366,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
         	vtkWriter2.addVertexData(fine->get_end_state()->data(), "fe_solution_u");
         	vtkWriter2.write("fe_2d_nach_solve" + name2);
         }
-
+#endif
 	
 
 
@@ -508,7 +514,7 @@ int main(int argc, char** argv)
         
   
   
-  pfasst::init(argc, argv, SweeperType::init_opts);
+  //pfasst::init(argc, argv, SweeperType::init_opts);
   pfasst::Status<double>::create_mpi_datatype();
 
 

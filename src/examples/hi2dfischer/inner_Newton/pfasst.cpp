@@ -5,7 +5,7 @@ using std::shared_ptr;
 
 #include <mpi.h>
 
-#include "dune_includes"
+#include "../2d_transfer/dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -50,7 +50,7 @@ namespace pfasst
     namespace heat_FE
     {
       void run_pfasst(const size_t nelements, const size_t basisorder, const size_t dim, const size_t& nnodes, const pfasst::quadrature::QuadratureType& quad_type,
-                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton, bool output)
+                      const double& t_0, const double& dt, const double& t_end, const size_t& niter, double newton, bool output, double tol)
       {
 
 
@@ -71,6 +71,10 @@ namespace pfasst
 
         coarse->is_coarse=true;
         fine->is_coarse=false;
+        fine->set_abs_residual_tol(tol);
+        coarse->set_abs_residual_tol(tol);
+        
+        
         fine->output=output;
         fine->output_level=1;
         
@@ -111,6 +115,9 @@ namespace pfasst
         //std::cout << "ERROR (infinity norm): " << std::endl;
         //fine->states()[fine->get_states().size() - 1]->scaled_add(-1.0, fine->exact(t_end));
         //std::cout << fine->states()[fine->get_states().size() - 1]->norm0() << std::endl;
+
+        fine->get_end_state()->scaled_add(-1.0 , fine->exact(t_end));
+	std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << fine->get_end_state()->norm0()<< std::endl;
 	std::cout << "my_rank: " << my_rank << ", number solutions which this process does: " << fine->num_solves << "" << std::endl;
 
 	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
@@ -148,12 +155,12 @@ int main(int argc, char** argv)
   double newton = get_value<double>("newton", 1e-2);
   bool output = get_value<double>("output", 0);
   const size_t niter = get_value<size_t>("num_iters", 10);
-
+  double tol = get_value<double>("abs_res_tol", 1e-8);
 
 	MPI_Barrier(MPI_COMM_WORLD);
     	auto st = MPI_Wtime();
 
-  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+  pfasst::examples::heat_FE::run_pfasst(nelements, BASE_ORDER, DIMENSION, nnodes, quad_type, t_0, dt, t_end, niter, newton, output, tol);
 
       	auto ut = MPI_Wtime()-st;
         double time;

@@ -1,5 +1,5 @@
 #include <config.h>
-#include "dune_includes"
+#include "../2d_transfer/dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -7,7 +7,6 @@
 #include <pfasst/contrib/spectral_transfer.hpp>
 
 #include <pfasst/encap/dune_vec.hpp>
-//#include "assemble.hpp"
 #include "fischer_sweeper.hpp"
 
 
@@ -24,12 +23,12 @@ using std::shared_ptr;
 using encap_traits_t = pfasst::encap::dune_vec_encap_traits<double, double, 1>; 
 
 
-using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+//using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
 
 
 
 
-using sweeper_t = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
+using sweeper_t = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   BasisFunction >;
 
 using pfasst::transfer_traits;
 using pfasst::contrib::SpectralTransfer;
@@ -43,10 +42,6 @@ using pfasst::quadrature::quadrature_factory;
 
 using pfasst::examples::fischer_example::fischer_sweeper;
 
-/////////////////////
-
-//using sweeper_predict = Heat_FE<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>>;
-//using heat_FE_sdc_t = SDC<SpectralTransfer<transfer_traits<sweeper_t, sweeper_t, 1>>>;
 
 
 
@@ -72,7 +67,7 @@ int main(int argc, char** argv) {
 	MPI_Barrier(MPI_COMM_WORLD);
     	auto st = MPI_Wtime();
     	
-    	std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
+    	/*std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
     	std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
     	std::shared_ptr<GridType> grid;
     	int n_levels=2;
@@ -84,17 +79,28 @@ int main(int argc, char** argv) {
         std::bitset<DIMENSION> periodic;
         periodic[0]=true;  
         periodic[1]=true; 
+        
         //make sure that the grid will not be automaticly splitted
 #if HAVE_MPI
         grid        = std::make_shared<GridType>(L,s,periodic,0, MPI_COMM_SELF);	
 #else          
         grid        = std::make_shared<GridType>(L,s,periodic,0);	      
 #endif
-    	for (int i=0; i<n_levels; i++){	      
-	      grid->globalRefine((bool) i);
-	      auto view = grid->levelGridView(i);
-              fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); 
-    	} 
+
+
+	fe_basis[1] = std::make_shared<BasisFunction>(grid->levelGridView(0));
+	
+	grid->globalRefine(1);	
+	
+	fe_basis[0] = std::make_shared<BasisFunction>(grid->levelGridView(1));
+
+    	//for (int i=0; i<n_levels; i++){	      
+	//      grid->globalRefine((bool) i);
+	//      auto view = grid->levelGridView(i);
+        //      fe_basis[n_levels-i-1] = std::make_shared<BasisFunction>(grid->levelGridView(i)); 
+    	//} */
+
+	auto FinEl   = make_shared<fe_manager>(nelements,2);
 
 	const auto num_nodes = nnodes;	
 
@@ -103,18 +109,17 @@ int main(int argc, char** argv) {
 
 	_new_newton_state.resize(num_nodes + 1);
 	
-	//std::cout << " basis groessen " << fe_basis[0]->size() << " " << fe_basis[1]->size()<< std::endl;
 	
 	for(int j=0; j<num_nodes +1 ; j++){
-		_new_newton_state[j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
+		_new_newton_state[j] = std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(FinEl->get_basis2()->size());
 	}
 
     	
-    	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(fe_basis[1]->size());
+    	Dune::BlockVector<Dune::FieldVector<double, 1>> _new_initial_state(FinEl->get_basis2()->size());
 
-	/*Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > A;
-	Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M;
-	assembleProblem(fe_basis[0], A, M);*/
+	//Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > A;
+	//Dune::BCRSMatrix<Dune::FieldMatrix<double,1,1> > M;
+	//assembleProblem(fe_basis[0], A, M);
 
 	int num_solves = 0;
 	
@@ -124,7 +129,7 @@ int main(int argc, char** argv) {
     		for(int ne=0; ne<10; ne++){	//Newtonschritte
 
 
-			auto sweeper = std::make_shared<sweeper_t>(fe_basis[1] , 0, grid); 
+			auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2() , 0, FinEl->get_grid()); 
 			sweeper->is_coarse = false;
     			sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
     			auto sdc = std::make_shared<heat_FE_sdc_t>();    
@@ -136,6 +141,7 @@ int main(int argc, char** argv) {
     			sdc->status()->max_iterations() = niter;
     			sdc->setup();
 			sweeper->num_solves+=num_solves;
+			
 
 			if(time==0 ) {	//im ersten Newton Lauf Anfangswerte setzen
 			
@@ -189,6 +195,7 @@ int main(int argc, char** argv) {
 			std::cout << "################################################################  Groesse  " << sweeper->get_end_state()->data().size() <<  std::endl;
 
 
+#if DIMENSION!=1
     			if(output){
         			GridType::LevelGridView gridView = grid->levelGridView(0);
         			Dune::VTKWriter<GridView> vtkWriter(gridView);
@@ -197,6 +204,7 @@ int main(int argc, char** argv) {
         			vtkWriter2.addVertexData(sweeper->get_end_state()->data(), "fe_solution_u");
         			vtkWriter2.write("fe_2d_nach_solve" + name2);
 			}
+#endif
 
 			if((*_new_newton_state[num_nodes]).infinity_norm() < newton){ 
 

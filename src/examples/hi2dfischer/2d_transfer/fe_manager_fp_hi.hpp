@@ -36,7 +36,7 @@
 
 #include <dune/fufem/assemblers/basisinterpolationmatrixassembler.hh>
 
-
+#include "dune_includes"
 
 
 
@@ -84,22 +84,49 @@
 	    	n_elem=nelements;
 	    	n_dof = new size_t [nlevels];
 
-	    	const unsigned int dim = 2;
-        	Dune::FieldVector<typename GridType::ctype,dim> L;
+
+
+#if DIMENSION==1
+
+	        //const int DIMENSION=1;
+		std::cout << "DIMENSION ==1"  << std::endl;
+	    	Dune::FieldVector<double,DIMENSION> hR = {100};
+	    	Dune::FieldVector<double,DIMENSION> hL = {-100};
+	    	array<int,DIMENSION> n;
+
+	    	std::fill(n.begin(), n.end(), nelements);
+	    	
+#if HAVE_MPI
+ 		grid = std::make_shared<GridType>(hL, hR, n, std::bitset<DIMENSION>{0ULL}, 1, MPI_COMM_SELF); 
+#else
+        	grid = std::make_shared<GridType>(hL, hR, n);
+#endif		    	
+	    	
+	    	
+#else
+		std::cout << "DIMENSION ==2"  << std::endl;
+        	Dune::FieldVector<typename GridType::ctype,DIMENSION> L;
         	L[0]=1; L[1]=1;
-        	typename std::array<int,dim> s;
+        	typename std::array<int,DIMENSION> s;
         	std::fill(s.begin(), s.end(), nelements);
-        	std::bitset<dim> periodic;
+        	std::bitset<DIMENSION> periodic;
         	periodic[0]=true;  
         	periodic[1]=true; 
-
-
 
 #if HAVE_MPI
         	grid        = std::make_shared<GridType>(L,s,periodic,0, MPI_COMM_SELF);	
 #else          
         	grid        = std::make_shared<GridType>(L,s,periodic,0);	      
-#endif  
+#endif         	
+        	
+        	
+        	
+#endif
+
+
+
+
+ 
 	    
 	    
 
@@ -128,25 +155,30 @@
 	  
 	  size_t get_ndofs(size_t i){return n_dof[i];}
 	  size_t get_nelem(){return n_elem;}
+	  
+	  
+	  std::shared_ptr<B2> get_basis2(){return fe_basis2;}
+	  
+	  std::shared_ptr<B1> get_basis1(){return fe_basis1;}
+	  
 	  void set_basis(std::shared_ptr<B2> &b2){
           	b2=fe_basis2;        
       	  }
+#if DIMENSION!=1      	  
       	  void set_basis(std::shared_ptr<B1> &b1){
           	b1=fe_basis1;          
       	  }
+#endif      	  
 	  std::shared_ptr<GridType> get_grid(){return grid;}
 
 	  std::shared_ptr<std::vector<MatrixType*>> get_transfer(){	   return transferMatrix;}
 	  size_t get_nlevel() {return n_levels;}
 	  
 
-	  //std::shared_ptr<GridType> get_grid(){return grid;}
 
-	  //std::shared_ptr<std::vector<MatrixType*>> get_transfer(){	   return transferMatrix;}
-	  //size_t get_nlevel() {return n_levels;}
 	  
 	  void create_transfer(GridType::LeafGridView gridView){
-	    	transfer = std::make_shared<TransferOperatorAssembler<Dune::YaspGrid<2>>>(*grid);
+	    	transfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
 	    	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
 	      	transferMatrix->push_back(new MatrixType()); 
         	B11 b_coarse(gridView);

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "dune_includes"
+#include "../2d_transfer/dune_includes"
 
 #include <pfasst.hpp>
 #include <pfasst/quadrature.hpp>
@@ -51,6 +51,7 @@ namespace pfasst
         sweeper->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 	sweeper->newton=newton; //genauigkeit fuer den inneren Newton Loeser
         sweeper->set_abs_residual_tol(tol);
+	sweeper->is_coarse=false;
 
         sdc->add_sweeper(sweeper);
 
@@ -75,17 +76,17 @@ namespace pfasst
 
 
 
-	/*if(output){
+	if(output){
         	auto naeherung = sweeper->get_end_state()->data();
         	auto exact     = sweeper->exact(t_end)->data();
 
         	for (int i=0; i< sweeper->get_end_state()->data().size(); i++){
           		std::cout << sweeper->exact(0)->data()[i] << " " << naeherung[i] << "   " << exact[i] << std::endl;
         	}
-        }*/
+        }
 
-        //sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
-	//std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
+        sweeper->get_end_state()->scaled_add(-1.0 , sweeper->exact(t_end));
+	std::cout << "ERROR (maximal difference of one component of the computed solution to analytic solution): " << sweeper->get_end_state()->norm0()<< std::endl;
 	std::cout << "the corresponding linear system were solved " << sweeper->num_solves << " times" << std::endl; 
 	std::cout << "(you solve this system in every time step for every time node for every outer iteration and for every Newton iteration)" << std::endl ;
 	std::cout << "Groesse des Loesungsvektors: " << sweeper->get_end_state()->data().size() << std::endl ;
