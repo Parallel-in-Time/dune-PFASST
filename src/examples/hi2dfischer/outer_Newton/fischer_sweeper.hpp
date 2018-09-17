@@ -45,6 +45,9 @@ namespace pfasst
 #endif            
         public:
 	int                                             num_solves=0;        
+	
+	
+	
             explicit fischer_sweeper<SweeperTrait, BaseFunction, Enabled>(std::shared_ptr<BaseFunction> basis, size_t nlevel, std::shared_ptr<GridType> grid)
                                     : Heat_FE<SweeperTrait, BaseFunction, Enabled>(basis, nlevel, grid){
         
@@ -74,7 +77,7 @@ namespace pfasst
         	auto result = this->get_encap_factory().create();
         	const auto dim = SweeperTrait::DIM;
         	
-        	
+         	
 #if DIMENSION==1
 
 
@@ -128,11 +131,10 @@ namespace pfasst
 		interpolate(*this->basis, result->data(), exact_solution1);
 	
 	
-	
+
 		for (int i = 0; i< result->data().size(); ++i)
 		{
 	  		result->data()[i][0] = pom1[i];
-	  
 	  
 		}
 #endif
@@ -310,7 +312,9 @@ namespace pfasst
         num_solves++;
 
 
-	
+        for (size_t i = 0; i < u->get_data().size(); i++) {
+	  std::cout << "implcit solve " << u->data()[i] << std::endl;
+        }	
 
 
 

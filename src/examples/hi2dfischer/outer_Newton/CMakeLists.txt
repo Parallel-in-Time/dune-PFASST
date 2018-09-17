@@ -1,5 +1,3 @@
-add_executable("vor" vor_pfasstFP.cpp)
-target_link_dune_default_libraries("vor")
 
 add_executable("newton_sdc" FE_sdcFP.cpp)
 target_link_dune_default_libraries("newton_sdc")

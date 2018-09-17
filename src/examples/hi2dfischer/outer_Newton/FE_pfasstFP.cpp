@@ -356,7 +356,7 @@ for(int time=0; time<((t_end-t_0)/dt); time+=num_pro){
 
 #if DIMENSION==2
 	if(my_rank==num_pro-1){
-        	GridType::LevelGridView gridView = grid->levelGridView(1);
+        	GridType::LeafGridView gridView = FinEl->get_grid()->leafGridView();
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
         	string name = std::to_string(76);  
 

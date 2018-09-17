@@ -63,8 +63,7 @@
 
 
 	std::shared_ptr<TransferOperatorAssembler<GridType>> transfer;
-	std::shared_ptr<std::vector<MatrixType*>> transferMatrix;	  
-
+	std::shared_ptr<std::vector<MatrixType*>> transferMatrix; 
 
 
 	    
@@ -164,11 +163,11 @@
 	  void set_basis(std::shared_ptr<B2> &b2){
           	b2=fe_basis2;        
       	  }
-#if DIMENSION!=1      	  
-      	  void set_basis(std::shared_ptr<B1> &b1){
+//#if DIMENSION!=1      	  
+/*      	  void set_basis(std::shared_ptr<B1> &b1){
           	b1=fe_basis1;          
-      	  }
-#endif      	  
+      	  }*/
+//#endif      	  
 	  std::shared_ptr<GridType> get_grid(){return grid;}
 
 	  std::shared_ptr<std::vector<MatrixType*>> get_transfer(){	   return transferMatrix;}

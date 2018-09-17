@@ -12,7 +12,7 @@ using std::vector;
 #include <pfasst/sweeper/FE_impl.hpp>
 
 #include <pfasst/contrib/fft.hpp>
-#include "../2d_transfer/fe_manager_fp.hpp"
+#include "../2d_transfer/fe_manager_fp_hi.hpp"
 
 using namespace pfasst::examples::FE_sweeper;
 

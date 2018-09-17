@@ -1,5 +1,5 @@
 
-#include <config.h>
+//#include <config.h>
 #include "../2d_transfer/dune_includes"
 #include <fenv.h>
 
@@ -37,34 +37,27 @@ using namespace pfasst::examples::fischer_example;
       using pfasst::quadrature::QuadratureType;
 
       
-      //using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-      using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>,   BasisFunction >;
-      //using sweeper_t      = fischer_sweeper<dune_sweeper_traits<encap_traits_t,   BASE_ORDER, DIMENSION>,   BasisFunction >;
-      using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   coarseBasisFunction >;
+
+      using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>,   coarseBasisFunction >;
+      using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   BasisFunction >;
+
       
       using transfer_traits_t = pfasst::transfer_traits<sweeper_t_coarse, sweeper_t_fine, 1>;
       using transfer_t = SpectralTransfer<transfer_traits_t>;
       using heat_FE_mlsdc_t = TwoLevelMLSDC<transfer_t>;
 
 
-      void run_mlsdc(const size_t nelements, const size_t basisorder, const size_t DIM, const size_t coarse_factor,
+      void run_mlsdc(const size_t nelements, const size_t DIM, const size_t coarse_factor,
                                            const size_t nnodes, const QuadratureType& quad_type,
                                            const double& t_0, const double& dt, const double& t_end,
                                            const size_t niter, double newton, bool output) {
 
 
 
-//         auto FinEl = make_shared<fe_manager>(nelements, 2);
-
-        
-                
-        //typedef Dune::YaspGrid<1,Dune::EquidistantOffsetCoordinates<double, 1> > GridType; 
-        //typedef GridType::LevelGridView GridView;
-        //using BasisFunction = Dune::Functions::PQkNodalBasis<GridView, BASE_ORDER>;
     
-        std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
+        //std::shared_ptr<TransferOperatorAssembler<GridType>> dunetransfer;
 
-        std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
+        //std::shared_ptr<std::vector<MatrixType*>> transferMatrix;
 
         //std::shared_ptr<GridType> grid;
 
@@ -99,24 +92,22 @@ using namespace pfasst::examples::fischer_example;
         using pfasst::quadrature::quadrature_factory;
 
 
-	auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis2(), 1,  FinEl->get_grid());
-        //auto coarse = std::make_shared<sweeper_t_coarse>(FinEl, 1);
-	//auto sweeper = std::make_shared<sweeper_t>(FinEl->get_basis2() , 0, FinEl->get_grid()); 
-        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis1() , 0, FinEl->get_grid());    //[0]
+	auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1,  FinEl->get_grid());
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2() , 0, FinEl->get_grid());    
 
 
 	const auto num_nodes = nnodes;	
-    	const auto num_time_steps = 1; //t_end/dt;
+    	const auto num_time_steps = 1; 
 
-	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_coarse;
+	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_coarse;
 	vector<shared_ptr<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>::encap_t>>  _new_newton_state_fine;	
 
 
 		_new_newton_state_fine.resize(num_nodes + 1);
 		_new_newton_state_coarse.resize(num_nodes + 1);
 		for(int j=0; j<num_nodes +1 ; j++){
-			_new_newton_state_fine[j] =  fine->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[0]->size());
-			_new_newton_state_coarse[j] = coarse->get_encap_factory().create(); //std::make_shared<Dune::BlockVector<Dune::FieldVector<double, 1>>>(fe_basis[1]->size());
+			_new_newton_state_fine[j] =  fine->get_encap_factory().create(); 
+			_new_newton_state_coarse[j] = coarse->get_encap_factory().create(); 
 		}
     	
     	
@@ -131,11 +122,12 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
         auto mlsdc = std::make_shared<heat_FE_mlsdc_t>();
 
-        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis2(), 1,  FinEl->get_grid());
+        std::cout << "erstelle coarse" << std::endl;
+        auto coarse = std::make_shared<sweeper_t_coarse>(FinEl->get_basis1(), 1,  FinEl->get_grid());
         coarse->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
-
-        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis1() , 0, FinEl->get_grid()); //0
+        std::cout << "erstelle fine" << std::endl;
+        auto fine = std::make_shared<sweeper_t_fine>(FinEl->get_basis2() , 0, FinEl->get_grid()); 
         fine->quadrature() = quadrature_factory<double>(nnodes, quad_type);
 
 
@@ -143,26 +135,12 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         fine->is_coarse=false;
         
         
-        
+	fine->set_abs_residual_tol(1e-8);
+	coarse->set_abs_residual_tol(1e-8);
 
         std::cout << "erstelle tranfer" << std::endl;
         
-        /*dunetransfer = std::make_shared<TransferOperatorAssembler<GridType>>(*grid);
-	transferMatrix = std::make_shared<std::vector<MatrixType*>>();
-	for (int i=0; i< n_levels-1; i++){
-		transferMatrix->push_back(new MatrixType()); // hier nur referenz die evtl geloescht wird??
-	}
-	dunetransfer->assembleMatrixHierarchy<MatrixType>(*transferMatrix);
-	    
-	std::shared_ptr<std::vector<MatrixType*>> vecvec = transferMatrix;
-	    //std::cout <<  "transfer erzeugt groesse " << (*vecvec->at(0)).M() <<  std::endl;
-	for (int i=0; i< vecvec->at(0)->N(); i++){
-	      for (int j=0; j< (*vecvec->at(0)).M(); j++){
-		if(vecvec->at(0)->exists(i,j)){
-		  //std::cout << ((*vecvec->at(0))[i][j]) << std::endl;
-		}
-	      }
-        }*/
+
         
         auto transfer = std::make_shared<transfer_t>();
         transfer->create(FinEl);
@@ -179,9 +157,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 
 
-        mlsdc->status()->time() = t_0 + time*dt;//t_0;
+        mlsdc->status()->time() = t_0 + time*dt;
         mlsdc->status()->dt() = dt;
-        mlsdc->status()->t_end() = t_0 + (time+1)*dt; //t_end;
+        mlsdc->status()->t_end() = t_0 + (time+1)*dt; 
         mlsdc->status()->max_iterations() = niter;
 
 
@@ -189,11 +167,11 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
         mlsdc->setup();
 
 	if (time==0){
-        coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
-        fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
+        	coarse->initial_state() = coarse->exact(mlsdc->get_status()->get_time());
+        	fine->initial_state() = fine->exact(mlsdc->get_status()->get_time());
 	}else{
-	coarse->initial_state()->data() = _new_newton_initial_coarse; 
-	fine->initial_state()->data() = _new_newton_initial_fine; 
+		coarse->initial_state()->data() = _new_newton_initial_coarse; 
+		fine->initial_state()->data() = _new_newton_initial_fine; 
 	}
 
 
@@ -201,12 +179,9 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 	if(time==0 && ne==0) 	
 		for(int j=0; j<num_nodes +1; j++){
-		//for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
     		 (*_new_newton_state_coarse[j]) = coarse->exact(mlsdc->get_status()->get_time())->data(); 
-    		//}
-		//for(int k=0; k< _new_newton_state_fine[i][j]->data().size(); k++){
     		 (*_new_newton_state_fine[j]) = fine->exact(mlsdc->get_status()->get_time())->data(); 
-    		//}
+
 		}
 	
 
@@ -215,7 +190,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 		for(int j=0; j<num_nodes +1; j++){
 			for(int k=0; k< _new_newton_state_coarse[j]->data().size(); k++){
-    			coarse->last_newton_state()[j]->data()[k] = _new_newton_state_coarse[j]->data()[k]  ;
+    				coarse->last_newton_state()[j]->data()[k] = _new_newton_state_coarse[j]->data()[k]  ;
 			}
     			//transfer->restrict_u(_new_newton_state_fine[i][j], coarse->last_newton_state()[i][j]);
 			/*for(int k=0; k< _new_newton_state_coarse[i][j]->data().size(); k++){
@@ -223,7 +198,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 			}*/
 
 			for(int k=0; k< _new_newton_state_fine[j]->data().size(); k++){
-    			fine->last_newton_state()[j]->data()[k] = _new_newton_state_fine[j]->data()[k]  ;
+    				fine->last_newton_state()[j]->data()[k] = _new_newton_state_fine[j]->data()[k]  ;
 			}
     		}
 	
@@ -308,7 +283,7 @@ for(int time=0; time<(t_end-t_0)/dt; time++){
 
 #if DIMENSION==2
 	if(true){
-        	GridType::LevelGridView gridView = grid->levelGridView(1);
+        	GridType::LeafGridView gridView = FinEl->get_grid()->leafGridView();
         	Dune::VTKWriter<GridView> vtkWriter(gridView);
 
 
@@ -387,13 +362,14 @@ int main(int argc, char** argv)
   using pfasst::quadrature::QuadratureType;
   //using sweeper_t      = pfasst::examples::heat_FE::Heat_FE<pfasst::sweeper_traits<encap_traits_t,1,1>>;
   //using sweeper_t_fine = pfasst::examples::heat_FE::Heat_FE<pfasst::examples::heat_FE::dune_sweeper_traits<encap_traits_t, 2, DIMENSION>>;
-  using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
-  using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   FE_function >;
-  
+  //using FE_function = Dune::Functions::PQkNodalBasis<GridType::LevelGridView, BASE_ORDER>;  
+  using sweeper_t_fine = fischer_sweeper<dune_sweeper_traits<encap_traits_t, BASE_ORDER, DIMENSION>,   BasisFunction>;
+  using sweeper_t_coarse = fischer_sweeper<dune_sweeper_traits<encap_traits_t, COARSE_ORDER, DIMENSION>,   coarseBasisFunction >;
   pfasst::init(argc, argv, sweeper_t_fine::init_opts);
+  pfasst::init(argc, argv, sweeper_t_coarse::init_opts);
 
   const size_t nelements = get_value<size_t>("num_elements", 32); //Anzahl der Elemente pro Dimension
-  const size_t nnodes = get_value<size_t>("num_nodes", 2);
+  const size_t nnodes = get_value<size_t>("num_nodes", 3);
   //const size_t ndofs = get_value<size_t>("num_dofs", 8);
   const size_t coarse_factor = get_value<size_t>("coarse_factor", 1);
   //const size_t nnodes = get_value<size_t>("num_nodes", 3);
@@ -420,6 +396,6 @@ int main(int argc, char** argv)
   }
   const size_t niter = get_value<size_t>("num_iters", 10);
 
-  run_mlsdc(nelements, BASE_ORDER, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
+  run_mlsdc(nelements, DIMENSION, coarse_factor, nnodes, quad_type, t_0, dt, t_end, niter, newton, output);
 }
 #endif 

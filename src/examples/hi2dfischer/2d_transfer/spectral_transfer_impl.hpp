@@ -21,8 +21,9 @@ namespace pfasst
     SpectralTransfer<TransferTraits>::create(std::shared_ptr<std::vector<MatrixType*>> transfer)
     {
 	
-	  std::shared_ptr<std::vector<MatrixType*>> vecvec(transfer);
-	  set_matrix(*vecvec->at(0), *vecvec->at(0));
+	  //std::shared_ptr<std::vector<MatrixType*>> vecvec(transfer);
+	  //set_matrix(*vecvec->at(0), *vecvec->at(0));
+	  set_matrix(*transfer->at(0), *transfer->at(0));
 	    
     }    
     
@@ -55,7 +56,7 @@ namespace pfasst
 	    for (int i=0; i< restrict_matrix.N(); i++){
 	      for (int j=0; j< restrict_matrix.M(); j++){
 		if(restrict_matrix.exists(i,j)){	
-		  if (restrict_matrix[i][j]==0.5 || restrict_matrix[i][j]==0.25) restrict_matrix[i][j]=0;//std::cout << restrict_matrix[i][j]<< " ";//
+		  if (restrict_matrix[i][j]!= 1) restrict_matrix[i][j]=0;//std::cout << restrict_matrix[i][j]<< " ";//
 		  //if (restrict_matrix[i][j]==0.5 ) restrict_matrix[i][j]=0;//std::cout << restrict_matrix[i][j]<< " ";//
 		}
 
@@ -81,6 +82,7 @@ namespace pfasst
 
       if (fine_ndofs == coarse_ndofs) {
         ML_CLOG(DEBUG, "TRANS", "number dofs of fine and coarse are the same; doing a trivial copy and NO FFT");
+        std::cout << "number dofs of fine and coarse are the same; doing a trivial copy and NO FFT" << std::endl;
         fine->data() = coarse->get_data();
 
       } else {
@@ -105,12 +107,13 @@ namespace pfasst
 
       if (fine_ndofs == coarse_ndofs) {
         ML_CLOG(DEBUG, "TRANS", "number dofs of fine and coarse are the same; doing a trivial copy and NO FFT");
+        std::cout << "number dofs of fine and coarse are the same; doing a trivial copy and NO FFT" << std::endl;
         coarse->data() = fine->get_data();
 
       } else {
 
 	restrict_matrix.mtv(fine->data(), coarse->data());
-	//coarse->data() *= 0.25;
+	coarse->data() *= 0.25;
       }
     }
     
@@ -129,6 +132,7 @@ namespace pfasst
 
       if (fine_ndofs == coarse_ndofs) {
         ML_CLOG(DEBUG, "TRANS", "number dofs of fine and coarse are the same; doing a trivial copy and NO FFT");
+        std::cout << "number dofs of fine and coarse are the same; doing a trivial copy and NO FFT" << std::endl;
         coarse->data() = fine->get_data();
 
       } else {

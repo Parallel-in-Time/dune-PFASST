@@ -50,7 +50,7 @@ namespace pfasst
 
       shared_ptr<heat_FE_sdc_t> run_sdc(const size_t nelements, const size_t basisorder, const size_t dim, const size_t nnodes,
                                        const QuadratureType& quad_type, const double& t_0,
-                                       const double& dt, const double& t_end, const size_t niter, double newton)
+                                       const double& dt, const double& t_end, const size_t niter, double newton, double tol)
       {
    //   
       
@@ -70,7 +70,7 @@ namespace pfasst
 	sweeper->newton=newton;
         sweeper->is_coarse = false;
         sweeper->comm=MPI_COMM_WORLD;
-        //sweeper->set_abs_residual_tol(1e-10);
+        sweeper->set_abs_residual_tol(tol);
         sdc->add_sweeper(sweeper);
 
         sdc->set_options();
@@ -227,6 +227,7 @@ namespace pfasst
     double t_end = get_value<double>("tend", 0.1);
     size_t nsteps = get_value<size_t>("num_steps", 0);
     double newton = get_value<double>("newton", 0.1);
+    double tol = get_value<double>("abs_res_tol", 0.00001);
 
     if (t_end == -1 && nsteps == 0) {
       ML_CLOG(ERROR, "USER", "Either t_end or num_steps must be specified.");
@@ -249,7 +250,7 @@ namespace pfasst
 
 
 
-    pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter, newton);
+    pfasst::examples::heat_FE::run_sdc(nelements, BASIS_ORDER, DIM, nnodes, quad_type, t_0, dt, t_end, niter, newton, tol);
     
     
 
